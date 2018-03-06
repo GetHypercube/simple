@@ -1,0 +1,81 @@
+<div class="tab-pasos tab-pane" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+    <table class="table">
+        <thead>
+        <tr class="form-agregar-paso">
+            <td></td>
+            <td>
+                <select class="pasoFormulario form-control">
+                    @foreach ($formularios as $f)
+                        <option value="<?= $f->id ?>"><?= $f->nombre ?></option>
+                    @endforeach
+                </select>
+            </td>
+            <td>
+                <div class="input-group mb-2 mr-sm-2">
+                    <input class="pasoRegla reglas form-control" type="text"
+                           placeholder="Escribir regla condición aquí"/>
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <a href="/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html"
+                               target="_blank">
+                                <i class="material-icons align-middle">help</i>
+                            </a>
+                            <p class="message" style="color: red; display: block;"></p>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <select class="pasoModo form-control">
+                    <option value="edicion">Edición</option>
+                    <option value="visualizacion">Visualización</option>
+                </select>
+            </td>
+            <td>
+                <button type="button" class="btn btn-light" title="Agregar"><i class="material-icons">add</i></button>
+            </td>
+        </tr>
+        <tr>
+            <th>#</th>
+            <th>Formulario</th>
+            <th>Condición</th>
+            <th>Modo</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach ($tarea->Pasos as $key => $p)
+            <tr>
+                <td><?= $key + 1 ?></td>
+                <td><a title="Editar" target="_blank"
+                       href="<?= url('backend/formularios/editar/' . $p->Formulario->id) ?>"><?= $p->Formulario->nombre ?></a>
+                </td>
+                <td><?= $p->regla ?></td>
+                <td><?= $p->modo ?></td>
+                <td>
+                    <input type="hidden" name="pasos[<?= $key + 1 ?>][id]"
+                           value="<?= $p->id ?>"/>
+                    <input type="hidden" name="pasos[<?= $key + 1 ?>][formulario_id]"
+                           value="<?= $p->formulario_id ?>"/>
+                    <input type="hidden" name="pasos[<?= $key + 1 ?>][regla]"
+                           value="<?= $p->regla ?>"/>
+                    <input type="hidden" name="pasos[<?= $key + 1 ?>][modo]"
+                           value="<?= $p->modo ?>"/>
+                    <a class="delete" title="Eliminar" href="#"><i class="material-icons">close</i></a>
+                </td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+    <div class="form-check">
+        <input class="form-check-input" id="paso_confirmacion" type="checkbox" name="paso_confirmacion"
+               value="1" <?=$tarea->paso_confirmacion ? 'checked' : ''?> >
+        <label for="paso_confirmacion" class="form-check-label">
+            Incluir último paso de confirmación antes de avanzar la tarea
+            <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_pasos"
+               target="_blank">
+                <i class="material-icons">help</i>
+            </a>
+        </label>
+    </div>
+</div>

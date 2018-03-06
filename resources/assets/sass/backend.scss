@@ -1,0 +1,124 @@
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,600");
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+// Variables
+@import "variables";
+// Bootstrap
+@import "~bootstrap/scss/bootstrap";
+//Footer
+@import "footer";
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 200px;
+}
+
+i.material-icons {
+  font-size: 20px;
+  vertical-align: top;
+  &.white {
+    color: #ffffff;
+  }
+  &.mini {
+    font-size: 16px;
+  }
+}
+
+.custom-nav {
+  background: #FFFFFF;
+  box-shadow: 0 2px 4px 0 rgba(209, 209, 209, 0.50);
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: $primary;
+  &.active {
+    padding: 8px 12px;
+    border-radius: 5px;
+    background-color: $primary;
+    color: #ffffff;
+  }
+}
+
+.form-actions {
+  margin-top: 15px;
+}
+
+.dl-horizontal {
+  dt {
+    float: left;
+    width: 160px;
+    clear: left;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  dd {
+    margin-left: 180px;
+  }
+}
+
+dl {
+  margin-bottom: 18px;
+}
+
+dt {
+  font-weight: bold;
+  display: block;
+
+}
+
+dt, dd {
+  line-height: 18px;
+}
+
+dd {
+  margin-left: 9px;
+}
+
+@media (min-width: 576px) {
+  .jumbotron {
+    padding: 2rem 1rem;
+  }
+}
+
+optgroup {
+  font-weight: bolder;
+  font-family: Arial, 'sans-serif';
+}
+
+.hide, .procesos_eliminados {
+  display: none;
+}
+
+.icn-logo {
+  max-width: 64px;
+  max-height: 64px;
+}
+
+pre {
+  display: block;
+  padding: 8.5px;
+  margin: 0 0 9px;
+  font-size: 12px;
+  line-height: 18px;
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.map {
+  height: 350px;
+  width: 590px;
+  position: relative;
+  display: block;
+}

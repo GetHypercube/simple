@@ -1,0 +1,245 @@
+// Fonts
+@import "fonts";
+// Variables
+@import "variables";
+// Bootstrap
+@import "~bootstrap/scss/bootstrap";
+//Footer
+@import "footer";
+
+html {
+  position: relative;
+  min-height: 100%;
+  background-color: #FFFFFF;
+}
+
+nav {
+  .bg-light {
+    color: $light;
+  }
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 150px;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: white;
+}
+
+h1 {
+  &.title {
+    color: #000000;
+    font-family: "Roboto Slab", sans-serif;
+    font-size: 28px;
+    line-height: 37px;
+  }
+}
+
+.red {
+  color: $red;
+}
+
+.btn-simple {
+  font-size: 16px;
+  padding: 6px 25px;
+}
+
+.nav-item.login {
+  background-color: $blue;
+  border-radius: 4px;
+  a.nav-link {
+    padding: 11px 22px;
+    color: white;
+    font-size: 16px;
+    line-height: 19px;
+    transition: all ease .2s;
+    &:hover, &:active, &:focus {
+      color: $blue;
+      background-color: white;
+    }
+  }
+  .dropdown-toggle::after {
+    vertical-align: middle;
+  }
+}
+
+.dropdown-menu.login {
+  padding: 0;
+  border: none;
+  background-color: $blue;
+  transition: all ease .2s;
+  a {
+    padding: 11px 22px;
+    color: white;
+    font-size: 16px;
+    line-height: 19px;
+    transition: all ease .2s;
+    &:hover, &:active, &:focus {
+      border-radius: 2px;
+      color: $blue;
+      background-color: white;
+    }
+  }
+}
+
+.date {
+  i.material-icons {
+    color: $red;
+    font-size: 12px;
+  }
+}
+
+.main-container {
+  margin-top: 40px;
+  color: $black;
+}
+
+.navbar {
+  .logo {
+    //max-width: 95px;
+    max-width: 150px;
+    max-height: 80px;
+  }
+  .name-institution {
+    color: #575757;
+    h5 {
+      font-size: 18px;
+      line-height: 21px;
+    }
+  }
+}
+
+i.material-icons {
+  font-size: 20px;
+  vertical-align: sub;
+}
+
+.card {
+  border: none;
+  color: $black;
+  border-radius: 4px;
+  margin-bottom: 30px;
+  background-color: #FFFFFF;
+  box-shadow: 1px 1px 4px 0 #CCCCCC;
+  .card-header {
+    text-align: left;
+    font-size: 14px;
+    padding: 10px 15px;
+    line-height: 16px;
+    text-transform: uppercase;
+    font-weight: 500;
+    &.draft {
+      color: white;
+      background: $red;
+    }
+  }
+  .card-body {
+    text-align: left;
+    min-height: 164px;
+    &.draft {
+      min-height: 126px;
+    }
+    .icon-archivo {
+      font-size: 22px;
+      &:before {
+        vertical-align: top;
+      }
+    }
+    .media-body {
+      margin-left: 15px;
+    }
+    .card-text {
+      line-height: 24px;
+      font-size: 20px;
+    }
+  }
+  a.card-footer {
+    border: none;
+    color: $red;
+    font-size: 16px;
+    text-align: left;
+    background-color: $light;
+    &.claveunica {
+      color: $blue;
+    }
+  }
+}
+
+#simple-destacados .tarjeta {
+  border-radius: 4px;
+  box-shadow: 1px 1px 4px 0 #CCCCCC;
+
+}
+
+.img-service {
+  width: 50px;
+  height: 50px;
+}
+
+//Side menu
+.simple-list-menu {
+  &.list-group {
+    border-radius: 0;
+  }
+  a.list-group-item {
+    border: none;
+    margin-bottom: 6px;
+    border-radius: 2px;
+    background-color: $light;
+    color: #757575;
+    font-size: 16px;
+    line-height: 19px;
+    transition: all ease .2s;
+    &.active {
+      background-color: $red;
+      color: white;
+    }
+    &:hover {
+      background-color: $red;
+      color: white;
+    }
+  }
+}
+
+//Steps
+ul.steps {
+  text-align: center;
+  margin-bottom: 70px;
+  padding-left: 0;
+}
+
+ul.steps li {
+  padding-bottom: 8px;
+  display: inline-block;
+  border-bottom: 8px solid $light;
+  &.active {
+    border-bottom: 8px solid #EB1414;
+  }
+}
+
+.steps li {
+  float: left;
+  color: #000000;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.has-error .form-control {
+  border-color: #a94442;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  &:focus {
+    border-color: #843534;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
+  }
+}
+
+.map {
+  height: 350px;
+  width: 100%;
+  position: relative;
+  display: block;
+}

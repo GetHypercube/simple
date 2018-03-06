@@ -1,0 +1,178 @@
+<?php
+
+namespace App\Http\Controllers\Manager;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
+use App\Helpers\Doctrine;
+use Connect_services;
+use Doctrine_Manager;
+use Cuenta;
+
+class AccountController extends Controller
+{
+    public function index()
+    {
+        $data['cuentas'] = Doctrine::getTable('Cuenta')->findAll();
+
+        $data['title'] = 'Cuentas';
+        $data['content'] = view('manager.account.index', $data);
+
+        return view('layouts.manager.app', $data);
+    }
+
+    public function edit($cuenta_id = null)
+    {
+
+        if ($cuenta_id) {
+            $cuenta = Doctrine::getTable('Cuenta')->find($cuenta_id);
+            $service = new Connect_services();
+            $service->setCuenta($cuenta_id);
+            $service->load_data();
+            $calendar = $service;
+
+            if ($cuenta != NULL && $cuenta->vinculo_produccion != null && strlen($cuenta->vinculo_produccion) > 0) {
+                Log::debug('if: $cuenta->vinculo_produccion: ' . $cuenta->vinculo_produccion);
+                $data['cuentas_productivas'] = $this->getListCuentasProductivas($cuenta_id, $cuenta->vinculo_produccion);
+            } else {
+                Log::debug('else: ' . $cuenta_id);
+                $data['cuentas_productivas'] = $this->getListCuentasProductivas($cuenta_id);
+            }
+        } else {
+            $data['cuentas_productivas'] = $this->getListCuentasProductivas();
+            $cuenta = new Cuenta();
+            $calendar = new Connect_services();
+        }
+
+
+        $data['cuenta'] = $cuenta;
+        $data['calendar'] = $calendar;
+        $data['title'] = $cuenta->id ? 'Editar' : 'Crear';
+        $data['content'] = view('manager.account.edit', $data);
+
+        return view('layouts.manager.app', $data);
+    }
+
+    public function edit_form(Request $request, $cuenta_id = null)
+    {
+        Doctrine_Manager::connection()->beginTransaction();
+
+        try {
+
+            if ($cuenta_id)
+                $cuenta = Doctrine::getTable('Cuenta')->find($cuenta_id);
+            else
+                $cuenta = new Cuenta();
+
+            $validations = [
+                'nombre' => 'required',
+                'nombre_largo' => 'required',
+                'domain' => 'required'
+            ];
+
+            $messages = [
+                'nombre.required' => 'El campo Nombre es obligatorio',
+                'nombre_largo.required' => 'El campo Nombre largo es obligatorio',
+                'domain.required' => 'El campo Dominio es obligatorio'
+            ];
+
+            //$this->form_validation->set_rules('nombre', 'Nombre', 'required|url_title');
+
+            if ($request->has('desarrollo') && $request->input('desarrollo') == 'on') {
+                $validations['vinculo_produccion'] = 'required';
+                $messages['vinculo_produccion.required'] = 'El campo Vinculo Producción es obligatorio';
+            }
+
+            $request->validate($validations, $messages);
+
+            $respuesta = new \stdClass();
+            $cuenta->nombre = $request->input('nombre');
+            $cuenta->nombre_largo = $request->has('nombre_largo') && !is_null($request->input('nombre_largo')) ? $request->input('nombre_largo') : '';
+            $cuenta->mensaje = $request->has('mensaje') && !is_null($request->input('mensaje')) ? $request->input('mensaje') : '';
+
+            if ($request->input('desarrollo') == 'on') {
+                $cuenta->ambiente = 'dev';
+                $cuenta->vinculo_produccion = $request->input('vinculo_produccion');
+                $stmn = Doctrine_Manager::getInstance()->connection();
+                $sql_desvinculo_produccion = "UPDATE cuenta SET vinculo_produccion = NULL, ambiente='prod' WHERE vinculo_produccion = " . $cuenta_id;
+                $result = $stmn->prepare($sql_desvinculo_produccion);
+                $result->execute();
+            } else {
+                $cuenta->ambiente = 'prod';
+                $cuenta->vinculo_produccion = NULL;
+            }
+
+            $cuenta->logo = $request->input('logo');
+            $cuenta->save();
+            $cuenta_id = (int)$cuenta->id;
+
+            if ($cuenta_id > 0) {
+                if ($cuenta->ambiente == 'dev') {
+                    $stmn = Doctrine_Manager::getInstance()->connection();
+                    $sql_desvinculo_produccion = "UPDATE cuenta SET vinculo_produccion = NULL, ambiente='prod' WHERE vinculo_produccion = " . $cuenta_id;
+                    $result = $stmn->prepare($sql_desvinculo_produccion);
+                    $result->execute();
+                }
+
+                // Calendar
+                $service = new Connect_services();
+                $service->setAppkey(env('APP_KEY'));
+                $service->setDomain($request->input('domain'));
+                $service->setCuenta($cuenta_id);
+                $service->save();
+
+                Doctrine_Manager::connection()->commit();
+
+                $request->session()->flash('success', 'Cuenta guardada con éxito.');
+                $respuesta->validacion = true;
+                $respuesta->redirect = url('manager/cuentas');
+
+            } else {
+                $respuesta->validacion = false;
+                $respuesta->errores = '<div class="alert alert-error"><a class="close" data-dismiss="alert">×</a>Ocurrió un error al guardar los datos.</div>';
+                Doctrine_Manager::connection()->rollback();
+            }
+        } catch (Exception $ex) {
+            $respuesta->validacion = false;
+            $respuesta->errores = '<div class="alert alert-error"><a class="close" data-dismiss="alert">×</a>' . $ex->getMessage() . '</div>';
+            Doctrine_Manager::connection()->rollback();
+        }
+
+        return response()->json($respuesta);
+    }
+
+    public function delete(Request $request, $cuenta_id)
+    {
+        $cuenta = Doctrine::getTable('Cuenta')->find($cuenta_id);
+        $cuenta->delete();
+
+        $request->session()->flash('success', 'Cuenta eliminada con éxito.');
+        return redirect('manager/cuentas');
+    }
+
+    // Método que obtiene todas las cuentas productivas a las cuales se puede asociar la cuenta $idcuenta
+    private function getListCuentasProductivas($cuenta_id = null, $vinculo_prod = null)
+    {
+
+        Log::debug('getListCuentasProductivas(' . $cuenta_id . ')');
+
+        $stmn = Doctrine_Manager::getInstance()->connection();
+
+        if ($cuenta_id != null && $vinculo_prod != null) {
+            $sql_vinculo_produccion = "SELECT id, nombre FROM cuenta WHERE ambiente = 'prod' AND id != " . $cuenta_id . " AND id NOT IN (SELECT vinculo_produccion FROM cuenta WHERE vinculo_produccion IS NOT NULL AND vinculo_produccion != " . $vinculo_prod . ")";
+        } else if ($cuenta_id != null && $vinculo_prod == null) {
+            $sql_vinculo_produccion = "SELECT id, nombre FROM cuenta WHERE ambiente = 'prod' AND id != " . $cuenta_id . " AND id NOT IN (SELECT vinculo_produccion FROM cuenta WHERE vinculo_produccion IS NOT NULL)";
+        } else {
+            $sql_vinculo_produccion = "SELECT id, nombre FROM cuenta WHERE ambiente = 'prod' AND id NOT IN (SELECT vinculo_produccion FROM cuenta WHERE vinculo_produccion IS NOT NULL)";
+        }
+
+        $result = $stmn->prepare($sql_vinculo_produccion);
+        $result->execute();
+        $vinculo_prod = $result->fetchAll();
+
+        Log::debug('vinculo_produccion OK [' . json_encode($vinculo_prod) . ']');
+
+        return $vinculo_prod;
+    }
+}

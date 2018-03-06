@@ -1,0 +1,273 @@
+<?php
+require_once('accion.php');
+
+use App\Helpers\Doctrine;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class AccionRest extends Accion
+{
+
+    public function displaySecurityForm($proceso_id)
+    {
+        $data = Doctrine::getTable('Proceso')->find($proceso_id);
+        $conf_seguridad = $data->Admseguridad;
+        $display = '
+            <p>
+                Esta accion consultara via REST la siguiente URL. Los resultados, seran almacenados en la variable de respuesta definida.
+            </p>
+        ';
+        $display .= '<label>Variable respuesta</label>';
+        $display .= '<input type="text" class="form-control col-2" name="extra[var_response]" value="' . ($this->extra ? $this->extra->var_response : '') . '" />';
+        $display .= '<label>Endpoint</label>';
+        $display .= '<input type="text" class="form-control col-4" placeholder="Server" name="extra[url]" value="' . ($this->extra ? $this->extra->url : '') . '" />';
+        $display .= '<label>Resource</label>';
+        $display .= '<input type="text" class="form-control col-4" placeholder="Uri" name="extra[uri]" value="' . ($this->extra ? $this->extra->uri : '') . '" />';
+        $display .= '
+                <label>Método</label>
+                <select id="tipoMetodo" name="extra[tipoMetodo]" class="form-control col-2">
+                    <option value="">Seleccione...</option>';
+        if (!is_null($this->extra) && $this->extra->tipoMetodo && $this->extra->tipoMetodo == "POST") {
+            $display .= '<option value="POST" selected>POST</option>';
+        } else {
+            $display .= '<option value="POST">POST</option>';
+        }
+        if (!is_null($this->extra) && $this->extra->tipoMetodo && $this->extra->tipoMetodo == "GET") {
+            $display .= '<option value="GET" selected>GET</option>';
+        } else {
+            $display .= '<option value="GET">GET</option>';
+        }
+        if (!is_null($this->extra) && $this->extra->tipoMetodo && $this->extra->tipoMetodo == "PUT") {
+            $display .= '<option value="PUT" selected>PUT</option>';
+        } else {
+            $display .= '<option value="PUT">PUT</option>';
+        }
+        if (!is_null($this->extra) && $this->extra->tipoMetodo && $this->extra->tipoMetodo == "DELETE") {
+            $display .= '<option value="DELETE" selected>DELETE</option>';
+        } else {
+            $display .= '<option value="DELETE">DELETE</option>';
+        }
+        $display .= '</select>';
+        $display .= '<label>Timeout</label>';
+        $display .= '<input type="text" class="form-control col-2" placeholder="Tiempo en segundos..." name="extra[timeout]" value="' . ($this->extra ? $this->extra->timeout : '') . '" />';
+
+        $display .= '<label>N&uacute;mero reintentos</label>';
+        $display .= '<input type="text" class="form-control col-2" name="extra[timeout_reintentos]" value="' . ($this->extra ? $this->extra->timeout_reintentos : '3') . '" />';
+
+        if (!is_null($this->extra) && $this->extra->tipoMetodo && ($this->extra->tipoMetodo == "PUT" || $this->extra->tipoMetodo == "POST")) {
+            $display .= '
+            <div id="divObject">
+                <label>Request</label>
+                <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
+                <br />
+                <span id="resultRequest" class="spanError"></span>
+                <br /><br />
+            </div>';
+        } else {
+            $display .= '
+            <div id="divObject" style="display:none;">
+                <label>Request</label>
+                <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
+                <br />
+                <span id="resultRequest" class="spanError"></span>
+                <br /><br />
+            </div>';
+        }
+        $display .= '
+            <div>
+                <label>Header</label>
+                <textarea id="header" name="extra[header]" rows="7" cols="70" placeholder="{ Header }" class="form-control col-4">' . ($this->extra ? $this->extra->header : '') . '</textarea>
+                <br />
+                <span id="resultHeader" class="spanError"></span>
+                <br /><br />
+            </div>';
+        $display .= '
+                <label>Seguridad</label>
+                <select id="tipoSeguridad" class="form-control col-2" name="extra[idSeguridad]">';
+        foreach ($conf_seguridad as $seg) {
+            $display .= '
+                        <option value="-1">Sin seguridad</option>';
+            if ($this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
+                $display .= '<option value="' . $seg->id . '" selected>' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
+            } else {
+                $display .= '<option value="' . $seg->id . '">' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
+            }
+        }
+        $display .= '</select>';
+        return $display;
+    }
+
+    public function validateForm(Request $request)
+    {
+        $request->validate([
+            'extra.var_response' => 'required',
+            'extra.url' => 'required',
+            'extra.uri' => 'required',
+        ], [
+            'extra.var_response.required' => 'El campo Variable de respuesta es obligatorio',
+            'extra.url.required' => 'El campo Endpoint es obligatorio',
+            'extra.uri.required' => 'El campo Resource es obligatorio',
+        ]);
+    }
+
+    //public function ejecutar(Etapa $etapa)
+    public function ejecutar($tramite_id)
+    {
+        $etapa = Etapa::find($tramite_id);
+
+        try {
+
+            Log::info("Ejecutando llamado REST");
+
+            $CI = &get_instance();
+            ($this->extra->timeout ? $timeout = $this->extra->timeout : $timeout = 30);
+
+            Log::info("TimeOut: " . $timeout);
+
+            $r = new Regla($this->extra->url);
+            $server = $r->getExpresionParaOutput($etapa->id);
+            $caracter = "/";
+            $f = substr($server, -1);
+            if ($caracter === $f) {
+                $server = substr($server, 0, -1);
+            }
+
+            $r = new Regla($this->extra->uri);
+            $uri = $r->getExpresionParaOutput($etapa->id);
+            $l = substr($uri, 0, 1);
+            if ($caracter === $l) {
+                $uri = substr($uri, 1);
+            }
+
+            Log::info("Server: " . $server);
+            Log::info("Resource: " . $uri);
+
+            $seguridad = new SeguridadIntegracion();
+            $idSeguridad = null;
+            if (isset($this->extra->idSeguridad)) {
+                $idSeguridad = $this->extra->idSeguridad;
+            }
+            $config = $seguridad->getConfigRest($idSeguridad, $server, $timeout);
+
+            Log::info("Config: " . $this->varDump($config));
+
+
+            if (isset($this->extra->request)) {
+                $r = new Regla($this->extra->request);
+                $request = $r->getExpresionParaOutput($etapa->id);
+            }
+
+            Log::info("Request: " . $request);
+
+            //obtenemos el Headers si lo hay
+            if (isset($this->extra->header)) {
+                $r = new Regla($this->extra->header);
+                $header = $r->getExpresionParaOutput($etapa->id);
+                $headers = json_decode($header);
+
+                if (isset($header) && trim($header) != '') {
+
+                    foreach ($headers as $name => $value) {
+                        $CI->rest->header($name . ": " . $value);
+                    }
+                }
+            }
+
+            $CI->rest->initialize($config);
+
+            $intentos = -1;
+            //se verifica si existe numero de reintentos
+            $reintentos = 0;
+            if (isset($this->extra->timeout_reintentos)) {
+                $reintentos = $this->extra->timeout_reintentos;
+            }
+            $timeout = false;
+
+            Log::debug("Numero de reintentos: " . $reintentos);
+
+            do {
+
+                try {
+                    // Se ejecuta la llamada segun el metodo
+                    if ($this->extra->tipoMetodo == "GET") {
+                        $result = $CI->rest->get($uri, array(), 'json');
+                    } else if ($this->extra->tipoMetodo == "POST") {
+                        $result = $CI->rest->post($uri, $request, 'json');
+                    } else if ($this->extra->tipoMetodo == "PUT") {
+                        $result = $CI->rest->put($uri, $request, 'json');
+                    } else if ($this->extra->tipoMetodo == "DELETE") {
+                        $result = $CI->rest->delete($uri, $request, 'json');
+                    }
+
+                    Log::debug("Result REST: " . $this->varDump($result));
+
+                } catch (Exception $e) {
+                    if (strpos($e->getMessage(), 'timed out') !== false) {
+                        Log::debug("Reintentando " . $reintentos . " veces . ");
+                        $result2['code'] = '504';
+                        $result2['desc'] = $e->getMessage();
+                        $intentos++;
+                        $timeout = true;
+                    } else {
+                        throw new ApiException($e->getMessage(), $e->getCode());
+                    }
+                }
+
+                Log::debug("Intentos: " . $intentos);
+                Log::debug("Reintentos: " . $reintentos);
+
+            } while ($timeout && ($intentos < $reintentos));
+
+            if ($intentos != $reintentos) {
+                $debug = $CI->rest->debug();
+
+                if ($debug['info']['http_code'] == '0') {
+                    $result2['code'] = '500';
+                    $result2['desc'] = $debug['response_string'];
+                } else {
+                    if (!is_array($result) && !is_object($result)) {
+                        $result2['code'] = '206';
+                        $result2['desc'] = $debug['response_string'];
+                    } else {
+
+                        $result2 = (is_array($result)) ? get_object_vars($result[0]) : get_object_vars($result);
+                    }
+                }
+
+                Log::debug("Respuesta REST: " . $this->varDump($result2));
+            }
+
+        } catch (Exception $e) {
+            Log::info("En catch de accion REST Error: " . $e->getMessage());
+            $result2['code'] = $e->getCode();
+            $result2['desc'] = $e->getMessage();
+        }
+
+        $result2 = json_encode($result2);
+        $result2 = str_replace(" - ", "_", $result2);
+        $result2 = json_decode($result2);
+        $response[$this->extra->var_response] = $result2;
+        Log::debug("Respuesta REST Response: " . $this->varDump($response));
+
+        foreach ($response as $key => $value) {
+            $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa->id);
+            if (!$dato)
+                $dato = new DatoSeguimiento();
+            $dato->nombre = $key;
+            $dato->valor = $value;
+            $dato->etapa_id = $etapa->id;
+            $dato->save();
+        }
+
+    }
+
+    function varDump($data)
+    {
+        ob_start();
+        //var_dump($data);
+        print_r($data);
+        $ret_val = ob_get_contents();
+        ob_end_clean();
+        return $ret_val;
+    }
+}
