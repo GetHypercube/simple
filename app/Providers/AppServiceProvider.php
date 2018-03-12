@@ -5,6 +5,10 @@ namespace App\Providers;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use App\ScoutEngines\Elasticsearch\ElasticsearchEngine;
+use Laravel\Scout\EngineManager;
+use Elasticsearch\ClientBuilder as ElasticBuilder;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->bootClaveUnicaSocialite();
 
+        $this->bootElasticsearch();
     }
 
     /**
@@ -56,6 +61,17 @@ class AppServiceProvider extends ServiceProvider
                 return $socialite->buildProvider(\App\Socialite\Two\ClaveUnicaProvider::class, $config);
             }
         );
+    }
+
+    private function bootElasticsearch()
+    {
+        app(EngineManager::class)->extend('elasticsearch', function ($app) {
+            return new ElasticsearchEngine(ElasticBuilder::create()
+                ->setHosts(config('scout.elasticsearch.hosts'))
+                ->build(),
+                config('scout.elasticsearch.index')
+            );
+        });
     }
 
 }

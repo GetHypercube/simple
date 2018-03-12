@@ -20,7 +20,7 @@ class AppointmentController extends Controller
     public function __construct(Request $request)
     {
         $this->base_services = env('BASE_SERVICE');
-        $this->context = env('context_servCONTEXT_SERVICEice');
+        $this->context = env('CONTEXT_SERVICE');
         $recordsc = env('RECORDS');
         $this->records = empty($recordsc) ? 10 : $recordsc;
         $cuenta = Cuenta::cuentaSegunDominio()->id;
@@ -29,15 +29,17 @@ class AppointmentController extends Controller
             $service = new Connect_services();
             $service->setCuenta($cuenta);
             $service->load_data();
-            $agendaTemplate = RequestHttp::init()
-                ->expectsJson()
-                ->addHeaders(array(
-                    'appkey' => $service->getAppkey(),
-                    'domain' => $service->getDomain()
-                ));
-            RequestHttp::ini($agendaTemplate);
-            //$request->headers->set('appkey', $service->getAppkey());
-            //$request->headers->set('domain', $service->getDomain());
+            /*
+                          $agendaTemplate = RequestHttp::init()
+                            ->expectsJson()
+                            ->addHeaders(array(
+                                'appkey' => $service->getAppkey(),
+                                'domain' => $service->getDomain()
+                            ));
+                        RequestHttp::ini($agendaTemplate);
+            */
+            $request->headers->set('appkey', $service->getAppkey());
+            $request->headers->set('domain', $service->getDomain());
         } catch (Exception $err) {
             Log::error('Constructor' . $err);
         }
@@ -50,6 +52,7 @@ class AppointmentController extends Controller
             echo 'No tiene permisos para acceder a esta sección.';
             exit;
         }*/
+
     }
 
     private function listarAgendas(Request $request, $pagina)
@@ -59,10 +62,12 @@ class AppointmentController extends Controller
         $pagina_hasta = 0;
         $pagina = (isset($pagina) && is_numeric($pagina)) ? $pagina : 1;//se establece la pagina a mostrar
         $registros = $this->records; // numero de registro a mostrar por pagina
+
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars?page=' . $pagina . '&records=' . $registros;
             Log::debug('listarAgendas URI ' . $uri);
             $response = RequestHttp::get($uri)->sendIt();
+
             Log::debug('listarAgendas Response ' . $response);
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                 $total_registros = $response->body[1]->count;

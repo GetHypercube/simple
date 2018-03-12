@@ -19,7 +19,7 @@ class CreateUsuarioManagerTable extends Migration
             $table->string('password', 255);
             $table->string('nombre', 128);
             $table->string('apellidos', 128);
-            $table->string('salt', 32);
+            $table->string('salt', 32)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

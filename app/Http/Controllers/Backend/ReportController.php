@@ -229,11 +229,8 @@ class ReportController extends Controller
             Log::debug("Explorando query: " . $query);
 
             if ($query) {
-                $this->load->library('sphinxclient');
-                $this->sphinxclient->setServer($this->config->item('sphinx_host'), $this->config->item('sphinx_port'));
-                $this->sphinxclient->setFilter('proceso_id', array($proceso->id));
-                $result = $this->sphinxclient->query(json_encode($query), 'tramites');
-                if ($result['total'] > 0) {
+                $result = Proceso::search($query)->get();
+                if (array_key_exists('total', $result) && $result['total'] > 0) {
                     $matches = array_keys($result['matches']);
                     Log::debug('$matches: ' . $matches);
                     array_push($params, 't.id IN (' . implode(',', $matches) . ')');

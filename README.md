@@ -59,3 +59,19 @@ Para indexar solo páginas:
 ```
 php artisan elasticsearch:admin index pages
 ```
+
+## Creación de usuarios en Backend y Manager
+
+Para crear un usuario perteneciente al Backend, basta con ejecutar este comando especificando email y contraseña:
+
+```
+php artisan simple:backend {email} {password}
+php artisan simple:backend mail@example.com 123456
+```
+
+Y para crear un usuario perteneciente al Manager,
+
+```
+php artisan simple:manager {user} {password}
+php artisan simple:manager siturra qwerty
+```

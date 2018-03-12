@@ -4,13 +4,16 @@
     <div class="col-xs-12 col-md-5">
         <h2>Bandeja de Entrada</h2>
     </div>
-    <div class="col-xs-12 col-md-7">
+    <div class="col-xs-12 col-md-12 mb-5">
         <!--buscador-->
         <form class="form-search" method="GET" action="">
-            <div class="search-form">
-                <input class="search-form_input" placeholder="Escribe aquí lo que deseas buscar" type="text"
+            <div class="search-form form-inline float-right">
+                <input class="search-form_input form-control" placeholder="Escribe aquí lo que deseas buscar"
+                       type="text"
+                       name="buscar"
                        value="<?= $buscar?>">
-                <button class="search-form_button search-form_button--submit" type="submit"><i class="icon-search"></i>
+                <button class="search-form_button search-form_button--submit btn btn-light" type="submit">
+                    <i class="material-icons">search</i>
                 </button>
             </div>
         </form>

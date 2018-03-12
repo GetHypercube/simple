@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Proceso;
+use App\Models\Tramite;
 use App\Rules\Captcha;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -98,11 +100,8 @@ class StagesController extends Controller
         $resultotal = "";
 
         if ($buscar) {
-            $this->load->library('sphinxclient');
-            $this->sphinxclient->setServer($this->config->item('sphinx_host'), $this->config->item('sphinx_port'));
-            $this->sphinxclient->SetLimits(0, 10000);
-            $result = $this->sphinxclient->query(json_encode($buscar), 'tramites');
-            if ($result['total'] > 0) {
+            $result = Proceso::search($buscar)->get();
+            if (array_key_exists('total', $result) && $result['total'] > 0) {
                 $resultotal = "true";
             } else {
                 $resultotal = "false";
@@ -145,11 +144,8 @@ class StagesController extends Controller
         $perpage = 50;
 
         if ($buscar) {
-            $this->load->library('sphinxclient');
-            $this->sphinxclient->setServer($this->config->item('sphinx_host'), $this->config->item('sphinx_port'));
-            $this->sphinxclient->SetLimits($offset, 10000);
-            $result = $this->sphinxclient->query(json_encode($buscar), 'tramites');
-            if ($result['total'] > 0) {
+            $result = Proceso::search($buscar)->get();
+            if (array_key_exists('total', $result) && $result['total'] > 0) {
                 $resultotal = true;
             } else {
                 $resultotal = false;

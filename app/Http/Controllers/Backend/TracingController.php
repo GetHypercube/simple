@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Models\Tramite;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -102,13 +103,8 @@ class TracingController extends Controller
             ));
 
         if ($query) {
-            $this->load->library('sphinxclient');
-            $this->sphinxclient->setServer($this->config->item('sphinx_host'), $this->config->item('sphinx_port'));
-            $this->sphinxclient->setFilter('proceso_id', array(
-                $proceso_id
-            ));
-            $result = $this->sphinxclient->query(json_encode($query), 'tramites');
-            if ($result ['total'] > 0) {
+            $result = Tramite::search($query)->where('proceso_id', $proceso_id)->get();
+            if (array_key_exists('total', $result) && $result['total'] > 0) {
                 $matches = array_keys($result ['matches']);
                 $doctrine_query->whereIn('t.id', $matches);
             } else {

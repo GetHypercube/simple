@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\CreateBackendAccount::class,
+        Commands\CreateManagerAccount::class,
+        Commands\AdminElasticsearch::class,
     ];
 
     /**
