@@ -10,6 +10,9 @@ use UsuarioBackend;
 class UsersController extends Controller
 {
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index()
     {
         $data['usuarios'] = Doctrine::getTable('UsuarioBackend')->findAll();
@@ -20,6 +23,10 @@ class UsersController extends Controller
         return view('layouts.manager.app', $data);
     }
 
+    /**
+     * @param null $usuario_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function edit($usuario_id = null)
     {
         if ($usuario_id)
@@ -36,6 +43,12 @@ class UsersController extends Controller
         return view('layouts.manager.app', $data);
     }
 
+    /**
+     * @param Request $request
+     * @param null $usuario_id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function edit_form(Request $request, $usuario_id = null)
     {
         if ($usuario_id)
@@ -81,6 +94,10 @@ class UsersController extends Controller
         return response()->json($respuesta);
     }
 
+    /**
+     * @param Request $request
+     * @param $usuario_id
+     */
     public function delete(Request $request, $usuario_id)
     {
         $usuario = Doctrine::getTable('UsuarioBackend')->find($usuario_id);

@@ -36,17 +36,11 @@
             box-sizing: border-box;
         }
 
-        #dashboard {
-            margin-left: -10px;
-            margin-right: -10px;
-        }
-
         #dashboard .widget {
             position: relative;
-            width: 31.5%;
+            width: 100%;
             height: 460px;
             float: left;
-            margin-left: 10px;
             margin-right: 10px;
             margin-bottom: 20px;
             perspective: 1000px;
@@ -76,9 +70,9 @@
 
         #dashboard .widget .front .cabecera,
         #dashboard .widget .back .cabecera {
-            background: #75aadb;
+            background: #0054AB;
             color: #fff;
-            padding: 10px 5px 5px 5px;
+            padding: 10px 5px 5px 13px;
             cursor: move;
         }
 
@@ -225,18 +219,21 @@
                 </p>
             </div>
         </div>
-
         <div id="dashboard">
-            @if(!is_null($widgets))
-                @foreach($widgets as $w)
-                    <div class="widget" data-id="{{$w->id}}">
-                        @php
-                            $data['widget'] = $w;
-                        @endphp
-                        @include('backend.management.widget_load', $data)
-                    </div>
-                @endforeach
-            @endif
+            <div class="row">
+                @if(!is_null($widgets))
+                    @foreach($widgets as $w)
+                        <div class="col-md-4">
+                            <div class="widget" data-id="{{$w->id}}">
+                                @php
+                                    $data['widget'] = $w;
+                                @endphp
+                                @include('backend.management.widget_load', $data)
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
         </div>
     </div>
 @endsection

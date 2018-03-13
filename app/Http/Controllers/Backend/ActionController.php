@@ -20,6 +20,10 @@ use Illuminate\Support\Facades\Auth;
 
 class ActionController extends Controller
 {
+    /**
+     * @param $proceso_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function list($proceso_id)
     {
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
@@ -36,6 +40,10 @@ class ActionController extends Controller
         return view('backend.action.index', $data);
     }
 
+    /**
+     * @param $proceso_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function ajax_seleccionar($proceso_id)
     {
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
@@ -50,6 +58,11 @@ class ActionController extends Controller
         return view('backend.action.ajax_seleccionar', $data);
     }
 
+    /**
+     * @param Request $request
+     * @param $proceso_id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function seleccionar_form(Request $request, $proceso_id)
     {
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
@@ -69,6 +82,11 @@ class ActionController extends Controller
         ]);
     }
 
+    /**
+     * @param $proceso_id
+     * @param $tipo
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function create($proceso_id, $tipo)
     {
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
@@ -112,6 +130,10 @@ class ActionController extends Controller
         return view('backend.action.edit', $data);
     }
 
+    /**
+     * @param $accion_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function edit($accion_id)
     {
         Log::info("####En Editar, id: " . $accion_id);
@@ -129,6 +151,12 @@ class ActionController extends Controller
         return view('backend.action.edit', $data);
     }
 
+    /**
+     * @param Request $request
+     * @param null $accion_id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function edit_form(Request $request, $accion_id = NULL)
     {
         $accion = NULL;
@@ -185,6 +213,11 @@ class ActionController extends Controller
         ]);
     }
 
+    /**
+     * @param $accion_id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
+     */
     public function eliminar($accion_id)
     {
         $accion = Doctrine::getTable('Accion')->find($accion_id);
@@ -218,6 +251,9 @@ class ActionController extends Controller
         return redirect()->route('backend.action.list', [$proceso->id]);
     }
 
+    /**
+     * @param $accion_id
+     */
     public function export($accion_id)
     {
         $accion = Doctrine::getTable('Accion')->find($accion_id);
@@ -230,6 +266,11 @@ class ActionController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
     public function import(Request $request)
     {
         try {
@@ -251,6 +292,9 @@ class ActionController extends Controller
         return redirect($_SERVER['HTTP_REFERER']);
     }
 
+    /**
+     * @param Request $request
+     */
     public function functions_soap(Request $request)
     {
         $url = $request->input('urlsoap');
@@ -271,6 +315,9 @@ class ActionController extends Controller
         exit;
     }
 
+    /**
+     * @param Request $request
+     */
     public function upload_file(Request $request)
     {
         try {
@@ -318,6 +365,9 @@ class ActionController extends Controller
         exit;
     }
 
+    /**
+     * @param Request $request
+     */
     public function converter_json(Request $request)
     {
         $array = $request->input('myArrClean');
@@ -405,6 +455,9 @@ class ActionController extends Controller
         exit;
     }
 
+    /**
+     * @param Request $request
+     */
     public function getTareasCallback(Request $request)
     {
         Log::info('En getTareasCallback');
@@ -428,6 +481,9 @@ class ActionController extends Controller
         exit;
     }
 
+    /**
+     * @param Request $request
+     */
     public function getTareasProceso(Request $request)
     {
         Log::info('En getTareasProceso');
@@ -450,6 +506,9 @@ class ActionController extends Controller
         exit;
     }
 
+    /**
+     * @param Request $request
+     */
     public function getProcesosCuentas(Request $request)
     {
         Log::info('En getProcesosCuentas');
@@ -475,6 +534,10 @@ class ActionController extends Controller
         exit;
     }
 
+    /**
+     * @param $data
+     * @return string
+     */
     function varDump($data)
     {
         ob_start();

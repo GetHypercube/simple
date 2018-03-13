@@ -48,7 +48,21 @@
                             @include('components.inputs.password_with_confirmation', ['key' => 'password'])
                             @include('components.inputs.text', ['key' => 'nombre'])
                             @include('components.inputs.text', ['key' => 'apellidos'])
-                            @include('components.inputs.text', ['key' => 'rol'])
+
+
+                            <div class="form-group">
+                                <label for="rol">Rol</label>
+                                @php
+                                    $roles = array("super", "modelamiento", "seguimiento", "operacion", "gestion", "desarrollo", "configuracion", "reportes");
+
+                                    $valores = isset($form->rol) ? explode(",", $form->rol) : '';
+                                @endphp
+                                <select name="rol" id="rol" class="form-control" multiple>
+                                    @foreach($roles as $rol)
+                                        <option value="<?= $rol ?>" <?= in_array($rol, $valores) ? 'selected' : ''?> > <?= $rol ?> </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                         <div class="col-12">

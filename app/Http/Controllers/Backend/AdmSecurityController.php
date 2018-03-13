@@ -14,6 +14,10 @@ use Accion;
 class AdmSecurityController extends Controller
 {
 
+    /**
+     * @param $proceso_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function list($proceso_id)
     {
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
@@ -30,6 +34,10 @@ class AdmSecurityController extends Controller
         return view('backend.security.index', $data);
     }
 
+    /**
+     * @param $proceso_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function create($proceso_id)
     {
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
@@ -46,6 +54,10 @@ class AdmSecurityController extends Controller
         return view('backend.security.edit', $data);
     }
 
+    /**
+     * @param $seguridad_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function edit($seguridad_id)
     {
         $seguridad = Doctrine::getTable('Seguridad')->find($seguridad_id);
@@ -61,6 +73,12 @@ class AdmSecurityController extends Controller
         return view('backend.security.edit', $data);
     }
 
+    /**
+     * @param Request $request
+     * @param null $seguridad_id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function edit_form(Request $request, $seguridad_id = NULL)
     {
         $seguridad = NULL;
@@ -124,6 +142,11 @@ class AdmSecurityController extends Controller
         ]);
     }
 
+    /**
+     * @param $seguridad_id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
     public function eliminar($seguridad_id)
     {
         $seguridad = Doctrine::getTable('Seguridad')->find($seguridad_id);
@@ -152,6 +175,9 @@ class AdmSecurityController extends Controller
         return redirect('backend/Admseguridad/listar/' . $proceso->id);
     }
 
+    /**
+     * @param $seguridad_id
+     */
     public function export($seguridad_id)
     {
 
@@ -164,6 +190,11 @@ class AdmSecurityController extends Controller
         echo $json;
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
+     */
     public function import(Request $request)
     {
         try {

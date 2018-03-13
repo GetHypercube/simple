@@ -341,7 +341,7 @@ class ConfigurationController extends Controller
     public function addFrontendUsers()
     {
         $data['form'] = new User();
-        $data['grupos'] = GrupoUsuarios::where('dsad', Auth::user()->cuenta_id)->get();
+        $data['grupos'] = GrupoUsuarios::where('id', Auth::user()->cuenta_id)->get();
         $data['edit'] = false;
 
         return view('backend.configuration.frontend_users.edit', $data);
