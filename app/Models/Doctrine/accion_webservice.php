@@ -17,8 +17,10 @@ class AccionWebservice extends Accion
     "variable2": "valor2",
     ...
 }</pre>';
-        $display .= '<label>URL</label>';
-        $display .= '<input type="text" class="input-xxlarge" name="extra[url]" value="' . ($this->extra ? $this->extra->url : '') . '" />';
+        $display .= '<div class="form-group">';
+        $display .= '<label for="url">URL</label>';
+        $display .= '<input type="text" id="url" class="form-control col-6" name="extra[url]" value="' . ($this->extra ? $this->extra->url : '') . '" />';
+        $display .= '</div>';
 
 
         return $display;

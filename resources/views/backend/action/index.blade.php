@@ -82,7 +82,7 @@
             </div>
         </div>
     </div>
-    <div id="modal" class="modal hide fade"></div>
+    <div id="modal" class="modal hide"></div>
 @endsection
 @section('script')
     <script src="{{asset('js/helpers/modelador-acciones.js')}}" type="text/javascript"></script>

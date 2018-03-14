@@ -15,7 +15,7 @@
             <div class="form-actions">
                 @if ($secuencia > 0)
                     <a class="btn btn-light" href="<?= url('etapas/ver/' . $etapa->id . '/' . ($secuencia - 1)) ?>">
-                        <i class="material-icons">chevron_left</i> Volver
+                        <i class="material-icons align-middle">chevron_left</i> Volver
                     </a>
                 @endif
                 @if ($secuencia + 1 < count($etapa->getPasosEjecutables()))

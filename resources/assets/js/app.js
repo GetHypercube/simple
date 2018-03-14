@@ -10,6 +10,10 @@ require('./bootstrap');
 window.moment = require('moment');
 
 import draggable from "jquery-ui";
+import jsPlumb from "jsplumb";
+
+import datetimepicker from "bootstrap4-datetimepicker";
+require("bootstrap4-datetimepicker/src/sass/bootstrap-datetimepicker-build.scss");
 
 //Sends forms
 $(".ajaxForm :submit").attr("disabled", false);

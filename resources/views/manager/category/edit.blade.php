@@ -21,10 +21,10 @@
         <div id="file-uploader"></div>
         <?php if($categoria->icon_ref):?>
         <input type="hidden" name="logo" value="<?= $categoria->icon_ref ?>"/>
-        <img class="logo" src="<?= asset('logos/' . $categoria->icon_ref)?>" alt="logo" style="max-width: 10%"/>
+        <img class="logo" src="<?= asset('uploads/logos/' . $categoria->icon_ref)?>" alt="logo" style="max-width: 10%"/>
         <?php else:?>
         <input type="hidden" name="logo" value="nologo.png"/>
-        <img class="logo" src="<?= asset('img/icon/nologo.png') ?>" alt="logo" style="max-width: 10%;"/>
+        <i class="icon-archivo"></i>
         <?php endif ?>
 
     </fieldset>
@@ -37,7 +37,7 @@
             action: '{{route('manager.uploader.logo')}}',
             onComplete: function (id, filename, respuesta) {
                 $("input[name=logo]").val(respuesta.file_name);
-                $("img.logo").attr("src", "logos/" + respuesta.file_name);
+                $("img.logo").attr("src", "/uploads/logos/" + respuesta.file_name);
             }
         });
     </script>

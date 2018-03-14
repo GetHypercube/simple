@@ -5,7 +5,7 @@
         <h2>Trámites destacados</h2>
         <?php else: ?>
         <h2>Trámites - <?= $categoria->nombre ?></h2>
-        <a href="<?=site_url('home/index/')?>" class="btn btn-primary preventDoubleRequest"
+        <a href="<?=url('home/index/')?>" class="btn btn-primary preventDoubleRequest"
            style="float: right;">
             <i class="icon-file icon-white"></i> Volver
         </a>
@@ -24,7 +24,7 @@
                 <div class="card-body {{($p->estado == 'draft') ? 'draft' : ''}}">
                     <div class="media">
                         @if($p->icon_ref)
-                            <img src="<?= asset('img/icons/' . $p->icon_ref) ?>" class="img-service">
+                            <img src="<?= asset('img/icon/' . $p->icon_ref) ?>" class="img-service">
                         @else
                             <i class="icon-archivo"></i>
                         @endif
@@ -44,24 +44,21 @@
                             )
                             }}"
                    class="card-footer {{$p->getTareaInicial()->acceso_modo == 'claveunica'? 'claveunica' : ''}}">
-                    <div class="card-footer text-muted">
-                        @if ($p->canUsuarioIniciarlo(Auth::user()->id))
-                            Iniciar
+                    @if ($p->canUsuarioIniciarlo(Auth::user()->id))
+                        Iniciar
+                    @else
+                        @if ($p->getTareaInicial()->acceso_modo == 'claveunica')
+                            <i class="icon-claveunica"></i> Iniciar con Clave Única
                         @else
-                            @if ($p->getTareaInicial()->acceso_modo == 'claveunica')
-                                <i class="icon-claveunica"></i> Iniciar con Clave Única
-                            @else
-                                Autenticarse
-                            @endif
+                            Autenticarse
                         @endif
-                        <span>&#8594;</span>
-                    </div>
+                    @endif
+                    <span>&#8594;</span>
                 </a>
             </div>
 
 
         </div>
-        <?php $count++ ?>
         <?php endif ?>
         <?php endforeach; ?>
     </div>
@@ -76,12 +73,12 @@
     <div class="row">
         @foreach ($categorias as $c)
             <div class="col-md-3 item">
-                <a href="<?=site_url('home/procesos/' . $c->id)?>">
+                <a href="<?=url('home/procesos/' . $c->id)?>">
                     <div class="card text-center">
                         <div class="card-body">
                             <div class="media">
                                 @if($c->icon_ref)
-                                    <img src="<?= asset('img/icons/' . $c->icon_ref) ?>" class="img-service">
+                                    <img src="<?= asset('uploads/logos/' . $c->icon_ref) ?>" class="img-service">
                                 @else
                                     <i class="icon-archivo"></i>
                                 @endif
@@ -122,7 +119,7 @@
                             <div class="card-body {{($p->estado == 'draft') ? 'draft' : ''}}">
                                 <div class="media">
                                     @if($p->icon_ref)
-                                        <img src="<?= asset('img/icons/' . $p->icon_ref) ?>"
+                                        <img src="<?= asset('img/icon/' . $p->icon_ref) ?>"
                                              class="img-service">
                                     @else
                                         <i class="icon-archivo"></i>

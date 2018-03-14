@@ -1,6 +1,5 @@
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,600");
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import "fonts";
 // Variables
 @import "variables";
 // Bootstrap
@@ -22,6 +21,13 @@ i.material-icons {
   }
   &.mini {
     font-size: 16px;
+  }
+}
+
+.icon-archivo {
+  font-size: 22px;
+  &:before {
+    vertical-align: top;
   }
 }
 

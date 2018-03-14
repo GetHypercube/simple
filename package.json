@@ -23,8 +23,10 @@
     },
     "dependencies": {
         "bootstrap-timepicker": "^0.5.2",
+        "bootstrap4-datetimepicker": "^5.2.3",
         "chosen-js": "^1.8.3",
         "highcharts": "^6.0.7",
+        "jsplumb": "^2.6.8",
         "moment": "^2.21.0",
         "popper.js": "^1.12.9",
         "select2": "^4.0.6-rc.1",

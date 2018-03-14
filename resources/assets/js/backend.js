@@ -101,14 +101,14 @@ $(document).on("submit", ".ajaxForm", function () {
 //Scroll change html background-color 'test'
 $(document).ready(function () {
     window.documentHeight = $(document).height();
-    window.documentHeightHalf = documentHeight / 2;
+    window.documentHeightLimit = 100;
 
     $(document).scroll(function () {
-        if ($(document).scrollTop() > documentHeightHalf && $("html").css("background-color") == "rgb(255, 255, 255)") {
+        if ($(document).scrollTop() > documentHeightLimit && $("html").css("background-color") == "rgb(255, 255, 255)") {
             $("html").css("background-color", "#09132E");
         }
 
-        if ($(document).scrollTop() < documentHeightHalf && $("html").css("background-color") == "rgb(9, 19, 46)") {
+        if ($(document).scrollTop() < documentHeightLimit && $("html").css("background-color") == "rgb(9, 19, 46)") {
             $("html").css("background-color", "#ffffff");
         }
     });

@@ -11,6 +11,7 @@ class ProcesoTable extends Doctrine_Table
         $usuario = Doctrine::getTable('Usuario')->find($usuario_id);
 
         $cuenta = Doctrine::getTable('Cuenta')->find(Cuenta::cuentaSegunDominio()->id); // UsuarioBackendSesion::usuario()->cuenta_id);
+
         $estados = "'public'";
         if ($cuenta->ambiente == 'dev') {
             $estados = $estados . ", 'draft'";

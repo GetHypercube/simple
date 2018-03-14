@@ -25,7 +25,7 @@ class AccionNotificaciones extends Accion
         $display .= '<div class="controls">';
 
         foreach ($suscriptores as $suscriptor) {
-            $nombre_checkbox = '<a target="_blank" href="' . site_url('backend/suscriptores/editar/' . $suscriptor->id) . '">' . $suscriptor->institucion . '</a>';
+            $nombre_checkbox = '<a target="_blank" href="' . url('backend/suscriptores/editar/' . $suscriptor->id) . '">' . $suscriptor->institucion . '</a>';
             if (isset($this->extra->suscriptorSel) && count($this->extra->suscriptorSel) > 0) {
                 if (in_array($suscriptor->id, $this->extra->suscriptorSel)) {
                     $display .= '<label class="checkbox"><input type="checkbox" name="extra[suscriptorSel][]" value="' . $suscriptor->id . '" checked=true />' . $nombre_checkbox . '</label>';

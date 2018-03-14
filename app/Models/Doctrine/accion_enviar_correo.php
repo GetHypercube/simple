@@ -9,8 +9,6 @@ class AccionEnviarCorreo extends Accion
 
     public function displayForm()
     {
-
-
         $display = '<label>Para</label>';
         $display .= '<input type="text" class="form-control col-2" name="extra[para]" value="' . (isset($this->extra->para) ? $this->extra->para : '') . '" />';
         $display .= '<label>CC</label>';
@@ -39,7 +37,7 @@ class AccionEnviarCorreo extends Accion
     //public function ejecutar(Etapa $etapa)
     public function ejecutar($tramite_id)
     {
-        $etapa = Etapa::find($tramite_id);
+        $etapa = $tramite_id;
 
         $regla = new Regla($this->extra->para);
         $to = $regla->getExpresionParaOutput($etapa->id);
@@ -61,10 +59,10 @@ class AccionEnviarCorreo extends Accion
 
         $cuenta = $etapa->Tramite->Proceso->Cuenta;
 
-        Mail::send('emails.send', ['message' => $message], function ($message) use ($etapa, $subject, $cuenta, $to, $cc, $bcc) {
+        Mail::send('emails.send', ['content' => $message], function ($message) use ($etapa, $subject, $cuenta, $to, $cc, $bcc) {
 
             $message->subject($subject);
-            $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN'), $cuenta->nombre_largo);
+            $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
 
             if (!is_null($cc)) $message->cc($cc);
             if (!is_null($bcc)) $message->bcc($bcc);

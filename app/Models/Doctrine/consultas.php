@@ -4,7 +4,6 @@
 
 class Consultas extends Doctrine_Record
 {
-
     public function __construct()
     {
         parent::__construct();

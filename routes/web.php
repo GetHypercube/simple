@@ -29,7 +29,10 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/etapas/ejecutar_exito', 'StagesController@ejecutar_exito')->name('stage.ejecutar_exito');
     Route::get('/documentos/get/{filename}', 'DocumentController@get')->name('document.get');
 
-//Test URL's
+    Route::get('/consultas', 'ConsultController@index')->name('consulta');
+    Route::post('/consultas', 'ConsultController@index')->name('consulta');
+
+    //Test URL's
     Route::get('/home', 'HomeController@index')->name('autenticacion.login_openid');
     Route::get('/agenda/miagenda', 'HomeController@index')->name('agenda.miagenda');
 });

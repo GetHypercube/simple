@@ -293,7 +293,7 @@ class ProcessController extends Controller
         $proceso->height = $request->input('height');
         $proceso->categoria_id = $request->input('categoria');
         $proceso->icon_ref = $request->input('logo');
-        $proceso->destacado = $request->has('destacadao') ? 1 : 0;
+        $proceso->destacado = $request->has('destacado') ? 1 : 0;
         $proceso->save();
 
         return response()->json([
