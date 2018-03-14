@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\Doctrine;
 use Illuminate\Support\Facades\Log;
 
 class Cuenta extends Doctrine_Record
