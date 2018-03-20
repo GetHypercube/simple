@@ -19,11 +19,11 @@ class CampoComunas extends Campo
 
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
-        $display .= '<select class="regiones select-semi-large" data-id="' . $this->id . '" name="' . $this->nombre . '[region]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
+        $display .= '<select class="regiones form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[region]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
         $display .= '<option value="">Seleccione región</option>';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<select class="comunas select-semi-large" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
+        $display .= '<select class="comunas form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
         $display .= '<option value="">Seleccione comuna</option>';
         $display .= '</select>';
         if ($this->ayuda)
@@ -79,8 +79,6 @@ class CampoComunas extends Campo
                     }
                 });
                 
-
-                
             </script>';
 
         return $display;
@@ -88,9 +86,10 @@ class CampoComunas extends Campo
 
     public function formValidate(Request $request, $etapa_id = null)
     {
+
         $request->validate([
-            $this->nombre . '[region]' => implode('|', $this->validacion),
-            $this->nombre . '[comuna]' => implode('|', $this->validacion),
+            $this->nombre . '.region' => implode('|', $this->validacion),
+            $this->nombre . '.comuna' => implode('|', $this->validacion),
         ]);
         /*
         $CI =& get_instance();

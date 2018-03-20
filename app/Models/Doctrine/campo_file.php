@@ -13,11 +13,14 @@ class CampoFile extends Campo
             $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
             $display .= '<div class="controls">';
             $display .= '<input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="" />';
-            $display .= '<button type="button" class="btn">Subir archivo</button>';
+            $display .= '<button type="button" class="btn btn-light">Subir archivo</button>';
 
-            if ($this->ayuda)
+            if ($this->ayuda) {
                 $display .= '<span class="form-text text-muted">' . $this->ayuda . '</span>';
+            }
+
             $display .= '</div>';
+
             return $display;
         }
 
@@ -52,10 +55,11 @@ class CampoFile extends Campo
     public function extraForm()
     {
         $filetypes = array();
-        if (isset($this->extra->filetypes))
+        if (isset($this->extra->filetypes)) {
             $filetypes = $this->extra->filetypes;
+        }
 
-        $output = '<select name="extra[filetypes][]" multiple>';
+        $output = '<select name="extra[filetypes][]" class="form-control" multiple>';
         $output .= '<option name="jpg" ' . (in_array('jpg', $filetypes) ? 'selected' : '') . '>jpg</option>';
         $output .= '<option name="png" ' . (in_array('png', $filetypes) ? 'selected' : '') . '>png</option>';
         $output .= '<option name="gif" ' . (in_array('gif', $filetypes) ? 'selected' : '') . '>gif</option>';

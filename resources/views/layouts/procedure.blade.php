@@ -23,10 +23,10 @@
         var site_url = "";
         var base_url = "";
 
-        var onloadCallback = function() {
+        var onloadCallback = function () {
             if ($('#form_captcha').length) {
                 grecaptcha.render("form_captcha", {
-                    sitekey : "6Le7zycUAAAAAKrvp-ndTrKRni3yeuCZQyrkJRfH"
+                    sitekey: "6Le7zycUAAAAAKrvp-ndTrKRni3yeuCZQyrkJRfH"
                 });
             }
         };
@@ -88,6 +88,8 @@
 
     @include('layouts.footer')
 </div>
+
+@stack('script')
 
 <!-- Scripts -->
 <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=es"></script>

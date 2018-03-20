@@ -148,7 +148,10 @@ class ProcessController extends Controller
 
         $request->session()->flash('success', 'Proceso eliminado con éxito.');
 
-        return redirect()->route('backend.procesos.index');
+        return response()->json([
+            'validacion' => true,
+            'redirect' => route('backend.procesos.index')
+        ]);
     }
 
     /**

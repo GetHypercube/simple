@@ -133,6 +133,10 @@ return [
 
     'attributes' => [
         'name' => 'nombre',
+        'comunas.region' => 'Región',
+        'comunas.comuna' => 'Comuna',
+        'instituciones.entidad' => 'Entidad',
+        'instituciones.servicio' => 'Servicio',
         'email' => 'correo electrónico',
         'subject' => 'asunto',
         'message' => 'mensaje',

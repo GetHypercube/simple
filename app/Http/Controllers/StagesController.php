@@ -86,6 +86,7 @@ class StagesController extends Controller
         $result->execute();
         $num_pasos = $result->fetchAll();
         Log::debug('$num_pasos [' . $num_pasos[0][0] . ']');
+
         return $num_pasos[0][0];
     }
 
@@ -201,7 +202,6 @@ class StagesController extends Controller
 
     public function ejecutar_form(Request $request, $etapa_id, $secuencia)
     {
-
         Log::info('ejecutar_form ($etapa_id [' . $etapa_id . '], $secuencia [' . $secuencia . '])');
 
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
@@ -229,7 +229,6 @@ class StagesController extends Controller
         $paso = $etapa->getPasoEjecutable($secuencia);
         $formulario = $paso->Formulario;
         $modo = $paso->modo;
-
         $respuesta = new \stdClass();
         $validations = [];
 
@@ -238,7 +237,9 @@ class StagesController extends Controller
                 // Validamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
                 if ($c->isEditableWithCurrentPOST($request, $etapa_id)) {
                     $validate = $c->formValidate($request, $etapa->id);
-                    $validations[$validate[0]] = $validate[1];
+                    if (!empty($validate[0]) && !empty($validate[1])) {
+                        $validations[$validate[0]] = $validate[1];
+                    }
                 }
                 if ($c->tipo == 'recaptcha') {
                     $validations['g-recaptcha-response'] = ['required', new Captcha];

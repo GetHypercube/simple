@@ -12,11 +12,11 @@ class CampoInstitucionesGob extends Campo
     {
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
-        $display .= '<select class="entidades select-semi-large" data-id="' . $this->id . '" name="' . $this->nombre . '[entidad]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
+        $display .= '<select class="entidades form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[entidad]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
         $display .= '<option></option>';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<select class="instituciones select-semi-large" data-id="' . $this->id . '" name="' . $this->nombre . '[servicio]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
+        $display .= '<select class="instituciones form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[servicio]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
         $display .= '<option></option>';
         $display .= '</select>';
         if ($this->ayuda)

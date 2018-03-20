@@ -448,6 +448,7 @@ class AppointmentController extends Controller
                 ->execute();
             foreach ($rsvalores as $obj2) {
                 if (isset($obj2->valor)) {
+                    //dd($obj2->valor);
                     $val = str_replace('"', '', $obj2->valor);
                     $val = trim($val);
                     if (is_string($val) && !empty($val)) {

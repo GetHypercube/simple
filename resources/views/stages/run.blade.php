@@ -36,7 +36,7 @@
         <div class="form-actions">
             @if ($secuencia > 0)
                 <button class="btn btn-light" type="button">
-                    <a href="{{route('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}º">
+                    <a href="{{url('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}">
                         Volver
                     </a>
                 </button>
@@ -48,19 +48,19 @@
     <input type="hidden" id="urlbase" value="<?= URL::to('/') ?>"/>
 @endsection
 
-@section('script')
+@push('script')
+    <script src="{{asset('js/helpers/fileuploader.js')}}"></script>
+
     <script type="text/javascript"
             src="<?= asset('js/helpers/calendar/components/underscore/underscore-min.js') ?>"></script>
     <script type="text/javascript"
             src="<?= asset('js/helpers/calendar/components/jstimezonedetect/jstz.min.js') ?>"></script>
     <script type="text/javascript" src="<?= asset('js/helpers/calendar/js/language/es-CO.js') ?>"></script>
-    <script src="{{asset('js/bootstrap-datetimepicker.min.js')}}"></script>
     <script type="text/javascript" src="<?= asset('js/helpers/calendar/js/calendar.js?v=0.3') ?>"></script>
     <script src="{{asset('js/helpers/collapse.js')}}"></script>
     <script src="{{asset('js/helpers/transition.js')}}"></script>
     <script>
         $(function () {
-            moment.lang('es');
             $.each($('.js-data-cita'), function () {
                 if (jQuery.trim($(this).val()) != "") {
                     var id = $(this).attr('id');
@@ -88,4 +88,6 @@
             });
         });
     </script>
-@endsection
+
+    <script src="{{asset('js/helpers/common.js')}}"></script>
+@endpush

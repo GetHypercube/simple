@@ -70,7 +70,6 @@ class Documento extends Doctrine_Record
 
     public function generar($etapa_id)
     {
-
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
         $filename_uniqid = uniqid();
         //Generamos el file
@@ -84,8 +83,10 @@ class Documento extends Doctrine_Record
             $file->validez = $this->validez;
             $file->validez_habiles = $this->validez_habiles;
         }
+
         $file->filename = $filename_uniqid . '.pdf';
         $file->save();
+
         //Renderizamos     
         $this->render($file->id, $file->llave_copia, $etapa->id, $file->filename, false);
         /*
@@ -159,8 +160,8 @@ class Documento extends Doctrine_Record
 
             $obj = new BlancoPDF($this->tamano);
 
-            $contenido=$this->contenido;
-            if($etapa_id){
+            $contenido = $this->contenido;
+            if ($etapa_id) {
                 $regla = new Regla($contenido);
                 $contenido = $regla->getExpresionParaOutput($etapa_id, true);
             }
@@ -169,6 +170,7 @@ class Documento extends Doctrine_Record
         }
 
         if ($filename) {
+            $obj->Output(public_path($uploadDirectory . $filename), 'F');
             if (!$copia && $this->hsm_configuracion_id) {
                 $hsm = new HsmConfiguracion();
                 $file_path = $uploadDirectory . $filename;
@@ -176,9 +178,11 @@ class Documento extends Doctrine_Record
                 $expiracion = date("Y-m-d", $fechatime) . 'T' . date("H:i:s", $fechatime);
                 $resultadoFirma = $hsm->firmar($file_path, $this->HsmConfiguracion->entidad, $this->HsmConfiguracion->nombre, $expiracion, $this->HsmConfiguracion->proposito);
             }
+        } else {
+            $obj->Output($filename);
         }
 
-        $obj->Output($filename);
+        return;
     }
 
     public function exportComplete()

@@ -54,6 +54,7 @@ class CampoDocumento extends Campo
             $dato->nombre = $this->nombre;
             $dato->valor = $file->filename;
             $dato->etapa_id = $etapa->id;
+
             $dato->save();
         } else {
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('documento', $dato->valor);

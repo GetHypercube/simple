@@ -19,7 +19,7 @@ Route::middleware(['auth_user'])->group(function () {
 
     Route::get('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar')->name('tramites.iniciar');
     Route::get('/tramites/participados', 'TramitesController@participados')->name('tramites.participados');
-    Route::get('/etapas/ejecutar/{etapa_id}', 'StagesController@run')->name('stage.run');
+    Route::get('/etapas/ejecutar/{etapa_id}/{secuencia?}', 'StagesController@run')->name('stage.run');
     Route::post('/etapas/ejecutar_form/{etapa_id}/{secuencia}', 'StagesController@ejecutar_form')->name('stage.run');
     Route::get('/etapas/ver/{etapa_id}/{secuencia}', 'StagesController@ver')->name('stage.view');
     Route::get('/etapas/inbox', 'StagesController@inbox')->name('stage.inbox');
