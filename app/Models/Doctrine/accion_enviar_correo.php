@@ -27,7 +27,7 @@ class AccionEnviarCorreo extends Accion
 
     public function validateForm(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'extra.paraa' => 'required',
             'extra.tema' => 'required',
             'extra.contenido' => 'required',

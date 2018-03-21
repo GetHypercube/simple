@@ -2,6 +2,7 @@
 
 use App\Helpers\Doctrine;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class Etapa extends Doctrine_Record
 {
@@ -281,16 +282,20 @@ class Etapa extends Doctrine_Record
         if ($this->Tarea->asignacion_notificar) {
             $usuario = Doctrine::getTable('Usuario')->find($usuario_id);
             if ($usuario->email) {
-                $varurl = site_url('etapas/ejecutar/' . $this->id);
+                $varurl = url('etapas/ejecutar/' . $this->id);
                 $url = ' Podrá realizarla en: ' . $varurl . ' ';
                 $url = str_replace("..", ".", $url);
-                $CI = &get_instance();
+                $to = $usuario->email;
+                $subject = 'Tiene una tarea pendiente';
                 $cuenta = $this->Tramite->Proceso->Cuenta;
-                $CI->email->from($cuenta->nombre . '@' . $CI->config->item('main_domain'), $cuenta->nombre_largo);
-                $CI->email->to($usuario->email);
-                $CI->email->subject('Tiene una tarea pendiente');
-                $CI->email->message('<p>' . $this->Tramite->Proceso->nombre . '</p><p>Se le ha asignado la tarea: ' . $this->Tarea->nombre . '</p><p>' . $url . '</p>');
-                $CI->email->send();
+                $message = '<p>' . $this->Tramite->Proceso->nombre . '</p><p>Se le ha asignado la tarea: ' . $this->Tarea->nombre . '</p><p>' . $url . '</p>';
+
+                Mail::send('emails.send', ['content' => $message], function ($message) use ($subject, $cuenta, $to) {
+                    $message->subject($subject);
+                    $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                    $message->to($to);
+                });
+
             }
         }
 
@@ -318,19 +323,24 @@ class Etapa extends Doctrine_Record
                 if ($usuario->email) {
                     $varurl = '';
                     if ($this->usuario_id) {
-                        $varurl = site_url('etapas/ejecutar/' . $this->id);
+                        $varurl = url('etapas/ejecutar/' . $this->id);
                     } else {
-                        $varurl = site_url('etapas/sinasignar');
+                        $varurl = url('etapas/sinasignar');
                     }
-                    $CI = &get_instance();
+
                     $cuenta = $this->Tramite->Proceso->Cuenta;
-                    $CI->email->from($cuenta->nombre . '@' . $CI->config->item('main_domain'), $cuenta->nombre_largo);
-                    $CI->email->to($usuario->email);
-                    $CI->email->subject('SIMPLE - Tiene una tarea pendiente');
+                    $to = $usuario->email;
                     $url = ' Podrá realizarla en: ' . $varurl . ' ';
                     $url = str_replace("..", ".", $url);
-                    $CI->email->message('<p>' . $this->Tramite->Proceso->nombre . '</p><p>Tiene una tarea pendiente por realizar: ' . $this->Tarea->nombre . '</p><p>' . $url . '</p>');
-                    $CI->email->send();
+                    $subject = 'SIMPLE - Tiene una tarea pendiente';
+                    $message = '<p>' . $this->Tramite->Proceso->nombre . '</p><p>Tiene una tarea pendiente por realizar: ' . $this->Tarea->nombre . '</p><p>' . $url . '</p>';
+
+                    Mail::send('emails.send', ['content' => $message], function ($message) use ($subject, $cuenta, $to) {
+                        $message->subject($subject);
+                        $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                        $message->to($to);
+                    });
+
                 }
             }
 
@@ -539,7 +549,6 @@ class Etapa extends Doctrine_Record
     public function ejecutar_eventos_externos()
     {
 
-        $CI = &get_instance();
         $etapa = Doctrine::getTable('Etapa')->find($this->id);
 
         // Ejecutar eventos antes de la tarea

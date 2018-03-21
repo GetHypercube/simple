@@ -32,6 +32,9 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function grupo_usuarios()
     {
         return $this->belongsToMany('App\Models\GrupoUsuarios', 'grupo_usuarios_has_usuario', 'usuario_id', 'grupo_usuarios_id');

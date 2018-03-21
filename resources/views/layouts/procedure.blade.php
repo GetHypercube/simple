@@ -26,7 +26,7 @@
         var onloadCallback = function () {
             if ($('#form_captcha').length) {
                 grecaptcha.render("form_captcha", {
-                    sitekey: "6Le7zycUAAAAAKrvp-ndTrKRni3yeuCZQyrkJRfH"
+                    sitekey: "{{env('CAPTCHA_SITE_KEY')}}"
                 });
             }
         };

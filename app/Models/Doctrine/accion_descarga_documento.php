@@ -23,7 +23,7 @@ class AccionDescargaDocumento extends Accion
 
     public function validateForm(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'extra.documento' => 'required',
             'extra.url' => 'required'
         ], [

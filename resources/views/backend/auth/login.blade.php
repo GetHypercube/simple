@@ -19,7 +19,7 @@
     <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
 
     @yield('css')
-    @if(env('APP_ENV') == 'production')
+    @if($errors->any())
         <script src='https://www.google.com/recaptcha/api.js'></script>
     @endif
 </head>
@@ -89,8 +89,10 @@
                             </div>
                         </div>
 
-                        @if(env('APP_ENV') == 'production')
-                            @include('shared.captcha')
+                        @if($errors->any())
+                            <div class="col-lg-6 offset-lg-4">
+                                @include('shared.captcha')
+                            </div>
                         @endif
 
                         <div class="form-group row">
@@ -99,7 +101,7 @@
                                     {{__('auth.login')}}
                                 </button>
 
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
+                                <a class="btn btn-link" href="{{ route('backend.password.email') }}">
                                     {{__('auth.forgot_password')}}
                                 </a>
                             </div>

@@ -35,7 +35,7 @@ class AppointmentController extends Controller
             Request::ini($agendaTemplate);
             */
         } catch (Exception $err) {
-            log_message('error', 'Constructor' . $err);
+            Log::error('Constructor' . $err);
             //echo 'Error: '.$err->getMessage();
         }
     }
@@ -45,7 +45,7 @@ class AppointmentController extends Controller
     {
         try {
             $uri = $this->base_services . '' . $this->context . 'appointments/confirm/' . $id;
-            log_message('debug', 'confirmar_cita URI ' . $uri);
+            Log::debug('confirmar_cita URI ' . $uri);
             $response = Request::put($uri)->sendIt();
             $code = $response->code;
             if ($code == 200) {
@@ -57,7 +57,7 @@ class AppointmentController extends Controller
                 throw new Exception('La cita reservada ya no esta disponible, reserve una nueva hora.');
             }
         } catch (Exception $err) {
-            log_message('error', 'confirmar_cita' . $err);
+            Log::error('confirmar_cita' . $err);
             throw new Exception($err->getMessage());
         }
     }
@@ -67,14 +67,14 @@ class AppointmentController extends Controller
         $valor = 0;
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars/' . $idagenda; //url del servicio con los parametros
-            log_message('debug', 'obtenerTiempoCita URI ' . $uri);
+            Log::debug('obtenerTiempoCita URI ' . $uri);
             $response = Request::get($uri)->sendIt();
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                 $valor = $response->body[1]->calendars[0]->time_attention;
             }
         } catch (Exception $err) {
-            log_message('error', 'obtenerTiempoCita ' . $err);
+            Log::error('obtenerTiempoCita ' . $err);
         }
         return $valor;
     }
@@ -93,7 +93,7 @@ class AppointmentController extends Controller
                 return false;
             }
         } catch (Exception $err) {
-            log_message('error', 'validateDate ' . $err);
+            Log::error('validateDate ' . $err);
             return false;
         }
     }
@@ -103,9 +103,9 @@ class AppointmentController extends Controller
         try {
             $id = (isset(Auth::user()->id)) ? Auth::user()->id : 0;
             $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $id;
-            log_message('debug', 'validarTipoUsuario URI ' . $uri);
+            Log::debug('validarTipoUsuario URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'validarTipoUsuario Response ' . $response);
+            Log::debug('validarTipoUsuario Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                 if (count($response->body[1]->calendars) > 0) {
@@ -119,7 +119,7 @@ class AppointmentController extends Controller
                 return $sw;
             }
         } catch (Exception $err) {
-            log_message('error', 'validarTipoUsuario ' . $err);
+            Log::error('validarTipoUsuario ' . $err);
             return false;
         }
     }
@@ -131,9 +131,9 @@ class AppointmentController extends Controller
         foreach ($usuario[0]->GruposUsuarios as $g) {
             try {
                 $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $g->id;
-                log_message('debug', 'validar_agenda_grupos URI ' . $uri);
+                Log::debug('validar_agenda_grupos URI ' . $uri);
                 $response = Request::get($uri)->sendIt();
-                log_message('debug', 'validar_agenda_grupos Response ' . $response);
+                Log::debug('validar_agenda_grupos Response ' . $response);
                 $code = $response->code;
                 if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                     if (count($response->body[1]->calendars) > 0) {
@@ -145,7 +145,7 @@ class AppointmentController extends Controller
                     $sw = false;
                 }
             } catch (Exception $err) {
-                log_message('error', 'validar_agenda_grupos ' . $err);
+                Log::error('validar_agenda_grupos ' . $err);
                 throw new Exception($err->getMessage());
             }
         }
@@ -157,9 +157,9 @@ class AppointmentController extends Controller
         $result = array();
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $owner;
-            log_message('debug', 'obtenerAgendas URI ' . $uri);
+            Log::debug('obtenerAgendas URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'obtenerAgendas response ' . $response);
+            Log::debug('obtenerAgendas response ' . $response);
             $code = $response->code;
             if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                 foreach ($response->body[1]->calendars as $item) {
@@ -180,7 +180,7 @@ class AppointmentController extends Controller
                 }
             }
         } catch (Exception $err) {
-            log_message('error', 'obtenerAgendas ' . $err);
+            Log::error('obtenerAgendas ' . $err);
             throw new Exception($err->getMessage());
         }
         $usuario = Doctrine::getTable('Usuario')->findByid($owner);
@@ -208,7 +208,7 @@ class AppointmentController extends Controller
                     }
                 }
             } catch (Exception $err) {
-                log_message('error', 'obtenerAgendas ' . $err);
+                Log::error('obtenerAgendas ' . $err);
                 throw new Exception($err->getMessage());
             }
         }
@@ -218,11 +218,11 @@ class AppointmentController extends Controller
     public function confirmar_citas_grupo($ids)
     {
         try {
-            log_message('debug', 'confirmar_citas_grupo Input ' . $ids);
+            Log::debug('confirmar_citas_grupo Input ' . $ids);
             $uri = $this->base_services . '' . $this->context . 'appointments/bulkConfirm';
-            log_message('debug', 'confirmar_citas_grupo URI ' . $uri);
+            Log::debug('confirmar_citas_grupo URI ' . $uri);
             $response = Request::post($uri)->body($ids)->sendIt();
-            log_message('debug', 'confirmar_citas_grupo Response ' . $response);
+            Log::debug('confirmar_citas_grupo Response ' . $response);
             $code = $response->code;
             if ($code == 200) {
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -233,7 +233,7 @@ class AppointmentController extends Controller
                 throw new Exception('La cita reservada ya no esta disponible. Por favor, reserve una nueva hora.');
             }
         } catch (Exception $err) {
-            log_message('error', 'confirmar_citas_grupo' . $err);
+            Log::error('confirmar_citas_grupo' . $err);
             throw new Exception($err->getMessage());
         }
     }
@@ -252,9 +252,9 @@ class AppointmentController extends Controller
             } else {
                 $uri = $this->base_services . '' . $this->context . 'appointments/availability/' . $idagenda;//url del servicio con los parametros
             }
-            log_message('debug', 'disponibilidad URI ' . $uri);
+            Log::debug('disponibilidad URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'disponibilidad response ' . $uri);
+            Log::debug('disponibilidad response ' . $uri);
             $code = $response->code;
 
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -312,7 +312,7 @@ class AppointmentController extends Controller
                 }
             }
         } catch (Exception $err) {
-            log_message('error', 'disponibilidad ' . $err);
+            Log::error('disponibilidad ' . $err);
             $mensaje = $err->getMessage();
             print $mensaje;
         }
@@ -333,9 +333,9 @@ class AppointmentController extends Controller
             } else {
                 $uri = $this->base_services . '' . $this->context . 'appointments/availability/' . $idagenda;//url del servicio con los parametros
             }
-            log_message('debug', 'disponibilidadCiudadano URI ' . $uri);
+            Log::debug('disponibilidadCiudadano URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'disponibilidadCiudadano response ' . $uri);
+            Log::debug('disponibilidadCiudadano response ' . $uri);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                 $code = $response->body[0]->response->code;
@@ -420,7 +420,7 @@ class AppointmentController extends Controller
                 }
             }
         } catch (Exception $err) {
-            log_message('error', 'disponibilidadCiudadano ' . $err);
+            Log::error('disponibilidadCiudadano ' . $err);
             $mensaje = $err->getMessage();
             print $mensaje;
         }
@@ -438,16 +438,19 @@ class AppointmentController extends Controller
                 ->where("id=?", $etapa)
                 ->execute();
             $idtramite = 0;
+
             foreach ($rstramite as $obj) {
                 $idtramite = $obj->tramite_id;
             }
+
             $rsvalores = Doctrine_Query::create()
                 ->select('ds.valor')
                 ->from('DatoSeguimiento ds,Etapa e')
                 ->where("ds.etapa_id=e.id AND e.tramite_id=?", $idtramite)
                 ->execute();
+
             foreach ($rsvalores as $obj2) {
-                if (isset($obj2->valor)) {
+                if (isset($obj2->valor) && is_string($obj2->valor)) {
                     //dd($obj2->valor);
                     $val = str_replace('"', '', $obj2->valor);
                     $val = trim($val);
@@ -463,7 +466,7 @@ class AppointmentController extends Controller
             }
             return $result;
         } catch (Exception $err) {
-            log_message('debug', 'obtener_citas_de_tramite ' . $err);
+            Log::debug('obtener_citas_de_tramite ' . $err);
             throw new Exception('No se pudo confirmar si en su proceso existen citas, vuelva a intentarlo');
         }
     }
@@ -471,7 +474,7 @@ class AppointmentController extends Controller
     public function miagenda($pagina = 1)
     {
 
-        log_message('debug', 'miagenda');
+        Log::debug('miagenda');
 
         if (!Auth::user()->registrado) {
             $this->session->set_flashdata('redirect', current_url());
@@ -490,7 +493,7 @@ class AppointmentController extends Controller
                     $agenda = $agendas[0]->id;
                 }
             } catch (Exception $err) {
-                log_message('error', 'miagenda ' . $err);
+                Log::error('miagenda ' . $err);
                 // echo $err->getMessage();
             }
         }
@@ -542,7 +545,7 @@ class AppointmentController extends Controller
     public function miagenda2($pagina = 1)
     {
 
-        log_message('debug', 'miagenda');
+        Log::debug('miagenda');
 
         if (!Auth::user()->registrado) {
             $this->session->set_flashdata('redirect', current_url());
@@ -561,7 +564,7 @@ class AppointmentController extends Controller
                     $agenda = $agendas[0]->id;
                 }
             } catch (Exception $err) {
-                log_message('error', 'miagenda ' . $err);
+                Log::error('miagenda ' . $err);
                 // echo $err->getMessage();
             }
         }
@@ -612,37 +615,37 @@ class AppointmentController extends Controller
 
     public function diasFeriados()
     {
-        log_message('info', '[INI][diasFeriados]');
+        Log::info('[INI][diasFeriados]');
         $code = 0;
         $msg = '';
         $data_tmp = array();
         $year_service = date('Y');
-        log_message('debug', '$year_service [' . $year_service . ']');
+        Log::debug('$year_service [' . $year_service . ']');
         for ($i = 0; $i < 2; $i++) {
             try {
-                log_message('debug', '============ [INI] Consulta Servicio daysOff Año ' . $year_service . ' ===');
+                Log::debug('============ [INI] Consulta Servicio daysOff Año ' . $year_service . ' ===');
                 // Url del servicio con los parametros
                 $uri = $this->base_services . '' . $this->context . 'daysOff?year=' . $year_service;
-                log_message('debug', 'diasFeriados URI ' . $uri);
-                log_message('debug', 'diasFeriados $data_tmp ' . json_encode($data_tmp));
+                Log::debug('diasFeriados URI ' . $uri);
+                Log::debug('diasFeriados $data_tmp ' . json_encode($data_tmp));
 
                 $response = Request::get($uri)->sendIt();
-                log_message('debug', 'diasFeriados Response ' . $response);
+                Log::debug('diasFeriados Response ' . $response);
 
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
-                    log_message('debug', '$response->body[0]->response->code [' . $response->body[0]->response->code . ']');
+                    Log::debug('$response->body[0]->response->code [' . $response->body[0]->response->code . ']');
                     $msg = $response->body[0]->response->message;
-                    log_message('debug', '$response->body[0]->response->message [' . $response->body[0]->response->message . ']');
+                    Log::debug('$response->body[0]->response->message [' . $response->body[0]->response->message . ']');
 
                     foreach ($response->body[1]->daysoff as $item) {
                         $tmp = date('d-m-Y', strtotime($item->date_dayoff));
                         $data_tmp[] = array('date_dayoff' => $tmp, 'name' => $item->name);
                     }
                 }
-                log_message('debug', '=== [END] Consulta Servicio daysOff Año ' . $year_service . ' ===');
+                Log::debug('=== [END] Consulta Servicio daysOff Año ' . $year_service . ' ===');
             } catch (Exception $err) {
                 $msg = $err->getMessage();
-                log_message('error', 'diasFeriados ' . $err);
+                Log::error('diasFeriados ' . $err);
             }
             $year_service++;
         }
@@ -655,7 +658,7 @@ class AppointmentController extends Controller
         }
 
         $array = array('code' => $code, 'message' => $msg, 'daysoff' => $data_tmp);
-        log_message('info', '[END][diasFeriados] result : ' . json_encode($array));
+        Log::info('[END][diasFeriados] result : ' . json_encode($array));
 
         echo json_encode($array);
     }
@@ -667,9 +670,9 @@ class AppointmentController extends Controller
         try {
             $id = (isset(Auth::user()->id)) ? Auth::user()->id : 0;
             $uri = $this->base_services . '' . $this->context . 'appointments/listByOwner/' . $id;//url del servicio con los parametros
-            log_message('debug', 'cargarCitasCalendar URI ' . $uri);
+            Log::debug('cargarCitasCalendar URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'cargarCitasCalendar Response ' . $response);
+            Log::debug('cargarCitasCalendar Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                 foreach ($response->body[1]->appointments as $item) {
@@ -684,7 +687,7 @@ class AppointmentController extends Controller
 
             }
         } catch (Exception $err) {
-            log_message('error', 'cargarCitasCalendar ' . $response);
+            Log::error('cargarCitasCalendar ' . $response);
             $mensaje = $err->getMessage();
         }
         $result = array('success' => 1, 'result' => $data);
@@ -715,9 +718,9 @@ class AppointmentController extends Controller
         $idbloqueo = (isset($_GET['id']) && is_numeric($_GET['id'])) ? $_GET['id'] : 0;
         try {
             $uri = $this->base_services . '' . $this->context . 'blockSchedules/' . $idbloqueo;
-            log_message('debug', 'ajax_eliminar_bloqueo URI ' . $uri);
+            Log::debug('ajax_eliminar_bloqueo URI ' . $uri);
             $response = Request::delete($uri)->sendIt();
-            log_message('debug', 'ajax_eliminar_bloqueo Response ' . $response);
+            Log::debug('ajax_eliminar_bloqueo Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && isset($response->body->response->code) && $response->body->response->code == 200) {
                 $code = $response->body->response->code;
@@ -727,7 +730,7 @@ class AppointmentController extends Controller
                 $mensaje = 'No se pudo eliminar el bloqueo por favor vuelva a intentarlo, si el problema persiste informe al administrador.';
             }
         } catch (Exception $err) {
-            log_message('error', 'ajax_eliminar_bloqueo ' . $response);
+            Log::error('ajax_eliminar_bloqueo ' . $response);
             $mensaje = $err->getMessage();
         }
         echo json_encode(array('code' => $code, 'mensaje' => $mensaje));
@@ -818,7 +821,7 @@ class AppointmentController extends Controller
         if ($appointment > 0) {//0 reserva una cita y 1 edita una cita
             try {
                 $uri = $this->base_services . '' . $this->context . 'appointments/' . $appointment;
-                log_message('debug', 'ajax_agregar_cita URI ' . $uri);
+                Log::debug('ajax_agregar_cita URI ' . $uri);
                 $responsever = Request::get($uri)->sendIt();
                 $code = $responsever->code;
                 if (isset($responsever->body) && is_array($responsever->body) && isset($responsever->body[0]->response->code) && ($responsever->body[0]->response->code == 200)) {//Se verifica si existe la cita.
@@ -844,7 +847,7 @@ class AppointmentController extends Controller
                             }
                         }
                     } catch (Exception $err) {
-                        log_message('error', 'ajax_agregar_cita ' . $err);
+                        Log::error('ajax_agregar_cita ' . $err);
                         $mensaje = $response->body[0]->response->message;
                     }
                 } else {
@@ -861,7 +864,7 @@ class AppointmentController extends Controller
                         }';
                     try {
                         $uri = $this->base_services . '' . $this->context . 'appointments/reserve';//url del servicio con los parametros
-                        log_message('debug', 'ajax_agregar_cita URI ' . $uri);
+                        Log::debug('ajax_agregar_cita URI ' . $uri);
                         $response = Request::post($uri)->body($json)->sendIt();
                         $code = $response->code;
                         if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -873,13 +876,13 @@ class AppointmentController extends Controller
                             $mensaje = (isset($response->body->response->message)) ? $response->body->response->message : 'Error General';
                         }
                     } catch (Exception $err) {
-                        log_message('error', 'ajax_agregar_cita ' . $err);
+                        Log::error('ajax_agregar_cita ' . $err);
                         $mensaje = 'No se pudo reservar la cita, volverlo a intentar.';
                         //$mensaje=$response->body[0]->response->message;
                     }
                 }
             } catch (Exception $err) {
-                log_message('error', 'ajax_agregar_cita ' . $err);
+                Log::error('ajax_agregar_cita ' . $err);
             }
         } else {
             $json = '{
@@ -893,7 +896,7 @@ class AppointmentController extends Controller
                 }';
             try {
                 $uri = $this->base_services . '' . $this->context . 'appointments/reserve';//url del servicio con los parametros
-                log_message('debug', 'ajax_agregar_cita URI ' . $uri);
+                Log::debug('ajax_agregar_cita URI ' . $uri);
                 $response = Request::post($uri)->body($json)->sendIt();
                 $code = $response->code;
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -905,7 +908,7 @@ class AppointmentController extends Controller
                     $mensaje = (isset($response->body->response->message)) ? $response->body->response->message : 'Error General';
                 }
             } catch (Exception $err) {
-                log_message('error', 'ajax_agregar_cita ' . $err);
+                Log::error('ajax_agregar_cita ' . $err);
                 $mensaje = 'No se pudo reservar la cita. Por favor, inténtelo de nuevo.';
             }
         }
@@ -923,9 +926,9 @@ class AppointmentController extends Controller
         $mensaje = '';
         try {
             $uri = $this->base_services . '' . $this->context . 'appointments/listByCalendar/' . $agenda . '?page=' . $pagina;
-            log_message('debug', 'ajax_listar_citas_agenda URI ' . $uri);
+            Log::debug('ajax_listar_citas_agenda URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'ajax_listar_citas_agenda Response ' . $response);
+            Log::debug('ajax_listar_citas_agenda Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                 //$datos=$response->body->appointments;
@@ -959,7 +962,7 @@ class AppointmentController extends Controller
                 }
             }
         } catch (Exception $err) {
-            log_message('error', 'ajax_listar_citas_agenda response ' . $err);
+            Log::error('ajax_listar_citas_agenda response ' . $err);
             $mensaje = $err->getMessage();
         }
         $array = array('code' => $code, 'message' => $mensaje, 'data' => $datos, 'count' => $total_registros);
@@ -980,9 +983,9 @@ class AppointmentController extends Controller
             } else {
                 $uri = $this->base_services . '' . $this->context . 'appointments/listByApplier/' . $id . '?page=' . $pagina;
             }
-            log_message('debug', 'ajax_listar_citas URI ' . $uri);
+            Log::debug('ajax_listar_citas URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'ajax_listar_citas Response ' . $response);
+            Log::debug('ajax_listar_citas Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                 $total_registros = $response->body[1]->count;
@@ -1015,7 +1018,7 @@ class AppointmentController extends Controller
                 }
             }
         } catch (Exception $err) {
-            log_message('error', 'ajax_listar_citas_agenda ' . $err);
+            Log::error('ajax_listar_citas_agenda ' . $err);
             $mensaje = $err->getMessage();
         }
         $array = array('code' => $code, 'message' => $mensaje, 'data' => $datos, 'count' => $total_registros);
@@ -1030,19 +1033,19 @@ class AppointmentController extends Controller
         $agenda = '';
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars/' . $id;//url del servicio con los parametros
-            log_message('debug', 'ajax_obtener_datos_agenda URI ' . $uri);
+            Log::debug('ajax_obtener_datos_agenda URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'ajax_obtener_datos_agenda Response ' . $response);
+            Log::debug('ajax_obtener_datos_agenda Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                 $agenda = $response->body[1]->calendars[0];
             } else {
                 $code = 0;
                 $mensaje = 'No se pudo obtener la validacion de ignorar feriados.';
-                log_message('debug', 'ajax_obtener_datos_agenda ' . $mensaje);
+                Log::debug('ajax_obtener_datos_agenda ' . $mensaje);
             }
         } catch (Exception $err) {
-            log_message('error', 'ajax_obtener_datos_agenda ' . $err);
+            Log::error('ajax_obtener_datos_agenda ' . $err);
             $mensaje = $err->getMessage();
         }
         echo json_encode(array('code' => $code, 'mensaje' => $mensaje, 'calendar' => $agenda));
@@ -1062,9 +1065,9 @@ class AppointmentController extends Controller
                 "user_name_cancel": "' . $nombre . '"
                 }';
             $uri = $this->base_services . '' . $this->context . 'appointments/cancel/' . $appoint_id;//url del servicio con los parametros
-            log_message('debug', 'ajax_cancelarCita URI ' . $uri);
+            Log::debug('ajax_cancelarCita URI ' . $uri);
             $response = Request::put($uri)->body($json)->sendIt();
-            log_message('debug', 'ajax_cancelarCita Response ' . $response);
+            Log::debug('ajax_cancelarCita Response ' . $response);
             $code = $response->code;
             if (isset($response->body->response->code) && $response->body->response->code == 200) {
                 $code = $response->body->response->code;
@@ -1079,7 +1082,7 @@ class AppointmentController extends Controller
                 }
             }
         } catch (Exception $err) {
-            log_message('error', 'ajax_cancelarCita ' . $err);
+            Log::error('ajax_cancelarCita ' . $err);
             $mensaje = $err->getMessage();
         }
         $array = array('code' => $code, 'message' => $mensaje);
@@ -1129,9 +1132,9 @@ class AppointmentController extends Controller
             if ($idagenda > 0) {
                 try {
                     $uri = $this->base_services . '' . $this->context . 'blockSchedules/bulkCreate';
-                    log_message('debug', 'ajax_agregar_bloqueo_dia_completo URI ' . $uri);
+                    Log::debug('ajax_agregar_bloqueo_dia_completo URI ' . $uri);
                     $response = Request::post($uri)->body($json)->sendIt();
-                    log_message('debug', 'ajax_agregar_bloqueo_dia_completo Response ' . $response);
+                    Log::debug('ajax_agregar_bloqueo_dia_completo Response ' . $response);
                     $code = $response->code;
                     if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                         $code = $response->body[0]->response->code;
@@ -1191,9 +1194,9 @@ class AppointmentController extends Controller
         if ($idagenda > 0) {
             try {
                 $uri = $this->base_services . '' . $this->context . 'blockSchedules';
-                log_message('debug', 'ajax_agregar_bloqueo URI ' . $uri);
+                Log::debug('ajax_agregar_bloqueo URI ' . $uri);
                 $response = Request::post($uri)->body($json)->sendIt();
-                log_message('debug', 'ajax_agregar_bloqueo Response ' . $response);
+                Log::debug('ajax_agregar_bloqueo Response ' . $response);
                 $code = $response->code;
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                     $code = $response->body[0]->response->code;
@@ -1215,7 +1218,7 @@ class AppointmentController extends Controller
                     }
                 }
             } catch (Exception $err) {
-                log_message('debug', 'ajax_agregar_bloqueo ' . $err);
+                Log::debug('ajax_agregar_bloqueo ' . $err);
                 $mensaje = 'No se pudo bloquear vuelvalo a intentar, si el problema persiste contacte con el administrador';
             }
         }
@@ -1242,9 +1245,9 @@ class AppointmentController extends Controller
         $data = array();
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars/' . $idagenda;//url del servicio con los parametros
-            log_message('debug', 'ajax_obtener_agenda URI ' . $uri);
+            Log::debug('ajax_obtener_agenda URI ' . $uri);
             $response = Request::get($uri)->sendIt();
-            log_message('debug', 'ajax_obtener_agenda Response ' . $response);
+            Log::debug('ajax_obtener_agenda Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                 $code = $response->body[0]->response->code;
@@ -1252,7 +1255,7 @@ class AppointmentController extends Controller
 
             }
         } catch (Exception $err) {
-            log_message('error', 'ajax_obtener_agenda ' . $err);
+            Log::error('ajax_obtener_agenda ' . $err);
         }
         echo json_encode(array('code' => $code, 'mensaje' => $mensaje, 'calendario_owner' => $data));
     }
@@ -1265,9 +1268,9 @@ class AppointmentController extends Controller
         if ($owner > 0) {
             try {
                 $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $owner;//url del servicio con los parametros
-                log_message('debug', 'ajax_mi_calendario URI ' . $uri);
+                Log::debug('ajax_mi_calendario URI ' . $uri);
                 $response = Request::get($uri)->sendIt();
-                log_message('debug', 'ajax_mi_calendario Response ' . $response);
+                Log::debug('ajax_mi_calendario Response ' . $response);
                 $code = $response->code;
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                     $code = $response->body[0]->response->code;
@@ -1292,16 +1295,16 @@ class AppointmentController extends Controller
                     $mensaje = $response->body->response->message;
                 }
             } catch (Exception $err) {
-                log_message('error', 'ajax_mi_calendario ' . $err);
+                Log::error('ajax_mi_calendario ' . $err);
                 $mensaje = $err->getMessage();
             }
             $usuario = Doctrine::getTable('Usuario')->findByid($owner);
             foreach ($usuario[0]->GruposUsuarios as $g) {
                 try {
                     $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $g->id;
-                    log_message('debug', 'ajax_mi_calendario URI ' . $uri);
+                    Log::debug('ajax_mi_calendario URI ' . $uri);
                     $response = Request::get($uri)->sendIt();
-                    log_message('debug', 'ajax_mi_calendario Response ' . $response);
+                    Log::debug('ajax_mi_calendario Response ' . $response);
                     $code = $response->code;
                     if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                         foreach ($response->body[1]->calendars as $item) {
@@ -1322,7 +1325,7 @@ class AppointmentController extends Controller
                         }
                     }
                 } catch (Exception $err) {
-                    log_message('error', 'ajax_mi_calendario ' . $err);
+                    Log::error('ajax_mi_calendario ' . $err);
                     throw new Exception($err->getMessage());
                 }
             }

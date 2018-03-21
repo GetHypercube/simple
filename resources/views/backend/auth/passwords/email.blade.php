@@ -13,11 +13,11 @@
                             </div>
                         @endif
 
-                        <form role="form" method="POST" action="{{ url('/password/email') }}">
+                        <form role="form" method="POST" action="{{ route('backend.password.email') }}">
                             {!! csrf_field() !!}
-
                             <div class="form-group row">
-                                <label for="email" class="col-lg-4 col-form-label text-lg-right">{{__('auth.email')}}</label>
+                                <label for="email"
+                                       class="col-lg-4 col-form-label text-lg-right">{{__('auth.email')}}</label>
 
                                 <div class="col-lg-6">
                                     <input type="email"

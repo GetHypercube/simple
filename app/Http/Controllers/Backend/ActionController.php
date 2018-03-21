@@ -191,6 +191,7 @@ class ActionController extends Controller
             echo 'Usuario no tiene permisos para editar esta accion.';
             exit;
         }
+
         $request->validate(['nombre' => 'required']);
 
         $accion->validateForm($request);
@@ -201,8 +202,6 @@ class ActionController extends Controller
                 'tipo' => 'required',
             ]);
         }
-
-
         $accion->nombre = $request->input('nombre');
         $accion->extra = $request->input('extra', false);
         $accion->save();

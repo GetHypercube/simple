@@ -57,7 +57,17 @@ class AppServiceProvider extends ServiceProvider
         $socialite->extend(
             'claveunica',
             function ($app) use ($socialite) {
-                $config = $app['config']['services.claveunica'];
+                //$config = $app['config']['services.claveunica'];
+
+                $redirect = env('APP_MAIN_DOMAIN') == 'localhost' ?
+                    env('APP_URL') . '/login/claveunica/callback' :
+                    secure_url('login/claveunica/callback');
+
+                $config = [
+                    'client_id' => \Cuenta::cuentaSegunDominio()->client_id,
+                    'client_secret' => \Cuenta::cuentaSegunDominio()->client_secret,
+                    'redirect' => $redirect
+                ];
                 return $socialite->buildProvider(\App\Socialite\Two\ClaveUnicaProvider::class, $config);
             }
         );

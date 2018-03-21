@@ -419,6 +419,7 @@ class ConfigurationController extends Controller
         $user->vacaciones = $request->has('vacaciones') ? 1 : 0;
         $user->email = $request->input('email');
         $user->cuenta_id = Auth::user()->cuenta_id;
+        $user->salt = '';
         $user->save();
 
         //Eliminamos todas las relaciones que tenga este usuario con grupos

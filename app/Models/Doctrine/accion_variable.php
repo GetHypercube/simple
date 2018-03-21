@@ -21,7 +21,7 @@ class AccionVariable extends Accion
 
     public function validateForm(Request $request)
     {
-        $request->validate($request, [
+        $request->validate([
             'extra.variable' => 'required',
             'extra.expresion' => 'required',
         ], [

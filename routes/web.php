@@ -1,6 +1,8 @@
 <?php
 
-//Intrgración
+if (!App::environment('local')) URL::forceScheme('https');
+
+//Integración
 Route::get('integracion/especificacion/servicio/proceso/{id_proceso}/tarea/{id_tarea}', 'Integration\SpecificationController@servicio_get');
 
 Route::middleware(['auth_user'])->group(function () {
@@ -9,7 +11,7 @@ Route::middleware(['auth_user'])->group(function () {
     Auth::routes();
 
     Route::get('login/claveunica', 'Auth\LoginController@redirectToProvider')->name('login.claveunica');
-    Route::get('login/claveunica/callback', 'Auth\LoginController@handleProviderCallback');
+    Route::get('login/claveunica/callback', 'Auth\LoginController@handleProviderCallback')->name('login.claveunica.callback');
 
     Route::get('/login', function () {
         return redirect()->route('login.claveunica');
@@ -41,6 +43,13 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::get('/salir', 'Auth\LoginController@logout')->name('logout');
     Route::post('/login', 'Auth\LoginController@login')->name('login.submit');
+    // Password reset link request routes...
+    Route::get('password/email', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.email');
+    Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+    // Password reset routes...
+    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset.get');
+    Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.reset.post');
+
 
     Route::middleware('auth:usuario_backend')->group(function () {
         Route::get('/', 'HomeController@index')->name('home');
@@ -226,6 +235,12 @@ Route::prefix('manager')->namespace('Manager')->name('manager.')->group(function
     Route::get('/home', 'HomeController@index')->name('home2');
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::post('/login', 'Auth\LoginController@login')->name('login.submit');
+    // Password reset link request routes...
+    //Route::get('password/email', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.email');
+    //Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+    // Password reset routes...
+    //Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset.get');
+    //Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.reset.post');
 
     Route::middleware('auth:usuario_manager')->group(function () {
         Route::post('/uploader/logo', 'CategoryController@mySiteUploadLogo')->name('uploader.logo');

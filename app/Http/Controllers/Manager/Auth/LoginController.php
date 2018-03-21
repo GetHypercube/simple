@@ -78,7 +78,7 @@ class LoginController extends Controller
             'password' => 'required|string'
         ];
 
-        if (env('APP_ENV') == 'production') {
+        if ($request->has('g-recaptcha-response')) {
             $validations['g-recaptcha-response'] = ['required', new Captcha];
         }
 

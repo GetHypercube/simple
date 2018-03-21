@@ -130,12 +130,12 @@ return [
         'usuario_backend' => [
             'provider' => 'usuario_backend',
             'table' => 'password_resets',
-            'expire' => 15,
+            'expire' => 60,
         ],
         'usuario_manager' => [
             'provider' => 'usuario_manager',
             'table' => 'password_resets',
-            'expire' => 15,
+            'expire' => 60,
         ],
     ],
 
