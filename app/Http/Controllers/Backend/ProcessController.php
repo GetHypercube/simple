@@ -558,7 +558,7 @@ class ProcessController extends Controller
     /**
      * @param $tarea_id
      */
-    public function editar_conexiones_form($tarea_id)
+    public function editar_conexiones_form(Request $request, $tarea_id)
     {
 
         Log::debug('method: editar_conexiones_form(' . $tarea_id . ')');
@@ -570,23 +570,19 @@ class ProcessController extends Controller
             exit;
         }
 
-        $this->form_validation->set_rules('conexiones', 'Conexiones', 'required');
+        $request->validate([
+            'conexiones' => 'required'
+        ]);
 
-        $respuesta = new stdClass();
-        if ($this->form_validation->run() == TRUE) {
+        $tarea->setConexionesFromArray($request->input('conexiones', false));
+        $tarea->save();
 
-            $tarea->setConexionesFromArray($request->input('conexiones', false));
-            $tarea->save();
+        $proceso = $tarea->Proceso;
 
-            $respuesta->validacion = TRUE;
-            $respuesta->redirect = site_url('backend/procesos/editar/' . $tarea->Proceso->id);
-
-        } else {
-            $respuesta->validacion = FALSE;
-            $respuesta->errores = validation_errors();
-        }
-
-        echo json_encode($respuesta);
+        return response()->json([
+            'validacion' => true,
+            'redirect' => route('backend.procesos.edit', [$proceso->id])
+        ]);
     }
 
     /**
@@ -604,7 +600,7 @@ class ProcessController extends Controller
         $proceso = $tarea->Proceso;
         $tarea->ConexionesOrigen->delete();
 
-        redirect('backend/procesos/editar/' . $proceso->id);
+        return redirect()->route('backend.procesos.edit', [$proceso->id]);
     }
 
     /**

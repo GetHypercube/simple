@@ -72,6 +72,9 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::post('procesos/editar_form/{proceso_id}', 'ProcessController@editar_form');
         Route::post('procesos/ajax_crear_tarea/{proceso_id}/{tarea_identificador}', 'ProcessController@ajax_crear_tarea');
         Route::post('procesos/ajax_editar_modelo/{proceso_id}', 'ProcessController@ajax_editar_modelo');
+        Route::get('procesos/ajax_editar_conexiones/{proceso_id}/{tarea_origen_identificador}/{union?}', 'ProcessController@ajax_editar_conexiones');
+        Route::get('procesos/eliminar_conexiones/{tarea_id}', 'ProcessController@eliminar_conexiones');
+        Route::post('procesos/editar_conexiones_form/{tarea_id}', 'ProcessController@editar_conexiones_form');
         Route::post('procesos/ajax_crear_conexion/{proceso_id}', 'ProcessController@ajax_crear_conexion');
         Route::post('procesos/editar_tarea_form/{tarea_id}', 'ProcessController@editar_tarea_form')->name('procesos.editar_tarea_form');
         Route::get('procesos/eliminar_tarea/{tarea_id}', 'ProcessController@eliminar_tarea');

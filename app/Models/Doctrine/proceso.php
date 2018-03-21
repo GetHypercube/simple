@@ -347,30 +347,32 @@ class Proceso extends Doctrine_Record
         Log::info('Conexiones creadas');
 
         //Creamos las configuraciones de seguridad
-        foreach ($json->Admseguridad as $f) {
-            Log::info('Admseguridad id: ' . $f->id);
-            $proceso->Admseguridad[$f->id] = new Seguridad();
-            Log::info('Completando');
-            foreach ($f as $keyf => $f_attr) {
-                if ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso') {
-                    $proceso->Admseguridad[$f->id]->{$keyf} = $f_attr;
+        if (property_exists($json, 'Admseguridad')) {
+            foreach ($json->Admseguridad as $f) {
+                Log::info('Admseguridad id: ' . $f->id);
+                $proceso->Admseguridad[$f->id] = new Seguridad();
+                Log::info('Completando');
+                foreach ($f as $keyf => $f_attr) {
+                    if ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso') {
+                        $proceso->Admseguridad[$f->id]->{$keyf} = $f_attr;
+                    }
                 }
             }
+            Log::info('Seguridad creadas');
         }
-
-        Log::info('Seguridad creadas');
 
         //Creamos las configuraciones de suscriptores
-        foreach ($json->Suscriptores as $f) {
-            $proceso->Suscriptores[$f->id] = new Suscriptor();
-            foreach ($f as $keyf => $f_attr) {
-                if ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso') {
-                    $proceso->Suscriptores[$f->id]->{$keyf} = $f_attr;
+        if (property_exists($json, 'Suscriptores')) {
+            foreach ($json->Suscriptores as $f) {
+                $proceso->Suscriptores[$f->id] = new Suscriptor();
+                foreach ($f as $keyf => $f_attr) {
+                    if ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso') {
+                        $proceso->Suscriptores[$f->id]->{$keyf} = $f_attr;
+                    }
                 }
             }
+            Log::info('Suscriptores creados');
         }
-
-        Log::info('Suscriptores creados');
 
         return $proceso;
     }

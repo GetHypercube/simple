@@ -121,3 +121,11 @@ pre {
   position: relative;
   display: block;
 }
+
+#optionalTareaExterna {
+  width: 100%;
+  overflow-x: scroll;
+  .form-control {
+    width: 150px;
+  }
+}
