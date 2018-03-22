@@ -35,11 +35,11 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
-    'claveunica' => [
+    //'claveunica' => [
         //'client_id' => env('CLAVEUNICA_KEY'),
         //'client_secret' => env('CLAVEUNICA_SECRET'),
         //'redirect' => env('CLAVEUNICA_REDIRECT'),
-    ],
+    //],
 
     'rollbar' => [
         'access_token' => env('ROLLBAR_ACCESS_TOKEN'),
