@@ -137,7 +137,7 @@ class FormsController extends Controller
         $formulario->nombre = $request->input('nombre');
         $formulario->save();
 
-        return redirect()->route('backend.forms.edit', [$formulario->id]);
+        return response()->json(['validacion' => true, 'redirect' => route('backend.forms.edit', [$formulario->id])]);
     }
 
     public function ajax_editar_campo($campo_id)
@@ -193,7 +193,7 @@ class FormsController extends Controller
         $campo->etiqueta = $request->input('etiqueta', false);
         $campo->readonly = $request->input('readonly');
         $campo->valor_default = $request->has('valor_default') && !is_null($request->input('valor_default')) ? $request->input('valor_default', false) : '';
-        $campo->ayuda = $request->has('ayuda')  && !is_null($request->input('ayuda')) ? $request->input('ayuda') : '';
+        $campo->ayuda = $request->has('ayuda') && !is_null($request->input('ayuda')) ? $request->input('ayuda') : '';
         $campo->validacion = explode('|', $request->input('validacion'));
         $campo->dependiente_tipo = $request->input('dependiente_tipo');
 

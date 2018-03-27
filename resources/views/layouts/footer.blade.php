@@ -18,7 +18,6 @@
             </div>
         </div>
 
-
         <div class="bicolor">
             <span class="azul"></span>
             <span class="rojo"></span>

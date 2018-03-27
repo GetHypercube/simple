@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Proceso;
 use App\Models\Tramite;
 use App\Rules\Captcha;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
 use Doctrine_Manager;
 use Illuminate\Support\Facades\URL;
+use Cuenta;
 
 class StagesController extends Controller
 {
@@ -135,7 +137,7 @@ class StagesController extends Controller
             return redirect('login.claveunica');
         }
 
-        $this->load->library('pagination');
+        //$this->load->library('pagination');
         $buscar = $request->input('query');
 
         $matches = "";
@@ -143,6 +145,9 @@ class StagesController extends Controller
         $resultotal = false;
         $contador = "0";
         $perpage = 50;
+        $page = $request->input('page', 1); // Get the ?page=1 from the url
+        $offset = ($page * $perpage) - $perpage;
+
 
         if ($buscar) {
             $result = Proceso::search($buscar)->get();
@@ -165,7 +170,7 @@ class StagesController extends Controller
             error_log("false" . " cantidad " . $contador);
         }
 
-        $config['base_url'] = site_url('etapas/sinasignar');
+        $config['base_url'] = url('etapas/sinasignar');
         $config['total_rows'] = $contador;
         $config['per_page'] = $perpage;
         $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
@@ -188,16 +193,21 @@ class StagesController extends Controller
         $config['cur_tag_close'] = '</a></li>';
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
-        $this->pagination->initialize($config);
+
         // $data['etapas'] = Doctrine::getTable('Etapa')->findSinAsignar(Auth::self::user()->id, Cuenta::cuentaSegunDominio());
-        $data['links'] = $this->pagination->create_links();
-        $data['etapas'] = $rowetapas;
+        $data['etapas'] = new LengthAwarePaginator(
+            $rowetapas, // Only grab the items we need
+            $contador, // Total items
+            $perpage, // Items per page
+            $page, // Current page
+            ['path' => $request->url(), 'query' => $request->query()] // We need this so we can keep all old query parameters from the url
+        );
         $data['query'] = $buscar;
         $data['sidebar'] = 'sinasignar';
-        $data['content'] = 'etapas/sinasignar';
+        $data['content'] = view('stages.unassigned', $data);
         $data['title'] = 'Sin Asignar';
 
-        return view('stages.sinasignar', $data);
+        return view('layouts.app', $data);
     }
 
     public function ejecutar_form(Request $request, $etapa_id, $secuencia)

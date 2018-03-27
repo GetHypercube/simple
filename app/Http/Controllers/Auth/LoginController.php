@@ -53,7 +53,8 @@ class LoginController extends Controller
             $request->session()->put('claveunica_redirect', $request->input('redirect'));
         }
         //return Socialite::driver('claveunica')->scopes(['email', 'phone'])->redirect();
-        return Socialite::driver('claveunica')->redirect();
+        //return Socialite::driver('claveunica')->redirect();
+        return Socialite::driver('claveunica')->scopes(['email'])->redirect();
     }
 
     /**

@@ -19,7 +19,6 @@ require("bootstrap4-datetimepicker/src/sass/bootstrap-datetimepicker-build.scss"
 window.chosen = require('chosen-js');
 require('chosen-js/chosen.css');
 
-
 //Sends forms
 $(".ajaxForm :submit").attr("disabled", false);
 $(document).on("submit", ".ajaxForm", function () {

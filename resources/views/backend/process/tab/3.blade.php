@@ -64,7 +64,7 @@
     </div>
     <div id="optionalGruposUsuarios"
          class="<?= $tarea->acceso_modo == 'grupos_usuarios' ? '' : 'hide' ?>">
-        <select id="selectGruposUsuarios" class="form-control" name="grupos_usuarios[]" multiple>
+        <select id="selectGruposUsuarios" class="form-control" name="grupos_usuarios[]" style="width: 270px;" multiple>
             @foreach($tarea->Proceso->Cuenta->GruposUsuarios as $g)
                 <option value="<?=$g->id?>" <?=in_array($g->id, explode(',', $tarea->grupos_usuarios)) ? 'selected' : ''?>><?=$g->nombre?></option>
             @endforeach

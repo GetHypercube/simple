@@ -46,7 +46,7 @@
                         <a class="btn btn-light" href="<?=route('backend.action.export', [$p->id])?>">
                             <i class="material-icons">file_download</i> Exportar
                         </a>
-                        <a href="<?=route('backend.action.eliminar', [$p->id])?>" class="btn btn-danger"
+                        <a href="<?=route('backend.action.eliminar', [$p->id])?>" class="btn btn-light btn-danger"
                            onclick="return confirm('¿Esta seguro que desea eliminar?')">
                             <i class="material-icons">delete</i>
                             Eliminar

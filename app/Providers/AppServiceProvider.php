@@ -90,6 +90,11 @@ class AppServiceProvider extends ServiceProvider
     private function bootValidatorExtend()
     {
 
+        Validator::extend('date_prep', function ($attribute, $value, $parameters, $validator) {
+            //Convierte una fecha en humano al formato mysql.
+            return strftime('%Y-%m-%d', strtotime($value));
+        });
+
         Validator::extend('alpha_space', function ($attribute, $value, $parameters, $validator) {
             return (!preg_match('/^[\pL\pN\s]{0,75}$/u', $value)) ? FALSE : TRUE;
         });

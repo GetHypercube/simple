@@ -21,11 +21,12 @@ Route::middleware(['auth_user'])->group(function () {
 
     Route::get('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar')->name('tramites.iniciar');
     Route::get('/tramites/participados', 'TramitesController@participados')->name('tramites.participados');
+    Route::get('/tramites/disponibles', 'TramitesController@disponibles')->name('tramites.disponibles');
     Route::get('/etapas/ejecutar/{etapa_id}/{secuencia?}', 'StagesController@run')->name('stage.run');
     Route::post('/etapas/ejecutar_form/{etapa_id}/{secuencia}', 'StagesController@ejecutar_form')->name('stage.run');
     Route::get('/etapas/ver/{etapa_id}/{secuencia}', 'StagesController@ver')->name('stage.view');
     Route::get('/etapas/inbox', 'StagesController@inbox')->name('stage.inbox');
-    Route::get('/etapas/sinasignar', 'StagesController@unassigned')->name('stage.unassigned');
+    Route::get('/etapas/sinasignar', 'StagesController@sinasignar')->name('stage.unassigned');
     Route::get('/etapas/ejecutar_fin/{etapa_id}', 'StagesController@ejecutar_fin')->name('stage.ejecutar_fin');
     Route::post('/etapas/ejecutar_fin_form/{etapa_id}', 'StagesController@ejecutar_fin_form')->name('stage.ejecutar_fin_form');
     Route::get('/etapas/ejecutar_exito', 'StagesController@ejecutar_exito')->name('stage.ejecutar_exito');

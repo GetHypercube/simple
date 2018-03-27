@@ -28,7 +28,7 @@ class AccionEnviarCorreo extends Accion
     public function validateForm(Request $request)
     {
         $request->validate([
-            'extra.paraa' => 'required',
+            'extra.para' => 'required',
             'extra.tema' => 'required',
             'extra.contenido' => 'required',
         ]);
@@ -40,6 +40,7 @@ class AccionEnviarCorreo extends Accion
         $etapa = $tramite_id;
 
         $regla = new Regla($this->extra->para);
+        //dump($regla);
         $to = $regla->getExpresionParaOutput($etapa->id);
         $cc = null;
         $bcc = null;

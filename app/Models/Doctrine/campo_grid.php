@@ -31,7 +31,7 @@ class CampoGrid extends Campo
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
         $display .= '</div>';
 
-        $this->javascript .= '
+        $display .= '
             <script>
                 $(document).ready(function(){
                     var mode = "' . $modo . '";
@@ -91,9 +91,9 @@ class CampoGrid extends Campo
                         $("#formEditarCampo .columnas .nuevo").click(function(){
                             var pos=$("#formEditarCampo .columnas table tbody tr").length;
                             var html="<tr>";
-                            html+="<td><input type=\'text\' name=\'extra[columns]["+pos+"][header]\' /></td>";
-                            html+="<td><select name=\'extra[columns]["+pos+"][type]\' ><option>text</option><option>numeric</option></select></td>";
-                            html+="<td><button type=\'button\' class=\'btn eliminar\'><i class=\'icon-remove\'></i> Eliminar</button></td>";
+                            html+="<td><input type=\'text\' name=\'extra[columns]["+pos+"][header]\' class=\'form-control\' /></td>";
+                            html+="<td><select class=\'form-control\' name=\'extra[columns]["+pos+"][type]\' ><option>text</option><option>numeric</option></select></td>";
+                            html+="<td><button type=\'button\' class=\'btn btn-light eliminar\'><i class=\'icon-remove\'></i> Eliminar</button></td>";
                             html+="</tr>";
 
                             $("#formEditarCampo .columnas table tbody").append(html);

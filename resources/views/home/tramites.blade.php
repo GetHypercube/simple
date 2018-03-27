@@ -40,7 +40,7 @@
                              $p->canUsuarioIniciarlo(Auth::user()->id) ? route('tramites.iniciar',  [$p->id]) :
                             (
                                 $p->getTareaInicial()->acceso_modo == 'claveunica' ? route('autenticacion.login_openid').'?redirect='.route('tramites.iniciar', [$p->id]) :
-                                route('login').'?redirect='.route('tramites.iniciar/', $p->id)
+                                route('login').'?redirect='.route('tramites.iniciar', $p->id)
                             )
                             }}"
                    class="card-footer {{$p->getTareaInicial()->acceso_modo == 'claveunica'? 'claveunica' : ''}}">
@@ -136,7 +136,7 @@
                                      $p->canUsuarioIniciarlo(Auth::user()->id) ? route('tramites.iniciar',  [$p->id]) :
                                     (
                                         $p->getTareaInicial()->acceso_modo == 'claveunica' ? route('login.claveunica').'?redirect='.route('tramites.iniciar', [$p->id]) :
-                                        route('login').'?redirect='.route('tramites.iniciar/', $p->id)
+                                        route('login').'?redirect='.route('tramites.iniciar', $p->id)
                                     )
                                     }}"
                                class="card-footer {{$p->getTareaInicial()->acceso_modo == 'claveunica'? 'claveunica' : ''}}">

@@ -2,6 +2,7 @@
 
 @section('title', $title)
 @section('css')
+    <link rel="stylesheet" href="{{asset('css/handsontable.full.min.css')}}">
     <style>
         #areaFormulario .btn-toolbar {
             margin-bottom: 20px;
@@ -156,6 +157,7 @@
 @endsection
 @section('script')
     <script src="{{asset('js/helpers/bootstrap-typeahead-multiple/bootstrap-typeahead-multiple.js')}}"></script>
+    <script src="{{asset('js/helpers/handsontable.full.min.js')}}"></script>
     <script>
         var formularioId = {{$formulario->id}};
 

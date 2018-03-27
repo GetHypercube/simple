@@ -26,6 +26,7 @@
 
     <div class="main-container container">
         @yield('content')
+        {!! isset($content) ? $content : '' !!}
     </div>
 
     @include('layouts.footer')

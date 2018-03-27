@@ -19,9 +19,9 @@ class CampoDate extends Campo
             $valor_default = $this->valor_default;
         }
 
-        $display = '<label class="control-label" for="' . $this->id . '">' . $this->etiqueta . (!in_array('required', $this->validacion) ? ' (Opcional)' : '') . '</label>';
-        $display .= '<div class="controls">';
-        $display .= '<input id="' . $this->id . '" class="datepicker" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' type="date" name="' . $this->nombre . '" value="' . ($dato && $dato->valor ? date('Y-m-d', strtotime($dato->valor)) : ($valor_default ? date('Y-m-d', strtotime($valor_default)) : $valor_default)) . '" placeholder="dd-mm-aaaa" />';
+        $display = '<div class="form-group">';
+        $display .= '<label class="control-label" for="' . $this->id . '">' . $this->etiqueta . (!in_array('required', $this->validacion) ? ' (Opcional)' : '') . '</label>';
+        $display .= '<input id="' . $this->id . '" class="datepicker form-control" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' type="date" name="' . $this->nombre . '" value="' . ($dato && $dato->valor ? date('Y-m-d', strtotime($dato->valor)) : ($valor_default ? date('Y-m-d', strtotime($valor_default)) : $valor_default)) . '" placeholder="dd-mm-aaaa" />';
 
         if ($this->ayuda) {
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
