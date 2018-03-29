@@ -30,6 +30,8 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/etapas/ejecutar_fin/{etapa_id}', 'StagesController@ejecutar_fin')->name('stage.ejecutar_fin');
     Route::post('/etapas/ejecutar_fin_form/{etapa_id}', 'StagesController@ejecutar_fin_form')->name('stage.ejecutar_fin_form');
     Route::get('/etapas/ejecutar_exito', 'StagesController@ejecutar_exito')->name('stage.ejecutar_exito');
+    Route::get('/etapas/descargar/{tramites}', 'StagesController@descargar')->name('stage.download');
+    Route::post('/etapas/descargar_form', 'StagesController@descargar_form')->name('stage.descargar_form');
     Route::get('/documentos/get/{filename}', 'DocumentController@get')->name('document.get');
 
     Route::get('/consultas', 'ConsultController@index')->name('consulta');

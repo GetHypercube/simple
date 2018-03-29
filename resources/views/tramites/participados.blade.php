@@ -4,7 +4,7 @@
     </div>
     <div class="col-xs-12 col-md-4">
         <!--buscador-->
-        <form class="form-search form-inline" method="GET" action="">
+        <form class="form-search form-inline  float-right" method="GET" action="">
             <div class="input-group mb-3">
                 <input name="query" class="search-form_input form-control" placeholder="Para buscar aquí" type="text"
                        value="<?= $query?>">
@@ -38,7 +38,7 @@
             <?php foreach ($tramites as $t): ?>
             <?php
             $file = false;
-            if (Doctrine::getTable('File')->findByTramiteId($t->id)->count() > 0) {
+            if (\App\Helpers\Doctrine::getTable('File')->findByTramiteId($t->id)->count() > 0) {
                 $file = true;
                 $registros = true;
             }
@@ -123,12 +123,12 @@
                 <input type="hidden" id="tramites" name="tramites"/>
                 <label>
                     <input type="checkbox" id="select_all" name="select_all"/> Seleccionar todos
-                    <a href="#" onclick="return descargarSeleccionados();" class="button preventDoubleRequest">Descargar
-                        seleccionados</a>
+                    <a href="#" onclick="return descargarSeleccionados();"
+                       class="btn btn-light preventDoubleRequest">Descargar seleccionados</a>
                 </label>
             </div>
         </div>
-        <div class="modal hide fade" id="modal"></div>
+        <div class="modal" tabindex="-1" id="modal" role="dialog"></div>
         <?php endif; ?>
         <?php endif; ?>
 
@@ -161,7 +161,7 @@
         });
 
         function descargarDocumentos(tramiteId) {
-            $("#modal").load(url + "etapas/descargar/" + tramiteId);
+            $("#modal").load("/etapas/descargar/" + tramiteId);
             $("#modal").modal();
 
             return false;
@@ -181,7 +181,7 @@
                 });
                 $('#tramites').val(checked);
                 var tramites = $('#tramites').val();
-                $("#modal").load(url + "etapas/descargar/" + tramites);
+                $("#modal").load("/etapas/descargar/" + tramites);
                 $("#modal").modal();
                 return false;
             }

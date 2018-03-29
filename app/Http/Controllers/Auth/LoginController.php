@@ -53,8 +53,8 @@ class LoginController extends Controller
             $request->session()->put('claveunica_redirect', $request->input('redirect'));
         }
         //return Socialite::driver('claveunica')->scopes(['email', 'phone'])->redirect();
-        //return Socialite::driver('claveunica')->redirect();
-        return Socialite::driver('claveunica')->scopes(['email'])->redirect();
+        //return Socialite::driver('claveunica')->scopes(['email'])->redirect();
+        return Socialite::driver('claveunica')->redirect();
     }
 
     /**
@@ -75,12 +75,12 @@ class LoginController extends Controller
             $authUser = new User();
         }
 
-        $authUser->rut = $user->run;
+        $authUser->rut = $user->run . '-' . $user->dv;
         //$authUser->dv = $user->dv;
         $authUser->nombres = $user->first_name;
         $authUser->apellido_paterno = $user->last_name;
         $authUser->usuario = $user->run;
-        $authUser->email = is_null($user->email) ? $user->run : $user->email;
+        $authUser->email = is_null($user->email) ? '' : $user->email;
         $authUser->registrado = 1;
         $authUser->open_id = 1;
         $authUser->salt = '';
