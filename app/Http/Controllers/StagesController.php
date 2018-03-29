@@ -19,7 +19,6 @@ class StagesController extends Controller
 {
     public function run(Request $request, $etapa_id, $secuencia = 0)
     {
-
         $iframe = $request->input('iframe');
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
@@ -317,7 +316,6 @@ class StagesController extends Controller
                 $respuesta->redirect = '/etapas/ejecutar/' . $etapa_id . '/' . ($secuencia + 1) . ($qs ? '?' . $qs : '');
             }
         }
-
 
         return response()->json([
             'validacion' => true,

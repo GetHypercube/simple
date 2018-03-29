@@ -55,8 +55,9 @@
                                 @php
                                     $roles = array("super", "modelamiento", "seguimiento", "operacion", "gestion", "desarrollo", "configuracion", "reportes");
 
-                                    $valores = isset($form->rol) ? explode(",", $form->rol) : '';
+                                    $valores = isset($form->rol) ? explode(",", $form->rol) : [];
                                 @endphp
+
                                 <select name="rol" id="rol" class="form-control" multiple>
                                     @foreach($roles as $rol)
                                         <option value="<?= $rol ?>" <?= in_array($rol, $valores) ? 'selected' : ''?> > <?= $rol ?> </option>

@@ -198,7 +198,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::view('/api/procesos_recurso', 'backend.api.procesos_recurso')->name('api.procesos_recurso');
         Route::view('/api/procesos_obtener', 'backend.api.procesos_obtener')->name('api.procesos_obtener');
         Route::view('/api/procesos_listar', 'backend.api.procesos_listar')->name('api.procesos_listar');
-        Route::view('/api/procesos_disponibles', 'backend.api.procesos_disponibles')->name('api.procesos_disponibles');
+        Route::get('/api/procesos_disponibles', 'ApiController@procesos_disponibles')->name('api.procesos_disponibles');
 
         //Configuración
         Route::get('/configuracion', 'ConfigurationController@mySite')->name('configuration.my_site');

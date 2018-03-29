@@ -143,25 +143,31 @@
 
                 <?php if ($campo->requiere_nombre): ?>
                 <label>Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" value="<?= $campo->nombre ?>"/>
-                <?php $campos_asistencia = $formulario->Proceso->getNombresDeCampos($campo->tipo, false) ?>
-
-                <?php if (count($campos_asistencia)): ?>
-                <div class="btn-group asistencia" style="display: inline-block; vertical-align: top;">
-                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="material-icons">list</i><span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        @foreach ($campos_asistencia as $c)
-                            <li><a href="#"><?= $c ?></a></li>
-                        @endforeach
-                    </ul>
-                </div>
-                <br>
-                <?php endif ?>
-                <?php else: ?>
-                <input type="hidden" name="nombre" value="<?=$campo->nombre ? $campo->nombre : uniqid();?>"/>
                 <?php endif; ?>
+
+                <div class="input-group">
+                    <?php if ($campo->requiere_nombre): ?>
+                    <input type="text" class="form-control col-4" id="nombre" name="nombre" value="<?= $campo->nombre ?>"/>
+                    <?php $campos_asistencia = $formulario->Proceso->getNombresDeCampos($campo->tipo, false) ?>
+
+                    <?php if (count($campos_asistencia)): ?>
+                    <div class="input-group-append asistencia">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">list</i><span class="caret"></span>
+                        </button>
+                        <div class="dropdown-menu">
+                            @foreach ($campos_asistencia as $c)
+                                <a class="dropdown-item" href="#"><?= $c ?></a>
+                            @endforeach
+                        </div>
+                    </div>
+                    <br>
+                    <?php endif ?>
+                    <?php else: ?>
+                    <input type="hidden" name="nombre" value="<?=$campo->nombre ? $campo->nombre : uniqid();?>"/>
+                    <?php endif; ?>
+                </div>
 
                 <?php if (!$campo->estatico):?>
                 <label>Ayuda contextual (Opcional)</label>
@@ -413,7 +419,8 @@
                         <?php foreach ($campo->datos as $key => $d): ?>
                         <tr>
                             <td>
-                                <input type="text" name="datos[<?= $i ?>][etiqueta]" value="<?= $d->etiqueta ?>" class="form-control"/>
+                                <input type="text" name="datos[<?= $i ?>][etiqueta]" value="<?= $d->etiqueta ?>"
+                                       class="form-control"/>
                             </td>
                             <td>
                                 <input class="form-control" type="text" name="datos[<?= $i ?>][valor]"

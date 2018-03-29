@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Helpers\Doctrine;
 use App\Models\Cuenta;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -22,4 +23,12 @@ class ApiController extends Controller
         return redirect()->route('backend.api');
     }
 
+    public function procesos_disponibles()
+    {
+        $data['title'] = 'Trámites disponibles como servicios';
+        $data['content'] = 'backend/api/tramites_disponibles';
+        $data['json'] = Doctrine::getTable('Proceso')->findProcesosExpuestos(Auth::user()->cuenta_id);
+
+        return view('backend.api.procesos_disponibles', $data);
+    }
 }

@@ -198,7 +198,6 @@ class Campo extends Doctrine_Record
 
     private function extractVariable(Request $request, $nombre, $ispost = TRUE)
     {
-        dd($nombre);
         if ($ispost) {
             return $request->input($nombre);
         } else {

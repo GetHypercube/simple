@@ -40,8 +40,13 @@ class AccionEnviarCorreo extends Accion
         $etapa = $tramite_id;
 
         $regla = new Regla($this->extra->para);
-        //dump($regla);
+
         $to = $regla->getExpresionParaOutput($etapa->id);
+
+        if (empty($to)) {
+            throw new Exception('email invalid.');
+        }
+
         $cc = null;
         $bcc = null;
 
@@ -65,8 +70,22 @@ class AccionEnviarCorreo extends Accion
             $message->subject($subject);
             $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
 
-            if (!is_null($cc)) $message->cc($cc);
-            if (!is_null($bcc)) $message->bcc($bcc);
+
+            if (!is_null($cc)) {
+                foreach (explode(',', $cc) as $cc) {
+                    if (!empty($cc)) {
+                        $message->cc(trim($cc));
+                    }
+                }
+            }
+
+            if (!is_null($bcc)) {
+                foreach (explode(',', $bcc) as $bcc) {
+                    if (!empty($bcc)) {
+                        $message->bcc(trim($bcc));
+                    }
+                }
+            }
 
             $message->to($to);
 

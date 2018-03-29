@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use Dompdf\Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -560,7 +561,6 @@ class ProcessController extends Controller
      */
     public function editar_conexiones_form(Request $request, $tarea_id)
     {
-
         Log::debug('method: editar_conexiones_form(' . $tarea_id . ')');
 
         $tarea = Doctrine::getTable('Tarea')->find($tarea_id);
@@ -575,7 +575,12 @@ class ProcessController extends Controller
         ]);
 
         $tarea->setConexionesFromArray($request->input('conexiones', false));
-        $tarea->save();
+
+        try {
+            $tarea->save();
+        } catch (\Doctrine_Connection_Mysql_Exception $e) {
+            return response()->json(['code' => 200, 'message' => 'alerta'], 400);
+        }
 
         $proceso = $tarea->Proceso;
 

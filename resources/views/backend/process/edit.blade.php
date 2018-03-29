@@ -2,7 +2,6 @@
 
 @section('title', $title)
 
-
 @section('css')
     @if(env('js_diagram') == 'gojs')
         <link href="{{asset('css/diagrama-procesos2.css')}}" rel="stylesheet">
@@ -11,6 +10,7 @@
     @endif
 
 @endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="row mt-3">
@@ -99,6 +99,7 @@
     <div class="modal hide" id="modal"></div>
     <div class="modal hide" id="modalSelectIcon"></div>
 @endsection
+
 @section('script')
     <script>
         $(document).ready(function () {
