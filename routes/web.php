@@ -18,6 +18,7 @@ Route::middleware(['auth_user'])->group(function () {
     })->name('login');
 
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/home/procesos/{categoria_id}', 'HomeController@procesos')->name('home.procesos');
 
     Route::get('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar')->name('tramites.iniciar');
     Route::get('/tramites/participados', 'TramitesController@participados')->name('tramites.participados');
@@ -282,7 +283,3 @@ Route::prefix('manager')->namespace('Manager')->name('manager.')->group(function
 
     });
 });
-
-//Route::middleware(['auth', 'backend'])->prefix('backend')->name('backend.')->namespace('Backend')->group(function () {
-//    Route::get('/home', 'HomeController@index')->name('home');
-//});

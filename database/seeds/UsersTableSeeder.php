@@ -17,13 +17,13 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         if (User::count() == 0) {
-            User::create([
+            /*User::create([
                 'nombres' => 'Admin Asimov',
                 'usuario' => 'admin',
                 'email' => 'admin@admin.com',
                 'password' => Hash::make('123456'),
                 'salt' => '',
-            ]);
+            ]);*/
         }
 
         if (Cuenta::count() == 0) {
@@ -35,16 +35,16 @@ class UsersTableSeeder extends Seeder
                 'api_token' => '',
             ]);
 
-            UsuarioBackend::create([
+            /*UsuarioBackend::create([
                 'nombre' => 'Admin',
                 'apellidos' => 'Asimov',
                 'email' => 'admin@admin.com',
                 'password' => Hash::make('123456'),
                 'cuenta_id' => $cuenta->id,
                 'rol' => 'super',
-            ]);
+            ]);*/
         }
-
+/*
         if (UsuarioManager::count() == 0) {
             UsuarioManager::create([
                 'usuario' => 'admin@admin.com',
@@ -54,5 +54,6 @@ class UsersTableSeeder extends Seeder
                 'salt' => '',
             ]);
         }
+*/
     }
 }

@@ -38,7 +38,8 @@
     },
     "files": [
       "app/Helpers/Helpers.php",
-      "app/Helpers/JsonHelper.php"
+      "app/Helpers/JsonHelper.php",
+      "app/Helpers/JWTHelper.php"
     ]
 
   },

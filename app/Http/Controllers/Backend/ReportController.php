@@ -261,7 +261,7 @@ class ReportController extends Controller
             $num_tramites++;
         }
 
-        $promedio_tramite = $suma_promedio_tramite / $num_tramites;
+        $promedio_tramite = ($num_tramites <= 0) ? 0 : $suma_promedio_tramite / $num_tramites;
 
         if ($formato == "pdf") {
             $reporte_tabla = $reporte->getReporteAsMatrix($params);

@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CustomValidationRulesTest extends TestCase
 {
@@ -24,4 +22,5 @@ class CustomValidationRulesTest extends TestCase
         $v = $this->app['validator']->make($data, $rules);
         $this->assertTrue($v->passes());
     }
+
 }

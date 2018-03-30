@@ -75,3 +75,17 @@ Y para crear un usuario perteneciente al Manager,
 php artisan simple:manager {user} {password}
 php artisan simple:manager siturra qwerty
 ```
+
+## Test Unitarios con PHPUnit
+
+Listado de Test Unitarios:
+
+- Validación de Reglas Customizadas (CustomValidationRulesTest)
+- Creación de Usuarios (Front, Backend, Manager) (CreateUsersTest)
+- Motor de Reglas Simple BPM (RulesTest)
+
+Para ejecutar los Test Unitarios solo debes ejecutar el siguiente comando:
+
+```
+vendor/bin/phpunit
+```

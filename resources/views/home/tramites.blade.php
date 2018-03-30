@@ -1,13 +1,13 @@
-<?php if ($num_destacados > 0 || $sidebar == 'categorias'): ?>
+<?php if ((isset($num_destacados) && $num_destacados > 0) || $sidebar == 'categorias'): ?>
 <section id="simple-destacados">
     <div class="section-header">
         <?php if ($sidebar == 'disponibles'): ?>
         <h2>Trámites destacados</h2>
         <?php else: ?>
         <h2>Trámites - <?= $categoria->nombre ?></h2>
-        <a href="<?=url('home/index/')?>" class="btn btn-primary preventDoubleRequest"
+        <a href="<?=route('home')?>" class="btn btn-primary preventDoubleRequest"
            style="float: right;">
-            <i class="icon-file icon-white"></i> Volver
+            <i class="material-icons align-middle">keyboard_backspace</i> Volver
         </a>
         <?php endif ?>
     </div>
@@ -65,7 +65,7 @@
 </section>
 <?php endif ?>
 
-<?php if (count($categorias) > 0): ?>
+<?php if (isset($categorias) && count($categorias) > 0): ?>
 <section id="simple-categorias">
     <div class="section-header">
         <h2>Categorías</h2>
@@ -98,7 +98,7 @@
 </section>
 <?php endif ?>
 
-@if ($num_otros > 0 && $sidebar != 'categorias')
+@if (isset($num_otros) && $num_otros > 0 && $sidebar != 'categorias')
     <section id="simple-destacados">
         <div class="section-header">
             @if (count($categorias) > 0 || $num_destacados > 0)

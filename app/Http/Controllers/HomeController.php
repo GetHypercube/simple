@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Cuenta;
 
 class HomeController extends Controller
 {
@@ -74,6 +75,25 @@ class HomeController extends Controller
         } else {
             return view('home', $data);
         }
+    }
 
+    /**
+     * @param $categoria_id
+     */
+    public function procesos($categoria_id)
+    {
+
+        $procesos = Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciarByCategoria(Auth::user()->id, $categoria_id, Cuenta::cuentaSegunDominio(), 'nombre', 'asc');
+        $categoria = Doctrine::getTable('Categoria')->find($categoria_id);
+
+        $data['procesos'] = $procesos;
+        $data['categoria'] = $categoria;
+        $data['sidebar'] = 'categorias';
+
+        if (Auth::check() && Auth::user()->registrado) {
+            return view('home.user_index', $data);
+        } else {
+            return view('home', $data);
+        }
     }
 }
