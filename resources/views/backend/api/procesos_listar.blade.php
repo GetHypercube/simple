@@ -15,7 +15,7 @@
 
                 <h3>Request HTTP</h3>
 
-                <pre>GET {{env('APP_URL')}}/backend/api/procesos?token={token}</pre>
+                <pre>GET {{env('APP_URL')}}/api/procesos?token={token}</pre>
 
                 <h3>Response HTTP</h3>
 

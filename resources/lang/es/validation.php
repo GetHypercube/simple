@@ -137,6 +137,7 @@ return [
 
     'attributes' => [
         'name' => 'nombre',
+        'g-recaptcha-response' => 'captcha',
         'comunas.region' => 'Región',
         'comunas.comuna' => 'Comuna',
         'instituciones.entidad' => 'Entidad',

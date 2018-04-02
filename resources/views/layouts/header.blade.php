@@ -25,6 +25,11 @@
                             <span class="icon-claveunica"></span> {{__('auth.login_claveunica')}}
                         </a>
                     </li>
+                    <li class="nav-item login btn-white ml-3">
+                        <a href="{{route('login')}}" class="nav-link">
+                            <i class="material-icons">person</i> Iniciar Sesión
+                        </a>
+                    </li>
                 @else
                     <li class="nav-item dropdown login">
                         <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink"

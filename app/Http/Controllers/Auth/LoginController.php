@@ -31,7 +31,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -110,11 +110,16 @@ class LoginController extends Controller
      */
     protected function validateLogin(Request $request)
     {
-        $this->validate($request, [
+        $validations = [
             $this->username() => 'required|string',
-            'password' => 'required|string',
-            'g-recaptcha-response' => ['required', new Captcha]
-        ]);
+            'password' => 'required|string'
+        ];
+
+        if ($request->has('g-recaptcha-response')) {
+            $validations['g-recaptcha-response'] = ['required', new Captcha];
+        }
+
+        $request->validate($validations);
     }
 
     public function logout(Request $request)

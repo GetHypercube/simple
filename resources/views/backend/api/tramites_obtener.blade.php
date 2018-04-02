@@ -15,12 +15,13 @@
 
                 <h3>Request HTTP</h3>
 
-                <pre>GET {{env('APP_URL')}}/backend/api/tramites/{tramiteId}?token={token}</pre>
+                <pre>GET {{env('APP_URL')}}/api/tramites/{tramiteId}?token={token}</pre>
 
                 <h3>Parámetros</h3>
 
                 <table class="table table-bordered">
-                    <tbody><tr>
+                    <tbody>
+                    <tr>
                         <th>Nombre del Parámetro</th>
                         <th>Valor</th>
                         <th>Descripción</th>
@@ -30,11 +31,13 @@
                         <td>int</td>
                         <td>Identificador único de un trámite en SIMPLE.</td>
                     </tr>
-                    </tbody></table>
+                    </tbody>
+                </table>
 
                 <h3>Response HTTP</h3>
 
-                <p>Si el request es correcto, se devuelve un <a href="{{route('backend.api.tramites_recurso')}}">recurso tramite</a>.</p>
+                <p>Si el request es correcto, se devuelve un <a href="{{route('backend.api.tramites_recurso')}}">recurso
+                        tramite</a>.</p>
             </div>
 
         </div>

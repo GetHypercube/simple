@@ -221,6 +221,7 @@ class ConfigurationController extends Controller
 
             $data['config'] = Doctrine::getTable('Config')->findByIdpar(2);
             $cuentahasconfig = Doctrine::getTable('CuentaHasConfig')->findOneByIdparAndCuentaId(2, Auth::user()->cuenta_id);
+
             $data['config_id'] = 2;
             if ($cuentahasconfig) {
                 $data['config_id'] = $cuentahasconfig->config_id;

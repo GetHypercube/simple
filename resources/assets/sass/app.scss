@@ -51,10 +51,26 @@ h1 {
     color: white;
     font-size: 16px;
     line-height: 19px;
-    transition: all ease .2s;
+    transition: all ease .5s;
     &:hover, &:active, &:focus {
       color: $blue;
       background-color: white;
+    }
+  }
+  &:hover, &:active, &:focus {
+    background-color: white;
+  }
+  &.btn-white {
+    background-color: #ffffff;
+    border-radius: 4px;
+    a.nav-link {
+      color: $red;
+      transition: all ease .2s;
+      &:hover, &:active, &:focus {
+        border-radius: 4px;
+        color: white;
+        background-color: $red;
+      }
     }
   }
   .dropdown-toggle::after {
@@ -270,4 +286,46 @@ ul.steps li {
 .aux-box {
   border-bottom: 1px solid rgba(10, 19, 45, 0.1);
   padding: 30px 0 10px;
+}
+
+.login {
+  font-family: "Roboto", sans-serif;
+
+  .card {
+    box-shadow: 1px 1px 4px 0 #CCCCCC;
+    padding: 10px 33px 0 33px;
+    border-radius: 0;
+    .card-header {
+      font-family: "Roboto Slab", sans-serif;
+      padding: 22px 0 18px 0;
+      font-size: 28px;
+      line-height: 37px;
+      background-color: white;
+    }
+  }
+  .col-form-label {
+    color: #757575;
+    text-transform: uppercase;
+  }
+  .form-control {
+    border: none;
+    border-radius: 2px;
+    box-shadow: 1px 1px 4px 0 #CCCCCC;
+    &:focus {
+      box-shadow: 1px 1px 4px 0 $blue;
+    }
+  }
+  .col-6 {
+    padding: 0;
+  }
+  .btn-link {
+    color: #757575;
+  }
+  .btn {
+    padding: 0;
+    font-size: 15px;
+  }
+  .btn-login {
+    padding: 11px 28%;
+  }
 }
