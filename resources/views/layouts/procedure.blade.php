@@ -15,6 +15,8 @@
 
     <meta name="google" content="notranslate"/>
 
+    <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
+
     @yield('css')
 
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= env('MAP_KEY') ?>&libraries=places&language=ES"></script>
@@ -69,7 +71,7 @@
                            href="{{route('tramites.participados')}}">
                             <i class="material-icons">history</i> Historial de Trámites ({{$nparticipados}})
                         </a>
-                        <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'miagenda' ? 'active' : ''}}"
+                        <a class="list-group-item list-group-item-action {{isset($sidebar) && strstr($sidebar, 'miagenda') ? 'active' : ''}}"
                            href="{{route('agenda.miagenda')}}">
                             <i class="material-icons">date_range</i> Mi Agenda
                         </a>
@@ -77,10 +79,11 @@
                 </ul>
             </div>
 
-            @include('components.messages')
 
             <div class="col-xs-12 col-md-9">
+                @include('components.messages')
                 @yield('content')
+                {!! isset($content) ? $content : '' !!}
             </div>
 
         </div>

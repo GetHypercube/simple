@@ -123,7 +123,6 @@ class StagesController extends Controller
         $data['orderby'] = $orderby;
         $data['direction'] = $direction;
         $data['sidebar'] = 'inbox';
-        $data['content'] = 'etapas/inbox';
         $data['title'] = 'Bandeja de Entrada';
 
         return view('stages.inbox', $data);

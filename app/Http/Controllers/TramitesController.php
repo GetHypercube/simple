@@ -113,7 +113,7 @@ class TramitesController extends Controller
         $data['content'] = view('tramites.participados', $data);
         $data['title'] = 'Bienvenido';
 
-        return view('layouts.app', $data);
+        return view('layouts.procedure', $data);
     }
 
     public function disponibles()

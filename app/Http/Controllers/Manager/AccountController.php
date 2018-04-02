@@ -117,7 +117,7 @@ class AccountController extends Controller
 
                 // Calendar
                 $service = new Connect_services();
-                $service->setAppkey(env('APP_KEY'));
+                $service->setAppkey(env('AGENDA_APP_KEY'));
                 $service->setDomain($request->input('domain'));
                 $service->setCuenta($cuenta_id);
                 $service->save();

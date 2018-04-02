@@ -15,7 +15,7 @@ class Connect_services
         $this->componente = 'token_services';
         $this->cuenta = 1;
         $this->num_rows = env('RECORDS');
-        $this->appkey = env('APP_KEY');
+        $this->appkey = env('AGENDA_APP_KEY');
     }
 
     public function getAppkey()
@@ -210,7 +210,7 @@ class Connect_services
     public function load_data()
     {
         try {
-            $this->appkey = env('APP_KEY');
+            $this->appkey = env('AGENDA_APP_KEY');
             $this->domain = $this->loadCampo('domain');
         } catch (Exception $err) {
             throw new Exception($err->getMessage());

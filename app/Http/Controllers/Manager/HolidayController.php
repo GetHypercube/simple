@@ -19,7 +19,7 @@ class HolidayController extends Controller
         $agendaTemplate = RequestHttp::init()
             ->expectsJson()
             ->addHeaders(array(
-                'appkey' => env('APP_KEY')
+                'appkey' => env('AGENDA_APP_KEY')
             ));
         RequestHttp::ini($agendaTemplate);
     }
