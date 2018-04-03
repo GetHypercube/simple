@@ -48,8 +48,9 @@ class AccionVariable extends Accion
         $valor = $regla->evaluar($etapa->id, $ev);
 
         $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($this->extra->variable, $etapa->id);
-        if (!$dato)
+        if (!$dato){
             $dato = new DatoSeguimiento();
+        }
         $dato->nombre = $this->extra->variable;
         $dato->valor = $valor;
         $dato->etapa_id = $etapa->id;
