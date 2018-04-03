@@ -229,7 +229,6 @@ if (isset($editar) && $editar) {
                 $.ajax({
                     url: url,
                     data: $(form).serialize(),
-                    method: 'GET',
                     type: form.method,
                     dataType: "json",
                     success: function (data) {

@@ -153,6 +153,9 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::get('agendas', 'AppointmentController@index')->name('appointment.index');
         Route::get('agendas/ajax_back_nueva_agenda', 'AppointmentController@ajax_back_nueva_agenda')->name('appointment.ajax_back_nueva_agenda');
         Route::get('agendas/ajax_grabar_agenda_back', 'AppointmentController@ajax_grabar_agenda_back')->name('appointment.ajax_grabar_agenda_back');
+        Route::get('agendas/ajax_back_editar_agenda/{id}', 'AppointmentController@ajax_back_editar_agenda')->name('appointment.ajax_back_editar_agenda');
+        Route::get('agendas/ajax_back_eliminar_agenda', 'AppointmentController@ajax_back_eliminar_agenda')->name('appointment.ajax_back_eliminar_agenda');
+        Route::get('agendas/ajax_eliminar_agenda', 'AppointmentController@ajax_eliminar_agenda')->name('appointment.ajax_eliminar_agenda');
 
         //Seguimiento
         Route::get('seguimiento', 'TracingController@index')->name('tracing.index');

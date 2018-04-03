@@ -191,8 +191,9 @@ class AppointmentController extends Controller
 
     public function ajax_back_eliminar_agenda()
     {
-        if (!in_array('super', explode(",", Auth::user()->rol)))
+        if (!in_array('super', explode(",", Auth::user()->rol))) {
             abort(401, 'No tiene permisos');
+        }
 
         $data['id'] = (isset($_GET['id'])) ? $_GET['id'] : 0;
         $data['nombre'] = (isset($_GET['nombre'])) ? $_GET['nombre'] : '';
@@ -459,7 +460,6 @@ class AppointmentController extends Controller
 
                             $response = RequestHttp::post($uri)->body($json)->sendIt();
                             Log::debug('ajax_grabar_agenda_back Response ' . $response);
-                            dump($response);
                             $code = $response->code;
                             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                                 $code = $response->body[0]->response->code;
