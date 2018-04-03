@@ -29,10 +29,16 @@
                     @foreach($config as $p)
                         <tr>
                             <td>{{$p->nombre_visible}}</td>
-                            <td><img class="theme" height="140" width="280"
+                            <td><img class="theme" height="240" width="280"
                                      src="{{asset('uploads/connectors/' . $p->nombre . '.png')}}" alt="connectors"/>
                             </td>
-                            <td>{{$condicion ? 'Si' : 'No'}}</td>
+                            <?php
+                            $condicion = "No";
+                            if ($config_id == $p->id) {
+                                $condicion = "Si";
+                            }
+                            ?>
+                            <td><?=$condicion?></td>
                             <td>
                                 <a class="btn btn-primary"
                                    href="{{route('backend.configuration.modeler', [$p->id])}}">

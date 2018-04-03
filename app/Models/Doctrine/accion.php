@@ -78,6 +78,7 @@ class Accion extends Doctrine_Record
         return json_decode($this->_get('extra'));
     }
 
+
     public function exportComplete()
     {
         $accion = $this;

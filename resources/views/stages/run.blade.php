@@ -35,11 +35,10 @@
 
         <div class="form-actions">
             @if ($secuencia > 0)
-                <button class="btn btn-light" type="button">
-                    <a href="{{url('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}">
-                        Volver
-                    </a>
-                </button>
+                <a class="btn btn-light"
+                   href="{{url('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}">
+                    Volver
+                </a>
             @endif
             <button class="btn btn-simple btn-danger" type="submit">Siguiente</button>
         </div>

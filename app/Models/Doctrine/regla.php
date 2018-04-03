@@ -16,18 +16,17 @@ class Regla
     // Evalua la regla de acuerdo a los datos capturados en el tramite tramite_id
     public function evaluar($etapa_id, $ev = FALSE)
     {
-        if (!$this->regla)
+        if (!$this->regla) {
             return TRUE;
+        }
 
         $new_regla = $this->getExpresionParaEvaluar($etapa_id, $ev);
         $new_regla = 'return ' . $new_regla . ';';
 
-        //$CI = &get_instance();
-        //$CI->load->library('SaferEval');
         $resultado = FALSE;
-        //if (!$errores = $CI->safereval->checkScript($new_regla, FALSE)) {
-        $resultado = @eval($new_regla);
-        //}
+        if (!$errores = (new \App\Helpers\SaferEval())->checkScript($new_regla, FALSE)) {
+            $resultado = @eval($new_regla);
+        }
 
         return $resultado;
     }
@@ -49,7 +48,7 @@ class Regla
 
             $dato = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($nombre_dato, $etapa_id);
 
-            if ($dato && is_array($accesor) && array_key_exists($accesor, $dato->valor)) {
+            if ($dato) {
                 $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
                 $valor_dato = 'json_decode(\'' . json_encode($dato_almacenado) . '\')';
                 if ($ev) {

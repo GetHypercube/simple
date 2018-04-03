@@ -47,7 +47,6 @@ class AccionSoap extends Accion
         $display .= '            
                 <label>Request</label>
                 <textarea id="request" class="form-control col-5" name="extra[request]" rows="7" cols="70" placeholder="<xml></xml>" class="form-control">' . ($this->extra ? $this->extra->request : '') . '</textarea>
-                <br />
                 <!-- <span id="resultRequest" class="spanError"></span> -->
                 <br /><br />';
         /*<div class="col-md-12">

@@ -30,11 +30,10 @@
             <?php endif; ?>
 
             <div class="form-actions">
-                <button class="btn btn-light" type="button">
-                    <a href="<?= url('etapas/ejecutar/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1) . ($qs ? '?' . $qs : '')) ?>">
-                        Volver
-                    </a>
-                </button>
+                <a class="btn btn-light"
+                   href="<?= url('etapas/ejecutar/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1) . ($qs ? '?' . $qs : '')) ?>">
+                    Volver
+                </a>
                 @if($tareas_proximas->estado != 'sincontinuacion')
                     <button class="btn btn-success" type="submit">Finalizar</button>
                 @endif

@@ -134,7 +134,9 @@ class Campo extends Doctrine_Record
     {
         $dato = NULL;
         $dato = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($this->nombre, $etapa_id);
-        if ($this->readonly) $modo = 'visualizacion';
+        if ($this->readonly) {
+            $modo = 'visualizacion';
+        }
         return $this->display($modo, $dato, $etapa_id);
     }
 

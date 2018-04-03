@@ -1,47 +1,53 @@
 <?php
 
-class DatoSeguimiento extends Doctrine_Record {
+class DatoSeguimiento extends Doctrine_Record
+{
 
-    function setTableDefinition() {
+    function setTableDefinition()
+    {
         $this->hasColumn('id');
         $this->hasColumn('nombre');
         $this->hasColumn('valor');
         $this->hasColumn('etapa_id');
     }
 
-    function setUp() {
+    function setUp()
+    {
         parent::setUp();
 
-        $this->hasOne('Etapa',array(
-            'local'=>'etapa_id',
-            'foreign'=>'id'
+        $this->hasOne('Etapa', array(
+            'local' => 'etapa_id',
+            'foreign' => 'id'
         ));
     }
-    
-    public function setValor($valor){
+
+    public function setValor($valor)
+    {
         //$this->_set('valor', json_encode($valor));
-        if(is_string($valor)){
+        if (is_string($valor)) {
             //Si es que no es un JSON lo que recibimos, lo codificamos nosotros.
             $val = json_decode($valor);
             if (!is_array($val) && !is_object($val))
                 $valor = json_encode($valor);
-        }else{
+        } else {
             $valor = json_encode($valor);
         }
 
         $this->_set('valor', $valor);
     }
-    
-    public function getValor(){
+
+    public function getValor()
+    {
         return json_decode($this->_get('valor'));
     }
 
-    
-    public function toPublicArray(){
-        $publicArray=array(
-            $this->nombre=>$this->valor
+
+    public function toPublicArray()
+    {
+        $publicArray = array(
+            $this->nombre => $this->valor
         );
-        
+
         return $publicArray;
     }
 }

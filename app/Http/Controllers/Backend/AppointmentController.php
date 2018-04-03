@@ -325,8 +325,9 @@ class AppointmentController extends Controller
     {
         $code = 0;
         $mensaje = '';
+        dump($request->all());
         if (isset($_GET) && is_array($_GET)) {
-            $nombre = $_GET['nombre'];
+            $nombre = $request->input('nombre');
             $id = $_GET['codagenda'];
             $grupo = $_GET['grupos_usuarios'];
             $nompertenece = $_GET['namepertenece'];
@@ -536,7 +537,6 @@ class AppointmentController extends Controller
         $code = 0;
         $mensaje = 'Imposible almacenar la informació, Por favor, vuelva a intentarlo, si el problema persiste consute con el administrador.';
         if (isset($_GET) && is_array($_GET)) {
-
             $nombre = $_GET['nombre'];
             $id = $_GET['codagenda'];
             $grupo = $_GET['grupos_usuarios'];

@@ -130,7 +130,7 @@
                 $conector = 'Bezier';
                 $config = \App\Helpers\Doctrine::getTable('CuentaHasConfig')->findOneByIdparAndCuentaId(2, Cuenta::cuentaSegunDominio()->id);
                 if ($config) {
-                    $config = Doctrine::getTable('Config')->findOneByIdAndIdpar($config->config_id, $config->idpar);
+                    $config = \App\Helpers\Doctrine::getTable('Config')->findOneByIdAndIdpar($config->config_id, $config->idpar);
                     $conector = $config->nombre;
                 }
                 ?>

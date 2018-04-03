@@ -39,7 +39,8 @@
     "files": [
       "app/Helpers/Helpers.php",
       "app/Helpers/JsonHelper.php",
-      "app/Helpers/JWTHelper.php"
+      "app/Helpers/JWTHelper.php",
+      "app/Helpers/SaferEval.php"
     ]
 
   },

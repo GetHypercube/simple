@@ -486,9 +486,9 @@ class Etapa extends Doctrine_Record
             ->execute();
         foreach ($eventos as $e) {
             $r = new Regla($e->regla);
-            if ($r->evaluar($this->id))
+            if ($r->evaluar($this->id)) {
                 $e->Accion->ejecutar($this);
-
+            }
         }
     }
 
