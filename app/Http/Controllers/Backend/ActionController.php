@@ -300,7 +300,7 @@ class ActionController extends Controller
         $url = $request->input('urlsoap');
         $request->validate(['urlsoap' => 'required']);
 
-        $client = new SoapClient($url);
+        $client = new \nusoap_client($url);
         $result['functions'] = $client->__getFunctions();
         $result['types'] = $client->__getTypes();
         $result['caso'] = 1;
@@ -341,7 +341,7 @@ class ActionController extends Controller
                 $data['uploadSuccess'] = $this->upload->data();
                 $file_path = str_replace("/", "", $file_path);
                 $wsdl_url = "uploads/wsdl/" . $file_path . ".wsdl";
-                $client = new \SoapClient($wsdl_url);
+                $client = new \nusoap_client($wsdl_url);
                 $result['caso'] = 2;
 
                 Log::info("endpoint: " . $this->varDump($xml->getDocNamespaces(true, true)));

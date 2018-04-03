@@ -42,7 +42,6 @@
       "app/Helpers/JWTHelper.php",
       "app/Helpers/SaferEval.php"
     ]
-
   },
   "autoload-dev": {
     "psr-4": {
