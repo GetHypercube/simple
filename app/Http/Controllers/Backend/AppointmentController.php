@@ -325,9 +325,8 @@ class AppointmentController extends Controller
     {
         $code = 0;
         $mensaje = '';
-        dump($request->all());
         if (isset($_GET) && is_array($_GET)) {
-            $nombre = $request->input('nombre');
+            $nombre = $_GET['nombre'];
             $id = $_GET['codagenda'];
             $grupo = $_GET['grupos_usuarios'];
             $nompertenece = $_GET['namepertenece'];
@@ -460,6 +459,7 @@ class AppointmentController extends Controller
 
                             $response = RequestHttp::post($uri)->body($json)->sendIt();
                             Log::debug('ajax_grabar_agenda_back Response ' . $response);
+                            dump($response);
                             $code = $response->code;
                             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                                 $code = $response->body[0]->response->code;

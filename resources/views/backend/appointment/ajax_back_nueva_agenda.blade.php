@@ -37,7 +37,7 @@ if (isset($editar) && $editar) {
         </div>
         <div class="modal-body">
             <div class="validacion valcal"></div>
-            <div id="formeditagenda" class="ajaxForm2 frmagenda" method="POST" action="<?= $service ?>">
+            <form id="formeditagenda" class="ajaxForm2 frmagenda" method="POST" action="<?= $service ?>">
                 <input type="hidden" id="namepertenece" name="namepertenece"/>
                 <?php
                 if (isset($editar) && $editar) {
@@ -102,8 +102,7 @@ if (isset($editar) && $editar) {
                     }
                     ?>
                 </select>
-                </form>
-            </div>
+            </form>
             <div class="modal-footer mt-3">
                 <a href="#" data-dismiss="modal" class="btn btn-light">Cerrar</a>
                 <?php
@@ -209,6 +208,10 @@ if (isset($editar) && $editar) {
 
         function guardaragenda() {
             var form = $('#formeditagenda');
+            console.log(form);
+            console.log(form.method);
+            console.log($(form).serialize());
+            console.log($(form).method);
             $('.validacion').html('');
             var url = $('#formeditagenda').attr('action');
             if (validarCampos()) {
@@ -226,6 +229,7 @@ if (isset($editar) && $editar) {
                 $.ajax({
                     url: url,
                     data: $(form).serialize(),
+                    method: 'GET',
                     type: form.method,
                     dataType: "json",
                     success: function (data) {
