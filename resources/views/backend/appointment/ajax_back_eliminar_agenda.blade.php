@@ -1,20 +1,25 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">×</button>
-            <h3 id="myModalLabel">Eliminar Agenda
+            <h5 class="modal-title">
+                Eliminar Agenda
                 <a href="/ayuda/simple/backend/agenda-editar.html#eliminar" target="_blank">
                     <span class="glyphicon glyphicon-info-sign" style="font-size: 16px;"></span>
                 </a>
-            </h3>
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
             <form id="frmeliminar">
                 <div class="validacion validacioneliminar"></div>
                 <label>Esta seguro de querer eliminar la agenda <strong>"<?= $nombre ?>"</strong> que pertenece a
                     <strong>"<?= $pertenece ?>"</strong></label>
-                <label>Motivo</label>
-                <textarea id="motivo" name="motivo" style="resize:none; width: 669px;"></textarea>
+                <div class="form-group">
+                    <label>Motivo</label>
+                    <textarea id="motivo" name="motivo" class="form-control" style="resize:none;"></textarea>
+                </div>
                 <input type="hidden" name="nombre" value="<?= $nombre ?>">
                 <input type="hidden" name="pertenece" value="<?= $pertenece ?>">
             </form>

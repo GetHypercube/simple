@@ -25,8 +25,7 @@ if (isset($editar) && $editar) {
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">
-                <?=$title_form ?>
+            <h5 class="modal-title"><?=$title_form ?>
                 <a href="/ayuda/simple/backend/agenda-agregar.html" target="_blank">
                     <i class="material-icons align-middle">help</i>
                 </a>

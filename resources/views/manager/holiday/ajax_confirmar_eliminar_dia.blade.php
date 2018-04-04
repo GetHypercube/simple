@@ -4,8 +4,10 @@ $arfe = explode('-', $fecha);
 <div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">×</button>
-            <h3 id="myModalLabel">Eliminar d&iacute;a</h3>
+            <h5 class="modal-title">Eliminar d&iacute;a</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
             <div class="validacion"></div>
