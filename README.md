@@ -80,6 +80,7 @@ php artisan simple:manager siturra qwerty
 
 Listado de Test Unitarios:
 
+- Verificar que las librerías de PHP requeridas por SIMPLE, estan habilitadas (VerifyLibrariesAvailableTest)
 - Validación de Reglas Customizadas (CustomValidationRulesTest)
 - Creación de Usuarios (Front, Backend, Manager) (CreateUsersTest)
 - Motor de Reglas Simple BPM (RulesTest)

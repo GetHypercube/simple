@@ -319,6 +319,7 @@ class AppointmentController extends Controller
             $mensaje = 'Imposible cargar los datos. Por favor, int&eacute;ntelo m&aacute;s tarde.';
         }
         $array = array('code' => 200, 'message' => $mensaje, 'calendar' => $data, 'franja' => $franjas);
+
         return response()->json($array);
     }
 

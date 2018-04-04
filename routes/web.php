@@ -156,6 +156,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::get('agendas/ajax_back_editar_agenda/{id}', 'AppointmentController@ajax_back_editar_agenda')->name('appointment.ajax_back_editar_agenda');
         Route::get('agendas/ajax_back_eliminar_agenda', 'AppointmentController@ajax_back_eliminar_agenda')->name('appointment.ajax_back_eliminar_agenda');
         Route::get('agendas/ajax_eliminar_agenda', 'AppointmentController@ajax_eliminar_agenda')->name('appointment.ajax_eliminar_agenda');
+        Route::get('agendas/ajax_cargarDatosAgenda/{id}', 'AppointmentController@ajax_cargarDatosAgenda')->name('appointment.ajax_cargarDatosAgenda');
 
         //Seguimiento
         Route::get('seguimiento', 'TracingController@index')->name('tracing.index');
