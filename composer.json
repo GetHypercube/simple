@@ -7,7 +7,6 @@
   "require": {
     "php": ">=7.0.0",
     "barryvdh/laravel-dompdf": "^0.8.2",
-    "econea/nusoap": "v0.9.5.4",
     "fideloper/proxy": "~3.3",
     "laravel/framework": "5.5.*",
     "laravel/scout": "3.0",
@@ -40,8 +39,7 @@
       "app/Helpers/helpers.php",
       "app/Helpers/JsonHelper.php",
       "app/Helpers/JWTHelper.php",
-      "app/Helpers/SaferEval.php",
-      "vendor/econea/nusoap/src/nusoap.php"
+      "app/Helpers/SaferEval.php"
     ]
   },
   "autoload-dev": {
