@@ -9,7 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class VerifyLibrariesAvailableTest extends TestCase
 {
     /**
-     * A basic test check if the necessary libraries are installed.
+     * A basic test check if the necessary libraries are installed. (php -m || php -me)
      *
      * @return void
      */
