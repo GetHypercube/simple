@@ -89,3 +89,7 @@ Para ejecutar los Test Unitarios solo debes ejecutar el siguiente comando:
 ```
 vendor/bin/phpunit
 ```
+
+## Adicionales, 
+
+Si desea poder utilizar una acción de tipo Soap, debe tener habilitada la librería Soap en su php.ini
