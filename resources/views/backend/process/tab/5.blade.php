@@ -35,7 +35,8 @@
                 </select>
             </td>
             <td>
-                <button type="button" class="btn btn-light" title="Agregar"><i class="material-icons">add</i>
+                <button type="button" class="btn btn-light" title="Agregar">
+                    <i class="material-icons">add</i>
                 </button>
             </td>
         </tr>

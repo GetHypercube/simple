@@ -470,7 +470,7 @@ class StagesController extends Controller
 
         $data['sidebar'] = 'participados';
         $data['title'] = 'Historial - ' . $etapa->Tarea->nombre;
-        $data['content'] = 'etapas/ver';
+        //$data['content'] = 'etapas/ver';
 
         return view('stages.view', $data);
     }

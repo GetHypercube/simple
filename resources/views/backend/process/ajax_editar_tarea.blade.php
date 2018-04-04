@@ -96,7 +96,7 @@
 
             var html = "<tr>";
             html += "<td>" + pos + "</td>";
-            html += '<td><a title="Editar" target="_blank" href="backend/acciones/editar/' + accionId + '">' + accionNombre + '</td>';
+            html += '<td><a title="Editar" target="_blank" href="/backend/acciones/editar/' + accionId + '">' + accionNombre + '</td>';
             html += "<td>" + regla + "</td>";
             html += "<td>" + instante + "</td>";
             html += "<td><abbr title='" + pasoTitle + "'>" + pasoNombre + "</abbr></td>";

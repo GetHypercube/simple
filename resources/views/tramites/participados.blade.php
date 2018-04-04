@@ -139,7 +139,7 @@
     </div>
 </div>
 
-@section('script')
+@push('script')
     <script>
         $(document).ready(function () {
 
@@ -187,4 +187,4 @@
             }
         }
     </script>
-@endsection
+@endpush
