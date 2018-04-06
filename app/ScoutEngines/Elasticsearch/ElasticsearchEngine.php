@@ -92,14 +92,16 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
      */
     public function map($results, $model)
     {
-        if (count($results['hits']['total']) === 0) {
+        if ($results['hits']['total'] === 0) {
             return Collection::make();
         }
+
         $keys = collect($results['hits']['hits'])
             ->pluck('_id')->values()->all();
         $models = $model->whereIn(
             $model->getKeyName(), $keys
         )->get()->keyBy($model->getKeyName());
+
         return collect($results['hits']['hits'])->map(function ($hit) use ($model, $models) {
             $result = isset($models[$hit['_id']]) ? $models[$hit['_id']] : null;
             $result->highlight = isset($hit['highlight']) ? $hit['highlight'] : null;

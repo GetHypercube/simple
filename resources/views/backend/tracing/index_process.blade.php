@@ -28,7 +28,7 @@
                         <button type="submit" class="btn btn-light">Buscar</button>
                     </div>
                 </form>
-                <div style='text-align: right;'><a href='#' onclick='toggleBusquedaAvanzada()'>Busqueda avanzada</a>
+                <div style='text-align: right;'><a href='#' onclick='toggleBusquedaAvanzada()'>Búsqueda avanzada</a>
                 </div>
             </div>
 
@@ -58,54 +58,63 @@
             @endif
         </div>
 
-        <div id='busquedaAvanzada' class='row-fluid' style='display: <?=$busqueda_avanzada ? 'block' : 'none'?>;'>
+        <br>
+
+        <div id='busquedaAvanzada' class='row mt-5' style='display: <?=$busqueda_avanzada ? 'block' : 'none'?>;'>
             <div class='col-12'>
-                <div class='well'>
+                <div class='jumbotron'>
                     <form class='form-horizontal'>
                         <input type='hidden' name='busqueda_avanzada' value='1'/>
-                        <div class='row-fluid'>
-                            <div class='span4'>
+                        <div class='row'>
+                            <div class='col-4'>
                                 <div class='control-group'>
-                                    <label class='control-label'>Término a buscar</label>
-                                    <div class='controls'>
-                                        <input name="query" value="<?= $query ?>" type="text" class="search-query"/>
+                                    <label class='col-form-label'>Término a buscar</label>
+                                        <input name="query" value="<?= $query ?>" type="text" class="form-control search-query"/>
+                                </div>
+                            </div>
+                            <div class='col-4'>
+                                <div class='control-group'>
+                                    <label class='col-form-label'>Estado del trámite</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type='radio' name='pendiente' id="cualquiera"
+                                               value='-1' <?= $pendiente == -1 ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="cualquiera">
+                                            Cualquiera
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type='radio' name='pendiente' id="encurso"
+                                               value='1' <?= $pendiente == 1 ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="encurso">
+                                            En Curso
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type='radio' name='pendiente' id="completado"
+                                               value='0' <?= $pendiente == 0 ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="completado">
+                                            Completado
+                                        </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class='span4'>
-                                <div class='control-group'>
-                                    <label class='control-label'>Estado del trámite</label>
-                                    <div class='controls'>
-                                        <label class='radio'><input type='radio' name='pendiente'
-                                                                    value='-1' <?= $pendiente == -1 ? 'checked' : '' ?>>
-                                            Cualquiera</label>
-                                        <label class='radio'><input type='radio' name='pendiente'
-                                                                    value='1' <?= $pendiente == 1 ? 'checked' : '' ?>>
-                                            En
-                                            curso</label>
-                                        <label class='radio'><input type='radio' name='pendiente'
-                                                                    value='0' <?= $pendiente == 0 ? 'checked' : '' ?>>
-                                            Completado</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class='span4'>
-                                <div class='control-group'>
-                                    <label class='control-label'>Fecha de creación</label>
-                                    <div class='controls'>
+                            <div class='col-4'>
+                                <div class='form-group row'>
+                                    <label class='col-sm-5 col-form-label'>Fecha de creación</label>
+                                    <div class='col-sm-6'>
                                         <input type='text' name='created_at_desde' placeholder='Desde'
-                                               class='datepicker input-small' value='<?= $created_at_desde ?>'/>
+                                               class='datepicker form-control' value='<?= $created_at_desde ?>'/>
                                         <input type='text' name='created_at_hasta' placeholder='Hasta'
-                                               class='datepicker input-small' value='<?= $created_at_hasta ?>'/>
+                                               class='datepicker form-control' value='<?= $created_at_hasta ?>'/>
                                     </div>
                                 </div>
-                                <div class='control-group'>
-                                    <label class='control-label'>Fecha de último cambio</label>
-                                    <div class='controls'>
+                                <div class='form-group row'>
+                                    <label class='col-sm-5 col-form-label'>Fecha de último cambio</label>
+                                    <div class='col-sm-6'>
                                         <input type='text' name='updated_at_desde' placeholder='Desde'
-                                               class='datepicker input-small' value='<?= $updated_at_desde ?>'/>
+                                               class='datepicker form-control' value='<?= $updated_at_desde ?>'/>
                                         <input type='text' name='updated_at_hasta' placeholder='Hasta'
-                                               class='datepicker input-small' value='<?= $updated_at_hasta ?>'/>
+                                               class='datepicker form-control' value='<?= $updated_at_hasta ?>'/>
                                     </div>
                                 </div>
                             </div>
