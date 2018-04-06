@@ -53,7 +53,7 @@ class AccionNotificaciones extends Accion
     //public function ejecutar(Etapa $etapa)
     public function ejecutar($tramite_id)
     {
-        $etapa = Etapa::find($tramite_id);
+        $etapa = $tramite_id;
 
         Log::info("Notificando a suscriptores");
 
@@ -106,13 +106,16 @@ class AccionNotificaciones extends Accion
 
                         Log::info("Llamando a suscriptor URL: " . $uri);
 
-                        $CI = &get_instance();
 
-                        $CI->rest->initialize($config);
-                        $result = $CI->rest->post($uri, $request, 'json');
+                        $headers = array(
+                            'Content-Type: application/json',
+                        );
+
+                        $rest = new Rest($config);
+                        $result = $rest->post($uri, $request, $headers);
 
                         //Se obtiene la codigo de la cabecera HTTP
-                        $debug = $CI->rest->debug();
+                        $debug = $rest->debug();
                         $parseInt = intval($debug['info']['http_code']);
                         if ($parseInt < 200 || $parseInt >= 300) {
                             // Ocurio un error en el server del Callback ## Error en el servidor externo ##

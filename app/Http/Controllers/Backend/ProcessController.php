@@ -160,7 +160,6 @@ class ProcessController extends Controller
      */
     public function edit($proceso_id)
     {
-
         Log::info('editar ($proceso_id [' . $proceso_id . '])');
 
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);

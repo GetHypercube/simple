@@ -40,7 +40,8 @@
       "app/Helpers/helpers.php",
       "app/Helpers/JsonHelper.php",
       "app/Helpers/JWTHelper.php",
-      "app/Helpers/SaferEval.php"
+      "app/Helpers/SaferEval.php",
+      "app/Helpers/Rest.php"
     ]
   },
   "autoload-dev": {

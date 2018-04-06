@@ -416,7 +416,7 @@ class Campo extends Doctrine_Record
     public function getCamposExportables($etapa)
     {
 
-        log_message("INFO", "getListaExportables", FALSE);
+        Log::Info("getListaExportables");
         if (!is_object($etapa)) {
             throw new ApiException('Se esperaba una instancia del "Objeto" de "Etapa"');
         }
@@ -434,8 +434,8 @@ class Campo extends Doctrine_Record
 
                 $key = $campo->nombre;//$value['nombre'];
 
-                log_message("INFO", "Nombre variable a retornar: " . $key, FALSE);
-                log_message("INFO", "Tipo variable a retornar: " . $campo->tipo, FALSE);
+                Log::Info("Nombre variable a retornar: " . $key);
+                Log::Info("Tipo variable a retornar: " . $campo->tipo);
                 if ($campo->tipo == 'file') {
                     //FIX valor
                     $filename = 'uploads/datos/' . str_replace('"', '', $campo->nombre);
@@ -458,7 +458,7 @@ class Campo extends Doctrine_Record
                         }
                     }
                 } else {
-                    log_message("INFO", "Obteniendo valor para etapa: " . $etapa->id, FALSE);
+                    Log::Info("Obteniendo valor para etapa: " . $etapa->id);
                     $valor_campo = $campo->displayDatoSeguimiento($etapa->id);
                     if (isset($valor_campo) && $valor_campo != '') {
                         $return[$key] = str_replace('"', '', $valor_campo);
@@ -516,9 +516,9 @@ class Campo extends Doctrine_Record
             ->execute();
 
         $return = array();
-        log_message("INFO", "#### Recorriendo resultados: " . $proceso_id, FALSE);
+        Log::Info("#### Recorriendo resultados: " . $proceso_id);
         foreach ($result as $value) {
-            log_message("INFO", "#### key: " . $value->nombre, FALSE);
+            Log::Info("#### key: " . $value->nombre);
             $key = $value->extra->variable;
             $valor_var = $this->getValosVariableGlobal($key, $tramite_id);
             if (isset($valor_var) && $valor_var != '') {
