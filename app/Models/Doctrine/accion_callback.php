@@ -135,25 +135,32 @@ class AccionCallback extends Accion
                 Log::info("Llamando a callback Request: " . $request);
                 Log::info("Llamando a callback Metodo: " . $this->extra->tipoMetodoC);
 
-                $CI->rest->initialize($config);
+                $client = new GuzzleHttp\Client($config);
 
                 // Se ejecuta la llamada segun el metodo
                 if ($this->extra->tipoMetodoC == "POST") {
-                    $result = $CI->rest->post($uri, $request, 'json');
+                    $result = $client->post($uri, [
+                        GuzzleHttp\RequestOptions::JSON => $request
+                    ]);
                 } else if ($this->extra->tipoMetodoC == "PUT") {
-                    $result = $CI->rest->put($uri, $request, 'json');
+                    $result = $client->put($uri, [
+                        GuzzleHttp\RequestOptions::JSON => $request
+                    ]);
                 } else if ($this->extra->tipoMetodoC == "DELETE") {
-                    $result = $CI->rest->delete($uri, $request, 'json');
+                    $result = $client->delete($uri, [
+                        GuzzleHttp\RequestOptions::JSON => $request
+                    ]);
                 }
                 //Se obtiene la codigo de la cabecera HTTP
-                $debug = $CI->rest->debug();
+                $response = $result->getResponse();
+                $statusCode = $response->getStatusCode();
 
-                $parseInt = intval($debug['info']['http_code']);
-                if ($parseInt < 200 || $parseInt > 204) {
+
+                if ($statusCode < 200 || $statusCode > 204) {
                     // Ocurio un error en el server del Callback ## Error en el servidor externo ##
                     // Se guarda en Auditoria el error
-                    $response['code'] = $debug['info']['http_code'];
-                    $response['des_code'] = $debug['response_string'];
+                    $response['code'] = $statusCode;
+                    $response['des_code'] = $response->getMessage();
                     $response = json_encode($response);
                     $operacion = 'Error en llamada Callback';
 

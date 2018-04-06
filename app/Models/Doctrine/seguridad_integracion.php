@@ -25,7 +25,7 @@ class SeguridadIntegracion
                 //Seguridad basic
                 $config = array(
                     'timeout' => $timeout,
-                    'server' => $server,
+                    'base_uri' => $server,
                     'http_user' => $user,
                     'http_pass' => $pass,
                     'http_auth' => 'Basic'
@@ -35,7 +35,7 @@ class SeguridadIntegracion
                 //Seguriad api key
                 $config = array(
                     'timeout' => $timeout,
-                    'server' => $server,
+                    'base_uri' => $server,
                     'api_key' => $api_key,
                     'api_name' => $name_key
                 );
@@ -43,23 +43,24 @@ class SeguridadIntegracion
             case "OAUTH2":
                 //SEGURIDAD OAUTH2
                 $config_seg = array(
-                    'server' => $url_auth
+                    'base_uri' => $url_auth
                 );
+                
+                $client = new GuzzleHttp\Client($config_seg);
 
-                $headers = array(
-                    'Content-Type: application/json',
-                );
+                $result = $client->post($uri_auth, [
+                    GuzzleHttp\RequestOptions::JSON => $request_seg
+                ]);
 
-                $rest = new Rest($config_seg);
-                $result = $rest->post($uri_auth, $request_seg, $headers);
+                $response = $result->getResponse();
+
+                $statusCode = $response->getStatusCode();
 
                 //Se obtiene la codigo de la cabecera HTTP
-                $debug_seg = $rest->debug();
-                $response_seg = intval($debug_seg['info']['http_code']);
-                if ($response_seg >= 200 && $response_seg < 300) {
+                if ($statusCode >= 200 && $statusCode < 300) {
                     $config = array(
                         'timeout' => $timeout,
-                        'server' => $server,
+                        'base_uri' => $server,
                         'api_key' => $result->token_type . ' ' . $result->access_token,
                         'api_name' => 'Authorization'
                     );
@@ -69,7 +70,7 @@ class SeguridadIntegracion
                 //SIN SEGURIDAD
                 $config = array(
                     'timeout' => $timeout,
-                    'server' => $server
+                    'base_uri' => $server
                 );
                 break;
         }

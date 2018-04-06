@@ -48,12 +48,14 @@ class Suscriptor extends Doctrine_Record
         $display .= '
             <div>
                 <label>Webhook</label>
-                <input type="text" id="user" name="extra[webhook]" class="form-control col-2" value="' . (isset($this->extra->webhook) ? $this->extra->webhook : '') . '">
+                <input type="text" id="user" name="extra[webhook]" class="form-control col-5" value="' . (isset($this->extra->webhook) ? $this->extra->webhook : '') . '">
             </div>';
 
         $display .= '
             <p>
                 Por defecto el contenido del request para el webhook será el siguiente:</br>
+                <div class="row">
+                <div class="col-5">
                 <pre>{
     "idInstancia": "string",
     "idTarea": "string",
@@ -62,14 +64,20 @@ class Suscriptor extends Doctrine_Record
          ...
     }
  }</pre>
+ </div>
+</div>
             </p>';
 
         $display .= '
             <p>
-                Si se requiere algún reques personalizado, es posible hacerlo con la variable output, la cual contendrá la información mostrada en el parrafo anterior.</br>
+                Si se requiere algún reques personalizado, es posible hacerlo con la variable output, la cual contendrá la información mostrada en el parrafo anterior.</br>                
+                <div class="row">
+                <div class="col-5">
                 <pre>{
     "campoPersonalizado": "@@output"
- }</pre>
+}</pre>
+                 </div>
+                </div>
             </p>';
 
         $display .= '

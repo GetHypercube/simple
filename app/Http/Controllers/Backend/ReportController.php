@@ -210,12 +210,12 @@ class ReportController extends Controller
         $per_page = 50;
         $page = $request->input('page', 1); // Get the ?page=1 from the url
         $offset = ($page * $per_page) - $per_page;
+        $params = array();
 
         foreach ($procesos as $proceso) {
 
             Log::debug("Explorando proceso id: " . $proceso->id);
 
-            $params = array();
             if ($created_at_desde) {
                 array_push($params, 'created_at >= ' . "'" . date('Y-m-d', strtotime($created_at_desde)) . "'");
             }
@@ -298,6 +298,7 @@ class ReportController extends Controller
         $reporte_tabla = $reporte->getReporteAsMatrix($params, $per_page, $offset);
 
         Log::debug("reporte tabla: " . json_encode($reporte_tabla));
+
         //Paginamos
         $reporte_tabla = new LengthAwarePaginator(
             $reporte_tabla, // Only grab the items we need

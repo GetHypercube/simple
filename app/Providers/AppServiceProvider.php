@@ -71,6 +71,7 @@ class AppServiceProvider extends ServiceProvider
                     'client_secret' => \Cuenta::cuentaSegunDominio()->client_secret,
                     'redirect' => $redirect
                 ];
+
                 return $socialite->buildProvider(\App\Socialite\Two\ClaveUnicaProvider::class, $config);
             }
         );

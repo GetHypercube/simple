@@ -19,7 +19,6 @@ class AccionNotificaciones extends Accion
             </p>
         ';
 
-
         $display .= '<div class="campo control-group">';
         $display .= '<label class="control-label">Suscriptores:</label>';
         $display .= '<div class="controls">';
@@ -57,99 +56,105 @@ class AccionNotificaciones extends Accion
 
         Log::info("Notificando a suscriptores");
 
-        try {
-            $proceso = Doctrine::getTable('Proceso')->find($etapa['Tarea']['proceso_id']);
-            $suscriptores = $proceso->Suscriptores;
+        $proceso = Doctrine::getTable('Proceso')->find($etapa['Tarea']['proceso_id']);
+        $suscriptores = $proceso->Suscriptores;
 
-            if (isset($this->extra->suscriptorSel) && count($this->extra->suscriptorSel) > 0) {
-                foreach ($this->extra->suscriptorSel as $suscriptor_id) {
-                    Log::info("Notificando a suscriptor id: " . $suscriptor_id);
-                    try {
-                        $suscriptor = Doctrine::getTable('Suscriptor')->find($suscriptor_id);
-                        Log::info("Suscriptor institucion: " . $suscriptor->institucion);
-                        Log::info("Suscriptor request: " . $suscriptor->extra->request);
+        if (isset($this->extra->suscriptorSel) && count($this->extra->suscriptorSel) > 0) {
+            foreach ($this->extra->suscriptorSel as $suscriptor_id) {
+                Log::info("Notificando a suscriptor id: " . $suscriptor_id);
+                $suscriptor = Doctrine::getTable('Suscriptor')->find($suscriptor_id);
+                Log::info("Suscriptor institucion: " . $suscriptor->institucion);
+                Log::info("Suscriptor request: " . $suscriptor->extra->request);
 
-                        $idSeguridad = $suscriptor->extra->idSeguridad;
+                $idSeguridad = $suscriptor->extra->idSeguridad;
 
-                        $webhook_url = str_replace('\/', '/', $suscriptor->extra->webhook);
-                        $base = explode("/", $webhook_url);
-                        $server = $base[0] . '//' . $base[2];
-                        $server = str_replace('"', '', $server);
-                        $uri = '';
-                        for ($i = 3; $i < count($base); $i++) {
-                            if ($i == 3)
-                                $uri .= $base[$i];
-                            else
-                                $uri .= '/' . $base[$i];
-                        }
-                        $uri = str_replace('"', '', $uri);
+                $webhook_url = str_replace('\/', '/', $suscriptor->extra->webhook);
+                $base = explode("/", $webhook_url);
+                $server = $base[0] . '//' . $base[2];
+                $server = str_replace('"', '', $server);
+                $uri = '';
+                for ($i = 3; $i < count($base); $i++) {
+                    if ($i == 3)
+                        $uri .= $base[$i];
+                    else
+                        $uri .= '/' . $base[$i];
+                }
+                $uri = str_replace('"', '', $uri);
 
-                        $campo = new Campo();
-                        $data = $campo->obtenerResultados($etapa, $etapa['Tarea']['proceso_id']);
-                        $output['idInstancia'] = $etapa['tramite_id'];
-                        $output['idTarea'] = $etapa['Tarea']['id'];
-                        $output['data'] = $data;
+                $campo = new Campo();
+                $data = $campo->obtenerResultados($etapa, $etapa['Tarea']['proceso_id']);
+                $output['idInstancia'] = $etapa['tramite_id'];
+                $output['idTarea'] = $etapa['Tarea']['id'];
+                $output['data'] = $data;
 
-                        $request = json_encode($output);
+                $request = json_encode($output);
 
-                        $request_suscriptor = $suscriptor->extra->request;
-                        if (isset($request_suscriptor) && strlen($request_suscriptor) > 0) {
-                            if (strpos($request_suscriptor, '@@output') !== false) {
-                                $request = str_replace('"', '\"', $request);
-                                $request = str_replace('@@output', $request, $request_suscriptor);
-                            }
-                        }
-
-
-                        $seguridad = new SeguridadIntegracion();
-                        $config = $seguridad->getConfigRest($idSeguridad, $server, 30);
-
-                        Log::info("Llamando a suscriptor URL: " . $uri);
-
-
-                        $headers = array(
-                            'Content-Type: application/json',
-                        );
-
-                        $rest = new Rest($config);
-                        $result = $rest->post($uri, $request, $headers);
-
-                        //Se obtiene la codigo de la cabecera HTTP
-                        $debug = $rest->debug();
-                        $parseInt = intval($debug['info']['http_code']);
-                        if ($parseInt < 200 || $parseInt >= 300) {
-                            // Ocurio un error en el server del Callback ## Error en el servidor externo ##
-                            // Se guarda en Auditoria el error
-                            $response['code'] = $debug['info']['http_code'];
-                            $response['des_code'] = $debug['response_string'];
-                            $response = json_encode($response);
-                            $operacion = 'Error Notificando a suscriptor ' . $suscriptor->institucion;
-
-                            AuditoriaOperaciones::registrarAuditoria($proceso->nombre,
-                                "Error Notificando a suscriptor " . $suscriptor->institucion, $response, array());
-
-                        } else {
-                            // Caso con errores
-                            if (isset($result)) {
-                                $result2 = get_object_vars($result);
-                            } else {
-                                $result2 = "SUCCESS";
-                            }
-                            $response = $result2;
-                            AuditoriaOperaciones::registrarAuditoria($proceso->nombre,
-                                "Suscriptor " . $suscriptor->institucion . " notificado exitosamente", $response, array());
-                        }
-                    } catch (Exception $e) {
-                        Log::error('Error Notificando a suscriptor ' . $suscriptor->institucion, $e->getMessage());
+                $request_suscriptor = $suscriptor->extra->request;
+                if (isset($request_suscriptor) && strlen($request_suscriptor) > 0) {
+                    if (strpos($request_suscriptor, '@@output') !== false) {
+                        $request = str_replace('"', '\"', $request);
+                        $request = str_replace('@@output', $request, $request_suscriptor);
                     }
                 }
+
+                $request = json_decode($request);
+
+                $seguridad = new SeguridadIntegracion();
+                $config = $seguridad->getConfigRest($idSeguridad, $server, 30);
+
+                Log::info("Llamando a suscriptor URL: " . $uri);
+
+                $headers = array(
+                    'Content-Type: application/json',
+                );
+
+                try {
+
+                    $client = new GuzzleHttp\Client($config); //GuzzleHttp\Client
+
+                    $result = $client->post($uri, [
+                        GuzzleHttp\RequestOptions::JSON => $request
+                    ]);
+
+                    $response = $result->getResponse();
+
+                } catch (Exception $exception) {
+                    Log::error('Error Notificando a suscriptor ' . $suscriptor->institucion . $exception->getMessage());
+
+                    $response = $exception->getResponse();
+                    $error_message = $exception->getMessage();
+                } finally {
+                    $statusCode = $response->getStatusCode();
+                }
+
+                //Se obtiene la codigo de la cabecera HTTP
+                if ($statusCode < 200 || $statusCode >= 300) {
+                    // Ocurio un error en el server del Callback ## Error en el servidor externo ##
+                    // Se guarda en Auditoria el error
+                    $response->code = $statusCode;
+                    $response->des_code = $error_message;
+                    $response = json_encode($response);
+                    $operacion = 'Error Notificando a suscriptor ' . $suscriptor->institucion;
+
+                    AuditoriaOperaciones::registrarAuditoria($proceso->nombre,
+                        "Error Notificando a suscriptor " . $suscriptor->institucion, $response, array());
+
+                } else {
+                    // Caso con errores
+                    if (isset($result)) {
+                        $result2 = get_object_vars($result);
+                    } else {
+                        $result2 = "SUCCESS";
+                    }
+                    $response = $result2;
+                    dd($response);
+                    AuditoriaOperaciones::registrarAuditoria($proceso->nombre,
+                        "Suscriptor " . $suscriptor->institucion . " notificado exitosamente", $response, array());
+                }
             }
-
-            Log::info("Suscriptores notificados");
-
-        } catch (Exception $e) {
-            Log::error('Error general en notificaciones a suscriptores ', $e->getMessage());
-            AuditoriaOperaciones::registrarAuditoria($proceso->nombre, "Ejecutar PUSH", $e->getMessage(), array());
         }
+
+        Log::info("Suscriptores notificados");
+
     }
 }
