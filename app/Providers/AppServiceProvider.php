@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Cuenta;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
         $this->bootElasticsearch();
 
         $this->bootValidatorExtend();
+
+        $this->bootSetEmailConfigs();
     }
 
     /**
@@ -210,6 +213,17 @@ class AppServiceProvider extends ServiceProvider
 
             return false;
         });
+    }
+
+    public function bootSetEmailConfigs()
+    {
+        $cuenta = \Cuenta::cuentaSegunDominio();
+        $data = [
+            'address' => $cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'),
+            'name' => $cuenta->nombre_largo,
+        ];
+
+        config(['mail.from' => $data]);
     }
 
 }

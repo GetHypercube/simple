@@ -92,7 +92,7 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
      */
     public function map($results, $model)
     {
-        if ($results['hits']['total'] === 0) {
+        if ($results['hits']['total'] == 0) {
             return Collection::make();
         }
 

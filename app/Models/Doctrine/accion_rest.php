@@ -83,11 +83,10 @@ class AccionRest extends Accion
             </div>';
         $display .= '
                 <label>Seguridad</label>
-                <select id="tipoSeguridad" class="form-control col-2" name="extra[idSeguridad]">';
+                <select id="tipoSeguridad" class="form-control col-2" name="extra[idSeguridad]">
+                <option value="-1">Sin seguridad</option>';
         foreach ($conf_seguridad as $seg) {
-            $display .= '
-                        <option value="-1">Sin seguridad</option>';
-            if ($this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
+            if (!is_null($this->extra) && $this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
                 $display .= '<option value="' . $seg->id . '" selected>' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
             } else {
                 $display .= '<option value="' . $seg->id . '">' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
