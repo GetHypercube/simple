@@ -46,8 +46,10 @@ if (!function_exists('mysql_to_unix')) {
         // YYYY-MM-DD HH:MM:SS
         $time = str_replace(array('-', ':', ' '), '', $time);
         // YYYYMMDDHHMMSS
+        $hour = substr($time, 8, 2);
+
         return mktime(
-            substr($time, 8, 2),
+            $hour == '' ? 0 : $hour,
             substr($time, 10, 2),
             substr($time, 12, 2),
             substr($time, 4, 2),
