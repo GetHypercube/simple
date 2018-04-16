@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Notifications\UserBackendResetPasswordNotification;
+use App\Notifications\UserFrontResetPasswordNotification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -46,6 +46,6 @@ class User extends Authenticatable
      */
     public function sendPasswordResetNotification($token)
     {
-        $this->notify(new UserBackendResetPasswordNotification($token));
+        $this->notify(new UserFrontResetPasswordNotification($token));
     }
 }

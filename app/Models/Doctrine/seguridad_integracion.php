@@ -1,5 +1,7 @@
 <?php
 
+use App\Helpers\Doctrine;
+
 class SeguridadIntegracion
 {
 
@@ -45,7 +47,7 @@ class SeguridadIntegracion
                 $config_seg = array(
                     'base_uri' => $url_auth
                 );
-                
+
                 $client = new GuzzleHttp\Client($config_seg);
 
                 $result = $client->post($uri_auth, [

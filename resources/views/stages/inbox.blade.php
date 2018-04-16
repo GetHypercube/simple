@@ -102,8 +102,8 @@
                                 ?>
                             </a></td><!--Tramites-->
                         <td><?=$e->Tarea->nombre?></td>
-                        <td class="time"><?= $e->updated_at?>
-                            <br/><?= $e->updated_at?></td>
+                        <td class="time"><?= strftime('%d.%b.%Y', mysql_to_unix($e->updated_at))?>
+                            <br/><?= strftime('%H:%M:%S', mysql_to_unix($e->updated_at))?></td>
                         <td><?=$e->vencimiento_at ? strftime('%c', strtotime($e->vencimiento_at)) : 'N/A'?></td>
                         <td class="actions">
                             <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
