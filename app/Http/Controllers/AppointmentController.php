@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\Doctrine;
 use Doctrine_Query;
+use Httpful\Request as RequestHttp;
 
 class AppointmentController extends Controller
 {
@@ -25,15 +26,15 @@ class AppointmentController extends Controller
             $service = new \Connect_services();
             $service->setCuenta($cuenta);
             $service->load_data();
-            /*
-            $agendaTemplate = Request::init()
-                ->expectsJson()
+
+            $agendaTemplate = RequestHttp::init()
+                //->expectsJson()
                 ->addHeaders(array(
                     'appkey' => $service->getAppkey(),
                     'domain' => $service->getDomain()
                 ));
-            Request::ini($agendaTemplate);
-            */
+            RequestHttp::ini($agendaTemplate);
+
         } catch (Exception $err) {
             Log::error('Constructor' . $err);
             //echo 'Error: '.$err->getMessage();
@@ -46,7 +47,7 @@ class AppointmentController extends Controller
         try {
             $uri = $this->base_services . '' . $this->context . 'appointments/confirm/' . $id;
             Log::debug('confirmar_cita URI ' . $uri);
-            $response = Request::put($uri)->sendIt();
+            $response = RequestHttp::put($uri)->sendIt();
             $code = $response->code;
             if ($code == 200) {
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -68,7 +69,7 @@ class AppointmentController extends Controller
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars/' . $idagenda; //url del servicio con los parametros
             Log::debug('obtenerTiempoCita URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                 $valor = $response->body[1]->calendars[0]->time_attention;
@@ -104,7 +105,7 @@ class AppointmentController extends Controller
             $id = (isset(Auth::user()->id)) ? Auth::user()->id : 0;
             $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $id;
             Log::debug('validarTipoUsuario URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('validarTipoUsuario Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
@@ -132,7 +133,7 @@ class AppointmentController extends Controller
             try {
                 $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $g->id;
                 Log::debug('validar_agenda_grupos URI ' . $uri);
-                $response = Request::get($uri)->sendIt();
+                $response = RequestHttp::get($uri)->sendIt();
                 Log::debug('validar_agenda_grupos Response ' . $response);
                 $code = $response->code;
                 if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -158,7 +159,7 @@ class AppointmentController extends Controller
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $owner;
             Log::debug('obtenerAgendas URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('obtenerAgendas response ' . $response);
             $code = $response->code;
             if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -187,7 +188,7 @@ class AppointmentController extends Controller
         foreach ($usuario[0]->GruposUsuarios as $g) {
             try {
                 $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $g->id;
-                $response = Request::get($uri)->sendIt();
+                $response = RequestHttp::get($uri)->sendIt();
                 $code = $response->code;
                 if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                     foreach ($response->body[1]->calendars as $item) {
@@ -221,7 +222,7 @@ class AppointmentController extends Controller
             Log::debug('confirmar_citas_grupo Input ' . $ids);
             $uri = $this->base_services . '' . $this->context . 'appointments/bulkConfirm';
             Log::debug('confirmar_citas_grupo URI ' . $uri);
-            $response = Request::post($uri)->body($ids)->sendIt();
+            $response = RequestHttp::post($uri)->body($ids)->sendIt();
             Log::debug('confirmar_citas_grupo Response ' . $response);
             $code = $response->code;
             if ($code == 200) {
@@ -253,7 +254,7 @@ class AppointmentController extends Controller
                 $uri = $this->base_services . '' . $this->context . 'appointments/availability/' . $idagenda;//url del servicio con los parametros
             }
             Log::debug('disponibilidad URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('disponibilidad response ' . $uri);
             $code = $response->code;
 
@@ -334,7 +335,7 @@ class AppointmentController extends Controller
                 $uri = $this->base_services . '' . $this->context . 'appointments/availability/' . $idagenda;//url del servicio con los parametros
             }
             Log::debug('disponibilidadCiudadano URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('disponibilidadCiudadano response ' . $uri);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -629,7 +630,7 @@ class AppointmentController extends Controller
                 Log::debug('diasFeriados URI ' . $uri);
                 Log::debug('diasFeriados $data_tmp ' . json_encode($data_tmp));
 
-                $response = Request::get($uri)->sendIt();
+                $response = RequestHttp::get($uri)->sendIt();
                 Log::debug('diasFeriados Response ' . $response);
 
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -671,7 +672,7 @@ class AppointmentController extends Controller
             $id = (isset(Auth::user()->id)) ? Auth::user()->id : 0;
             $uri = $this->base_services . '' . $this->context . 'appointments/listByOwner/' . $id;//url del servicio con los parametros
             Log::debug('cargarCitasCalendar URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('cargarCitasCalendar Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
@@ -719,7 +720,7 @@ class AppointmentController extends Controller
         try {
             $uri = $this->base_services . '' . $this->context . 'blockSchedules/' . $idbloqueo;
             Log::debug('ajax_eliminar_bloqueo URI ' . $uri);
-            $response = Request::delete($uri)->sendIt();
+            $response = RequestHttp::delete($uri)->sendIt();
             Log::debug('ajax_eliminar_bloqueo Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && isset($response->body->response->code) && $response->body->response->code == 200) {
@@ -822,14 +823,14 @@ class AppointmentController extends Controller
             try {
                 $uri = $this->base_services . '' . $this->context . 'appointments/' . $appointment;
                 Log::debug('ajax_agregar_cita URI ' . $uri);
-                $responsever = Request::get($uri)->sendIt();
+                $responsever = RequestHttp::get($uri)->sendIt();
                 $code = $responsever->code;
                 if (isset($responsever->body) && is_array($responsever->body) && isset($responsever->body[0]->response->code) && ($responsever->body[0]->response->code == 200)) {//Se verifica si existe la cita.
                     //Si la cita existe se procede a consumir el servicio de actualizar.
                     try {
                         $uri = $this->base_services . '' . $this->context . 'appointments/' . $appointment;
-                        $responsever = Request::put($uri)->sendIt();
-                        $response = Request::put($uri)->body($json)->sendIt();
+                        $responsever = RequestHttp::put($uri)->sendIt();
+                        $response = RequestHttp::put($uri)->body($json)->sendIt();
                         $code = $response->code;
                         if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                             $code = $response->body[0]->response->code;
@@ -865,7 +866,7 @@ class AppointmentController extends Controller
                     try {
                         $uri = $this->base_services . '' . $this->context . 'appointments/reserve';//url del servicio con los parametros
                         Log::debug('ajax_agregar_cita URI ' . $uri);
-                        $response = Request::post($uri)->body($json)->sendIt();
+                        $response = RequestHttp::post($uri)->body($json)->sendIt();
                         $code = $response->code;
                         if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                             $code = $response->body[0]->response->code;
@@ -897,7 +898,7 @@ class AppointmentController extends Controller
             try {
                 $uri = $this->base_services . '' . $this->context . 'appointments/reserve';//url del servicio con los parametros
                 Log::debug('ajax_agregar_cita URI ' . $uri);
-                $response = Request::post($uri)->body($json)->sendIt();
+                $response = RequestHttp::post($uri)->body($json)->sendIt();
                 $code = $response->code;
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                     $code = $response->body[0]->response->code;
@@ -927,7 +928,7 @@ class AppointmentController extends Controller
         try {
             $uri = $this->base_services . '' . $this->context . 'appointments/listByCalendar/' . $agenda . '?page=' . $pagina;
             Log::debug('ajax_listar_citas_agenda URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('ajax_listar_citas_agenda Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
@@ -984,7 +985,7 @@ class AppointmentController extends Controller
                 $uri = $this->base_services . '' . $this->context . 'appointments/listByApplier/' . $id . '?page=' . $pagina;
             }
             Log::debug('ajax_listar_citas URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('ajax_listar_citas Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
@@ -1034,7 +1035,7 @@ class AppointmentController extends Controller
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars/' . $id;//url del servicio con los parametros
             Log::debug('ajax_obtener_datos_agenda URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('ajax_obtener_datos_agenda Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
@@ -1066,7 +1067,7 @@ class AppointmentController extends Controller
                 }';
             $uri = $this->base_services . '' . $this->context . 'appointments/cancel/' . $appoint_id;//url del servicio con los parametros
             Log::debug('ajax_cancelarCita URI ' . $uri);
-            $response = Request::put($uri)->body($json)->sendIt();
+            $response = RequestHttp::put($uri)->body($json)->sendIt();
             Log::debug('ajax_cancelarCita Response ' . $response);
             $code = $response->code;
             if (isset($response->body->response->code) && $response->body->response->code == 200) {
@@ -1133,7 +1134,7 @@ class AppointmentController extends Controller
                 try {
                     $uri = $this->base_services . '' . $this->context . 'blockSchedules/bulkCreate';
                     Log::debug('ajax_agregar_bloqueo_dia_completo URI ' . $uri);
-                    $response = Request::post($uri)->body($json)->sendIt();
+                    $response = RequestHttp::post($uri)->body($json)->sendIt();
                     Log::debug('ajax_agregar_bloqueo_dia_completo Response ' . $response);
                     $code = $response->code;
                     if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -1195,7 +1196,7 @@ class AppointmentController extends Controller
             try {
                 $uri = $this->base_services . '' . $this->context . 'blockSchedules';
                 Log::debug('ajax_agregar_bloqueo URI ' . $uri);
-                $response = Request::post($uri)->body($json)->sendIt();
+                $response = RequestHttp::post($uri)->body($json)->sendIt();
                 Log::debug('ajax_agregar_bloqueo Response ' . $response);
                 $code = $response->code;
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -1246,7 +1247,7 @@ class AppointmentController extends Controller
         try {
             $uri = $this->base_services . '' . $this->context . 'calendars/' . $idagenda;//url del servicio con los parametros
             Log::debug('ajax_obtener_agenda URI ' . $uri);
-            $response = Request::get($uri)->sendIt();
+            $response = RequestHttp::get($uri)->sendIt();
             Log::debug('ajax_obtener_agenda Response ' . $response);
             $code = $response->code;
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
@@ -1269,7 +1270,7 @@ class AppointmentController extends Controller
             try {
                 $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $owner;//url del servicio con los parametros
                 Log::debug('ajax_mi_calendario URI ' . $uri);
-                $response = Request::get($uri)->sendIt();
+                $response = RequestHttp::get($uri)->sendIt();
                 Log::debug('ajax_mi_calendario Response ' . $response);
                 $code = $response->code;
                 if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
@@ -1303,7 +1304,7 @@ class AppointmentController extends Controller
                 try {
                     $uri = $this->base_services . '' . $this->context . 'calendars/listByOwner/' . $g->id;
                     Log::debug('ajax_mi_calendario URI ' . $uri);
-                    $response = Request::get($uri)->sendIt();
+                    $response = RequestHttp::get($uri)->sendIt();
                     Log::debug('ajax_mi_calendario Response ' . $response);
                     $code = $response->code;
                     if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {

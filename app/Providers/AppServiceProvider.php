@@ -215,6 +215,9 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Seteamos las variables de 'address' y 'name' correspondientes al email dependiendo de la cuenta segun el dominio.
+     */
     public function bootSetEmailConfigs()
     {
         $cuenta = \Cuenta::cuentaSegunDominio();

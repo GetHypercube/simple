@@ -43,10 +43,11 @@ class UserBackendResetPasswordNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Restablecimiento de contraseña ' . env('APP_NAME'))
-            ->line('Usted está recibiendo este correo electrónico porque recibimos una solicitud de restablecimiento de contraseña para su cuenta.')
-            ->action('Restablecer la contraseña', route('backend.password.reset.get', [$this->token]))
-            ->line('Si no solicitó un restablecimiento de contraseña, no se requieren más acciones.');
+            ->greeting(' ')
+            ->salutation(' ')
+            ->subject('Reestablecer contraseña')
+            ->line('Haga click en el siguiente link para reestablacer su contraseña:')
+            ->line(route('backend.password.reset.get', [$this->token]));
     }
 
 }

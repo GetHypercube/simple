@@ -147,7 +147,8 @@
 
                 <div class="input-group">
                     <?php if ($campo->requiere_nombre): ?>
-                    <input type="text" class="form-control col-4" id="nombre" name="nombre" value="<?= $campo->nombre ?>"/>
+                    <input type="text" class="form-control col-4" id="nombre" name="nombre"
+                           value="<?= $campo->nombre ?>"/>
                     <?php $campos_asistencia = $formulario->Proceso->getNombresDeCampos($campo->tipo, false) ?>
 
                     <?php if (count($campos_asistencia)): ?>
@@ -219,70 +220,79 @@
                 <?php } ?>
                 <?php endif ?>
                 <label>Visible solo si</label>
-                <div class="campoDependientes form-inline">
-                    <input type="text" class="form-control col-4" name="dependiente_campo"
-                           value="<?=$campo->dependiente_campo?>"/>
-                    <div class="btn-group dependiente ml-1" style="display: inline-block; vertical-align: top;">
-                        <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="material-icons">view_list</i> <span class="caret align-middle"></span>
-                        </a>
-                        <div class="dropdown-menu">
-                            <button class="dropdown-item" type="button"><b>Campos</b></button>
-                            @foreach ($formulario->Proceso->getCampos() as $c)
-                                <a class="dropdown-item" href="#"><?= $c->nombre ?></a>
-                            @endforeach
-                            <div class="dropdown-divider"></div>
-                            <button class="dropdown-item" type="button"><b>Variables</b></button>
-                            @foreach ($formulario->Proceso->getVariables() as $v)
-                                <a class="dropdown-item" href="#"><?= $v->extra->variable ?></a>
-                            @endforeach
+                <div class="campoDependientes">
+                    <div class="form-inline">
+                        <input type="text" class="form-control col-4" name="dependiente_campo"
+                               value="<?=$campo->dependiente_campo?>"/>
+                        <div class="btn-group dependiente ml-1" style="display: inline-block; vertical-align: top;">
+                            <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
+                                <i class="material-icons">view_list</i> <span class="caret align-middle"></span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item" type="button"><b>Campos</b></button>
+                                @foreach ($formulario->Proceso->getCampos() as $c)
+                                    <a class="dropdown-item" href="#"><?= $c->nombre ?></a>
+                                @endforeach
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" type="button"><b>Variables</b></button>
+                                @foreach ($formulario->Proceso->getVariables() as $v)
+                                    <a class="dropdown-item" href="#"><?= $v->extra->variable ?></a>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- <select class="input-medium" name="dependiente_campo"> -->
-                    <!-- </select> -->
+                        <!-- <select class="input-medium" name="dependiente_campo"> -->
+                        <!-- </select> -->
 
-                    <div class="btn-group ml-3 mr-3">
-                        <button type="button" class="buttonIgualdad btn btn-secondary">=</button>
-                        <button type="button" class="buttonDesigualdad btn btn-secondary">!=</button>
-                    </div>
+                        <div class="btn-group ml-3 mr-3">
+                            <button type="button" class="buttonIgualdad btn btn-secondary">=</button>
+                            <button type="button" class="buttonDesigualdad btn btn-secondary">!=</button>
+                        </div>
 
-                    <input type="hidden" name="dependiente_relacion"
-                           value="<?=isset($campo) && $campo->dependiente_relacion ? $campo->dependiente_relacion : '==' ?>"/>
+                        <input type="hidden" name="dependiente_relacion"
+                               value="<?=isset($campo) && $campo->dependiente_relacion ? $campo->dependiente_relacion : '==' ?>"/>
 
-                    <span class="input-append">
+                        <span class="input-append">
                         <input type="text" class="form-control" name="dependiente_valor"
                                value="<?= isset($campo) ? $campo->dependiente_valor : '' ?>"/>
                         <button type="button" class="buttonString btn btn-secondary">String</button>
                         <button type="button" class="buttonRegex btn btn-secondary">Regex</button>
                     </span>
-                    <input type="hidden" name="dependiente_tipo"
-                           value="<?=isset($campo) && $campo->dependiente_tipo ? $campo->dependiente_tipo : 'string' ?>"/>
+                        <input type="hidden" name="dependiente_tipo"
+                               value="<?=isset($campo) && $campo->dependiente_tipo ? $campo->dependiente_tipo : 'string' ?>"/>
 
-                    @if (isset($campo->datos_mapa) && $campo->datos_mapa)
-                        <script type="text/javascript">
-                            $(function () {
-                                $("[name=readonly]").click(function () {
-                                    if ($(this).attr('checked')) {
-                                        $('.columnas').show();
-                                    } else {
-                                        $("#formEditarCampo .columnas table tbody tr").remove();
-                                        $('.columnas').hide();
-                                    }
+                        @if (isset($campo->datos_mapa) && $campo->datos_mapa)
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("[name=readonly]").click(function () {
+                                        if ($(this).attr('checked')) {
+                                            $('.columnas').show();
+                                        } else {
+                                            $("#formEditarCampo .columnas table tbody tr").remove();
+                                            $('.columnas').hide();
+                                        }
+                                    });
                                 });
-                            });
-                        </script>
-                    @endif
+                            </script>
+                        @endif
+                    </div>
 
                     <?php if (isset($campo->datos_agenda) && $campo->datos_agenda): ?>
-                    <label>Pertenece a: </label>
-                    <select id="selectgrupo" class="form-control" name="grupos_usuarios">
-                    </select>
-                    <button class="btn btn_filtrar_agenda vtop" type="button">Filtrar</button>
-                    <label style="margin-top:8px;">Agenda:</label>
-                    <select id="miagenda" class="form-control" name="agenda_campo">
-                        <option value="1">Seleccione(Opcional)</option>
-                    </select>
+                    <div class="form-group">
+                        <label>Pertenece a: </label>
+                        <div class="input-group mb-3">
+                            <select id="selectgrupo" class="form-control col-4" name="grupos_usuarios"></select>
+                            <div class="input-group-append">
+                                <button class="btn btn_filtrar_agenda vtop btn-light" type="button">Filtrar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Agenda:</label>
+                        <select id="miagenda" class="form-control col-4" name="agenda_campo">
+                            <option value="1">Seleccione(Opcional)</option>
+                        </select>
+                    </div>
                     <script type="text/javascript">
                         $(function () {
                             $("#selectgrupo").select2({
@@ -329,9 +339,10 @@
                                     if (data.code == 200) {
                                         var items = data.resultado.items;
                                         $.each(items, function (index, element) {
-                                            var icon = 'iconglyp-user';
+                                            console.log(element);
+                                            var icon = 'person';
                                             if (element.tipo == 1) {
-                                                icon = 'iconglyp-group';
+                                                icon = 'group';
                                             }
                                             $("#selectgrupo").append('<option value="' + element.id + '" data-icon="' + icon + '" >' + element.nombre + '</option>');
                                         });
@@ -347,12 +358,12 @@
 
                         function format(icon) {
                             var originalOption = icon.element;
-                            return '<i class="fa defaulticonglyp ' + $(originalOption).data('icon') + '" style="top: 1px;"></i>&nbsp;&nbsp;' + icon.text;
+                            return $('<span><i class="material-icons" style="top: 1px;">' + $(originalOption).data('icon') + '</i>&nbsp;&nbsp;' + icon.text + '</span>');
                         }
 
                         function selection(icon) {
                             var originalOption = icon.element;
-                            return '<i class="fa defaulticonglyp ' + $(originalOption).data('icon') + ' " style="top: 7px;"></i>&nbsp;&nbsp;' + icon.text;
+                            return $('<span><i class="material-icons" style="top: 7px;">' + $(originalOption).data('icon') + '</i>&nbsp;&nbsp;' + icon.text + '</span>');
                         }
 
                         function cargar_service(idagenda) {
@@ -404,7 +415,8 @@
                         });
                     </script>
                     <h4>Datos</h4>
-                    <button class="btn btn-light nuevo" type="button"><i class="material-icons">add</i> Nuevo</button>
+                    <button class="btn btn-light nuevo" type="button"><i class="material-icons">add</i> Nuevo
+                    </button>
                     <table class="table mt-3">
                         <thead>
                         <tr>

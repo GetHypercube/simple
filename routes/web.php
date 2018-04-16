@@ -107,6 +107,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::post('formularios/editar_campo_form/{campo_id?}', 'FormsController@editar_campo_form')->name('forms.editar_campo_form');
         Route::get('formularios/listarPertenece', 'FormsController@listarPertenece')->name('forms.listarPertenece');
         Route::post('formularios/editar_posicion_campos/{formulario_id}', 'FormsController@editar_posicion_campos')->name('forms.editar_posicion_campos');
+        Route::get('formularios/ajax_mi_calendario', 'FormsController@ajax_mi_calendario')->name('forms.ajax_mi_calendario');
 
         Route::get('documentos/listar/{proceso_id}', 'DocumentController@list')->name('document.list');
         Route::get('documentos/crear/{proceso_id}', 'DocumentController@create')->name('document.create');
@@ -145,7 +146,6 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::post('suscriptores/import', 'SubscribersController@import')->name('subscribers.import');
 
         //Test
-        Route::post('formularios/ajax_mi_calendario', 'FormsController@editar_campo_form')->name('forms.ajax_mi_calendario');
         Route::post('formularios/obtener_agenda', 'FormsController@editar_campo_form')->name('forms.obtener_agenda');
         Route::post('documentos/crear/{proceso_id}', 'ProcessController@publicar')->name('documentos.listar');
 

@@ -200,17 +200,11 @@ if (isset($editar) && $editar) {
 
         function selection(icon) {
             var originalOption = icon.element;
-            console.log(icon);
-            console.log();
             return $('<span><i class="material-icons" style="top: 7px;">' + $(originalOption).data('icon') + '</i>&nbsp;&nbsp;' + icon.text + '</span>');
         }
 
         function guardaragenda() {
             var form = $('#formeditagenda');
-            console.log(form);
-            console.log(form.method);
-            console.log($(form).serialize());
-            console.log($(form).method);
             $('.validacion').html('');
             var url = $('#formeditagenda').attr('action');
             if (validarCampos()) {

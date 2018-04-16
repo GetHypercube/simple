@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Notifications\UserBackendResetPasswordNotification;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -38,5 +39,13 @@ class User extends Authenticatable
     public function grupo_usuarios()
     {
         return $this->belongsToMany('App\Models\GrupoUsuarios', 'grupo_usuarios_has_usuario', 'usuario_id', 'grupo_usuarios_id');
+    }
+
+    /**
+     * @param string $token
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new UserBackendResetPasswordNotification($token));
     }
 }

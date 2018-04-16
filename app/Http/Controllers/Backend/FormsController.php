@@ -342,7 +342,8 @@ class FormsController extends Controller
     public function ajax_mi_calendario()
     {
         $owner = (isset($_GET['pertenece']) && is_numeric($_GET['pertenece'])) ? $_GET['pertenece'] : 0;
-        $agenda = new \agenda();
+        $agenda = new \App\Http\Controllers\AppointmentController();
         $agenda->ajax_mi_calendario($owner);
     }
+
 }

@@ -33,16 +33,18 @@ if (!function_exists('prep_url')) {
  * @return    integer
  */
 if (!function_exists('mysql_to_unix')) {
+    /**
+     * Converts a MySQL Timestamp to Unix
+     *
+     * @param    int    MySQL timestamp YYYY-MM-DD HH:MM:SS
+     * @return    int    Unix timstamp
+     */
     function mysql_to_unix($time = '')
     {
         // We'll remove certain characters for backward compatibility
         // since the formatting changed with MySQL 4.1
         // YYYY-MM-DD HH:MM:SS
-
-        $time = str_replace('-', '', $time);
-        $time = str_replace(':', '', $time);
-        $time = str_replace(' ', '', $time);
-
+        $time = str_replace(array('-', ':', ' '), '', $time);
         // YYYYMMDDHHMMSS
         return mktime(
             substr($time, 8, 2),

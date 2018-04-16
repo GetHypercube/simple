@@ -123,7 +123,7 @@ h1 {
       margin-top: 0.5rem;
     }
     p {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.2rem;
     }
   }
 }
@@ -242,17 +242,7 @@ ul.steps li {
   font-size: 16px;
   line-height: 24px;
 }
-
-.has-error .form-control {
-  border-color: #a94442;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-  &:focus {
-    border-color: #843534;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;
-  }
-}
+ar
 
 .map {
   height: 350px;
