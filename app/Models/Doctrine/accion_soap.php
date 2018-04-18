@@ -131,8 +131,6 @@ class AccionSoap extends Accion
                 $r = new Regla($this->extra->request);
                 $request = $r->getExpresionParaOutput($etapa->id);
             }
-            dd($request);
-
             $intentos = -1;
 
             //se verifica si existe numero de reintentos
@@ -145,6 +143,8 @@ class AccionSoap extends Accion
             do {
                 //Se EJECUTA el llamado Soap
                 $result = $client->call($this->extra->operacion, $request,null,'',false,null,'rpc','literal', true);
+                dump($this->extra->operacion);
+                dump($request);
                 dd($result);
                 Log::info("Error SOAP");
 
