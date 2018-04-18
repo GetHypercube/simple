@@ -22,9 +22,12 @@ $(document).ready(function() {
 
     $(".file-uploader").each(function(i, el) {
         var $parentDiv = $(el).parent();
+        console.log($(el).data("action"));
         new qq.FileUploader({
+            params: {_token: window._token},
             element: el,
             action: $(el).data("action"),
+            method: 'post',
             onComplete: function(id, filename, respuesta) {
                 if (!respuesta.error) {
                     if (typeof(respuesta.file_name) !== "undefined") {
@@ -34,7 +37,7 @@ $(document).ready(function() {
                         prepareDynaForm(".dynaForm");
                     } else {
                         $parentDiv.find(".link").html("");
-                        alert("La imagen es muy grande");
+                        //alert("La imagen es muy grande");
                     }
                 }
             }

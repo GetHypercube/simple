@@ -86,7 +86,7 @@ class AccionRest extends Accion
                 <select id="tipoSeguridad" class="form-control col-2" name="extra[idSeguridad]">
                 <option value="-1">Sin seguridad</option>';
         foreach ($conf_seguridad as $seg) {
-            if (!is_null($this->extra) && $this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
+            if (!is_null($this->extra) && isset($this->extra->idSeguridad) && $this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
                 $display .= '<option value="' . $seg->id . '" selected>' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
             } else {
                 $display .= '<option value="' . $seg->id . '">' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
@@ -143,6 +143,7 @@ class AccionRest extends Accion
 
             $seguridad = new SeguridadIntegracion();
             $idSeguridad = null;
+
             if (isset($this->extra->idSeguridad)) {
                 $idSeguridad = $this->extra->idSeguridad;
             }
@@ -152,13 +153,13 @@ class AccionRest extends Accion
             Log::info("Config: " . $this->varDump($config));
 
 
+            $request = '';
             if (isset($this->extra->request)) {
                 $r = new Regla($this->extra->request);
                 $request = $r->getExpresionParaOutput($etapa->id);
             }
 
             Log::info("Request: " . $request);
-
 
             $headers = array();
 
@@ -179,10 +180,9 @@ class AccionRest extends Accion
 
             $client = new GuzzleHttp\Client($config);
 
-
-            $intentos = -1;
             //se verifica si existe numero de reintentos
             $reintentos = 0;
+            $intentos = 0;
             if (isset($this->extra->timeout_reintentos)) {
                 $reintentos = $this->extra->timeout_reintentos;
             }
@@ -195,22 +195,23 @@ class AccionRest extends Accion
                 try {
                     // Se ejecuta la llamada segun el metodo
                     if ($this->extra->tipoMetodo == "GET") {
-                        $result = $client->get($uri, [
+                        $result = $client->request('GET', $uri, [
                             GuzzleHttp\RequestOptions::JSON => array()
                         ]);
                     } else if ($this->extra->tipoMetodo == "POST") {
-                        $result = $client->post($uri, [
-                            GuzzleHttp\RequestOptions::JSON => $request
+                        $result = $client->request('POST', $uri, [
+                            GuzzleHttp\RequestOptions::JSON => json_decode($request)
                         ]);
                     } else if ($this->extra->tipoMetodo == "PUT") {
                         $result = $client->put($uri, [
-                            GuzzleHttp\RequestOptions::JSON => $request
+                            GuzzleHttp\RequestOptions::JSON => json_decode($request)
                         ]);
                     } else if ($this->extra->tipoMetodo == "DELETE") {
                         $result = $client->delete($uri, [
-                            GuzzleHttp\RequestOptions::JSON => $request
+                            GuzzleHttp\RequestOptions::JSON => json_decode($request)
                         ]);
                     }
+
 
                     Log::debug("Result REST: " . $this->varDump($result));
 
@@ -232,9 +233,8 @@ class AccionRest extends Accion
             } while ($timeout && ($intentos < $reintentos));
 
             if ($intentos != $reintentos) {
-                $response = $result->getResponse();
-                $statusCode = $response->getStatusCode();
-
+                $response = $result->getBody()->getContents();
+                $statusCode = $result->getStatusCode();
                 if ($statusCode == '0') {
                     $result2['code'] = '500';
                     $result2['desc'] = $response->getMessage();
@@ -243,8 +243,7 @@ class AccionRest extends Accion
                         $result2['code'] = '206';
                         $result2['desc'] = $response->getMessage();
                     } else {
-
-                        $result2 = (is_array($result)) ? get_object_vars($result[0]) : get_object_vars($result);
+                        $result2 = $response;
                     }
                 }
 
@@ -260,7 +259,10 @@ class AccionRest extends Accion
         $result2 = json_encode($result2);
         $result2 = str_replace(" - ", "_", $result2);
         $result2 = json_decode($result2);
-        $response[$this->extra->var_response] = $result2;
+
+        $response = (object)[];
+        $response->{$this->extra->var_response} = $result2;
+
         Log::debug("Respuesta REST Response: " . $this->varDump($response));
 
         foreach ($response as $key => $value) {

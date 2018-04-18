@@ -141,7 +141,12 @@ class Regla
             $dato = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($nombre_dato, $etapa_id);
 
             if ($dato) {
-                $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
+                try {
+                    $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
+                } catch (Exception $e) {
+                    $dato_almacenado = '';
+                    Log::error("Error" . $e);
+                }
 
                 if (!is_string($dato_almacenado)) {
                     $valor_dato = json_encode($dato_almacenado);

@@ -37,7 +37,7 @@ class Suscriptor extends Doctrine_Record
                 <select id="tipoSeguridad" name="extra[idSeguridad]" class="form-control col-2">';
         $display .= '<option value="-1">Sin seguridad</option>';
         foreach ($conf_seguridad as $seg) {
-            if ($this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
+            if (!is_null($this->extra) && isset($this->extra->idSeguridad) && $this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
                 $display .= '<option value="' . $seg->id . '" selected>' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
             } else {
                 $display .= '<option value="' . $seg->id . '">' . $seg->institucion . ' - ' . $seg->servicio . '</option>';

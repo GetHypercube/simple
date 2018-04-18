@@ -164,7 +164,7 @@ class AppointmentController extends Controller
             $code = $response->code;
             if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                 foreach ($response->body[1]->calendars as $item) {
-                    $tmp = new stdClass();
+                    $tmp = new \stdClass();
                     $tmp->id = $item->id;
                     $tmp->name = $item->name;
                     $tmp->owner_id = $item->owner_id;
@@ -192,7 +192,7 @@ class AppointmentController extends Controller
                 $code = $response->code;
                 if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                     foreach ($response->body[1]->calendars as $item) {
-                        $tmp = new stdClass();
+                        $tmp = new \stdClass();
                         $tmp->id = $item->id;
                         $tmp->name = $item->name;
                         $tmp->owner_id = $item->owner_id;
@@ -934,7 +934,7 @@ class AppointmentController extends Controller
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                 //$datos=$response->body->appointments;
                 foreach ($response->body[1]->appointments as $items) {
-                    $class = $newobj = new stdClass();
+                    $class = $newobj = new \stdClass();
                     $class->appointment_id = $items->appointment_id;
                     $class->subject = $items->subject;
                     $class->owner_name = $items->owner_name;
@@ -991,7 +991,7 @@ class AppointmentController extends Controller
             if (isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code) && $response->body[0]->response->code == 200) {
                 $total_registros = $response->body[1]->count;
                 foreach ($response->body[1]->appointments as $items) {
-                    $class = $newobj = new stdClass();
+                    $class = $newobj = new \stdClass();
                     $class->appointment_id = $items->appointment_id;
                     $class->subject = $items->subject;
                     $class->owner_name = $items->owner_name;
@@ -1277,7 +1277,7 @@ class AppointmentController extends Controller
                     $code = $response->body[0]->response->code;
                     $mensaje = $response->body[0]->response->message;
                     foreach ($response->body[1]->calendars as $items) {
-                        $tmp = new stdClass();
+                        $tmp = new \stdClass();
                         $tmp->id = $items->id;
                         $tmp->name = $items->name;
                         $tmp->owner_id = $items->owner_id;
@@ -1309,7 +1309,7 @@ class AppointmentController extends Controller
                     $code = $response->code;
                     if (isset($response->code) && $response->code == 200 && isset($response->body) && is_array($response->body) && isset($response->body[0]->response->code)) {
                         foreach ($response->body[1]->calendars as $item) {
-                            $tmp = new stdClass();
+                            $tmp = new \stdClass();
                             $tmp->id = $item->id;
                             $tmp->name = $item->name;
                             $tmp->owner_id = $item->owner_id;

@@ -24,7 +24,7 @@ class AccionNotificaciones extends Accion
         $display .= '<div class="controls">';
 
         foreach ($suscriptores as $suscriptor) {
-            $nombre_checkbox = '<a target="_blank" href="' . url('backend/suscriptores/editar/' . $suscriptor->id) . '">' . $suscriptor->institucion . '</a>';
+            $nombre_checkbox = ' <a target="_blank" href="' . url('backend/suscriptores/editar/' . $suscriptor->id) . '">' . $suscriptor->institucion . '</a>';
             if (isset($this->extra->suscriptorSel) && count($this->extra->suscriptorSel) > 0) {
                 if (in_array($suscriptor->id, $this->extra->suscriptorSel)) {
                     $display .= '<label class="checkbox"><input type="checkbox" name="extra[suscriptorSel][]" value="' . $suscriptor->id . '" checked=true />' . $nombre_checkbox . '</label>';
@@ -58,7 +58,6 @@ class AccionNotificaciones extends Accion
 
         $proceso = Doctrine::getTable('Proceso')->find($etapa['Tarea']['proceso_id']);
         $suscriptores = $proceso->Suscriptores;
-
         if (isset($this->extra->suscriptorSel) && count($this->extra->suscriptorSel) > 0) {
             foreach ($this->extra->suscriptorSel as $suscriptor_id) {
                 Log::info("Notificando a suscriptor id: " . $suscriptor_id);
@@ -116,15 +115,14 @@ class AccionNotificaciones extends Accion
                         GuzzleHttp\RequestOptions::JSON => $request
                     ]);
 
-                    $response = $result->getResponse();
+                    $response = $result->getBody();
 
                 } catch (Exception $exception) {
                     Log::error('Error Notificando a suscriptor ' . $suscriptor->institucion . $exception->getMessage());
-
-                    $response = $exception->getResponse();
+                    $response = $exception->getBody();
                     $error_message = $exception->getMessage();
                 } finally {
-                    $statusCode = $response->getStatusCode();
+                    $statusCode = $result->getStatusCode();
                 }
 
                 //Se obtiene la codigo de la cabecera HTTP
@@ -133,7 +131,7 @@ class AccionNotificaciones extends Accion
                     // Se guarda en Auditoria el error
                     $response->code = $statusCode;
                     $response->des_code = $error_message;
-                    $response = json_encode($response);
+                    $response = json_encode($response->getContents());
                     $operacion = 'Error Notificando a suscriptor ' . $suscriptor->institucion;
 
                     AuditoriaOperaciones::registrarAuditoria($proceso->nombre,
@@ -147,9 +145,8 @@ class AccionNotificaciones extends Accion
                         $result2 = "SUCCESS";
                     }
                     $response = $result2;
-                    dd($response);
                     AuditoriaOperaciones::registrarAuditoria($proceso->nombre,
-                        "Suscriptor " . $suscriptor->institucion . " notificado exitosamente", $response, array());
+                        "Suscriptor " . $suscriptor->institucion . " notificado exitosamente", implode(',', $response), array());
                 }
             }
         }

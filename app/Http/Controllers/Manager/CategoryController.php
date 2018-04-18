@@ -127,7 +127,7 @@ class CategoryController extends Controller
     public function mySiteUploadLogo(Request $request)
     {
         $allowedExtensions = ['jpg', 'png'];
-        $pathLogos = public_path('uploads/logos/');
+        $pathLogos = public_path('logos/');
         $response = (new FileUploader($allowedExtensions))->handleUpload($pathLogos);
 
         return $response;

@@ -28,8 +28,7 @@ class SeguridadIntegracion
                 $config = array(
                     'timeout' => $timeout,
                     'base_uri' => $server,
-                    'http_user' => $user,
-                    'http_pass' => $pass,
+                    'auth' => [$user, $pass],
                     'http_auth' => 'Basic'
                 );
                 break;
@@ -54,9 +53,7 @@ class SeguridadIntegracion
                     GuzzleHttp\RequestOptions::JSON => $request_seg
                 ]);
 
-                $response = $result->getResponse();
-
-                $statusCode = $response->getStatusCode();
+                $statusCode = $result->getStatusCode();
 
                 //Se obtiene la codigo de la cabecera HTTP
                 if ($statusCode >= 200 && $statusCode < 300) {

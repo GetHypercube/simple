@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Facades\Log;
+
 /**
  * Handle file uploads via XMLHttpRequest
  */
@@ -104,6 +106,7 @@ class FileUploader
 
         if ($postSize < $this->sizeLimit || $uploadSize < $this->sizeLimit) {
             $size = max(1, $this->sizeLimit / 1024 / 1024) . 'M';
+
             die("{'error':'increase post_max_size and upload_max_filesize to $size'}");
         }
     }
@@ -112,7 +115,8 @@ class FileUploader
     {
         $val = trim($str);
         $last = strtolower($str[strlen($str) - 1]);
-        $val = substr($val, 0, -1);
+        $val = preg_replace('/[^0-9]/', '', $val);
+
         switch ($last) {
             case 'g':
                 $val *= 1024;
@@ -121,6 +125,7 @@ class FileUploader
             case 'k':
                 $val *= 1024;
         }
+
         return $val;
     }
 

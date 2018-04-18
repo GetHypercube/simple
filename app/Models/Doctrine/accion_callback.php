@@ -151,17 +151,17 @@ class AccionCallback extends Accion
                         GuzzleHttp\RequestOptions::JSON => $request
                     ]);
                 }
-                //Se obtiene la codigo de la cabecera HTTP
-                $response = $result->getResponse();
-                $statusCode = $response->getStatusCode();
 
+                //Se obtiene la codigo de la cabecera HTTP
+                $response = $result->getBody();
+                $statusCode = $response->getStatusCode();
 
                 if ($statusCode < 200 || $statusCode > 204) {
                     // Ocurio un error en el server del Callback ## Error en el servidor externo ##
                     // Se guarda en Auditoria el error
                     $response['code'] = $statusCode;
-                    $response['des_code'] = $response->getMessage();
-                    $response = json_encode($response);
+                    $response['des_code'] = $response->getContents();
+                    $response = json_encode($response->getContents());
                     $operacion = 'Error en llamada Callback';
 
                     AuditoriaOperaciones::registrarAuditoria($proceso->nombre,

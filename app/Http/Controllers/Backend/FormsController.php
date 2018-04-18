@@ -191,7 +191,7 @@ class FormsController extends Controller
 
         $campo->nombre = trim($request->input('nombre'));
         $campo->etiqueta = $request->input('etiqueta', false);
-        $campo->readonly = $request->input('readonly');
+        $campo->readonly = $request->has('readonly') && !is_null($request->input('readonly')) ? $request->input('readonly') : 0;
         $campo->valor_default = $request->has('valor_default') && !is_null($request->input('valor_default')) ? $request->input('valor_default', false) : '';
         $campo->ayuda = $request->has('ayuda') && !is_null($request->input('ayuda')) ? $request->input('ayuda') : '';
         $campo->validacion = explode('|', $request->input('validacion'));

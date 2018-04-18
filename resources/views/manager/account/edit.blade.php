@@ -56,11 +56,12 @@
     <script src="{{asset('js/helpers/fileuploader.js')}}"></script>
     <script>
         var uploader = new qq.FileUploader({
+            params: {_token: '{{csrf_token()}}'},
             element: document.getElementById('file-uploader'),
             action: '/manager/uploader/logo',
             onComplete: function (id, filename, respuesta) {
                 $("input[name=logo]").val(respuesta.file_name);
-                $("img.logo").attr("src", "logos/" + respuesta.file_name);
+                $("img.logo").attr("src", "/logos/" + respuesta.file_name);
             }
         });
     </script>

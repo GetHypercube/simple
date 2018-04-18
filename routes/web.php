@@ -10,6 +10,8 @@ Route::middleware(['auth_user'])->group(function () {
 
     Auth::routes();
 
+    Route::post('/uploader/datos/{campo_id}/{etapa_id}', 'UploadController@datos');
+
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::get('login/claveunica', 'Auth\LoginController@redirectToProvider')->name('login.claveunica');
     Route::get('login/claveunica/callback', 'Auth\LoginController@handleProviderCallback')->name('login.claveunica.callback');
