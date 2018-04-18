@@ -16,7 +16,7 @@ return [
     'is_natural_no_zero' => 'El campo :attribute no es un número natural excluyendo el cero.',
     'rut' => 'El campo :attribute no es un RUN válido',
     'valid_email' => 'El campo :attribute no es un email válido',
-    'valid_emails' => 'Los correos electrónicos indicados en el campo no son correos electrónicos válidos.',
+    'emails' => 'Los correos electrónicos indicados en el campo no son correos electrónicos válidos.',
     'captcha' => 'Captcha invalido.',
     'approved' => 'Esta cuenta aún no ha sido aceptada por la CNE',
     'available_role' => 'No tienes permisos para usar este Rol',

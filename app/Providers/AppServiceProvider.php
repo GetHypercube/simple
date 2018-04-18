@@ -115,7 +115,7 @@ class AppServiceProvider extends ServiceProvider
             return TRUE;
         });
 
-        Validator::extend('valid_emails', function ($attribute, $value, $parameters, $validator) {
+        Validator::extend('emails', function ($attribute, $value, $parameters, $validator) {
 
             $value = str_replace(' ', '', $value);
             $array = explode(',', $value);
@@ -128,7 +128,7 @@ class AppServiceProvider extends ServiceProvider
             $rules = array('email.*' => 'email');
 
             $messages = array(
-                'email.*' => trans('validation.valid_emails')
+                'email.*' => trans('validation.emails')
             );
             $validator = Validator::make($email_to_validate, $rules, $messages);
 
