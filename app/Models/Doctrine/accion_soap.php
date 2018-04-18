@@ -106,11 +106,10 @@ class AccionSoap extends Accion
 
     public function ejecutar($tramite_id)
     {
-
         $etapa = $tramite_id;
 
         //Se declara el cliente soap
-        $client = new nusoap_client($this->extra->wsdl, 'wsdl');
+        $client = new \App\Helpers\nusoap\lib\nusoap_client($this->extra->wsdl, 'wsdl');
 
         if (isset($this->extra->idSeguridad) && strlen($this->extra->idSeguridad) > 0 && $this->extra->idSeguridad > 0) {
             $seguridad = new SeguridadIntegracion();
@@ -143,13 +142,8 @@ class AccionSoap extends Accion
 
             do {
                 //Se EJECUTA el llamado Soap
-                $result = $client->call($this->extra->operacion, $request,null,'',false,null,'rpc','literal', true);
-                echo '<h2>Request</h2><pre>' . htmlspecialchars($client->request, ENT_QUOTES) . '</pre>';
-                echo '<h2>Response</h2><pre>' . htmlspecialchars($client->response, ENT_QUOTES) . '</pre>';
-                echo '<h2>Debug</h2><pre>' . htmlspecialchars($client->debug_str, ENT_QUOTES) . '</pre>';
-                dump($this->extra->operacion);
-                dump($request);
-                dd($result);
+                $result = $client->call($this->extra->operacion, $request, null, '', false, null, 'rpc', 'literal', true);
+
                 Log::info("Error SOAP");
 
                 $error = $client->getError();
