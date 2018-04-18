@@ -2,6 +2,10 @@
 
 @section('title', $title)
 
+@section('css')
+    <link rel="stylesheet" href="<?= asset('css/handsontable.full.min.css') ?>">
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="row mt-3">
@@ -108,6 +112,8 @@
     </div>
 @endsection
 @section('script')
+
+    <script src="{{asset('js/helpers/handsontable.full.min.js')}}"></script>
     <script>
         $(document).ready(function () {
             $("#reasignarLink").click(function () {

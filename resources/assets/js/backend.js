@@ -98,6 +98,17 @@ $(document).on("submit", ".ajaxForm", function () {
     return false;
 });
 
+
+$(document).ready(function () {
+    //Para que el tooltip funcione en los contenidos cargados con ajax
+    $( ".tt" ).hover(function() {
+        $(this).tooltip({
+            html: true,
+            trigger: "manual"
+        }).tooltip('toggle');
+    });
+});
+
 //Scroll change html background-color 'test'
 $(document).ready(function () {
     window.documentHeight = $(document).height();

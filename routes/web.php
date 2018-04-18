@@ -40,6 +40,9 @@ Route::middleware(['auth_user'])->group(function () {
     //Test URL's
     Route::get('/home', 'HomeController@index')->name('autenticacion.login_openid');
     Route::get('/agenda/miagenda', 'HomeController@index')->name('agenda.miagenda');
+
+    //Agenda
+    Route::get('/agenda/ajax_modal_calendar', 'AppointmentController@ajax_modal_calendar')->name('agenda.ajax_modal_calendar');
 });
 
 Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function () {

@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     $('.navbar-detail').hide();
     $("#main").css("margin-top", $("header").height());
@@ -7,7 +7,7 @@ $(document).ready(function() {
         $('.navbar-detail').toggle();
     });
 
-    $(window).resize(function() {
+    $(window).resize(function () {
         $('.navbar-detail').hide();
         $("#main").css("margin-top", $("header").height());
     });
@@ -16,11 +16,13 @@ $(document).ready(function() {
 
     $(".chosen").chosen();
 
-    $(".preventDoubleRequest").one("click", function() {
-        $(this).click(function () { return false; });
+    $(".preventDoubleRequest").one("click", function () {
+        $(this).click(function () {
+            return false;
+        });
     });
 
-    $(".file-uploader").each(function(i, el) {
+    $(".file-uploader").each(function (i, el) {
         var $parentDiv = $(el).parent();
         console.log($(el).data("action"));
         new qq.FileUploader({
@@ -28,7 +30,7 @@ $(document).ready(function() {
             element: el,
             action: $(el).data("action"),
             method: 'post',
-            onComplete: function(id, filename, respuesta) {
+            onComplete: function (id, filename, respuesta) {
                 if (!respuesta.error) {
                     if (typeof(respuesta.file_name) !== "undefined") {
                         $parentDiv.find(":input[type=hidden]").val(respuesta.file_name);
@@ -44,7 +46,7 @@ $(document).ready(function() {
         });
     });
 
-    $(".file-uploader").parent().on("click", "a.remove", function() {
+    $(".file-uploader").parent().on("click", "a.remove", function () {
         var $parentDiv = $(this).closest("div");
         $parentDiv.find(":input[type=hidden]").val("");
         $parentDiv.find(".link").empty();
@@ -52,7 +54,7 @@ $(document).ready(function() {
         prepareDynaForm(".dynaForm");
     });
 
-    $("#login .submit").click(function() {
+    $("#login .submit").click(function () {
         var form = $("#login");
         if (!$(form).prop("submitting")) {
             $(form).prop("submitting", true);
@@ -63,7 +65,7 @@ $(document).ready(function() {
                 data: $(form).serialize(),
                 type: $(form).prop("method"),
                 dataType: "json",
-                success: function(response) {
+                success: function (response) {
                     if (response.validacion) {
                         if (response.redirect) {
                             window.location = response.redirect;
@@ -75,7 +77,7 @@ $(document).ready(function() {
                         if ($('#login_captcha').length > 0) {
                             if ($('#login_captcha').is(':empty')) {
                                 grecaptcha.render('login_captcha', {
-                                    'sitekey' : site_key
+                                    'sitekey': site_key
                                 });
                             } else {
                                 grecaptcha.reset();
@@ -91,7 +93,7 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function() {
+                error: function () {
                     $(form).prop("submitting", false);
                     $('#login .ajaxLoader').hide();
                 }
@@ -100,7 +102,7 @@ $(document).ready(function() {
         return false;
     });
 
-    $(document).on("submit", ".ajaxForm", function() {
+    $(document).on("submit", ".ajaxForm", function () {
         var form = this;
         if (!form.submitting) {
             form.submitting = true;
@@ -117,7 +119,7 @@ $(document).ready(function() {
                 data: $(form).serialize(),
                 type: form.method,
                 dataType: "json",
-                success: function(response) {
+                success: function (response) {
                     if (response.validacion) {
                         if (response.redirect) {
                             window.location = response.redirect;
@@ -146,7 +148,7 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function() {
+                error: function () {
                     form.submitting = false;
                     $(ajaxLoader).remove();
                     $(form).find(":submit").attr("disabled", false);
@@ -159,8 +161,8 @@ $(document).ready(function() {
     // Para manejar los input dependientes en dynaforms
     function prepareDynaForm(form) {
         $(form).find(":input[readonly]").prop("disabled", false);
-        $(form).find(".file-uploader ~ input[type=hidden]").prop("type","text");
-        $(form).find(".campo[data-dependiente-campo]").each(function(i, el) {
+        $(form).find(".file-uploader ~ input[type=hidden]").prop("type", "text");
+        $(form).find(".campo[data-dependiente-campo]").each(function (i, el) {
             var tipo = $(el).data("dependiente-tipo");
             var relacion = $(el).data("dependiente-relacion");
             var campo = $(el).data("dependiente-campo");
@@ -168,7 +170,7 @@ $(document).ready(function() {
             var existe = false;
             var visible = false;
 
-            $(form).find(":input[name='"+campo+"']").each(function (i, el) {
+            $(form).find(":input[name='" + campo + "']").each(function (i, el) {
 
                 existe = true;
 
@@ -186,7 +188,7 @@ $(document).ready(function() {
                             }
                         }
                         if (relacion == "!=") {
-                            visible =! visible;
+                            visible = !visible;
                         }
                         if (visible) {
                             break;
@@ -198,7 +200,7 @@ $(document).ready(function() {
             if (existe) {
                 if (visible) {
                     if ($(form).hasClass("debugForm"))
-                        $(el).css("opacity","1.0");
+                        $(el).css("opacity", "1.0");
                     else
                         $(el).show();
 
@@ -207,7 +209,7 @@ $(document).ready(function() {
 
                 } else {
                     if ($(form).hasClass("debugForm"))
-                        $(el).css("opacity","0.5");
+                        $(el).css("opacity", "0.5");
                     else
                         $(el).hide();
 
@@ -216,23 +218,23 @@ $(document).ready(function() {
             }
         });
 
-        $(form).find(":input.disabled-temp").each(function(i, el) {
+        $(form).find(":input.disabled-temp").each(function (i, el) {
             $(el).prop("disabled", true);
             $(el).removeClass("disabled-temp");
         });
 
-        $(form).find(":input.enabled-temp").each(function(i, el) {
+        $(form).find(":input.enabled-temp").each(function (i, el) {
             $(el).prop("disabled", false);
             $(el).removeClass("disabled-temp");
         });
 
-        $(form).find(".file-uploader ~ input[type=text]").prop("type","hidden");
-        $(form).find(":input[readonly]").prop("disabled",true);
+        $(form).find(".file-uploader ~ input[type=text]").prop("type", "hidden");
+        $(form).find(":input[readonly]").prop("disabled", true);
     }
 
     prepareDynaForm(".dynaForm");
 
-    $(".dynaForm").on("change", ":input", function(event) {
+    $(".dynaForm").on("change", ":input", function (event) {
         prepareDynaForm($(event.target).closest(".dynaForm"))
     });
 });
@@ -272,6 +274,6 @@ function calendarioFront(idagenda, idobject, idcita, tramite, etapa) {
     }
 
     $('#codcita' + idobject).attr('data-id-etapa');
-    $("#modalcalendar").load(site_url + "agenda/ajax_modal_calendar?idagenda=" + idagenda + "&object=" + idobject + "&idcita=" + idcita + "&idtramite=" + idtramite + "&etapa=" + etapa);
+    $("#modalcalendar").load(site_url + "/agenda/ajax_modal_calendar?idagenda=" + idagenda + "&object=" + idobject + "&idcita=" + idcita + "&idtramite=" + idtramite + "&etapa=" + etapa);
     $("#modalcalendar").modal();
 }

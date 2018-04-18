@@ -168,16 +168,9 @@ class AccionRest extends Accion
                 $r = new Regla($this->extra->header);
                 $header = $r->getExpresionParaOutput($etapa->id);
                 $headers = json_decode($header);
-
-                if (isset($header) && trim($header) != '') {
-                    foreach ($headers as $name => $value) {
-                        $headers[$name] = $value;
-                    }
-                }
             }
 
             array_push($config, ['headers' => $headers]);
-
             $client = new GuzzleHttp\Client($config);
 
             //se verifica si existe numero de reintentos

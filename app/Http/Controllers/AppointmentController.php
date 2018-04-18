@@ -749,7 +749,8 @@ class AppointmentController extends Controller
         $data['idcita'] = $idcita;
         $data['idtramite'] = $idtramite;
         $data['etapa'] = $etapa;
-        $this->load->view('agenda/calendario_ciudadano', $data);
+
+        return view('agenda.calendario_ciudadano', $data);
     }
 
     public function ajax_confirmar_agregar_dia()

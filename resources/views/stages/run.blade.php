@@ -2,6 +2,7 @@
 
 @section('css')
     <link rel="stylesheet" href="<?= asset('js/helpers/calendar/css/calendar.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/handsontable.full.min.css') ?>">
 @endsection
 
 @section('content')
@@ -33,7 +34,7 @@
             </div>
         @endforeach
 
-        <div class="form-actions">
+        <div class="form-actions mt-3">
             @if ($secuencia > 0)
                 <a class="btn btn-light"
                    href="{{url('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}">
@@ -43,12 +44,14 @@
             <button class="btn btn-simple btn-danger" type="submit">Siguiente</button>
         </div>
     </form>
-    <div id="modalcalendar" class="modal hide fade modalconfg modcalejec"></div>
+    <div id="modalcalendar" class="modal hide modalconfg modcalejec"></div>
     <input type="hidden" id="urlbase" value="<?= URL::to('/') ?>"/>
 @endsection
 
 @push('script')
     <script src="{{asset('js/helpers/fileuploader.js')}}"></script>
+
+    <script src="{{asset('js/helpers/handsontable.full.min.js')}}"></script>
 
     <script type="text/javascript"
             src="<?= asset('js/helpers/calendar/components/underscore/underscore-min.js') ?>"></script>
