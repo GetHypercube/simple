@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Doctrine_Query;
 use stdClass;
 use Doctrine_Core;
+use DatoSeguimiento;
+use Regla;
 
 class ApiController extends Controller
 {
@@ -166,7 +168,7 @@ class ApiController extends Controller
             $respuesta->procesos->titulo = 'Listado de Procesos';
             $respuesta->procesos->tipo = '#procesosFeed';
             $respuesta->procesos->items = null;
-            foreach ($procesos as $t){
+            foreach ($procesos as $t) {
                 $respuesta->procesos->items[] = $t->toPublicArray();
             }
         }
@@ -177,6 +179,10 @@ class ApiController extends Controller
 
     public function notificar($tramite_id)
     {
+        if (!is_numeric($tramite_id)) {
+            return response()->json('ID inválido.');
+        }
+
         $t = Doctrine::getTable('Tramite')->find($tramite_id);
         $etapa_id = $t->getUltimaEtapa()->id;
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);

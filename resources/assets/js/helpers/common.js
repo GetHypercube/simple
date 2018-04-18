@@ -37,7 +37,7 @@ $(document).ready(function() {
                         prepareDynaForm(".dynaForm");
                     } else {
                         $parentDiv.find(".link").html("");
-                        //alert("La imagen es muy grande");
+                        alert("La imagen es muy grande");
                     }
                 }
             }

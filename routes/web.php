@@ -203,6 +203,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::view('/api/procesos_obtener', 'backend.api.procesos_obtener')->name('api.procesos_obtener');
         Route::view('/api/procesos_listar', 'backend.api.procesos_listar')->name('api.procesos_listar');
         Route::get('/api/procesos_disponibles', 'ApiController@procesos_disponibles')->name('api.procesos_disponibles');
+        Route::get('/api/notificar/{tramite_id}', 'ApiController@notificar')->name('api.notificar');
 
         //Configuración
         Route::get('/configuracion', 'ConfigurationController@mySite')->name('configuration.my_site');

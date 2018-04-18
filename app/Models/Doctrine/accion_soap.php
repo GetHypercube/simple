@@ -131,16 +131,22 @@ class AccionSoap extends Accion
                 $r = new Regla($this->extra->request);
                 $request = $r->getExpresionParaOutput($etapa->id);
             }
+            dd($request);
 
             $intentos = -1;
+
             //se verifica si existe numero de reintentos
             $reintentos = 0;
+
             if (isset($this->extra->timeout_reintentos)) {
                 $reintentos = $this->extra->timeout_reintentos;
             }
+
             do {
                 //Se EJECUTA el llamado Soap
-                $result = $client->call($this->extra->operacion, $request, null, '', false, null, 'rpc', 'literal', true);
+                $result = $client->call($this->extra->operacion, $request,null,'',false,null,'rpc','literal', true);
+                dd($result);
+                Log::info("Error SOAP");
 
                 $error = $client->getError();
                 Log::info("Error SOAP " . $this->varDump($error));
@@ -163,6 +169,7 @@ class AccionSoap extends Accion
             } else {
                 $result_soap = $this->utf8ize($result);
             }
+
         } catch (Exception $e) {
             $result_soap['code'] = $e->getCode();
             $result_soap['desc'] = $e->getMessage();
@@ -185,7 +192,7 @@ class AccionSoap extends Accion
         }
     }
 
-    function varDump($data)
+    public function varDump($data)
     {
         ob_start();
         //var_dump($data);
