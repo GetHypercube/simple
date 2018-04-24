@@ -335,7 +335,7 @@ class FormsController extends Controller
     public function obtener_agenda()
     {
         $idagenda = (isset($_GET['idagenda']) && is_numeric($_GET['idagenda'])) ? $_GET['idagenda'] : 0;
-        $agenda = new \agenda();
+        $agenda = new \App\Http\Controllers\AppointmentController();
         $agenda->ajax_obtener_agenda($idagenda);
     }
 

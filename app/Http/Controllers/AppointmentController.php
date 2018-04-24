@@ -1259,7 +1259,7 @@ class AppointmentController extends Controller
         } catch (Exception $err) {
             Log::error('ajax_obtener_agenda ' . $err);
         }
-        echo json_encode(array('code' => $code, 'mensaje' => $mensaje, 'calendario_owner' => $data));
+        return response()->json(array('code' => $code, 'mensaje' => $mensaje, 'calendario_owner' => $data));
     }
 
     public function ajax_mi_calendario($owner)

@@ -36,7 +36,7 @@
         <div id="areaFormulario">
 
             <div class="btn-toolbar">
-                <div class="btn-group mr-1">
+                <div class="btn-group ml-1 mb-1">
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'title')">
                         Título
                     </button>
@@ -50,7 +50,7 @@
                         Documento
                     </button>
                 </div>
-                <div class="btn-group mr-1">
+                <div class="btn-group ml-1 mb-1">
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'text')">
                         Textbox
                     </button>
@@ -80,7 +80,7 @@
                         Recaptcha
                     </button>
                 </div>
-                <div class="btn-group">
+                <div class="btn-group ml-1 mb-1">
                     <button class="btn btn-secondary"
                             onclick="return agregarCampo(<?= $formulario->id ?>,'instituciones_gob')">
                         Instituciones
@@ -95,7 +95,7 @@
                         Moneda
                     </button>
                 </div>
-                <div class="btn-group mt-1">
+                <div class="btn-group ml-1 mb-1">
                     <button class="btn btn-secondary"
                             onclick="return agregarCampo(<?= $formulario->id ?>,'javascript')">
                         Javascript

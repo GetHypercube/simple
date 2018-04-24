@@ -2,9 +2,6 @@
 
 if (!App::environment('local')) URL::forceScheme('https');
 
-//Integración
-Route::get('integracion/especificacion/servicio/proceso/{id_proceso}/tarea/{id_tarea}', 'Integration\SpecificationController@servicio_get');
-
 Route::middleware(['auth_user'])->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
 
@@ -102,6 +99,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::post('procesos/publicar/{proceso_draft_id}', 'ProcessController@publicar')->name('procesos.publicar');
         Route::resource('procesos', 'ProcessController');
 
+        Route::get('formularios/obtener_agenda', 'FormsController@obtener_agenda')->name('forms.obtener_agenda');
         Route::post('formularios/importar', 'FormsController@import')->name('forms.import');
         Route::get('formularios/exportar/{proceso_id}', 'FormsController@exportar')->name('forms.export');
         Route::get('formularios/listar/{proceso_id}', 'FormsController@list')->name('forms.list');
@@ -155,7 +153,6 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::post('suscriptores/import', 'SubscribersController@import')->name('subscribers.import');
 
         //Test
-        Route::post('formularios/obtener_agenda', 'FormsController@editar_campo_form')->name('forms.obtener_agenda');
         Route::post('documentos/crear/{proceso_id}', 'ProcessController@publicar')->name('documentos.listar');
 
         //Agenda
@@ -241,6 +238,8 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::post('/configuracion/grupo_usuarios_editar', 'ConfigurationController@storeGroupUsers')->name('configuration.group_users.store');
         Route::put('/configuracion/grupo_usuarios_editar/{id}', 'ConfigurationController@updateGroupUsers')->name('configuration.group_users.update');
         Route::delete('/configuracion/grupo_usuarios_editar/{id}', 'ConfigurationController@deleteGroupUsers')->name('configuration.group_users.delete');
+
+        Route::get('/configuracion/ajax_get_validacion_reglas', 'ConfigurationController@ajax_get_validacion_reglas')->name('configuration.ajax_get_validacion_reglas');
     });
 });
 

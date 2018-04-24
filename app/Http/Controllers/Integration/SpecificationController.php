@@ -20,9 +20,10 @@ class SpecificationController extends Controller
     public function procesos_get()
     {
         try {
-            //print_r(Cuenta::cuentaSegunDominio());die;
             $tarea = Doctrine::getTable('Proceso')->findProcesosExpuestos(Cuenta::cuentaSegunDominio()->id);
+
             Log::debug('Recuperando procesos expuestos: ' . count($tarea));
+
             $result = array();
             $host = $_SERVER['HTTP_HOST'];
             //$nombre_host = gethostname();
@@ -40,9 +41,9 @@ class SpecificationController extends Controller
             }
             $retval["catalogo"] = $result;
 
-            $this->response($retval);
-        } catch (Exception $e) {
-            $this->response(
+            return response()->json($retval);
+        } catch (\Exception $e) {
+            return response()->json(
                 array("message" => "Problemas internos al recuperar especificación de procesos",
                     "code" => 500), 500);
         }
@@ -65,7 +66,7 @@ class SpecificationController extends Controller
     {
         try {
             if ($id_proceso == NULL || $id_tarea == NULL) {
-                $this->response(array('status' => false, 'error' => 'Parámetros no validos'), 400);
+                return response()->json(array('status' => false, 'error' => 'Parámetros no validos'), 400);
             }
 
 
@@ -74,12 +75,9 @@ class SpecificationController extends Controller
             /* Siempre obtengo el paso número 1 para generar el swagger de la opracion iniciar trámite */
             $formulario = $integrador->obtenerFormularios($id_proceso, $id_tarea, 1);
             $swagger_file = $swagger->generar_swagger($formulario, $id_proceso, $id_tarea);
-
-            header('Content-disposition: attachment; filename=start_simple.json');
-            header('Content-type: application/json');
-            return response($swagger_file);
+            return response()->json(json_decode($swagger_file));
         } catch (Exception $e) {
-            $this->response(
+            return response()->json(
                 array("code" => $e->getCode(),
                     "message" => $e->getMessage()),
                 $e->getCode());
@@ -90,34 +88,23 @@ class SpecificationController extends Controller
     /**
      * Para obtener la especificación de formularios
      */
-    public function formularios_get()
+    public function formularios_get($id_proceso, $id_tarea = null, $id_paso = null)
     {
-        $param = $this->get();
-
-        if (!isset($param['proceso'])) {
-            $this->response(
-                array('codigo' => 400,
-                    'message' => 'Parámetros obligatorios no enviados'), 400);
-
-        }
-        $id_proceso = $param['proceso'];
-        $id_tarea = isset($param['tarea']) ? $param['tarea'] : null;
-        $id_paso = isset($param['paso']) ? $param['paso'] : null;
 
         if (!is_null($id_proceso) && !is_numeric($id_proceso)) {
-            $this->response(array("code" => 400,
+            return response()->json(array("code" => 400,
                     "message" => 'Proceso debe ser un valor numérico')
                 , 400);
         }
 
-        if (!is_null($id_tarea) && !is_numeric($id_tarea)) {
-            $this->response(array("code" => 400,
+        if (!is_numeric($id_tarea)) {
+            return response()->json(array("code" => 400,
                     "message" => 'Terea debe ser distinto a null y un valor numérico')
                 , 400);
         }
 
-        if (isset($id_paso) && !is_null($id_paso) && $id_paso < 1) {
-            $this->response(array("code" => 400,
+        if (!is_numeric($id_paso) || $id_paso < 1) {
+            return response()->json(array("code" => 400,
                     "message" => 'El valor de paso no es válido, debe ser número >= 1')
                 , 400);
         }
@@ -125,10 +112,11 @@ class SpecificationController extends Controller
         try {
             $integrador = new IntegracionMediator();
             $response = $integrador->obtenerFormularios($id_proceso, $id_tarea, $id_paso);
-            $this->response($response);
-        } catch (Exception $e) {
+
+            return response()->json($response);
+        } catch (\Exception $e) {
             Log::error($e->getMessage());
-            $this->response(array("code" => $e->getCode(), "message" => $e->getMessage()), $e->getCode());
+            return response()->json(array("code" => $e->getCode(), "message" => $e->getMessage()), $e->getCode());
         }
     }
 

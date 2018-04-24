@@ -39,6 +39,8 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapBackendApiRoutes();
 
+        $this->mapIntegrationRoutes();
+
         $this->mapWebRoutes();
 
         //
@@ -86,5 +88,20 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/backendapi.php'));
+    }
+
+    /**
+     * Define the "Integration Api" routes for the application.
+     *
+     * These routes are typically stateless.
+     *
+     * @return void
+     */
+    protected function mapIntegrationRoutes()
+    {
+        Route::prefix('integracion')
+            ->middleware('api')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/integration.php'));
     }
 }

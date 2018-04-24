@@ -55,7 +55,7 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
      */
     public function map($results, $model)
     {
-        dd($results['hits']);
+        //dd($results['hits']);
         if ($results['hits']['total'] == 0) {
             return Collection::make();
         }

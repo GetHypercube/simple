@@ -394,11 +394,10 @@ class IntegracionMediator
 
     public function validarCamposObligatorios($body, $form)
     {
-
         $campos = $form->getCamposEntrada();
         Log::debug('Validando campos obligatorios: ' . $this->varDump($body['data']));
         $error = false;
-        $campos_faltantes = "";
+        $campos_faltantes = [];
         foreach ($campos as $c) {
             if (!key_exists($c->nombre, $body['data'])) {  //si no esta el campo se valida si es obligatorio
                 foreach ($c->validacion as $rule) {
@@ -413,7 +412,6 @@ class IntegracionMediator
         if ($error) {
             throw new ApiException('Faltan parametros de entrada obligatorios: ' . json_encode($campos_faltantes), 400);
         }
-
     }
 
     private function registrarCallbackURL($callback, $callback_id, $etapa)

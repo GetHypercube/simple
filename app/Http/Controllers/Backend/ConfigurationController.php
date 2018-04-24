@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class ConfigurationController extends Controller
 {
@@ -453,6 +454,20 @@ class ConfigurationController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteBackendUsers(Request $request, $id)
+    {
+        UsuarioBackend::destroy($id);
+
+        $request->session()->flash('status', 'Usuario eliminado con éxito');
+
+        return redirect()->route('backend.configuration.backend_users');
+    }
+
+    /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function groupUsers()
@@ -629,5 +644,35 @@ class ConfigurationController extends Controller
         }
 
         return $result;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function ajax_get_validacion_reglas(Request $request)
+    {
+
+        $rule = (isset($_GET['rule'])) ? $_GET['rule'] : '';
+        $proceso_id = (isset($_GET['proceso_id'])) ? $_GET['proceso_id'] : '';
+
+        Log::debug('ajax_get_validacion_reglas() $rule [' . $rule . ']');
+
+        $code = 200;
+
+        if (strlen($rule) > 0) {
+            $regla = new \Regla($rule);
+            $mensaje = $regla->validacionVariablesEnReglas($proceso_id);
+
+            if (isset($mensaje) && count($mensaje) == 0) {
+                $code = 202;
+            } else {
+                $mensaje = "Las sgtes. variables no existen: <br>" . implode(', ', $mensaje);
+            }
+        } else {
+            $code = 202;
+            $mensaje = "";
+        }
+
+        return response()->json(array('code' => $code, 'mensaje' => $mensaje));
     }
 }
