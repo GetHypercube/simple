@@ -34,7 +34,7 @@ class CampoFile extends Campo
         if ($dato) {
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('dato', $dato->valor);
             if ($file) {
-                $display .= '<p class="link"><a href="' . url('uploader/datos_get/' . $file->filename) . '?id=' . $file->id . '&amp;token=' . $file->llave . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
+                $display .= '<p class="link"><a href="' . url("uploader/datos_get/{$file->id}/{$file->llave}") . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
                 if (!($modo == 'visualizacion'))
                     $display .= '(<a class="remove" href="#">X</a>)</p>';
             } else {

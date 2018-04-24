@@ -30,13 +30,11 @@ class UploadController extends Controller
             exit;
         }
 
-
         // list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $allowedExtensions = array('gif', 'jpg', 'png', 'pdf', 'doc', 'docx', 'zip', 'rar', 'ppt', 'pptx', 'xls', 'xlsx', 'mpp', 'vsd', 'odt', 'odp', 'ods', 'odg');
         if (isset($campo->extra->filetypes)) {
             $allowedExtensions = $campo->extra->filetypes;
         }
-        Log::error('llegu3');
 
         // max file size in bytes
         $sizeLimit = 20 * 1024 * 1024;
@@ -71,17 +69,13 @@ class UploadController extends Controller
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
     }
 
-    public function datos_get($filename)
+    public function datos_get($id, $token)
     {
-        $id = $this->input->get('id');
-        $token = $this->input->get('token');
-
         //Chequeamos los permisos en el frontend
         $file = Doctrine_Query::create()
             ->from('File f, f.Tramite t, t.Etapas e, e.Usuario u')
             ->where('f.id = ? AND f.llave = ? AND u.id = ?', array($id, $token, Auth::user()->id))
             ->fetchOne();
-
         if (!$file) {
             //Chequeamos permisos en el backend
             $file = Doctrine_Query::create()
@@ -95,8 +89,7 @@ class UploadController extends Controller
             }
         }
 
-        $path = 'uploads/datos/' . $file->filename;
-
+        $path = public_path('uploads/datos/' . $file->filename);
         if (preg_match('/^\.\./', $file->filename)) {
             echo 'Archivo invalido';
             exit;

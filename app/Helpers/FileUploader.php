@@ -156,6 +156,15 @@ class FileUploader
         $filename = mb_strtolower($pathinfo['filename']);   //Lo convertimos a minusculas
         $filename = preg_replace('/\s+/', ' ', $filename);  //Le hacemos un trim
         //$filename = sha1(uniqid(mt_rand(),true));
+        $filename = trim($filename);
+        $filename = str_replace(array('á', 'à', 'ä', 'â', 'ª', 'Á', 'À', 'Â', 'Ä'),array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'),$filename);
+        $filename = str_replace(array('é', 'è', 'ë', 'ê', 'É', 'È', 'Ê', 'Ë'), array('e', 'e', 'e', 'e', 'E', 'E', 'E', 'E'),$filename);
+        $filename = str_replace(array('í', 'ì', 'ï', 'î', 'Í', 'Ì', 'Ï', 'Î'), array('i', 'i', 'i', 'i', 'I', 'I', 'I', 'I'),$filename);
+        $filename = str_replace(array('ó', 'ò', 'ö', 'ô', 'Ó', 'Ò', 'Ö', 'Ô'), array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'), $filename);
+        $filename = str_replace(array('ú', 'ù', 'ü', 'û', 'Ú', 'Ù', 'Û', 'Ü'),array('u', 'u', 'u', 'u', 'U', 'U', 'U', 'U'),$filename);
+        $filename = str_replace(array('ñ', 'Ñ', 'ç', 'Ç'),array('n', 'N', 'c', 'C',), $filename);
+        $filename = str_replace(array("\\","¨","º","-","~","#","@","|","!","\"","·","$","%","&","/","(", ")","?","'","¡","¿","[","^","`","]","+","}","{","¨","´",">","< ",";", ",",":"," "),'',$filename);
+
         $ext = $pathinfo['extension'];
 
         if ($this->allowedExtensions && !in_array(strtolower($ext), $this->allowedExtensions)) {

@@ -35,7 +35,7 @@ $(document).ready(function () {
                     if (typeof(respuesta.file_name) !== "undefined") {
                         $parentDiv.find(":input[type=hidden]").val(respuesta.file_name);
                         $parentDiv.find(".qq-upload-list").empty();
-                        $parentDiv.find(".link").html("<a target='blank' href='" + site_url + "uploader/datos_get/" + respuesta.file_name + "?id=" + respuesta.id + "&token=" + respuesta.llave + "'>" + respuesta.file_name + "</a> (<a href='#' class='remove'>X</a>)");
+                        $parentDiv.find(".link").html("<a target='blank' href='/uploader/datos_get/" + respuesta.id + "/" + respuesta.llave + "'>" + respuesta.file_name + "</a> (<a href='#' class='remove'>X</a>)");
                         prepareDynaForm(".dynaForm");
                     } else {
                         $parentDiv.find(".link").html("");
