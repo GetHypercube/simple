@@ -22,36 +22,9 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
             'type' => $builder->index ?: $builder->model->searchableAs(),
             'body' => [
                 'query' => [
-                    'bool' => [
-                        'must' => [
-                            'function_score' => [
-                                'functions' => [
-                                    [
-                                        'field_value_factor' => [
-                                            'field' => 'hit_count',
-                                            'modifier' => 'log2p'
-                                        ]
-                                    ],
-                                    [
-                                        'field_value_factor' => [
-                                            'field' => 'boost'
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                'highlight' => [
-                    'fields' => [
-                        'title' => [
-                            "number_of_fragments" => 1
-                        ],
-                        'objective' => [
-                            "fragment_size" => 300,
-                            "number_of_fragments" => 1
-                        ]
-                    ]
+                    'multi_match' => [
+                        'query' => "*{$builder->query}*",
+                    ],
                 ]
             ]
         ];
@@ -64,19 +37,9 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
         if (isset($options['size'])) {
             $params['body']['size'] = $options['size'];
         }
-        if ($builder->query) {
-            $params['body']['query']['bool']['must']['function_score']['query'] = [
-                'multi_match' => [
-                    'query' => $builder->query,
-                    'fields' => ['id', 'title^3', 'keywords^2', 'objective'],
-                    'fuzziness' => 'AUTO'
-                ]
-            ];
-        }
         if (isset($options['numericFilters']) && count($options['numericFilters'])) {
-            $params['body']['query']['bool']['filter'] = $options['numericFilters'];
-            //$params['body']['query']['bool']['must'] = array_merge($params['body']['query']['bool']['must'],
-            //$options['numericFilters']);
+            $params['body']['query']['bool']['must'] = array_merge($params['body']['query']['bool']['must'],
+                $options['numericFilters']);
         }
 
         return $this->elastic->search($params);
@@ -92,6 +55,7 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
      */
     public function map($results, $model)
     {
+        dd($results['hits']);
         if ($results['hits']['total'] == 0) {
             return Collection::make();
         }

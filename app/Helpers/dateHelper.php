@@ -1,9 +1,5 @@
 <?php
 
-namespace App\Helpers;
-
-use Doctrine_Query;
-
 // $date is (YYYY-mm-dd)
 function add_working_days($date, $days)
 {

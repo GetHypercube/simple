@@ -11,14 +11,16 @@ class Tramite extends Model
 
     protected $table = 'tramite';
 
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
     public function toSearchableArray()
     {
-        return [
-            'id' => $this->id,
-            'proceso_id' => $this->proceso_id,
-            'pendiente' => $this->pendiente,
-            'tramite_proc_cont' => $this->tramite_proc_cont,
-        ];
+        $array = $this->toArray();
+
+        return $array;
     }
 
     public function proceso()

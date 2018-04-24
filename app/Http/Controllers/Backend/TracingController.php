@@ -103,10 +103,12 @@ class TracingController extends Controller
             ));
 
         if ($query) {
-            $result = Tramite::search($query)->where('proceso_id', $proceso_id)->get();
-            if (array_key_exists('total', $result) && $result['total'] > 0) {
-                $matches = array_keys($result ['matches']);
-                $doctrine_query->whereIn('t.id', $matches);
+            $result = Tramite::search($query)->get();
+            dd($result);
+            if (!$result->isEmpty()) {
+                dd($result);
+                $matches = $result->groupBy('id')->keys()->toArray();
+                //$doctrine_query->whereIn('t.id', [3139]);
             } else {
                 $doctrine_query->where('0');
             }

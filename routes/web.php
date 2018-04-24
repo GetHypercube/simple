@@ -10,6 +10,11 @@ Route::middleware(['auth_user'])->group(function () {
 
     Auth::routes();
 
+    //Validador Documento
+    Route::get('/validador', 'ValidatorController@index');
+    Route::get('/validador/documento', 'ValidatorController@documento');
+    Route::post('/validador/documento', 'ValidatorController@documento')->name('validator.document');
+
     Route::post('/uploader/datos/{campo_id}/{etapa_id}', 'UploadController@datos');
 
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -55,7 +60,6 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
     // Password reset routes...
     Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset.get');
     Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.reset.post');
-
 
     Route::middleware('auth:usuario_backend')->group(function () {
         Route::get('/', 'HomeController@index')->name('home');
@@ -165,7 +169,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
 
         //Seguimiento
         Route::get('seguimiento', 'TracingController@index')->name('tracing.index');
-        Route::get('seguimiento/index_proceso/{proceso}', 'TracingController@indexProcess')->name('tracing.list');
+        Route::get('seguimiento/index_proceso/{proceso}', 'TracingController@backend_usuario_editar')->name('tracing.list');
         Route::get('seguimiento/ajax_actualizar_id_tramite', 'TracingController@ajaxIdProcedure')->name('tracing.ajaxIdProcedure');
         Route::post('seguimiento/ajax_actualizar_id_tramite', 'TracingController@ajaxUpdateIdProcedure')->name('tracing.ajaxUpdateIdProcedure');
         Route::get('seguimiento/ajax_auditar_eliminar_tramite/{tramite_id}', 'TracingController@ajax_auditar_eliminar_tramite')->name('tracing.ajax_auditar_eliminar_tramite');
@@ -194,6 +198,15 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::get('auditoria', 'AuditController@index')->name('audit');
         Route::get('auditoria/ver_detalles/{id}', 'AuditController@view')->name('audit.view');
 
+        //Configuración
+        Route::get('/configuracion', 'ConfigurationController@mySite')->name('configuration.my_site');
+        Route::post('/configuracion', 'ConfigurationController@saveMySite')->name('configuration.my_site.save');
+        Route::get('/configuracion/plantilla_seleccion/{plantilla_id?}', 'ConfigurationController@templates')->name('configuration.template');
+        Route::post('/configuracion/plantilla_seleccion', 'ConfigurationController@storeTemplate')->name('configuration.template.store');
+        Route::get('/configuracion/plantillas', 'ConfigurationController@addTemplates')->name('configuration.template.add');
+        Route::get('/configuracion/plantilla_eliminar/{plantilla_id}', 'ConfigurationController@deleteTemplate')->name('configuration.template.delete');
+        Route::get('/configuracion/modelador/{conector_id?}', 'ConfigurationController@modeler')->name('configuration.modeler');
+
         //API
         Route::view('/api', 'backend.api.index')->name('api');
         Route::view('/api/token', 'backend.api.token')->name('api.token');
@@ -207,16 +220,6 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::view('/api/procesos_listar', 'backend.api.procesos_listar')->name('api.procesos_listar');
         Route::get('/api/procesos_disponibles', 'ApiController@procesos_disponibles')->name('api.procesos_disponibles');
         Route::get('/api/notificar/{tramite_id}', 'ApiController@notificar')->name('api.notificar');
-
-        //Configuración
-        Route::get('/configuracion', 'ConfigurationController@mySite')->name('configuration.my_site');
-        Route::post('/configuracion', 'ConfigurationController@saveMySite')->name('configuration.my_site.save');
-        Route::get('/configuracion/plantilla_seleccion/{plantilla_id?}', 'ConfigurationController@templates')->name('configuration.template');
-        Route::post('/configuracion/plantilla_seleccion', 'ConfigurationController@storeTemplate')->name('configuration.template.store');
-        Route::get('/configuracion/plantillas', 'ConfigurationController@addTemplates')->name('configuration.template.add');
-        Route::get('/configuracion/plantilla_eliminar/{plantilla_id}', 'ConfigurationController@deleteTemplate')->name('configuration.template.delete');
-        Route::get('/configuracion/modelador/{conector_id?}', 'ConfigurationController@modeler')->name('configuration.modeler');
-
 
         Route::get('/configuracion/backend_usuarios', 'ConfigurationController@backendUsers')->name('configuration.backend_users');
         Route::get('/configuracion/backend_usuario_editar', 'ConfigurationController@addBackendUsers')->name('configuration.backend_users.add');

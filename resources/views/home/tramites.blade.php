@@ -72,7 +72,7 @@
     </div>
     <div class="row">
         @foreach ($categorias as $c)
-            <div class="col-md-3 item">
+            <div class="col-lg-3 col-md-6 item">
                 <a href="<?=url('home/procesos/' . $c->id)?>">
                     <div class="card text-center">
                         <div class="card-body">

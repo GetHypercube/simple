@@ -202,50 +202,57 @@ class Proceso extends Doctrine_Record
 
 
         //Creamos los documentos
-        foreach ($json->Documentos as $f) {
-            $proceso->Documentos[$f->id] = new Documento();
-            foreach ($f as $keyf => $f_attr) {
-                if ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso' && $keyf != 'hsm_configuracion_id') {
-                    $proceso->Documentos[$f->id]->{$keyf} = $f_attr;
+        if (isset($json->Documentos)) {
+            foreach ($json->Documentos as $f) {
+                $proceso->Documentos[$f->id] = new Documento();
+                foreach ($f as $keyf => $f_attr) {
+                    if ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso' && $keyf != 'hsm_configuracion_id') {
+                        $proceso->Documentos[$f->id]->{$keyf} = $f_attr;
+                    }
                 }
-            }
 
+            }
         }
 
         //Creamos los formularios
-        foreach ($json->Formularios as $f) {
-            $proceso->Formularios[$f->id] = new Formulario();
-            foreach ($f as $keyf => $f_attr)
-                if ($keyf == 'Campos') {
-                    foreach ($f_attr as $c) {
-                        $campo = new Campo();
-                        foreach ($c as $keyc => $c_attr) {
-                            if ($keyc != 'id' && $keyc != 'formulario_id' && $keyc != 'Formulario' && $keyc != 'documento_id') {
-                                $campo->{$keyc} = $c_attr;
+        if (isset($json->Formularios)) {
+            foreach ($json->Formularios as $f) {
+                $proceso->Formularios[$f->id] = new Formulario();
+                foreach ($f as $keyf => $f_attr)
+                    if ($keyf == 'Campos') {
+                        foreach ($f_attr as $c) {
+                            $campo = new Campo();
+                            foreach ($c as $keyc => $c_attr) {
+                                if ($keyc != 'id' && $keyc != 'formulario_id' && $keyc != 'Formulario' && $keyc != 'documento_id') {
+                                    $campo->{$keyc} = $c_attr;
+                                }
                             }
+                            if ($c->documento_id) $campo->Documento = $proceso->Documentos[$c->documento_id];
+                            $proceso->Formularios[$f->id]->Campos[] = $campo;
                         }
-                        if ($c->documento_id) $campo->Documento = $proceso->Documentos[$c->documento_id];
-                        $proceso->Formularios[$f->id]->Campos[] = $campo;
+                    } elseif ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso') {
+                        $proceso->Formularios[$f->id]->{$keyf} = $f_attr;
                     }
-                } elseif ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso') {
-                    $proceso->Formularios[$f->id]->{$keyf} = $f_attr;
-                }
-
-        }
-
-        Log::info('Se crean acciones de nuevo proceso importado');
-        // Creamos las acciones
-        foreach ($json->Acciones as $f) {
-            $proceso->Acciones[$f->id] = new Accion();
-            foreach ($f as $keyf => $f_attr) {
-                if ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso') {
-                    $proceso->Acciones[$f->id]->{$keyf} = $f_attr;
-                }
             }
         }
-        Log::info('Acciones creadas');
+
+
+        // Creamos las acciones
+        if (isset($json->Acciones)) {
+            Log::info('Se crean acciones de nuevo proceso importado');
+            foreach ($json->Acciones as $f) {
+                $proceso->Acciones[$f->id] = new Accion();
+                foreach ($f as $keyf => $f_attr) {
+                    if ($keyf != 'id' && $keyf != 'proceso_id' && $keyf != 'Proceso') {
+                        $proceso->Acciones[$f->id]->{$keyf} = $f_attr;
+                    }
+                }
+            }
+            Log::info('Acciones creadas');
+        }
 
         //Completamos el proceso y sus tareas
+        dd($json);
         foreach ($json as $keyp => $p_attr) {
             if ($keyp == 'Tareas') {
                 foreach ($p_attr as $t) {

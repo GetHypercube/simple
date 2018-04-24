@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Helpers\Doctrine;
-use Cuenta;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Doctrine_Query;
-use stdClass;
-use Doctrine_Core;
+use Illuminate\Http\Request;
+use App\Helpers\Doctrine;
 use DatoSeguimiento;
+use Doctrine_Query;
+use Doctrine_Core;
+use stdClass;
+use Cuenta;
 use Regla;
 
 class ApiController extends Controller
@@ -42,7 +42,6 @@ class ApiController extends Controller
     /*
      * Llamadas de la API
      */
-
     public function tramites(Request $request, $tramite_id = null)
     {
         $api_token = $request->input('token');

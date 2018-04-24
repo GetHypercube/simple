@@ -8,14 +8,14 @@
 
             @include('backend.api.nav')
 
-            <div class="span9">
+            <div class="col-9">
                 <h2>Procesos: listar</h2>
 
                 <p>Lista todos los procesos.</p>
 
                 <h3>Request HTTP</h3>
 
-                <pre>GET {{env('APP_URL')}}/api/procesos?token={token}</pre>
+                <pre>GET {{url('backend/api/procesos?token={token}')}}</pre>
 
                 <h3>Response HTTP</h3>
 

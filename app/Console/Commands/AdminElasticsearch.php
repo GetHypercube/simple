@@ -54,54 +54,22 @@ class AdminElasticsearch extends Command
                 $this->line($e->getMessage());
             }
 
-
             $this->info('Se crea índice');
             $response = $client->request('PUT', env('ELASTICSEARCH_HOST') . '/' . env('ELASTICSEARCH_INDEX'), [
                 'json' => [
                     'mappings' => [
-                        'pages' => [
+                        'tramite' => [
                             'properties' => [
                                 'id' => [
-                                    'type' => 'keyword',
-                                ],
-                                'nombre' => [
-                                    'type' => 'text',
-                                    'analyzer' => 'spanish'
-                                ],
-                                'master' => [
-                                    'type' => 'boolean'
-                                ],
-                                'master_id' => [
                                     'type' => 'integer'
                                 ],
-                                'master_published' => [
-                                    'type' => 'boolean'
-                                ],
-                                'published' => [
-                                    'type' => 'boolean',
-                                ],
-                                'keywords' => [
-                                    'type' => 'text',
-                                    'analyzer' => 'spanish'
-                                ],
-                                'objective' => [
-                                    'type' => 'text',
-                                    'analyzer' => 'spanish'
-                                ],
-                                'hit_count' => [
+                                'proceso_id' => [
                                     'type' => 'integer'
                                 ],
-                                'boost' => [
-                                    'type' => 'integer'
-                                ],
-                                'ministry_id' => [
-                                    'type' => 'keyword'
-                                ],
-                                'institution_id' => [
-                                    'type' => 'keyword'
-                                ],
-                                'category_id' => [
-                                    'type' => 'integer'
+                                'created_at' => [
+                                    'type' => 'date',
+                                    'format' => 'yyyy-MM-dd HH:mm:ss'
+                                    //'fielddata' => true
                                 ]
                             ]
                         ]
@@ -109,7 +77,7 @@ class AdminElasticsearch extends Command
                 ]
             ]);
         } elseif ($operation == 'index') {
-            if (!$model || $model == 'tramites') {
+            if (!$model || $model == 'tramite') {
                 $this->call('scout:import', ['model' => 'App\Models\Tramite']);
             }
 

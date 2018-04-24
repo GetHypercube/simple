@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| Backend API Routes
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+//Api
+Route::namespace('Backend')->group(function () {
+    //Tramites
+    Route::get('/tramites/{tramite_id?}', 'ApiController@tramites');
+    //Procesos
+    Route::get('/procesos/{proceso_id?}/{recurso?}', 'ApiController@procesos');
 });

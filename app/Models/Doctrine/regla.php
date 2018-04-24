@@ -24,8 +24,13 @@ class Regla
         $new_regla = 'return ' . $new_regla . ';';
 
         $resultado = FALSE;
-        if (!$errores = (new \App\Helpers\SaferEval())->checkScript($new_regla, FALSE)) {
-            $resultado = @eval($new_regla);
+        $errores = (new \App\Helpers\SaferEval())->checkScript($new_regla, FALSE);
+        if (is_null($errores)) {
+            try {
+                $resultado = eval($new_regla);
+            } catch (Throwable $throwable) {
+                $resultado = false;
+            }
         }
 
         return $resultado;

@@ -301,8 +301,8 @@ class ConfigurationController extends Controller
     public function saveBackendUsers(Request $request, UsuarioBackend $user, $edit = false)
     {
         $this->validate($request, [
-            'nombre' => 'required',
-            'apellidos' => 'required',
+            'nombre' => 'required|max:128',
+            'apellidos' => 'required|max:128',
             'rol' => 'required'
         ]);
 
