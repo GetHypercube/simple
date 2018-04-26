@@ -12,7 +12,6 @@ use Doctrine_Query;
 
 class ProcessController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *

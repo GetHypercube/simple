@@ -45,54 +45,69 @@
                                     <i class="material-icons">dashboard</i> {{__('nav.home')}}
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{route('backend.appointment.index')}}"
-                                   class="nav-link {{strstr(Request::path(), 'backend/agenda') ? 'active' : ''}}">
-                                    <i class="material-icons">date_range</i> {{__('nav.diary')}}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('backend.procesos.index')}}"
-                                   class="nav-link {{strstr(Request::path(), 'backend/procesos') ||
-                           strstr(Request::path(), 'backend/formularios') ||
-                           strstr(Request::path(), 'backend/acciones') ||
-                           strstr(Request::path(), 'backend/Admseguridad') ||
-                           strstr(Request::path(), 'backend/suscriptores') ||
-                           strstr(Request::path(), 'backend/documentos') ?
-                           'active' : ''}}">
-                                    <i class="material-icons">create_new_folder</i> {{__('nav.bpm')}}
-                                </a>
-                            </li>
+                            @can('agenda')
+                                <li class="nav-item">
+                                    <a href="{{route('backend.appointment.index')}}"
+                                       class="nav-link {{strstr(Request::path(), 'backend/agenda') ? 'active' : ''}}">
+                                        <i class="material-icons">date_range</i> {{__('nav.diary')}}
+                                    </a>
+                                </li>
+                            @endcan
+
+                            @can('proceso')
+                                <li class="nav-item">
+                                    <a href="{{route('backend.procesos.index')}}"
+                                       class="nav-link {{strstr(Request::path(), 'backend/procesos') ||
+                                       strstr(Request::path(), 'backend/formularios') ||
+                                       strstr(Request::path(), 'backend/acciones') ||
+                                       strstr(Request::path(), 'backend/Admseguridad') ||
+                                       strstr(Request::path(), 'backend/suscriptores') ||
+                                       strstr(Request::path(), 'backend/documentos') ?
+                                       'active' : ''}}">
+                                        <i class="material-icons">create_new_folder</i> {{__('nav.bpm')}}
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('seguimiento')
                             <li class="nav-item">
                                 <a href="{{route('backend.tracing.index')}}"
                                    class="nav-link {{strstr(Request::path(), 'backend/seguimiento') ? 'active' : ''}}">
                                     <i class="material-icons">search</i> {{__('nav.tracing')}}
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{route('backend.report')}}"
-                                   class="nav-link {{strstr(Request::path(), 'backend/reportes') ? 'active' : '' }}">
-                                    <i class="material-icons">library_books</i> {{__('nav.management')}}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('backend.audit')}}"
-                                   class="nav-link {{strstr(Request::path(), 'backend/auditoria') ? 'active' : ''}}">
-                                    <i class="material-icons">assignment</i> {{__('nav.audit')}}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{route('backend.api')}}"
-                                   class="nav-link {{strstr(Request::path(), 'backend/api') ? 'active' : ''}}">
-                                    <i class="material-icons">code</i> {{__('nav.api')}}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('backend.configuration.my_site') }}"
-                                   class="nav-link {{strstr(Request::path(), 'backend/configuracion') ? 'active' : ''}}">
-                                    <i class="material-icons">settings</i> {{__('nav.config')}}
-                                </a>
-                            </li>
+                            @endcan
+                            @can('gestion')
+                                <li class="nav-item">
+                                    <a href="{{route('backend.report')}}"
+                                       class="nav-link {{strstr(Request::path(), 'backend/reportes') ? 'active' : '' }}">
+                                        <i class="material-icons">library_books</i> {{__('nav.management')}}
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('auditoria')
+                                <li class="nav-item">
+                                    <a href="{{route('backend.audit')}}"
+                                       class="nav-link {{strstr(Request::path(), 'backend/auditoria') ? 'active' : ''}}">
+                                        <i class="material-icons">assignment</i> {{__('nav.audit')}}
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('api')
+                                <li class="nav-item">
+                                    <a href="{{route('backend.api')}}"
+                                       class="nav-link {{strstr(Request::path(), 'backend/api') ? 'active' : ''}}">
+                                        <i class="material-icons">code</i> {{__('nav.api')}}
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('configuracion')
+                                <li class="nav-item">
+                                    <a href="{{ route('backend.configuration.my_site') }}"
+                                       class="nav-link {{strstr(Request::path(), 'backend/configuracion') ? 'active' : ''}}">
+                                        <i class="material-icons">settings</i> {{__('nav.config')}}
+                                    </a>
+                                </li>
+                            @endcan
                             <li class="nav-item">
                                 <a target="_blank" href="{{asset('/ayuda/simple/index.html')}}" class="nav-link">
                                     <i class="material-icons">help</i> {{__('nav.help')}}

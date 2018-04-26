@@ -43,16 +43,6 @@ class AppointmentController extends Controller
         } catch (Exception $err) {
             Log::error('Constructor' . $err);
         }
-
-        $this->middleware('auth:usuario_backend');
-        $this->user = Auth::user();
-
-        /*if (!in_array('super', explode(',', Auth::user()->rol)) &&
-            !in_array('agenda', explode(',', Auth::user()->rol))) {
-            echo 'No tiene permisos para acceder a esta sección.';
-            exit;
-        }*/
-
     }
 
     private function listarAgendas(Request $request, $pagina)

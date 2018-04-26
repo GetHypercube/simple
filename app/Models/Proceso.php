@@ -7,7 +7,6 @@ use Laravel\Scout\Searchable;
 
 class Proceso extends Model
 {
-
     use Searchable;
 
     protected $table = 'proceso';
