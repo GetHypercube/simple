@@ -171,7 +171,6 @@ if (!function_exists('get_mime_by_extension')) {
             'json' => array('application/json', 'text/json')
         );
 
-
         if (!is_array($mimes)) {
             return FALSE;
         }
