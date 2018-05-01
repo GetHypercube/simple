@@ -218,7 +218,7 @@ class IntegracionMediator
             $input = json_decode($body, true);
             Log::debug("Input: " . $this->varDump($input));
             //Validar entrada
-            if (array_key_exists('callback', $input) && !array_key_exists('callback-id', $input)) {
+            if (!is_null($input) && array_key_exists('callback', $input) && !array_key_exists('callback-id', $input)) {
                 throw new ApiException('Callback y callback-id son valores opcionales pero deben ir juntos', 400);
             }
 
@@ -238,7 +238,7 @@ class IntegracionMediator
             //Recuper la priemra etapa
             $etapa_id = $tramite->getEtapasActuales()->get(0)->id;
 
-            if (array_key_exists('callback', $input)) {
+            if (!is_null($input) && array_key_exists('callback', $input)) {
                 $this->registrarCallbackURL($input['callback'], $input['callback-id'], $etapa_id);
             }
 

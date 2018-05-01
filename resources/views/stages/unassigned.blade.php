@@ -1,10 +1,10 @@
 <div class="row">
-    <div class="col-xs-12 col-md-5">
+    <div class="col-xs-12 col-md-8">
         <h2>Etapas sin asignar</h2>
     </div>
-    <div class="col-xs-12 col-md-7">
+    <div class="col-xs-12 col-md-4">
         <!--buscador-->
-        <form class="form-search form-inline" method="GET" action="">
+        <form class="form-search form-inline float-right" method="GET" action="">
             <div class="input-group mb-3">
                 <input name="query" class="form-control" placeholder="Escribe aquí lo que deseas buscar"
                        type="text"

@@ -206,7 +206,7 @@ class StagesController extends Controller
         $data['content'] = view('stages.unassigned', $data);
         $data['title'] = 'Sin Asignar';
 
-        return view('layouts.app', $data);
+        return view('layouts.procedure', $data);
     }
 
     public function ejecutar_form(Request $request, $etapa_id, $secuencia)

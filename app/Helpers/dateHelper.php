@@ -6,7 +6,7 @@ function add_working_days($date, $days)
     $timestamp = strtotime($date);
     $skipdays = array("Saturday", "Sunday");
     $skipdates = array();
-    $feriados = Doctrine::getTable('Feriado')->findAll();
+    $feriados = \App\Helpers\Doctrine::getTable('Feriado')->findAll();
     foreach ($feriados as $f)
         $skipdates[] = $f->fecha;
 

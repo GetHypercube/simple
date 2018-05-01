@@ -172,7 +172,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         //Seguimiento
         Route::middleware('can:seguimiento')->group(function () {
             Route::get('seguimiento', 'TracingController@index')->name('tracing.index');
-            Route::get('seguimiento/index_proceso/{proceso}', 'TracingController@backend_usuario_editar')->name('tracing.list');
+            Route::get('seguimiento/index_proceso/{proceso}', 'TracingController@indexProcess')->name('tracing.list');
             Route::get('seguimiento/ajax_actualizar_id_tramite', 'TracingController@ajaxIdProcedure')->name('tracing.ajaxIdProcedure');
             Route::post('seguimiento/ajax_actualizar_id_tramite', 'TracingController@ajaxUpdateIdProcedure')->name('tracing.ajaxUpdateIdProcedure');
             Route::get('seguimiento/ajax_auditar_eliminar_tramite/{tramite_id}', 'TracingController@ajax_auditar_eliminar_tramite')->name('tracing.ajax_auditar_eliminar_tramite');

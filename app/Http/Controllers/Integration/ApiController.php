@@ -197,10 +197,10 @@ class ApiController extends Controller
 
             $headers = getallheaders();
 
-            $new_headers = array('host' => $headers['Host'],
-                'Origin' => isset($headers['Origin']) ? $headers['Origin'] : '',
-                'largo-mensaje' => isset($headers['Content-Length']) ? $headers['Content-Length'] : '',
-                'Content-type' => isset($headers['Content-type']) ? $headers['Content-type'] : '',
+            $new_headers = array('host' => $headers['host'],
+                'Origin' => isset($headers['origin']) ? $headers['origin'] : '',
+                'largo-mensaje' => isset($headers['content-length']) ? $headers['content-length'] : '',
+                'Content-type' => isset($headers['content-type']) ? $headers['content-type'] : '',
                 'http-Method' => $request->getMethod());
 
             $data['headers'] = $new_headers;
@@ -274,7 +274,7 @@ class ApiController extends Controller
                 if (isset($tramites) && (is_object($tramites) || is_array($tramites))) {
                     $statusTramites = array();
                     foreach ($tramites as $tramite) {
-                        $status = $this->obtenerInfoTramite($tramite);
+                            $status = $this->obtenerInfoTramite($tramite);
                         array_push($statusTramites, $status);
                     }
                 }
