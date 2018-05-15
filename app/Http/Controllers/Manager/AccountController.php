@@ -68,7 +68,7 @@ class AccountController extends Controller
             $validations = [
                 'nombre' => 'required',
                 'nombre_largo' => 'required',
-                'appkey' => 'required'
+                //'appkey' => 'required'
             ];
 
             $messages = [

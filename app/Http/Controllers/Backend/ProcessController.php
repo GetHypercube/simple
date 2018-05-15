@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
 use Doctrine_Query;
+use Session;
 
 class ProcessController extends Controller
 {
@@ -163,10 +164,17 @@ class ProcessController extends Controller
 
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
 
+        if ($proceso->estado != 'public') {
+            session()->forget('nueva_version');
+            $nueva_version = false;
+        } else {
+            $nueva_version = session()->get('nueva_version');
+        }
+
         Log::debug('$proceso->estado [' . $proceso->estado . '])');
 
         // Verificar si es draft o un proceso publicado
-        if ($proceso->estado == 'public') { //no es draft
+        if ($proceso->estado == 'public' && $nueva_version) { //no es draft
             //Se crea Draft
             Log::info("Creando Draft para proceso id " . $proceso_id);
             $proceso = $this->crearDraft($proceso);
@@ -217,7 +225,7 @@ class ProcessController extends Controller
     {
         Log::info('activar ($proceso_id [' . $proceso_id . '])');
 
-        $request->validate(['descripcipn' => 'required']);
+        $request->validate(['descripcion' => 'required']);
 
         $respuesta = new stdClass();
 
@@ -1109,6 +1117,34 @@ class ProcessController extends Controller
         $data['proceso'] = $proceso;
 
         return view('backend.process.ajax_publicar_proceso', $data);
+    }
+
+
+    /**
+     * @param $proceso_id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function ajax_editar_proceso($proceso_id)
+    {
+        $proceso = Doctrine::getTable("Proceso")->find($proceso_id);
+        $data['proceso'] = $proceso;
+        return view('backend.process.ajax_editar_proceso', $data);
+
+    }
+
+    /**
+     * @param $proceso_id
+     * @param int $publicado
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function editar_publicado($proceso_id, $publicado = 0)
+    {
+        $nueva_version = $publicado == 1 ? false : true;
+
+        session()->put('nueva_version', $nueva_version);
+        session()->save();
+
+        return redirect()->route('backend.procesos.edit', $proceso_id);
     }
 
 }

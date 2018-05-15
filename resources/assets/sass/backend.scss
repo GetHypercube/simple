@@ -1,12 +1,16 @@
 // Fonts
 @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,600");
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+//Import glpyhicons
+@import "glyphicons";
 // Variables
 @import "variables";
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 //Footer
 @import "footer";
+//datetimepicker
+@import "~bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css";
 
 html {
   background-color: #ffffff;
@@ -184,4 +188,8 @@ pre {
 .tooltip-inner {
   max-width: 200px;
   padding: 8px;
+}
+
+.bootstrap-datetimepicker-widget {
+  min-width: 290px;
 }

@@ -270,7 +270,7 @@ class ReportController extends Controller
             $data['tramites_completos'] = $tramites_completos;
             $data['promedio_tramite'] = $promedio_tramite;
             $data['reporte'] = $reporte_tabla;
-            $data['title'] = $reporte->nombre . ' - Proceso "' . $proceso_activo->nombre . '"';
+            $data['title'] = $reporte->nombre . ' - Proceso "' . $reporte->Proceso->nombre . '"';
 
             $pdf = PDF::loadView('backend.report.pdf', $data)->setPaper('a4', 'landscape');
             return $pdf->download('reporte.pdf');

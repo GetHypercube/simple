@@ -107,12 +107,12 @@
                         <td><?=$e->vencimiento_at ? strftime('%c', strtotime($e->vencimiento_at)) : 'N/A'?></td>
                         <td class="actions">
                             <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
-                               class="btn btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i>
+                               class="btn btn-link preventDoubleRequest"><i class="icon-edit icon-white"></i>
                                 Realizar</a>
                             <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                             <?php if ($file): ?>
                             <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);"
-                               class="btn btn-success"><i
+                               class="btn btn-link"><i
                                         class="icon-download icon-white"></i> Descargar</a>
                         <?php endif; ?>
                         <?php endif; ?>
@@ -147,7 +147,7 @@
     </div>
 @endsection
 
-@section('script')
+@push('script')
     <script>
         function descargarDocumentos(tramiteId) {
             $("#modal").load(url + "etapas/descargar/" + tramiteId);
@@ -218,4 +218,4 @@
             }
         }
     </script>
-@endsection
+@endpush

@@ -338,7 +338,7 @@ class StagesController extends Controller
 
         $etapa->asignar(Auth::user()->id);
 
-        redirect('etapas/inbox');
+        return redirect('etapas/inbox');
     }
 
     public function ejecutar_fin(Request $request, $etapa_id)
@@ -553,7 +553,7 @@ class StagesController extends Controller
                         $nombre = $fecha . "_" . $t . "_" . $tramite_nro;
                         $new_file = $ruta_tmp . $nombre_documento . "." . $nombre_archivo . "." . $tramite_nro . "." . $ext;
                         copy($path, $new_file);
-                        $zipName=
+                        //$zipName=
                         $zip->open(public_path($ruta_tmp . $nombre) . '.zip', ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
                         $zip->addFile($new_file);
                         $zip->close();
@@ -620,7 +620,7 @@ class StagesController extends Controller
                 }
             }
             $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
-            $nombre = str_replace(' ', '',$fecha . "_" . $t . "_" . $tramite_nro);
+            $nombre = str_replace(' ', '', $fecha . "_" . $t . "_" . $tramite_nro);
 
 
             // Create Download Response

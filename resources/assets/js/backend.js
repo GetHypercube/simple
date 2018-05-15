@@ -22,6 +22,7 @@ import {draggable, timepicker, sortable} from "jquery-ui";
 window.timepicker = require('bootstrap-timepicker');
 require('bootstrap-timepicker/css/bootstrap-timepicker.css');
 
+require('bootstrap4-datetimepicker');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

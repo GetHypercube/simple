@@ -89,11 +89,11 @@
                 <br/><?= strftime('%H:%M:%S', mysql_to_unix($e->updated_at))?></td>
             <td><?=$e->vencimiento_at ? strftime('%c', strtotime($e->vencimiento_at)) : 'N/A'?></td>
             <td class="actions">
-                <a href="<?=url('etapas/asignar/' . $e->id)?>" class="btn btn-primary"><i
+                <a href="<?=url('etapas/asignar/' . $e->id)?>" class="btn btn-link"><i
                             class="icon-check icon-white"></i> Asignármelo</a>
                 <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                 <?php if ($file): ?>
-                <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);" class="btn btn-success"><i
+                <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);" class="btn btn-link"><i
                             class="icon-download icon-white"></i> Descargar</a>
                 <?php endif; ?>
                 <?php endif; ?>
@@ -124,7 +124,7 @@
     <p>No hay trámites para ser asignados.</p>
     <?php endif; ?>
 </div>
-@section('script')
+@push('script')
     <script>
         function descargarDocumentos(tramiteId) {
             $("#modal").load(url + "etapas/descargar/" + tramiteId);
@@ -169,4 +169,4 @@
             }
         }
     </script>
-@endsection
+@endpush

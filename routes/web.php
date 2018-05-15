@@ -26,8 +26,9 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/tramites/participados', 'TramitesController@participados')->name('tramites.participados');
     Route::get('/tramites/disponibles', 'TramitesController@disponibles')->name('tramites.disponibles');
     Route::get('/etapas/ejecutar/{etapa_id}/{secuencia?}', 'StagesController@run')->name('stage.run');
+    Route::get('/etapas/asignar/{etapa_id}', 'StagesController@asignar')->name('stage.asignar');
     Route::post('/etapas/ejecutar_form/{etapa_id}/{secuencia}', 'StagesController@ejecutar_form')->name('stage.run');
-    Route::get('/etapas/ver/{etapa_id}/{secuencia}', 'StagesController@ver')->name('stage.view');
+    Route::get('/etapas/ver/{etapa_id}/{secuencia?}', 'StagesController@ver')->name('stage.view');
     Route::get('/etapas/inbox', 'StagesController@inbox')->name('stage.inbox');
     Route::get('/etapas/sinasignar', 'StagesController@sinasignar')->name('stage.unassigned');
     Route::get('/etapas/ejecutar_fin/{etapa_id}', 'StagesController@ejecutar_fin')->name('stage.ejecutar_fin');
@@ -85,6 +86,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::middleware('can:proceso')->group(function () {
             Route::get('procesos/{id}/export', 'ProcessController@export')->name('procesos.export');
             Route::post('procesos/import', 'ProcessController@import')->name('procesos.import');
+            Route::get('procesos/ajax_editar_proceso/{proceso_id}', 'ProcessController@ajax_editar_proceso');
             Route::get('procesos/ajax_auditar_eliminar_proceso/{proceso_id}', 'ProcessController@ajax_auditar_eliminar_proceso');
             Route::get('procesos/ajax_publicar_proceso/{proceso_id}', 'ProcessController@ajax_publicar_proceso');
             Route::get('procesos/ajax_auditar_activar_proceso/{proceso_id}', 'ProcessController@ajax_auditar_activar_proceso');
@@ -102,6 +104,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::get('procesos/seleccionar_icono', 'ProcessController@seleccionar_icono');
             Route::post('procesos/activar/{proceso_id}', 'ProcessController@activar')->name('procesos.activar');
             Route::post('procesos/publicar/{proceso_draft_id}', 'ProcessController@publicar')->name('procesos.publicar');
+            Route::get('procesos/editar_publicado/{proceso_id}/{publicado?}', 'ProcessController@editar_publicado')->name('procesos.editar_publicado');
             Route::resource('procesos', 'ProcessController');
 
             Route::get('acciones/listar/{proceso_id}', 'ActionController@list')->name('action.list');
@@ -161,6 +164,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         //Agenda
         Route::middleware('can:agenda')->group(function () {
             Route::get('agendas', 'AppointmentController@index')->name('appointment.index');
+            Route::get('agendas/pagina/{pagina}', 'AppointmentController@index');
             Route::get('agendas/ajax_back_nueva_agenda', 'AppointmentController@ajax_back_nueva_agenda')->name('appointment.ajax_back_nueva_agenda');
             Route::get('agendas/ajax_grabar_agenda_back', 'AppointmentController@ajax_grabar_agenda_back')->name('appointment.ajax_grabar_agenda_back');
             Route::get('agendas/ajax_back_editar_agenda/{id}', 'AppointmentController@ajax_back_editar_agenda')->name('appointment.ajax_back_editar_agenda');

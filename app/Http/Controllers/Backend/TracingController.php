@@ -104,9 +104,9 @@ class TracingController extends Controller
 
         if ($query) {
             $result = Tramite::search($query)->get();
-            dd($result);
+            //dd($result);
             if (!$result->isEmpty()) {
-                dd($result);
+                //dd($result);
                 $matches = $result->groupBy('id')->keys()->toArray();
                 //$doctrine_query->whereIn('t.id', [3139]);
             } else {

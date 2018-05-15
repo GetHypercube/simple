@@ -170,7 +170,7 @@ class Usuario extends Doctrine_Record
     public static function registrarUsuario($usuario)
     {
         Log::info("UsuarioSesion - Registrando usuario " . $usuario);
-        dd($usuario);
+
         if ($usuario == NULL) {
             return NULL;
         }

@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Log;
 use App\Helpers\Doctrine;
-/* 
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -209,7 +210,6 @@ class IntegracionMediator
     public function iniciarProceso($proceso_id, $id_tarea, $body, $tramite_ret_id = null, $tarea_ret_id = null)
     {
         //validar la entrada
-
         if ($proceso_id == NULL || $id_tarea == NULL) {
             throw new ApiException('Parametros no validos', 400);
         }
@@ -351,9 +351,11 @@ class IntegracionMediator
 
         } catch (Exception $e) {
             Log::error($e->getTraceAsString());
+
             if ($e->getCode() === 400) {
                 throw new ApiException($e->getMessage(), $e->getCode());
             }
+
             throw new ApiException("Error interno", 500);
         }
         return $result;
@@ -369,14 +371,16 @@ class IntegracionMediator
      */
     public function saveFields($campos, Etapa $etapa, $body)
     {
+        $request = (new \Illuminate\Http\Request)->instance();
 
         foreach ($campos as $c) {
             // Almacenamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
             Log::debug('$$$$$$$$   registrando campo: ' . $c->nombre);
-            if ($c->isEditableWithCurrentPOST($etapa->id, $body)) {
+            if ($c->isEditableWithCurrentPOST($request, $etapa->id, $body)) {
                 $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($c->nombre, $etapa->id);
-                if (!$dato)
+                if (!$dato) {
                     $dato = new DatoSeguimiento();
+                }
                 $dato->nombre = $c->nombre;
 
                 $dato->valor = $this->extractVariable($body, $c, $etapa->tramite_id) === false ? '' : $this->extractVariable($body, $c, $etapa->tramite_id);
@@ -395,11 +399,13 @@ class IntegracionMediator
     public function validarCamposObligatorios($body, $form)
     {
         $campos = $form->getCamposEntrada();
-        Log::debug('Validando campos obligatorios: ' . $this->varDump($body['data']));
+        if (key_exists('data', $body)) {
+            Log::debug('Validando campos obligatorios: ' . $this->varDump($body['data']));
+        }
         $error = false;
         $campos_faltantes = [];
         foreach ($campos as $c) {
-            if (!key_exists($c->nombre, $body['data'])) {  //si no esta el campo se valida si es obligatorio
+            if (key_exists('data', $body) && !key_exists($c->nombre, $body['data'])) {  //si no esta el campo se valida si es obligatorio
                 foreach ($c->validacion as $rule) {
                     if (strpos($rule, "required") >= 0) {  //si conteine require entonces es obligatorio
                         $campos_faltantes[] = $c->nombre;
@@ -454,9 +460,8 @@ class IntegracionMediator
             $user->open_id = TRUE;
             $user->save();
         }
-        $CI = &get_instance();
-        $CI->session->set_userdata('usuario_id', $user->id);
 
+        \Illuminate\Support\Facades\Auth::loginUsingId($user->id);
     }
 
     private function varDump($data)

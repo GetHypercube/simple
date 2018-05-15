@@ -25,6 +25,7 @@ mix.js('resources/assets/js/app.js', 'public/js')
     .copy('resources/assets/ayuda', 'public/ayuda', true)
     .copy('resources/assets/uploads', 'public/uploads', true)
     .copy('resources/assets/calendar', 'public/calendar', true)
+    .copy('resources/assets/fonts/bootstrap', 'public/fonts', true)
     .disableNotifications()
     .browserSync({
         notify: false,

@@ -46,9 +46,9 @@
 
                                     <div class="input-group col-4">
                                         <input type='text' name='created_at_desde' placeholder='Desde'
-                                               class='datepicker form-control col-5'/>
+                                               class='datetimepicker form-control col-5'/>
                                         <input type='text' name='created_at_hasta' placeholder='Hasta'
-                                               class='datepicker form-control col-5'/>
+                                               class='datetimepicker form-control col-5'/>
                                     </div>
 
                                     <div class="report-action-form">
@@ -84,4 +84,20 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('script')
+    <script type="text/javascript">
+        $(function () {
+            $('.datetimepicker').datetimepicker({
+                //inline: true,
+                //sideBySide: true,
+                format: 'DD-MM-YYYY',
+                icons: {
+                    previous: "glyphicon glyphicon-chevron-left",
+                    next: "glyphicon glyphicon-chevron-right"
+                }
+            });
+        });
+    </script>
 @endsection

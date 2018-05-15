@@ -252,7 +252,6 @@ class Proceso extends Doctrine_Record
         }
 
         //Completamos el proceso y sus tareas
-        dd($json);
         foreach ($json as $keyp => $p_attr) {
             if ($keyp == 'Tareas') {
                 foreach ($p_attr as $t) {

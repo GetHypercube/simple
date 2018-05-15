@@ -29,13 +29,12 @@ class ApiController extends Controller
             $this->registrarAuditoria($request, $id_tarea, "Iniciar Tramite", "Tramites", $bodyContent);
 
             $data = $mediator->iniciarProceso($id_proceso, $id_tarea, $bodyContent);
-            dd($data);
+
             return response()->json($data);
-
-
         } catch (Exception $e) {
             Log::info("Recupera exception: " . $e->getMessage());
             Log::info("Recupera getCode: " . $e->getCode());
+
             return response()->json(
                 array("message" => $e->getMessage(),
                     "code" => $e->getCode()), $e->getCode());
@@ -137,7 +136,7 @@ class ApiController extends Controller
                     if (!isset($body->identificacion)) {
                         throw new ApiException('Identificación Clave Unica no enviada', 403);
                     }
-                    $mediator = new IntegracionMediator();
+                    $mediator = new \IntegracionMediator();
                     $mediator->registerUserFromHeadersClaveUnica($body->identificacion);
                     if (Auth::user() == NULL) {
                         Log::error('No se pudo registrar el usuario Open ID');
@@ -197,10 +196,10 @@ class ApiController extends Controller
 
             $headers = getallheaders();
 
-            $new_headers = array('host' => $headers['host'],
-                'Origin' => isset($headers['origin']) ? $headers['origin'] : '',
+            $new_headers = array('host' => $headers['Host'],
+                'Origin' => isset($headers['Origin']) ? $headers['Origin'] : '',
                 'largo-mensaje' => isset($headers['content-length']) ? $headers['content-length'] : '',
-                'Content-type' => isset($headers['content-type']) ? $headers['content-type'] : '',
+                'Content-type' => isset($headers['Content-Type']) ? $headers['Content-Type'] : '',
                 'http-Method' => $request->getMethod());
 
             $data['headers'] = $new_headers;

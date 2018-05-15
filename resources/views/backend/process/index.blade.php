@@ -44,7 +44,11 @@
                     <td>{{$p->estado == 'public' ? 'Publicado' : 'Draft'}}</td>
                     <td>{{$p->version}}</td>
                     <td>
-                        @if ($editar_proceso)
+                        @if ($editar_proceso && $p->estado == 'public')
+                            <a class="btn btn-primary" onclick="return editarProceso(<?=$p->id?>);" href="#">
+                                <i class="material-icons">edit</i> Editar
+                            </a>
+                        @else
                             <a class="btn btn-primary" href="{{route('backend.procesos.edit', [$p->id])}}">
                                 <i class="material-icons">edit</i> Editar</a>
                         @endif
@@ -153,6 +157,12 @@
 
         function publicarProceso(procesoId) {
             $("#modal").load("/backend/procesos/ajax_publicar_proceso/" + procesoId);
+            $("#modal").modal();
+            return false;
+        }
+
+        function editarProceso(procesoId) {
+            $("#modal").load("/backend/procesos/ajax_editar_proceso/" + procesoId);
             $("#modal").modal();
             return false;
         }
