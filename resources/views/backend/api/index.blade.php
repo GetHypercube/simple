@@ -27,7 +27,7 @@
                     estándares HTTP para obtener la información. Por ejemplo, si deseas obtener una ficha en particular,
                     deberías enviar un request HTTP como el siguiente:</p>
 
-                <pre>GET {{url('/api/tramites/{tramiteId}?token={token}')}}</pre>
+                <pre>GET {{url('/backend/api/tramites/{tramiteId}?token={token}')}}</pre>
 
                 <h3>Parámetros comunes</h3>
 

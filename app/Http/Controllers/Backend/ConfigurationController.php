@@ -58,7 +58,7 @@ class ConfigurationController extends Controller
 
         $data = Cuenta::find(Auth::user()->cuenta_id);
         $data->nombre_largo = $request->input('name_large');
-        $data->mensaje = $request->input('message');
+        $data->mensaje = is_null($request->input('message')) ? '' : $request->input('message', '');
         $data->descarga_masiva = $request->has('massive_download') ? 1 : 0;
         $data->logo = $request->input('logo');
         $data->save();

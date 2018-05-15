@@ -15,7 +15,7 @@
 
                 <h3>Request HTTP</h3>
 
-                <pre>GET {{url('/api/procesos/{procesoId}?token={token}')}}</pre>
+                <pre>GET {{url('/backend/api/procesos/{procesoId}?token={token}')}}</pre>
 
                 <h3>Parámetros</h3>
 
