@@ -18,13 +18,23 @@ class Tramite extends Model
      */
     public function toSearchableArray()
     {
-        $array = $this->toArray();
+        $array = $this->with("proceso")
+            ->with('etapas')
+            ->with('etapas.datoSeguimientos')
+            ->where("id", $this->id)
+            ->first()
+            ->toArray();
 
         return $array;
     }
 
     public function proceso()
     {
-        return $this->belongsToMany('App\Proceso');
+        return $this->belongsTo(Proceso::class);
+    }
+
+    public function etapas()
+    {
+        return $this->hasMany(Etapa::class);
     }
 }

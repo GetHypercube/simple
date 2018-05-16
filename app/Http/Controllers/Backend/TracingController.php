@@ -39,7 +39,9 @@ class TracingController extends Controller
         Log::info("Detalle de seguimiento para proceso id: " . $proceso_id);
 
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
-
+        if (is_null($proceso->root)) {
+            $proceso->root = $proceso->id;
+        }
         $procesos_archivados = $proceso->findProcesosArchivados($proceso->root);
         $id_archivados = array();
         Log::info("Buscando procesos relacionados archivados");
@@ -81,34 +83,39 @@ class TracingController extends Controller
             ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')-> // Mostramos solo los que se han avanzado o tienen datos
             groupBy('t.id')->orderBy($order . ' ' . $direction)->limit($per_page)->offset($offset);
 
-        if ($created_at_desde)
+        if ($created_at_desde) {
             $doctrine_query->andWhere('created_at >= ?', array(
                 date('Y-m-d', strtotime($created_at_desde))
             ));
-        if ($created_at_hasta)
+        }
+        if ($created_at_hasta) {
             $doctrine_query->andWhere('created_at <= ?', array(
                 date('Y-m-d', strtotime($created_at_hasta))
             ));
-        if ($updated_at_desde)
+        }
+        if ($updated_at_desde) {
             $doctrine_query->andWhere('updated_at >= ?', array(
                 date('Y-m-d', strtotime($updated_at_desde))
             ));
-        if ($updated_at_hasta)
+        }
+        if ($updated_at_hasta) {
             $doctrine_query->andWhere('updated_at <= ?', array(
                 date('Y-m-d', strtotime($updated_at_hasta))
             ));
-        if ($pendiente != -1)
+        }
+        if ($pendiente != -1) {
             $doctrine_query->andWhere('pendiente = ?', array(
                 $pendiente
             ));
+        }
 
         if ($query) {
-            $result = Tramite::search($query)->get();
-            //dd($result);
+            $result = Tramite::search(['query' => $query, 'filter' => ['proceso_id' => $id_archivados]])->get();
+
             if (!$result->isEmpty()) {
-                //dd($result);
                 $matches = $result->groupBy('id')->keys()->toArray();
-                //$doctrine_query->whereIn('t.id', [3139]);
+
+                $doctrine_query->whereIn('t.id', $matches);
             } else {
                 $doctrine_query->where('0');
             }

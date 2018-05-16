@@ -10,17 +10,26 @@ class Proceso extends Model
     use Searchable;
 
     protected $table = 'proceso';
-
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
     public function toSearchableArray()
     {
-        return [
-            'id' => $this->id,
-            'nombre' => $this->nombre,
-        ];
+        $array = $this->with("tramites")
+            ->with('tramites.etapas')
+            ->with('tramites.etapas.datoSeguimientos')
+            ->where("id", $this->id)
+            ->first()
+            ->toArray();
+
+        return $array;
     }
 
-    public function tramite()
+    public function tramites()
     {
-        return $this->belongsToMany('App\Tramite');
+        return $this->hasMany(Tramite::class);
     }
+
 }

@@ -18,8 +18,9 @@
 
                 <div class="validacion"></div>
                 <form id="frmsearch" method="POST" action="<?= url('backend/agendas/buscar') ?>">
+                    {{csrf_field()}}
                     <a class="btn btn-success" href="#" onclick="nuevaagenda();">
-                        <i class="icon-file icon-white"></i> Nueva
+                        <i class="material-icons">add</i> Nueva
                     </a>
                     <a href="/ayuda/simple/backend/agenda-agregar.html" target="_blank">
                         <i class="material-icons align-middle">help</i>
@@ -31,7 +32,7 @@
                         <div class="clearfix">
                             <a class="btn btn-light js-btn-buscar" onclick="buscarAgenda();" href="#"
                                data-toggle="modal">
-                                Buscar
+                                <i class="material-icons">search</i> Buscar
                             </a>
                         </div>
                     </div>
@@ -144,6 +145,7 @@
     </div>
 @endsection
 @section('script')
+    <script src="{{asset('js/helpers/common.js')}}"></script>
     <script>
         $(document).ready(function () {
             $('.container-menu').css({'position': 'absolute', 'left': '50%', 'margin-left': '-113px'});

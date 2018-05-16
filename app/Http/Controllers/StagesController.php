@@ -103,8 +103,8 @@ class StagesController extends Controller
         $resultotal = "";
 
         if ($buscar) {
-            $result = Proceso::search($buscar)->get();
-            if (array_key_exists('total', $result) && $result['total'] > 0) {
+            $result = Tramite::search($buscar)->get();
+            if (!$result->isEmpty()) {
                 $resultotal = "true";
             } else {
                 $resultotal = "false";
@@ -112,7 +112,7 @@ class StagesController extends Controller
         }
 
         if ($resultotal == "true") {
-            $matches = array_keys($result['matches']);
+            $matches = $result->groupBy('id')->keys()->toArray();
             $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, $matches, $buscar);
         } else {
             $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, "0", $buscar);
@@ -150,7 +150,7 @@ class StagesController extends Controller
 
         if ($buscar) {
             $result = Proceso::search($buscar)->get();
-            if (array_key_exists('total', $result) && $result['total'] > 0) {
+            if (!$result->isEmpty()) {
                 $resultotal = true;
             } else {
                 $resultotal = false;
@@ -158,7 +158,7 @@ class StagesController extends Controller
         }
 
         if ($resultotal == true) {
-            $matches = array_keys($result['matches']);
+            $matches = $result->groupBy('id')->keys()->toArray();
             $contador = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $buscar, 0, $perpage)->count();
             $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $buscar, 0, $perpage);
             error_log("true" . " cantidad " . $contador);

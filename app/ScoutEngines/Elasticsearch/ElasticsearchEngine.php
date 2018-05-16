@@ -20,14 +20,35 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
         $params = [
             'index' => $this->index,
             'type' => $builder->index ?: $builder->model->searchableAs(),
-            'body' => [
+            /*'body' => [
                 'query' => [
                     'multi_match' => [
-                        'query' => "*{$builder->query}*",
+                        //'query' => "*{$builder->query}*",
+                        'query' => $query,
                     ],
                 ]
-            ]
+            ]*/
         ];
+
+
+        //Si $builder->query, es por que traera opciones adicionales, de no ser así, se trata como un multi_match solamente
+        if (is_array($builder->query)) {
+            dd($builder->query);
+            $query = array_get($builder->query, 'query');
+            $filter = array_get($builder->query, 'filter', '');
+            $params['body']['query']['bool']['should']['multi_match']['query'] = $query;
+
+            //si queremos filtrar por varios terminos, basta con agregr 'terms' y no 'term',
+            //lo siguiente sera un array asociativo donde su llave es la columna y el valor son todos los posibles filtros
+            if (!empty($filter)) {
+                $params['body']['query']['bool']['filter']['terms'] = $filter;
+            }
+        } else {
+            $params['body']['query']['multi_match']['query'] = $builder->query;
+        }
+
+
+        //dd($params);
         if ($sort = $this->sort($builder)) {
             $params['body']['sort'] = $sort;
         }
@@ -38,8 +59,9 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
             $params['body']['size'] = $options['size'];
         }
         if (isset($options['numericFilters']) && count($options['numericFilters'])) {
-            $params['body']['query']['bool']['must'] = array_merge($params['body']['query']['bool']['must'],
-                $options['numericFilters']);
+            $params['body']['query']['bool']['filter'] = $options['numericFilters'];
+            //$params['body']['query']['bool']['must'] = array_merge($params['body']['query']['bool']['must'],
+            //$options['numericFilters']);
         }
 
         return $this->elastic->search($params);
@@ -68,7 +90,7 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
 
         return collect($results['hits']['hits'])->map(function ($hit) use ($model, $models) {
             $result = isset($models[$hit['_id']]) ? $models[$hit['_id']] : null;
-            $result->highlight = isset($hit['highlight']) ? $hit['highlight'] : null;
+            //$result->highlight = isset($hit['highlight']) ? $hit['highlight'] : null;
             return $result;
         })->filter()->values();
     }

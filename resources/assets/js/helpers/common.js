@@ -249,7 +249,9 @@ function buscarAgenda() {
             $('#frmsearch').submit();
         }
     } else {
-        $('.validacion').html('<div class="alert alert-error"><a class="close" data-dismiss="alert">Ã—</a>Debe ingresar un nombre de agenda o pertence. si quiere listar todas digite \'%\'</div>');
+        $('.validacion').html('<div class="alert alert-danger" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close">\n' +
+            '    <span aria-hidden="true">&times;</span>\n' +
+            '  </button>Debe ingresar un nombre de agenda o pertence. si quiere listar todas digite \'%\'</div>');
     }
 }
 

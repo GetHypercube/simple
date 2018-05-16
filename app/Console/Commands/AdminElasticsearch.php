@@ -58,6 +58,13 @@ class AdminElasticsearch extends Command
             $response = $client->request('PUT', env('ELASTICSEARCH_HOST') . '/' . env('ELASTICSEARCH_INDEX'), [
                 'json' => [
                     'mappings' => [
+                        'procesos' => [
+                            'properties' => [
+                                'query' => [
+                                    'type' => 'completion'
+                                ]
+                            ]
+                        ],
                         'tramite' => [
                             'properties' => [
                                 'id' => [

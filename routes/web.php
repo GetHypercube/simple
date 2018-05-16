@@ -27,7 +27,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/tramites/disponibles', 'TramitesController@disponibles')->name('tramites.disponibles');
     Route::get('/etapas/ejecutar/{etapa_id}/{secuencia?}', 'StagesController@run')->name('stage.run');
     Route::get('/etapas/asignar/{etapa_id}', 'StagesController@asignar')->name('stage.asignar');
-    Route::post('/etapas/ejecutar_form/{etapa_id}/{secuencia}', 'StagesController@ejecutar_form')->name('stage.run');
+    Route::post('/etapas/ejecutar_form/{etapa_id}/{secuencia}', 'StagesController@ejecutar_form')->name('stage.ejecutar_form');
     Route::get('/etapas/ver/{etapa_id}/{secuencia?}', 'StagesController@ver')->name('stage.view');
     Route::get('/etapas/inbox', 'StagesController@inbox')->name('stage.inbox');
     Route::get('/etapas/sinasignar', 'StagesController@sinasignar')->name('stage.unassigned');
@@ -165,6 +165,8 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::middleware('can:agenda')->group(function () {
             Route::get('agendas', 'AppointmentController@index')->name('appointment.index');
             Route::get('agendas/pagina/{pagina}', 'AppointmentController@index');
+            Route::post('agendas/buscar', 'AppointmentController@buscar');
+            Route::get('agendas/buscar/{pagina?}', 'AppointmentController@buscar');
             Route::get('agendas/ajax_back_nueva_agenda', 'AppointmentController@ajax_back_nueva_agenda')->name('appointment.ajax_back_nueva_agenda');
             Route::get('agendas/ajax_grabar_agenda_back', 'AppointmentController@ajax_grabar_agenda_back')->name('appointment.ajax_grabar_agenda_back');
             Route::get('agendas/ajax_back_editar_agenda/{id}', 'AppointmentController@ajax_back_editar_agenda')->name('appointment.ajax_back_editar_agenda');

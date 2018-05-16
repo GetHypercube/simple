@@ -2,7 +2,7 @@
     "/js/backend.js": "/js/backend.js",
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
+    "/css/backend.css": "/css/backend.css",
     "/css/manager.css": "/css/manager.css",
-    "/js/manager.js": "/js/manager.js",
-    "/css/backend.css": "/css/backend.css"
+    "/js/manager.js": "/js/manager.js"
 }
