@@ -33,7 +33,6 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
 
         //Si $builder->query, es por que traera opciones adicionales, de no ser así, se trata como un multi_match solamente
         if (is_array($builder->query)) {
-            dd($builder->query);
             $query = array_get($builder->query, 'query');
             $filter = array_get($builder->query, 'filter', '');
             $params['body']['query']['bool']['should']['multi_match']['query'] = $query;
@@ -47,8 +46,6 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
             $params['body']['query']['multi_match']['query'] = $builder->query;
         }
 
-
-        //dd($params);
         if ($sort = $this->sort($builder)) {
             $params['body']['sort'] = $sort;
         }
@@ -77,7 +74,6 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
      */
     public function map($results, $model)
     {
-        //dd($results['hits']);
         if ($results['hits']['total'] == 0) {
             return Collection::make();
         }

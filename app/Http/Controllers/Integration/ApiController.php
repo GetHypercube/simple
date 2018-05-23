@@ -194,7 +194,7 @@ class ApiController extends Controller
 
             }
 
-            $headers = getallheaders();
+            $headers = \getallheaders();
 
             $new_headers = array('host' => $headers['Host'],
                 'Origin' => isset($headers['Origin']) ? $headers['Origin'] : '',
