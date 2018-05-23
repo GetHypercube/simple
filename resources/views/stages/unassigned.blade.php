@@ -116,7 +116,6 @@
             </label>
         </div>
     </div>
-    <div class="modal hide fade" id="modal"></div>
     <?php endif; ?>
     <?php endif; ?>
     <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
@@ -124,10 +123,11 @@
     <p>No hay trámites para ser asignados.</p>
     <?php endif; ?>
 </div>
+<div class="modal hide" id="modal"></div>
 @push('script')
     <script>
         function descargarDocumentos(tramiteId) {
-            $("#modal").load(url + "etapas/descargar/" + tramiteId);
+            $("#modal").load("/etapas/descargar/" + tramiteId);
             $("#modal").modal();
             return false;
         }
@@ -163,7 +163,7 @@
                 });
                 $('#tramites').val(checked);
                 var tramites = $('#tramites').val();
-                $("#modal").load(url + "etapas/descargar/" + vtramites);
+                $("#modal").load("/etapas/descargar/" + vtramites);
                 $("#modal").modal();
                 return false;
             }

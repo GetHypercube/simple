@@ -109,7 +109,7 @@
                             <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
                                class="btn btn-link preventDoubleRequest"><i class="icon-edit icon-white"></i>
                                 Realizar</a>
-                            <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
+                        <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                             <?php if ($file): ?>
                             <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);"
                                class="btn btn-link"><i
@@ -136,7 +136,6 @@
                     </label>
                 </div>
             </div>
-            <div class="modal hide fade in" id="modal"></div>
             <?php endif; ?>
             <?php endif; ?>
 
@@ -145,12 +144,14 @@
             <?php endif; ?>
         </div>
     </div>
+    <div class="modal hide in" id="modal"></div>
+
 @endsection
 
 @push('script')
     <script>
         function descargarDocumentos(tramiteId) {
-            $("#modal").load(url + "etapas/descargar/" + tramiteId);
+            $("#modal").load("/etapas/descargar/" + tramiteId);
             $("#modal").modal();
             $("#modal").css('display', 'block');
 
@@ -211,7 +212,7 @@
                 });
                 $('#tramites').val(checked);
                 var tramites = $('#tramites').val();
-                $("#modal").load(url + "etapas/descargar/" + tramites);
+                $("#modal").load("/etapas/descargar/" + tramites);
                 $("#modal").modal();
                 console.log("descargarSeleccionados.modal");
                 return false;
