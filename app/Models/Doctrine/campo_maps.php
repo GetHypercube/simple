@@ -6,8 +6,6 @@ use App\Helpers\Doctrine;
 
 class CampoMaps extends Campo
 {
-    private $javascript;
-
     public $requiere_datos = false;
     public $datos_mapa = true;
 
@@ -292,8 +290,9 @@ class CampoMaps extends Campo
         $columns = array();
         if (isset($this->extra))
             $columns = $this->extra;
-        $this->javascript = '
-        <script type="text/javascript">
+        $output = '
+            <div class="columnas" ' . ($this->readonly == 0 ? 'style="display: none;"' : '') . '>
+                <script type="text/javascript">
                     $(document).ready(function() {
                         $("#formEditarCampo .columnas .nuevo").click(function() {
                             var pos=$("#formEditarCampo .columnas table tbody tr").lenght;
@@ -312,10 +311,6 @@ class CampoMaps extends Campo
                         });
                     });
                 </script>
-                ';
-        $output = '
-            <div class="columnas" ' . ($this->readonly == 0 ? 'style="display: none;"' : '') . '>
-                
                 <h4>Columnas</h4>
                 <button class="btn btn-light nuevo" type="button"><i class="material-icons">add</i> Nuevo</button>
                 <table class="table mt-3">
@@ -354,9 +349,4 @@ class CampoMaps extends Campo
         return $output;
     }
 
-
-    public function getJavascript()
-    {
-        return $this->javascript;
-    }
 }
