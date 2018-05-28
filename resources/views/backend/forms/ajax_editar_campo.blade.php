@@ -265,7 +265,7 @@
                             <script type="text/javascript">
                                 $(function () {
                                     $("[name=readonly]").click(function () {
-                                        if ($(this).attr('checked')) {
+                                        if (this.checked) {
                                             $('.columnas').show();
                                         } else {
                                             $("#formEditarCampo .columnas table tbody tr").remove();

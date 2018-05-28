@@ -286,15 +286,15 @@ class CampoMaps extends Campo
 
     public function backendExtraFields()
     {
-
         $columns = array();
         if (isset($this->extra))
             $columns = $this->extra;
         $output = '
             <div class="columnas" ' . ($this->readonly == 0 ? 'style="display: none;"' : '') . '>
-                <script type="text/javascript">
+                 <script type="text/javascript">
                     $(document).ready(function() {
                         $("#formEditarCampo .columnas .nuevo").click(function() {
+                            console.log(\'dsa\');
                             var pos=$("#formEditarCampo .columnas table tbody tr").lenght;
                             var html="<tr>";
                             html+="<td><input type=\'text\' class=\'form-control\' name=\'extra[" + pos + "][latitude]\' style=\'width:100px;\' /></td>";
@@ -302,10 +302,10 @@ class CampoMaps extends Campo
                             html+="<td><input type=\'text\' class=\'form-control\' name=\'extra[" + pos + "][address]\' style=\'width:140px;\' /></td>";
                             html+="<td><button type=\'button\' class=\'btn btn-light eliminar\'><i class=\'icon-remove\'></i> Eliminar</button></td>";
                             html+="</tr>";
-
+            
                             $("#formEditarCampo .columnas table tbody").append(html);
                         });
-
+            
                         $("#formEditarCampo .columnas").on("click", ".eliminar", function() {
                             $(this).closest("tr").remove();
                         });
