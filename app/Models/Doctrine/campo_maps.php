@@ -292,17 +292,16 @@ class CampoMaps extends Campo
         $columns = array();
         if (isset($this->extra))
             $columns = $this->extra;
-        $output = '
-            <div class="columnas" ' . ($this->readonly == 0 ? 'style="display: none;"' : '') . '>
-                <script type="text/javascript">
+        $this->javascript = '
+        <script type="text/javascript">
                     $(document).ready(function() {
                         $("#formEditarCampo .columnas .nuevo").click(function() {
                             var pos=$("#formEditarCampo .columnas table tbody tr").lenght;
                             var html="<tr>";
-                            html+="<td><input type=\'text\' name=\'extra[" + pos + "][latitude]\' style=\'width:100px;\' /></td>";
-                            html+="<td><input type=\'text\' name=\'extra[" + pos + "][longitude]\' style=\'width:100px;\' /></td>";
-                            html+="<td><input type=\'text\' name=\'extra[" + pos + "][address]\' style=\'width:140px;\' /></td>";
-                            html+="<td><button type=\'button\' class=\'btn eliminar\'><i class=\'icon-remove\'></i> Eliminar</button></td>";
+                            html+="<td><input type=\'text\' class=\'form-control\' name=\'extra[" + pos + "][latitude]\' style=\'width:100px;\' /></td>";
+                            html+="<td><input type=\'text\' class=\'form-control\' name=\'extra[" + pos + "][longitude]\' style=\'width:100px;\' /></td>";
+                            html+="<td><input type=\'text\' class=\'form-control\' name=\'extra[" + pos + "][address]\' style=\'width:140px;\' /></td>";
+                            html+="<td><button type=\'button\' class=\'btn btn-light eliminar\'><i class=\'icon-remove\'></i> Eliminar</button></td>";
                             html+="</tr>";
 
                             $("#formEditarCampo .columnas table tbody").append(html);
@@ -313,6 +312,10 @@ class CampoMaps extends Campo
                         });
                     });
                 </script>
+                ';
+        $output = '
+            <div class="columnas" ' . ($this->readonly == 0 ? 'style="display: none;"' : '') . '>
+                
                 <h4>Columnas</h4>
                 <button class="btn btn-light nuevo" type="button"><i class="material-icons">add</i> Nuevo</button>
                 <table class="table mt-3">
@@ -354,6 +357,6 @@ class CampoMaps extends Campo
 
     public function getJavascript()
     {
-        return $display;
+        return $this->javascript;
     }
 }

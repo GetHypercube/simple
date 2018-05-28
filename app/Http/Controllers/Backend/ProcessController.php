@@ -227,7 +227,7 @@ class ProcessController extends Controller
 
         $request->validate(['descripcion' => 'required']);
 
-        $respuesta = new stdClass();
+        $respuesta = new \stdClass();
 
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
 
@@ -239,7 +239,7 @@ class ProcessController extends Controller
         $fecha = new \DateTime();
 
         // Auditar
-        $registro_auditoria = new AuditoriaOperaciones();
+        $registro_auditoria = new \AuditoriaOperaciones();
         $registro_auditoria->fecha = $fecha->format("Y-m-d H:i:s");
         $registro_auditoria->operacion = 'Activación de Proceso';
         $registro_auditoria->motivo = $request->input('descripcion');
@@ -261,8 +261,10 @@ class ProcessController extends Controller
             ->where("id = ?", $proceso_id);
         $q->execute();
 
-        return redirect()->route('backend.procesos.index');
-
+        return response()->json([
+            'validacion' => true,
+            'redirect' => route('backend.procesos.index', [$proceso_id]),
+        ]);
     }
 
     /**

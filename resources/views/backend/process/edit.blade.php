@@ -32,8 +32,7 @@
 
         <div class="row">
             <div class="col-12 mt-3">
-                <form id="procArchivadoForm" class="form-inline mt-3" method="POST" action="/backend/procesos/editar/">
-                    {{csrf_field()}}
+                <form id="procArchivadoForm" class="form-inline mt-3" method="GET" action="">
                     <div class="form-group">
                         <label for="proc_arch_id">Versiones anteriores </label>
                         <select id="proc_arch_id" name="proc_arch_id"
