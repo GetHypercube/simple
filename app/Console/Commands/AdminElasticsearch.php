@@ -40,6 +40,7 @@ class AdminElasticsearch extends Command
      */
     public function handle()
     {
+        ini_set('memory_limit', -1);
 
         $client = new Client();
 
