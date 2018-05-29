@@ -2,7 +2,7 @@
     <a class="nav-link {{Request::path() == 'manager' ? 'active' : ''}}"
        href="{{route('manager.home')}}">Portada</a>
     <a class="nav-link disabled" href="#">ADMINISTRACIÓN</a>
-    <a class="nav-link {{Request::path() == 'manager/cuentas' ? 'active' : ''}}"
+    <a class="nav-link {{strstr(Request::path(), 'manager/cuentas')  ? 'active' : ''}}"
        href="{{route('manager.account.index')}}">Cuentas</a>
     <a class="nav-link {{strstr(Request::path(), 'manager/usuarios') ? 'active' : ''}}"
        href="{{route('manager.users.index')}}">Usuarios Backend</a>

@@ -37,7 +37,7 @@ class UsersController extends Controller
         $data['usuario'] = $usuario;
         $data['cuentas'] = Doctrine::getTable('Cuenta')->findAll();
 
-        $data['title'] = $usuario->id ? 'Editar' : 'Crear';
+        $data['title'] = property_exists($usuario, 'id') ? 'Editar' : 'Crear';
         $data['content'] = view('manager.users.edit', $data);
 
         return view('layouts.manager.app', $data);
@@ -100,11 +100,14 @@ class UsersController extends Controller
      */
     public function delete(Request $request, $usuario_id)
     {
-        $usuario = Doctrine::getTable('UsuarioBackend')->find($usuario_id);
-        $usuario->delete();
+        $usuario = \App\Models\UsuarioBackend::find($usuario_id);
+        if (!is_null($usuario)) {
+            $usuario->delete();
+
+        }
 
         $request->session()->flash('success', 'Usuario eliminado con éxito.');
-        redirect('manager/usuarios');
+        return redirect('manager/usuarios');
     }
 
 }

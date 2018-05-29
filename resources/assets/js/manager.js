@@ -94,3 +94,14 @@ $(document).on("submit", ".ajaxForm", function () {
     }
     return false;
 });
+
+$(document).ready(function() {
+
+    $('#toggle_ambiente_dev').change(function() {
+        if ($(this).prop('checked')) {
+            $('#vinculo_prod').show(300);
+        } else {
+            $('#vinculo_prod').hide(300);
+        }
+    });
+});

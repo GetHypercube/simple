@@ -2,6 +2,8 @@
 
 if (!App::environment('local')) URL::forceScheme('https');
 
+Route::post('/notificar/{tramite_id}', 'ApiController@notificar')->name('api.notificar');
+
 Route::middleware(['auth_user'])->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
 
@@ -225,7 +227,6 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::view('/procesos_obtener', 'backend.api.procesos_obtener')->name('api.procesos_obtener');
             Route::view('/procesos_listar', 'backend.api.procesos_listar')->name('api.procesos_listar');
             Route::get('/procesos_disponibles', 'ApiController@procesos_disponibles')->name('api.procesos_disponibles');
-            Route::get('/notificar/{tramite_id}', 'ApiController@notificar')->name('api.notificar');
         });
 
         //Configuración
