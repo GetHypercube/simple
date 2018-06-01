@@ -38,7 +38,17 @@ Luego, Migración y Semillas de la base de datos:
 php artisan migrate --seed
 ```
 
+## Actualizaciones
 
+Cada vez que se realice un pull del proyecto, este deberá ser acompañado de la siguiente lista de ejecución de comandos.
+
+```
+npm install
+npm run production
+composer install
+php artisan migrate --force
+vendor/bin/phpunit
+```
 
 ## Elasticsearch
 

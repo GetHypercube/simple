@@ -69,13 +69,14 @@ class AccountController extends Controller
                 'nombre' => 'required',
                 'nombre_largo' => 'required',
                 //'appkey' => 'required'
+                'domain' => 'required'
             ];
 
             $messages = [
                 'nombre.required' => 'El campo Nombre es obligatorio',
                 'nombre_largo.required' => 'El campo Nombre largo es obligatorio',
                 'domain.required' => 'El campo Dominio es obligatorio',
-                'domain.required' => 'El campo Clave App es obligatorio'
+                'appkey.required' => 'El campo Clave App es obligatorio'
             ];
 
             //$this->form_validation->set_rules('nombre', 'Nombre', 'required|url_title');

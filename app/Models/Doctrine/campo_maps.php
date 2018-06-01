@@ -294,13 +294,12 @@ class CampoMaps extends Campo
                  <script type="text/javascript">
                     $(document).ready(function() {
                         $("#formEditarCampo .columnas .nuevo").click(function() {
-                            console.log(\'dsa\');
                             var pos=$("#formEditarCampo .columnas table tbody tr").lenght;
                             var html="<tr>";
                             html+="<td><input type=\'text\' class=\'form-control\' name=\'extra[" + pos + "][latitude]\' style=\'width:100px;\' /></td>";
                             html+="<td><input type=\'text\' class=\'form-control\' name=\'extra[" + pos + "][longitude]\' style=\'width:100px;\' /></td>";
                             html+="<td><input type=\'text\' class=\'form-control\' name=\'extra[" + pos + "][address]\' style=\'width:140px;\' /></td>";
-                            html+="<td><button type=\'button\' class=\'btn btn-light eliminar\'><i class=\'icon-remove\'></i> Eliminar</button></td>";
+                            html+="<td><button type=\'button\' class=\'btn btn-light eliminar\'><i class=\'material-icons\'>close</i> Eliminar</button></td>";
                             html+="</tr>";
             
                             $("#formEditarCampo .columnas table tbody").append(html);
@@ -311,7 +310,7 @@ class CampoMaps extends Campo
                         });
                     });
                 </script>
-                <h4>Columnas</h4>
+                <h4 class="mt-3">Columnas</h4>
                 <button class="btn btn-light nuevo" type="button"><i class="material-icons">add</i> Nuevo</button>
                 <table class="table mt-3">
                     <thead>
