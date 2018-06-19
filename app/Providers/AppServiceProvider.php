@@ -220,13 +220,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function bootSetEmailConfigs()
     {
-        $cuenta = \Cuenta::cuentaSegunDominio();
-        $data = [
-            'address' => $cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'),
-            'name' => $cuenta->nombre_largo,
-        ];
+        try {
+            $cuenta = \Cuenta::cuentaSegunDominio();
 
-        config(['mail.from' => $data]);
+            $data = [
+                'address' => $cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'),
+                'name' => $cuenta->nombre_largo,
+            ];
+
+            config(['mail.from' => $data]);
+        } catch (\Exception $e) {
+        }
     }
 
 }

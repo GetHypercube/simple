@@ -11,7 +11,7 @@ RUN apt-get update \
 && git clone --depth=1 https://$CREDENTIALS_GIT@$REPO /var/www/simple \
 && cd /var/www/simple \
 && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-&& composer install && rm -rf /root/.composer/cache/* \
+&& composer install --no-dev && rm -rf /root/.composer/cache/* \
 && rm -rf  dump.sql .gitattributes webpack.mix.js package-lock.json package.json phpunit.xml .env.example .git .gitignore composer* docker-compose.yml Dockerfile .gitlab-ci-yml readme.md tests /usr/local/bin/composer
 
 ENV LANG es_CL.UTF-8
