@@ -1,23 +1,48 @@
 # Simple 2.0
 
+## Requerimientos
+
+* Servidor Web con PHP 7.1
+* Librerias PHP necesarias:
+    * OpenSSL
+    * PDO
+    * Mbstring
+    * Tokenizer
+    * curl
+    * mcrypt
+    * Ctype
+    * XML
+    * JSON
+    * GD
+    * soap
+
 ## Instalación
 
-Primero se debe copiar el archivo .env.example a .env y editar las variables de configuración de acuerdo a tu servidor:
+### Permisos de directorio
+
+Es posible que deba configurar algunos permisos. Los directorios dentro de `storage` y `bootstrap/cache` deben ser editables por su servidor web o Laravel no se ejecutará.
+
+### Variables de entorno
+
+El siguiente paso es copiar el archivo .env.example a .env y editar las variables de configuración de acuerdo a tu servidor:
 
 ```
 cp .env.example .env
 ```
 
-Generar la llave de instalación
+### Instalar las dependencias con composer
+
+Laravel utiliza `Composer` para administrar sus dependencias. Entonces, antes de usar este proyecto desarrollado en Laravel, 
+asegúrese de tener Composer instalado en su máquina. Y ejecute el siguiente comando.
+ 
+```
+composer install
+```
+
+Luego, Generar la llave de aplicación
 
 ```
 php artisan key:generate
-```
-
-Luego, hacer la instalación de las librerias PHP necesarias:
-
-```
-composer install
 ```
 
 Luego, la instalación de las librerias JS necesarias:
