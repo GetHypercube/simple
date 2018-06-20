@@ -1,6 +1,6 @@
 FROM php:7.1-fpm
 ARG CREDENTIALS_GIT
-ARG REPO=bitbucket.org/asimovers/simple-2018
+ARG REPO=gitlab.digital.gob.cl/simple/simple
 
 RUN apt-get update \
 && apt-get install -y libxml2-dev git zip unzip zlib1g-dev libpng-dev libmcrypt-dev --no-install-recommends \
