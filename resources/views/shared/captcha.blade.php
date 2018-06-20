@@ -1,5 +1,5 @@
 <div class="form-group row">
-    <div class="g-recaptcha" data-sitekey="{{env('CAPTCHA_SITE_KEY')}}"></div>
+    <div class="g-recaptcha" data-sitekey="{{env('RECAPTCHA_SITE_KEY')}}"></div>
     <input
             id="g-recaptcha-response"
             type="hidden"

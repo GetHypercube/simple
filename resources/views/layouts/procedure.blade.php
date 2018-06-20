@@ -28,7 +28,7 @@
         var onloadCallback = function () {
             if ($('#form_captcha').length) {
                 grecaptcha.render("form_captcha", {
-                    sitekey: "{{env('CAPTCHA_SITE_KEY')}}"
+                    sitekey: "{{env('RECAPTCHA_SITE_KEY')}}"
                 });
             }
         };

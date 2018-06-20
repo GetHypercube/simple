@@ -32,7 +32,7 @@ class Captcha implements Rule
 
         curl_setopt($ch, CURLOPT_POSTFIELDS,
             http_build_query([
-                'secret' => env('CAPTCHA_SECRET_KEY'),
+                'secret' => env('RECAPTCHA_SECRET_KEY'),
                 'response' => $value
             ]));
 
