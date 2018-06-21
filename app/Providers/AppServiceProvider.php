@@ -11,7 +11,6 @@ use App\ScoutEngines\Elasticsearch\ElasticsearchEngine;
 use Laravel\Scout\EngineManager;
 use Elasticsearch\ClientBuilder as ElasticBuilder;
 
-
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -220,7 +219,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function bootSetEmailConfigs()
     {
-        try {
+        if (class_exists('Cuenta')) {
             $cuenta = \Cuenta::cuentaSegunDominio();
 
             $data = [
@@ -229,7 +228,6 @@ class AppServiceProvider extends ServiceProvider
             ];
 
             config(['mail.from' => $data]);
-        } catch (\Exception $e) {
         }
     }
 
