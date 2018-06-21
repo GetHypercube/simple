@@ -39,11 +39,6 @@ class RollbarServiceProvider extends ServiceProvider
         $app = $this->app;
 
         $config['access_token'] = getenv('ROLLBAR_ACCESS_TOKEN') ?: $app['config']->get('services.rollbar.access_token');
-
-        if (is_null($config['access_token'])) {
-            return false;
-        }
-
         if (empty($config['access_token'])) {
             throw new InvalidArgumentException('Rollbar access token not configured');
         }
