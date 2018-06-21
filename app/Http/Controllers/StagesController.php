@@ -133,7 +133,7 @@ class StagesController extends Controller
 
         if (!Auth::user()->registrado) {
             $request->session()->put('claveunica_redirect', URL::current());
-            return redirect('login.claveunica');
+            return redirect()->route('login.claveunica');
         }
 
         //$this->load->library('pagination');
