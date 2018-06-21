@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Doctrine_Manager_Exception;
 use App\Helpers\Doctrine;
+use Doctrine_Connection_Exception;
 use Doctrine_Exception;
 use Doctrine_Manager;
 use Doctrine_Core;
@@ -49,9 +50,8 @@ class DoctrineOrmServiceProvider extends ServiceProvider
             Doctrine_Manager::getInstance()->setAttribute(Doctrine_Core::ATTR_USE_NATIVE_ENUM, true);
 
         } catch (Doctrine_Manager_Exception $exception) {
-            dd($exception);
         } catch (Doctrine_Exception $exception) {
-            dd($exception);
+        } catch (\Exception $exception) {
         }
     }
 }

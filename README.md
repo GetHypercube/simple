@@ -2,10 +2,14 @@
 
 ## Requerimientos
 
-* Servidor Web con PHP 7.1
+* NodeJS >= 8.11.3 
+* NPM >= 5.6.0
+* MySQL 5.7 ó MariaDB 10.2
+* PHP 7.1
 * Librerías PHP necesarias:
     * OpenSSL
     * PDO
+    * PDO_MYSQL
     * Mbstring
     * Tokenizer
     * curl

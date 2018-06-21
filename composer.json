@@ -26,7 +26,8 @@
     "ext-mbstring": "*",
     "ext-mcrypt": "*",
     "ext-curl": "*",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "ext-pdo_mysql": "*"
   },
   "require-dev": {
     "filp/whoops": "~2.0",
