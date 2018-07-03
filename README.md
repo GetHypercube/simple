@@ -89,12 +89,6 @@ asegúrese de tener Composer instalado en su máquina. Y ejecute el siguiente co
 composer install
 ```
 
-Luego, Generar la llave de aplicación
-
-```
-php artisan key:generate
-```
-
 Luego, la instalación de las librerías JS necesarias:
 
 ```
@@ -159,6 +153,12 @@ Y para crear un usuario perteneciente al Manager,
 ```
 php artisan simple:manager {user} {password}
 php artisan simple:manager siturra qwerty
+```
+
+## Generar la llave de aplicación
+
+```
+php artisan key:generate
 ```
 
 ## Tests con PHPUnit

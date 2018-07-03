@@ -20,17 +20,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        setlocale(LC_ALL, env('PHP_LOCALE'));
+        if (\Schema::hasTable('cuenta')) {
+            setlocale(LC_ALL, env('PHP_LOCALE'));
 
-        Schema::defaultStringLength(191);
+            Schema::defaultStringLength(191);
 
-        $this->bootClaveUnicaSocialite();
+            $this->bootClaveUnicaSocialite();
 
-        $this->bootElasticsearch();
+            $this->bootElasticsearch();
 
-        $this->bootValidatorExtend();
+            $this->bootValidatorExtend();
 
-        $this->bootSetEmailConfigs();
+            $this->bootSetEmailConfigs();
+        }
     }
 
     /**
