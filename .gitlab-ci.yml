@@ -1,0 +1,57 @@
+image: docker:stable
+
+stages:
+  - build
+  - code_quality
+
+variables:
+  MYSQL_DATABASE: homestead
+  MYSQL_ROOT_PASSWORD: secret
+  DB_HOST: mysql
+  DB_USERNAME: root
+
+
+build:
+  stage: build
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - docker login gitlab.digital.gob.cl:4567 -u gitlab-ci-token -p $CI_BUILD_TOKEN
+    - docker build -t gitlab.digital.gob.cl:4567/simple/simple -t gitlab.digital.gob.cl:4567/simple/simple:$CI_COMMIT_SHA .
+    - docker push gitlab.digital.gob.cl:4567/simple/simple
+    - docker push gitlab.digital.gob.cl:4567/simple/simple:$CI_COMMIT_SHA
+
+code_quality:
+  stage: code_quality
+  variables:
+    DOCKER_DRIVER: overlay2
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
+    - docker run
+        --env SOURCE_CODE="$PWD"
+        --volume "$PWD":/code
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        "registry.gitlab.com/gitlab-org/security-products/codequality:$SP_VERSION" /code
+  artifacts:
+    paths: [codeclimate.json]
+
+build site:
+  stage: build
+  image: node:10-stretch
+  script:
+    - apt-get update
+    - apt-get -y install libpng16-16 libpng-tools libpng-dev
+    - npm i npm@latest -g
+    - npm install
+    - npm audit fix --force
+    - npm run prod
+  artifacts:
+    expire_in: 10 days
+    paths:
+      - public/*
