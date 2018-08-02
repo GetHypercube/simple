@@ -447,7 +447,7 @@ class IntegracionMediator
             Log::info('Registrando usuario: ' . $body->rut);
             $user = new Usuario();
             $user->usuario = random_string('unique');
-            $user->setPasswordWithSalt(random_string('alnum', 32));
+            $user->password = \Illuminate\Support\Facades\Hash::make(random_string('alnum', 32));
             $user->rut = $body->rut;
             $apellidos = explode(";", $body->apellidos);
             if (count($apellidos) < 2) {

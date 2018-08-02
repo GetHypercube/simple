@@ -212,9 +212,9 @@ class Usuario extends Doctrine_Record
     {
         $anonimo = new Usuario();
         $anonimo->usuario = random_string('unique');
-        $anonimo->setPasswordWithSalt(random_string('alnum', 32));
+        $anonimo->password = \Illuminate\Support\Facades\Hash::make(random_string('alnum', 32));
         $anonimo->save();
         \Illuminate\Support\Facades\Auth::loginUsingId($anonimo->id);
-        Log::info('Usaurio no tiene registada un sesion');
+        Log::info('Usuario no tiene registada un sesion');
     }
 }

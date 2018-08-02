@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Manager;
 
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
@@ -83,7 +84,7 @@ class UsersController extends Controller
         $usuario->Cuenta = Doctrine::getTable('Cuenta')->find($request->input('cuenta_id'));
         $usuario->rol = implode(",", $request->input('rol'));
         if ($request->input('password'))
-            $usuario->setPasswordWithSalt($request->input('password'));
+            $usuario->password = Hash::make($request->input('password'));
 
         $usuario->save();
 
