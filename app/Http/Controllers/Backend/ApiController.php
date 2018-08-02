@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -346,7 +347,7 @@ class ApiController extends Controller
             //inicio de sesión con usuario no registrado
             $usuario = new \Usuario();
             $usuario->usuario = random_string('unique');
-            $usuario->setPasswordWithSalt(random_string('alnum', 32));
+            $usuario->password = Hash::make(random_string('alnum', 32));
             $usuario->registrado = 0;
             $usuario->save();
 
