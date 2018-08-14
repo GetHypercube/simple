@@ -1,6 +1,6 @@
 FROM php:7.1-fpm
 ARG CREDENTIALS_GIT
-ARG REPO=gitlab.digital.gob.cl/simple/simple
+ARG REPO=git.gob.cl/simple/simple
 ARG DIRECTORY_PROJECT=/var/www/simple
 
 # Install Packages
