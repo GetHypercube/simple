@@ -10,6 +10,9 @@ variables:
   DB_HOST: mysql
   DB_USERNAME: root
 
+job_name:
+  variables:
+    CI_DEBUG_TRACE: "true"
 
 build:
   stage: build
@@ -19,7 +22,7 @@ build:
   services:
     - docker:stable-dind
   script:
-    - docker login git.gob.cl:4567 -u gitlab-ci-token -p $CI_BUILD_TOKEN
+    - docker login git.gob.cl:4567 -u gitlab-ci-token -p $CI_JOB_TOKEN
     - docker build -t git.gob.cl:4567/simple/simple -t git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA .
     - docker push git.gob.cl:4567/simple/simple
     - docker push git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA
