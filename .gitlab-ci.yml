@@ -19,10 +19,10 @@ build:
   services:
     - docker:stable-dind
   script:
-    - docker login gitlab.digital.gob.cl:4567 -u gitlab-ci-token -p $CI_BUILD_TOKEN
-    - docker build -t gitlab.digital.gob.cl:4567/simple/simple -t gitlab.digital.gob.cl:4567/simple/simple:$CI_COMMIT_SHA .
-    - docker push gitlab.digital.gob.cl:4567/simple/simple
-    - docker push gitlab.digital.gob.cl:4567/simple/simple:$CI_COMMIT_SHA
+    - docker login git.gob.cl:4567 -u gitlab-ci-token -p $CI_BUILD_TOKEN
+    - docker build -t git.gob.cl:4567/simple/simple -t git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA .
+    - docker push git.gob.cl:4567/simple/simple
+    - docker push git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA
 
 code_quality:
   stage: code_quality
