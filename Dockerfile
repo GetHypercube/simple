@@ -1,5 +1,7 @@
 FROM php:7.1-fpm
 ARG CI_JOB_TOKEN
+ARG CI_DEPLOY_USER
+ARG CI_DEPLOY_PASSWORD
 ARG REPO=git.gob.cl/simple/simple
 ARG DIRECTORY_PROJECT=/var/www/simple
 
@@ -36,7 +38,7 @@ RUN apt-get update && apt-get install -y \
     # Install composer
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     # Clone repository
-    && git clone --depth=1 https://gitlab-ci-token:$CI_JOB_TOKEN@$REPO $DIRECTORY_PROJECT \
+    && git clone --depth=1 https://$CI_DEPLOY_USER:$CI_DEPLOY_PASSWORD@$REPO $DIRECTORY_PROJECT \
     # Change to directory Project
     && cd $DIRECTORY_PROJECT \
     # Install dependencies  from project
