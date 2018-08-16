@@ -10,14 +10,11 @@ variables:
   DB_HOST: mysql
   DB_USERNAME: root
 
-job_name:
-  variables:
-    CI_DEBUG_TRACE: "true"
-
 build:
   stage: build
   variables:
     DOCKER_DRIVER: overlay2
+    CI_DEBUG_TRACE: "true"
   allow_failure: true
   services:
     - docker:stable-dind
