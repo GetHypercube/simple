@@ -5,6 +5,8 @@ ARG CI_DEPLOY_PASSWORD
 ARG REPO=git.gob.cl/simple/simple
 ARG DIRECTORY_PROJECT=/var/www/simple
 
+COPY . $DIRECTORY_PROJECT
+
 # Install Packages
 RUN apt-get update && apt-get install -y \
         libxml2-dev \
@@ -37,8 +39,6 @@ RUN apt-get update && apt-get install -y \
     && npm i npm@latest -g \
     # Install composer
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    # Clone repository
-    && git clone --depth=1 https://$CI_DEPLOY_USER:$CI_DEPLOY_PASSWORD@$REPO $DIRECTORY_PROJECT \
     # Change to directory Project
     && cd $DIRECTORY_PROJECT \
     # Install dependencies  from project
