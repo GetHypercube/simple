@@ -17,7 +17,7 @@ build:
     DB_HOST: mysql
     DB_USERNAME: root
     DB_PASSWORD: secret
-    DB_NAME: homestead
+    DB_DATABASE: homestead
     MYSQL_DATABASE: homestead
     MYSQL_ROOT_PASSWORD: secret
     CI_DEBUG_TRACE: "true"
