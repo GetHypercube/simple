@@ -14,7 +14,7 @@ build:
   stage: build
   variables:
     DOCKER_DRIVER: overlay2
-    DB_HOST: mysql
+#    DB_HOST: mysql
     DB_USERNAME: root
     DB_PASSWORD: secret
     DB_NAME: homestead
