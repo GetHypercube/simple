@@ -14,9 +14,10 @@ build:
   stage: build
   variables:
     DOCKER_DRIVER: overlay2
-    CI_DEBUG_TRACE: "true"
-    CI_DEPLOY_USER: CI_DEPLOY_USER
-    CI_DEPLOY_PASSWORD: CI_DEPLOY_PASSWORD
+    DB_HOST: DB_HOST
+    DB_USERNAME: DB_USERNAME
+    DB_PASSWORD: MYSQL_ROOT_PASSWORD
+    DB_NAME: MYSQL_DATABASE
   allow_failure: true
   services:
     - docker:stable-dind
