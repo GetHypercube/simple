@@ -7,7 +7,7 @@ stages:
 variables:
   MYSQL_DATABASE: homestead
   MYSQL_ROOT_PASSWORD: secret
-  DB_HOST: mysql
+#  DB_HOST: mysql
   DB_USERNAME: root
 
 build:
