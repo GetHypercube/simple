@@ -36,20 +36,20 @@ RUN apt-get update && apt-get install -y \
     && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt-get install -yq nodejs build-essential \
     # Upgrade to the latest version of npm
-    && npm i npm@latest -g \
+    && npm i npm@latest -g 
     # Install composer
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer 
     # Change to directory Project
-    && cd $DIRECTORY_PROJECT \
+    RUN cd $DIRECTORY_PROJECT \
     # Install dependencies  from project
-    && composer install \
-    && npm install \
+    && composer install -vvv
+    RUN npm install 
     # Install compatible updates to vulnerable dependencies JavaScript
-    && npm audit fix --force \
+    RUN npm audit fix --force 
     # Compile JavaScript
-    && npm run production \
+    RUN npm run production
     # TO DO SEGPRES
-    && find $DIRECTORY_PROJECT -type f -exec chmod 644 {} \; \
+    RUN find $DIRECTORY_PROJECT -type f -exec chmod 644 {} \; \
     && find $DIRECTORY_PROJECT -type d -exec chmod 755 {} \; \
     && chown -R www-data:www-data $DIRECTORY_PROJECT \
     && apt-get remove --purge -y git curl \
@@ -64,5 +64,8 @@ ENV LC_ALL es_CL.UTF-8
 ENV TZ America/Santiago
 
 WORKDIR $DIRECTORY_PROJECT
+
+RUN echo "APP_KEY=$(php artisan key:generate --show)" > .env
+
 EXPOSE 9000
 CMD ["php-fpm"]
