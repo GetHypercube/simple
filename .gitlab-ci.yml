@@ -27,7 +27,6 @@ build:
   allow_failure: true
   services:
     - docker:stable-dind
-    - mysql
   script:
     - docker login git.gob.cl:4567 -u gitlab-ci-token -p $CI_JOB_TOKEN
     - docker build --build-arg DB_HOST=$DB_HOST --build-arg DB_USERNAME=$DB_USERNAME --build-arg DB_PASSWORD=$DB_PASSWORD --build-arg DB_DATABASE=$DB_DATABASE --network host -t git.gob.cl:4567/simple/simple -t git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA .
