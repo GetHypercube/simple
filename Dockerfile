@@ -48,10 +48,7 @@ RUN apt-get update && apt-get install -y \
     # Install dependencies  from project
     && composer install -vvv
     RUN npm install 
-    # Install compatible updates to vulnerable dependencies JavaScript
-    RUN npm audit fix --force 
-    # Compile JavaScript
-    RUN npm run production
+    RUN npm run prod
     # TO DO SEGPRES
     RUN find $DIRECTORY_PROJECT -type f -exec chmod 644 {} \; \
     && find $DIRECTORY_PROJECT -type d -exec chmod 755 {} \; \
