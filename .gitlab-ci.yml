@@ -29,7 +29,7 @@ build:
     - docker:stable-dind
   script:
     - docker login git.gob.cl:4567 -u gitlab-ci-token -p $CI_JOB_TOKEN
-    - docker build --build-arg DB_HOST=$DB_HOST --build-arg DB_USERNAME=$DB_USERNAME --build-arg DB_PASSWORD=$DB_PASSWORD --build-arg DB_DATABASE=$DB_DATABASE --network host -t git.gob.cl:4567/simple/simple -t git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA .
+    - docker build -t git.gob.cl:4567/simple/simple -t git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA -t git.gob.cl:4567/simple/simple:$CI_COMMIT_REF_NAME .
     - docker push git.gob.cl:4567/simple/simple
     - docker push git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA
 
@@ -61,6 +61,6 @@ build site:
     - npm audit fix --force
     - npm run prod
   artifacts:
-    expire_in: 10 days
+    expire_in: 30 days
     paths:
       - public/*
