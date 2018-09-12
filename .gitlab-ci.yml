@@ -2,7 +2,7 @@ image: docker:stable
 
 stages:
   - build
-  - code_quality
+#  - code_quality
 
 variables:
   MYSQL_DATABASE: homestead
