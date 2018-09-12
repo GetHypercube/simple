@@ -21,6 +21,7 @@
     "siturra/doctrine1-php7": "^1.2",
     "siturra/tcpdf-laravel": "^5.5",
     "tamayo/laravel-scout-elastic": "^3.0",
+    "predis/predis": "*",
     "ext-soap": "*",
     "ext-xml": "*",
     "ext-mbstring": "*",
