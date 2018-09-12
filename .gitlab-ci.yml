@@ -29,7 +29,7 @@ build:
     - docker:stable-dind
   script:
     - docker login git.gob.cl:4567 -u gitlab-ci-token -p $CI_JOB_TOKEN
-    - docker build -t git.gob.cl:4567/simple/simple -t git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA -t git.gob.cl:4567/simple/simple:$CI_COMMIT_REF_NAME .
+    - docker build -t git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA -t git.gob.cl:4567/simple/simple:$CI_COMMIT_REF_NAME .
     - docker push git.gob.cl:4567/simple/simple
     - docker push git.gob.cl:4567/simple/simple:$CI_COMMIT_SHA
 
