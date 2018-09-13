@@ -31,7 +31,7 @@
         $roles = array("super", "modelamiento", "seguimiento", "operacion", "gestion", "desarrollo", "configuracion", "reportes");
         $longitud = count($roles);
 
-        $valores = isset($usuario->rol) ? explode(",", $usuario->rol) : '';
+        $valores = isset($usuario->rol) ? explode(",", $usuario->rol) : [];
         ?>
         <select name="rol[]" class="form-control col-6" multiple>
             <?php
