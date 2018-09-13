@@ -82,7 +82,7 @@ class UsersController extends Controller
         $usuario->email = $request->input('email');
         $usuario->nombre = $request->input('nombre');
         $usuario->apellidos = $request->input('apellidos');
-        $usuario->Cuenta = Doctrine::getTable('Cuenta')->find($request->input('cuenta_id'));
+        $usuario->cuenta_id = $request->input('cuenta_id');
         $usuario->rol = implode(",", $request->input('rol'));
 
         if ($request->input('password')) {
