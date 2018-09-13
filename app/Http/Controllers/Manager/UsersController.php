@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Manager;
 
-use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
-use UsuarioBackend;
+use Illuminate\Support\Facades\Hash;
+use App\Models\UsuarioBackend;
 
 class UsersController extends Controller
 {
@@ -34,6 +34,7 @@ class UsersController extends Controller
             $usuario = Doctrine::getTable('UsuarioBackend')->find($usuario_id);
         else
             $usuario = new UsuarioBackend();
+
 
         $data['usuario'] = $usuario;
         $data['cuentas'] = Doctrine::getTable('Cuenta')->findAll();
@@ -83,8 +84,10 @@ class UsersController extends Controller
         $usuario->apellidos = $request->input('apellidos');
         $usuario->Cuenta = Doctrine::getTable('Cuenta')->find($request->input('cuenta_id'));
         $usuario->rol = implode(",", $request->input('rol'));
-        if ($request->input('password'))
-            $usuario->setPasswordWithSalt($request->input('password'));
+
+        if ($request->input('password')) {
+            $usuario->password = Hash::make($request->input('password'));
+        }
 
         $usuario->save();
 
@@ -101,7 +104,7 @@ class UsersController extends Controller
      */
     public function delete(Request $request, $usuario_id)
     {
-        $usuario = \App\Models\UsuarioBackend::find($usuario_id);
+        $usuario = UsuarioBackend::find($usuario_id);
         if (!is_null($usuario)) {
             $usuario->delete();
 
