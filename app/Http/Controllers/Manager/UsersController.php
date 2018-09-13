@@ -31,7 +31,7 @@ class UsersController extends Controller
     public function edit($usuario_id = null)
     {
         if ($usuario_id)
-            $usuario = Doctrine::getTable('UsuarioBackend')->find($usuario_id);
+            $usuario = UsuarioBackend::find($usuario_id);
         else
             $usuario = new UsuarioBackend();
 
@@ -54,7 +54,7 @@ class UsersController extends Controller
     public function edit_form(Request $request, $usuario_id = null)
     {
         if ($usuario_id)
-            $usuario = Doctrine::getTable('UsuarioBackend')->find($usuario_id);
+            $usuario = UsuarioBackend::find($usuario_id);
         else
             $usuario = new UsuarioBackend();
 
