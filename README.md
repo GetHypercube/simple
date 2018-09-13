@@ -24,10 +24,10 @@
 
 
 ### Mysql >= 5.7
-Si estas usando una versión mayor o igual a MySQL 5.7, deberas desactivar el only_full_group_by.
+Si estas usando una versión mayor o igual a MySQL 5.7, deberas desactivar el only_full_group_by, para eso en el sql mode deberás tener las siguientes lineas (my.cnf).
 
-    mysql> set global sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-    mysql> set session sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+    sql-mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+
 
 ### Permisos de directorio
 
