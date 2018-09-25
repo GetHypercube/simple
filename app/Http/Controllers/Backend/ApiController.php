@@ -177,7 +177,7 @@ class ApiController extends Controller
         echo json_indent(json_encode($respuesta));
     }
 
-    public function notificar($tramite_id)
+    public function notificar(Request $request, $tramite_id = null)
     {
         if (!is_numeric($tramite_id)) {
             return response()->json('ID inválido.');
@@ -189,8 +189,7 @@ class ApiController extends Controller
         $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id, 0)->count();
         if ($pendientes > 0) {
 
-            $post = file_get_contents('php://input');
-            $json = json_decode($post);
+            $json = json_decode($request->getContent(), true);
             if (count($json) > 0) {
                 foreach ($json as $key => $value) {
                     $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa_id);

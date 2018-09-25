@@ -2,8 +2,6 @@
 
 if (!App::environment('local')) URL::forceScheme('https');
 
-Route::post('/notificar/{tramite_id}', 'ApiController@notificar')->name('api.notificar');
-
 Route::middleware(['auth_user'])->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
 
