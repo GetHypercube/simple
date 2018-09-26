@@ -591,7 +591,7 @@ class Etapa extends Doctrine_Record
             $acontecimiento = Doctrine::getTable('Acontecimiento')->findOneByEventoExternoIdAndEtapaId($evento->id, $this->id);
             if (!$acontecimiento)
                 $acontecimiento = new Acontecimiento();
-            $acontecimiento->estado = FALSE;
+            $acontecimiento->estado = 1;
             if ($regla->evaluar($this->id)) {
 
                 $ch = curl_init();
@@ -633,7 +633,7 @@ class Etapa extends Doctrine_Record
                         $dato->save();
                     }
                 }
-                $acontecimiento->estado = TRUE;
+                $acontecimiento->estado = 0;
             }
             $acontecimiento->evento_externo_id = $evento->id;
             $acontecimiento->etapa_id = $this->id;

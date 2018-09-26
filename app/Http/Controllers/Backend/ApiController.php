@@ -186,7 +186,7 @@ class ApiController extends Controller
         $t = Doctrine::getTable('Tramite')->find($tramite_id);
         $etapa_id = $t->getUltimaEtapa()->id;
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-        $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id, 0)->count();
+        $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id, 1)->count();
         if ($pendientes > 0) {
 
             $json = json_decode($request->getContent(), true);
@@ -218,7 +218,7 @@ class ApiController extends Controller
 
             $acontecimientos = Doctrine_Query::create()
                 ->from('Acontecimiento a')
-                ->where('a.etapa_id = ? AND a.estado = ?', array($etapa_id, 0))
+                ->where('a.etapa_id = ? AND a.estado = ?', array($etapa_id, 1))
                 ->orderBy('a.id asc')
                 ->execute();
 
@@ -284,7 +284,7 @@ class ApiController extends Controller
                             $dato->save();
                         }
                     }
-                    $a->estado = TRUE;
+                    $a->estado = 0;
                     $a->save();
 
                     //Ejecutar eventos despues del evento externo
@@ -319,7 +319,7 @@ class ApiController extends Controller
 
         }
 
-        $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id, 0)->count();
+        $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id, 1)->count();
         if ($pendientes == 0) {
             $tp = $etapa->getTareasProximas();
             if ($tp->estado == 'completado') {
