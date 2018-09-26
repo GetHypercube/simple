@@ -16,7 +16,7 @@
         $('.validacion').typeahead({
             mode: "multiple",
             delimiter: "|",
-            source: ["required", "rut", "min:[num]", "max:[num]", "digits:[num]", "alpha", "alpha_dash", "alpha_num", "numeric", "integer", "is_natural_no_zero", "email", "emails", "ip", "unique[exp]"]
+            source: ["required", "rut", "min:num", "max:num", "digits:num", "alpha", "alpha_dash", "alpha_num", "numeric", "integer", "is_natural_no_zero", "email", "emails", "ip", "unique[exp]", "digits_between:min,max", "between:min,max", "nullable"]
         });
 
         // Funcionalidad del llenado de nombre usando el boton de asistencia
