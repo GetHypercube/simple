@@ -24,6 +24,13 @@ RUN docker-php-ext-install \
             soap \
             mcrypt \
             gd \
+    && { \
+        echo "log_errors = On"; \
+        echo "error_log = /dev/stderr"; \
+        echo "error_reporting = E_ALL"; \
+        echo "post_max_size = 100M"; \
+        echo "upload_max_filesize = 100M"; \
+    } > /usr/local/etc/php/php.ini \
     # Install Node.js v8
     && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt-get install -yq nodejs build-essential \
