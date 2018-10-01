@@ -68,7 +68,7 @@ class AccionIniciarTramite extends Accion
                     <option value="">Seleccione...</option>';
 
         foreach ($tareas_proceso as $tarea) {
-            if ($this->extra->tareaRetornoSel && $this->extra->tareaRetornoSel == $tarea["id"]) {
+            if (isset($this->extra->tareaRetornoSel) && $this->extra->tareaRetornoSel == $tarea["id"]) {
                 $display .= '<option value="' . $tarea["id"] . '" selected>' . $tarea["nombre"] . '</option>';
             } else {
                 $display .= '<option value="' . $tarea["id"] . '">' . $tarea["nombre"] . '</option>';
