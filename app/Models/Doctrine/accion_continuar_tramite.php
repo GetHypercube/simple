@@ -65,7 +65,11 @@ class AccionContinuarTramite extends Accion
 
     public function ejecutar($tramite_id)
     {
-        $etapa = Etapa::find($tramite_id);
+        if (is_numeric($tramite_id)) {
+            $etapa = Etapa::find($tramite_id);
+        } else {
+            $etapa = $tramite_id;
+        }
 
         Log::info("En ejecución continuar trámite");
 
