@@ -99,7 +99,7 @@ class Swagger
 
         Log::info("HOST: " . $nombre_host);
 
-        if ($file = fopen("uploads/swagger/start_swagger.json", "r")) {
+        if ($file = fopen(public_path('start_swagger.json'), "r")) {
             Log::debug("Formulario recuperado");
             while (!feof($file)) {
                 $line = fgets($file);
