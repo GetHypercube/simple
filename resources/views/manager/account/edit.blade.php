@@ -45,6 +45,15 @@
     </fieldset>
     </br>
     <fieldset>
+        <legend><?= $title ?> Claveúnica</legend>
+        <hr>
+        <label>Client ID</label>
+        <input class="form-control col-6" type="text" name="client_id" value="<?= $cuenta->client_id ?>"/>
+        <label>Client Secret</label>
+        <input class="form-control col-6" type="text" name="client_secret" value="<?= $cuenta->client_secret ?>"/>
+    </fieldset>
+    </br>
+    <fieldset>
         <legend><?= $title ?> configuraci&oacute;n de agenda</legend>
         <hr>
         <label>Clave App</label>

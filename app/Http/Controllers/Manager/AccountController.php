@@ -105,6 +105,9 @@ class AccountController extends Controller
                 $cuenta->vinculo_produccion = NULL;
             }
 
+            $cuenta->client_id = $request->has('client_id') && !is_null($request->input('client_id')) ? $request->input('client_id') : NULL;
+            $cuenta->client_secret = $request->has('client_secret') && !is_null($request->input('client_secret')) ? $request->input('client_secret') : NULL;
+
             $cuenta->logo = $request->input('logo');
             $cuenta->save();
             $cuenta_id = (int)$cuenta->id;
