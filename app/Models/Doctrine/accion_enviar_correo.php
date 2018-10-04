@@ -68,8 +68,11 @@ class AccionEnviarCorreo extends Accion
         Mail::send('emails.send', ['content' => $message], function ($message) use ($etapa, $subject, $cuenta, $to, $cc, $bcc) {
 
             $message->subject($subject);
-            $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
-
+            $mail_from = env('MAIL_FROM_ADDRESS');
+            if(isset($mail_from) && !empty($mail_from))
+                $message->from($mail_from);
+            else
+                $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
 
             if (!is_null($cc)) {
                 foreach (explode(',', $cc) as $cc) {
