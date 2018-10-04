@@ -430,7 +430,7 @@ class ProcessController extends Controller
         $tarea->setPasosFromArray($request->input('pasos', false));
         $tarea->setEventosExternosFromArray($request->input('eventos_externos', false));
         $tarea->setEventosFromArray($request->input('eventos', false));
-        $tarea->paso_confirmacion = $request->input('paso_confirmacion');
+        $tarea->paso_confirmacion = $request->has('paso_confirmacion') ? $request->input('paso_confirmacion') : 0;
         $tarea->almacenar_usuario = $request->has('almacenar_usuario') ? $request->input('almacenar_usuario') : 0;
         $tarea->almacenar_usuario_variable = $request->input('almacenar_usuario_variable');
         $tarea->acceso_modo = $request->input('acceso_modo');
