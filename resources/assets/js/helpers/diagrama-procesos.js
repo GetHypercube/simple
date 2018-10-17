@@ -23,7 +23,7 @@ $(document).ready(function () {
     }]];
 });
 
-function drawFromModel(model, width, height) {
+function drawFromModel(model, width, height, tipoconector) {
     //Modificamos el titulo
     //$("#areaDibujo h1").text(model.nombre);
 
@@ -49,6 +49,16 @@ function drawFromModel(model, width, height) {
 
 
     //Creamos las conexiones
+    curvatura=0;
+    
+    if(tipoconector=='StateMachine'){
+        curvatura=10;
+    } 
+    if(tipoconector=='Bezier'){
+        curvatura=150;
+    }  
+    jsPlumb.Defaults.Connector=[ tipoconector, { curviness: curvatura }];
+
     $(model.connections).each(function (i, c) {
         drawConnection(c);
     });
