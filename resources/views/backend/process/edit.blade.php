@@ -106,16 +106,14 @@
         });
     </script>
 
-    <script src="{{asset('js/helpers/jquery.ui.livedraggable/jquery.ui.livedraggable.js')}}"
-            type="text/javascript"></script>
+    <script src="{{asset('js/helpers/jquery.ui.livedraggable/jquery.ui.livedraggable.js')}}" type="text/javascript"></script>
 
     @if(env('js_diagram') == 'gojs')
         <script src="{{asset('js/go/go.js')}}" type="text/javascript"></script>
         <script type="text/javascript" src="{{asset('js/helpers/diagrama-procesos2.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/helpers/modelador-procesos2.js')}}"></script>
     @else
-        <script src="{{asset('js/helpers/jquery.jsplumb/jquery.jsPlumb-1.3.16-all-min.js')}}"
-                type="text/javascript"></script>
+        <script src="{{asset('js/helpers/jquery.jsplumb/jquery.jsPlumb-1.3.16-all-min.js')}}" type="text/javascript"></script>
         <script type="text/javascript" src="{{asset('js/helpers/diagrama-procesos.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/helpers/modelador-procesos.js')}}"></script>
         <script type="text/javascript" src="{{asset('js/helpers/editar.js')}}"></script>
@@ -126,7 +124,7 @@
             procesoId = {{$proceso->id}};
 
                 <?php
-                $conector = 'Bezier';
+                $conector = env('CONECTOR');
                 $config = \App\Helpers\Doctrine::getTable('CuentaHasConfig')->findOneByIdparAndCuentaId(2, Cuenta::cuentaSegunDominio()->id);
                 if ($config) {
                     $config = \App\Helpers\Doctrine::getTable('Config')->findOneByIdAndIdpar($config->config_id, $config->idpar);
