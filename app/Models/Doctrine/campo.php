@@ -232,7 +232,7 @@ class Campo extends Doctrine_Record
             if (preg_match('/\[(\w+)\]$/', $this->dependiente_campo, $matches))
                 $variable = $variable[$matches[1]];
 
-            if ($variable === false) {
+            if (is_null($variable)) {
                 //buscar en este tramite la ultima aparición de la variable buscada
                 $dato_dependiente = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($this->dependiente_campo, $etapa_id);
 
