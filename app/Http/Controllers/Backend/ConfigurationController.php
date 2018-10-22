@@ -239,7 +239,7 @@ class ConfigurationController extends Controller
      */
     public function backendUsers()
     {
-        $users = UsuarioBackend::all();
+        $users = UsuarioBackend::where('cuenta_id',Auth::user()->cuenta_id)->get();
 
         return view('backend.configuration.backend_users.index', compact('users'));
     }
