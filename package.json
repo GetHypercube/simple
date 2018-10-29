@@ -26,6 +26,7 @@
   "dependencies": {
     "bootstrap-timepicker": "^0.5.2",
     "bootstrap4-datetimepicker": "^5.2.3",
+    "bootstrap4c-chosen": "^1.0.13",
     "chosen-js": "^1.8.3",
     "highcharts": "^6.0.7",
     "jsplumb": "^2.6.8",

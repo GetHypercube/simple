@@ -16,6 +16,7 @@
     <meta name="google" content="notranslate"/>
 
     <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
+    <link href="{{ asset('css/component-chosen.css') }}" rel="stylesheet">
 
     @yield('css')
 

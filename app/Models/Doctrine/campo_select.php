@@ -19,7 +19,7 @@ class CampoSelect extends Campo
 
         $display = '<div class="form-group">';
         $display .= '<label for="' . $this->id . '">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
-        $display .= '<select id="' . $this->id . '" class="form-control" name="' . $this->nombre . '" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="' . $modo . '">';
+        $display .= '<select id="' . $this->id . '" class="form-control form-control-chosen" name="' . $this->nombre . '" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="' . $modo . '">';
         $display .= '<option value="">Seleccionar</option>';
         if ($this->datos) foreach ($this->datos as $d) {
             if ($dato) {
@@ -32,6 +32,16 @@ class CampoSelect extends Campo
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
         $display .= '</div>';
+
+        $display .= '
+                    <script>
+                        $(document).ready(function(){
+                            $(".form-control-chosen").chosen();
+
+                        });
+                    </script>
+    
+                ';
 
 
         if ($this->extra && $this->extra->ws) {

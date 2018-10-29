@@ -19,6 +19,7 @@
 
     <!-- fav and touch icons -->
     <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
+    <link href="{{ asset('css/component-chosen.css') }}" rel="stylesheet">
 
     @yield('css')
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= env('MAP_KEY') ?>&libraries=places&language=ES"></script>
