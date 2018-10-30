@@ -3,8 +3,10 @@
         <a class="nav-link disabled" href="#">GENERAL</a>
         <a class="nav-link {{Request::path() == 'backend/configuracion' ? 'active' : ''}}"
            href="{{route('backend.configuration.my_site')}}">Mi Sitio</a>
+        <!--
         <a class="nav-link {{strstr(Request::path(), 'backend/configuracion/plantilla') ? 'active' : ''}}"
            href="{{route('backend.configuration.template')}}">Plantillas de Simple</a>
+        -->
         <a class="nav-link {{strstr(Request::path(), 'backend/configuracion/modelador') ? 'active' : ''}}"
            href="{{route('backend.configuration.modeler')}}">Configuración Modelador</a>
         <!--
