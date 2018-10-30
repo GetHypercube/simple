@@ -23,6 +23,7 @@ class Proceso extends Doctrine_Record
         $this->hasColumn('version');
         $this->hasColumn('root');
         $this->hasColumn('estado');
+        $this->hasColumn('descripcion');
     }
 
     function setUp()

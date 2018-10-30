@@ -105,7 +105,8 @@ class IntegracionMediator
                 "solo_lectura" => ($campo['readonly'] == 0) ? false : true,
                 "dominio_valores" => ($this->mapType($campo) == "grid") ? $campo["extra"] : $campo['datos'],
                 "valor" => $valor,
-                "direccion" => ($this->varDireccion($campo)));
+                "direccion" => ($this->varDireccion($campo)),
+                "format" => $campo['validacion'],);
 
 
             array_push($retval['form']['campos'], $record);
