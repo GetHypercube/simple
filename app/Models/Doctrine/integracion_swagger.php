@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Log;
+use App\Helpers\Doctrine;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -23,6 +24,7 @@ class Swagger
      */
     public function generar_swagger($formulario, $id_tramite, $id_etapa)
     {
+        $proceso = Doctrine::getTable('Proceso')->find($id_tramite);
         if (!isset($formulario)) {
             throw new ApiException("Formulario no se puede recuper", 404);
         }
@@ -49,7 +51,7 @@ class Swagger
                     $data_entrada .= ",";
 
                 if ($campo["tipo"] == "string") {
-                    $data_entrada .= "\"" . $campo["nombre"] . "\": {\"type\": \"string\"}";
+                    $data_entrada .= "\"" . $campo["nombre"] . "\": {\"type\": \"string\",\"format\": \"".implode(",",$campo["format"])."\",\"description\": \"".$campo["descripcion"]."\"}";
                 } else if ($campo["tipo"] == "base64") {
                     $data_entrada .= "\"" . $campo["nombre"] . "\":" . json_encode(array('type' => 'string', 'format' => 'base64')); //{\"type\": \"string\"}";
                 } else if ($campo["tipo_control"] == "checkbox") {
@@ -103,6 +105,8 @@ class Swagger
             Log::debug("Formulario recuperado");
             while (!feof($file)) {
                 $line = fgets($file);
+                $line = str_replace("-PROCESO-", $proceso->nombre, $line);
+                $line = str_replace("-DESCRIPCION-", $proceso->descripcion, $line);
                 $line = str_replace("-DATA_ENTRADA-", $data_entrada, $line);
                 $line = str_replace("-OUTPUT-", $data_salida, $line);
                 $line = str_replace("-HOST-", $nombre_host, $line);

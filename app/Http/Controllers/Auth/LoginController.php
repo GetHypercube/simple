@@ -130,4 +130,21 @@ class LoginController extends Controller
 
         return redirect('/');
     }
+
+    protected function authenticated(Request $request, $user)
+    {
+        if ($request->session()->has('redirect')) {
+            $redirect = $request->session()->get('redirect');
+            return redirect($redirect);
+        }
+
+    }
+
+    public function showLoginForm(Request $request)
+    {
+        if ($request->has('redirect')) {
+            $request->session()->put('redirect', $request->input('redirect'));
+        }
+        return view('auth.login');
+    }
 }

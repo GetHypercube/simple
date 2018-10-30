@@ -1,5 +1,3 @@
-@extends('layouts.app')
-
 @section('title', $title)
 @section('content')
     <div class="container" id="main">
@@ -40,34 +38,7 @@
                                    data-intro="Ingresá el Nro. de la Mesa de Entrada  <img src='{{asset('/js/helpdoc/ayu1.png')}}/>"
                                    data-position='center'>
                         </div>
-
-
-                        <div class="form-group">
-
-                            <label class="control-label" style="color:#465f6e;" for="datetimepicker1">
-                                <i class="icon icon-chevron-right"></i>Ingrese el año que fue ingresado el
-                                trámite
-                            </label>
-                            <div class="input-group date" data-date=""
-                                 data-date-format="yyyy"
-                                 data-link-field="fecha1" data-link-format="yyyy">
-                                <input type="text" placeholder="aaaa" value="<?=$fecha?>" name="fecha"
-                                       class="form-control col-3"
-                                       id="datetimepicker1"
-                                       onkeypress="validarDatos(event,'#fecha','#buscar');"
-                                       data-step="2"
-                                       data-intro="Ingresá la Fecha de Entrada <img src='{{asset('js/helpdoc/ayu2.png')}}/>"
-                                       data-position='center'/>
-                                <div class="input-group-append">
-                                <span class="input-group-text" id="inputGroupPrepend3">
-                                    <i class="material-icons">access_time</i>
-                                </span>
-                                </div>
-                            </div>
-
-
-                        </div>
-                        <input size="16" type="hidden" value="<?=$fecha?>" name="fecha1" id="fecha1">
+                        
                         <div>
                             <button class="btn btn-primary" type="submit" id="buscar" name="buscar"
                                     data-step="3"
@@ -79,29 +50,8 @@
                 </form>
 
                 <?php $indice = 1; if (count($tareas) > 0 && $tareas > 0):  ?>
-                <div id="diagramContainer">
-                    <div id="dibujo"></div>
-                </div>
                 <div class="responsive">
-                    <div class="panel panel-default">
-                        <div class="panel-body" style="margin-left: 100px;">
-                            <div class="row-fluid">
-                                <div class="col-2">
-                                    <div class="info" style="background: green; float: left;"></div>
-                                    <div style="margin-left: 30px;"><b>Completados</b></div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="info" style="background: goldenrod; float: left;"></div>
-                                    <div style="margin-left: 30px;"><b>Pendientes</b></div>
-                                </div>
-                            </div>
-                            <div class="row-fluid">
-                                <b>Observación:</b> Para ver más detalles; realizar click en cada gráfico.
-                            </div>
-                        </div>
-                    </div>
-                    <br/>
-                    <table class="mt-3 table table-striped table-condensed table-bordered table-hover">
+                    <table class="mt-3 table table-striped table-sm table-bordered table-hover">
                         <thead>
                         <th>Nro.</th>
                         <th>Pasos del Trámite</th>
@@ -130,7 +80,6 @@
     </div>
 @endsection
 @section('script')
-    <script src="{{asset('js/helpers/grafico-consulta.js')}}"></script>
     <script type="text/javascript">
         $(function () {
             $('#datetimepicker1').datetimepicker({
@@ -141,7 +90,6 @@
 
         $(document).ready(function () {
             tareas =<?= json_encode($tareas); ?>;
-            graficar(tareas);
         });
 
         function doSearchEnter(e) {

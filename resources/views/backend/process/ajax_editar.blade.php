@@ -54,6 +54,11 @@
                         <img id="icn-logo" class="logo icn-logo" src="{{asset('img/icon/nologo.png')}}" alt="logo"/>
                     @endif
                 </div>
+                <div>
+                    <label>Descripción</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" rows="5" cols="10">{{$proceso->descripcion}}</textarea>
+                </div>
+
             </form>
         </div>
         <div class="modal-footer">
