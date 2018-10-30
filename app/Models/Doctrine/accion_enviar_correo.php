@@ -69,10 +69,11 @@ class AccionEnviarCorreo extends Accion
 
             $message->subject($subject);
             $mail_from = env('MAIL_FROM_ADDRESS');
-            if(empty($mail_from))
+            if(empty($mail_from)) {
                 $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
-            else
+            } else {
                 $message->from($mail_from);
+            }
 
             if (!is_null($cc)) {
                 foreach (explode(',', $cc) as $cc) {

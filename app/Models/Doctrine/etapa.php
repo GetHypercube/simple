@@ -292,7 +292,12 @@ class Etapa extends Doctrine_Record
 
                 Mail::send('emails.send', ['content' => $message], function ($message) use ($subject, $cuenta, $to) {
                     $message->subject($subject);
-                    $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                    $mail_from = env('MAIL_FROM_ADDRESS');
+                    if(empty($mail_from)) {
+                        $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                    } else {
+                        $message->from($mail_from);
+                    }
                     $message->to($to);
                 });
 
@@ -337,7 +342,12 @@ class Etapa extends Doctrine_Record
 
                     Mail::send('emails.send', ['content' => $message], function ($message) use ($subject, $cuenta, $to) {
                         $message->subject($subject);
-                        $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                        $mail_from = env('MAIL_FROM_ADDRESS');
+                        if(empty($mail_from)) {
+                            $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                        } else {
+                            $message->from($mail_from);
+                        }
                         $message->to($to);
                     });
 
