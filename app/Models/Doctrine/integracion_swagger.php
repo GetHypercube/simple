@@ -96,7 +96,8 @@ class Swagger
 
         $swagger = "";
 
-        $nombre_host = gethostname();
+        // $nombre_host = gethostname();
+        $nombre_host = URL::to('/');
         //($_SERVER['HTTPS'] ? $protocol = 'https://' : $protocol = 'http://');
 
         Log::info("HOST: " . $nombre_host);
