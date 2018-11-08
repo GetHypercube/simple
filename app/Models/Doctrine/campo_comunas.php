@@ -37,6 +37,7 @@ class CampoComunas extends Campo
                     var justLoadedComuna=true;
                     var defaultRegion="' . ($dato && $dato->valor ? $dato->valor->region : $valor_default->region) . '";
                     var defaultComuna="' . ($dato && $dato->valor ? $dato->valor->comuna : $valor_default->comuna) . '";
+                    var opcion = "'. (isset($this->extra->codigo) && $this->extra->codigo ? "codigo" : "nombre") .'";
                         
                     updateRegiones();
                     
@@ -66,7 +67,8 @@ class CampoComunas extends Campo
                             var html="<option value=\'\'>Seleccione comuna</option>";
                             if(data){
                                 $(data).each(function(i,el){
-                                    html+="<option value=\""+el.nombre+"\">"+el.nombre+"</option>";
+                                    var op = el[opcion];
+                                    html+="<option value=\""+op+"\" >"+el.nombre+"</option>";
                                 });
                             }
                             $("select.comunas[data-id=' . $this->id . ']").html(html);
@@ -96,6 +98,17 @@ class CampoComunas extends Campo
         $CI->form_validation->set_rules($this->nombre . '[region]', $this->etiqueta . ' - Región', implode('|', $this->validacion));
         $CI->form_validation->set_rules($this->nombre . '[comuna]', $this->etiqueta . ' - Comuna', implode('|', $this->validacion));
         */
+    }
+
+    public function backendExtraFields(){
+        $codigo = isset($this->extra->codigo) ? $this->extra->codigo : null;
+        $html = '<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="extra[codigo]" id="checkbox_codigo"  ' . ($codigo ? 'checked' : '') . ' /> 
+                    <label for="checkbox_codigo" class="form-check-label">Utilizar código en select comunas.</label>
+                    </div>';
+        $html .= ' </label>';
+        
+        return $html;
     }
 
 }
