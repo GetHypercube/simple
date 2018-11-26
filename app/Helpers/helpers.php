@@ -256,7 +256,11 @@ if (!function_exists('get_puntos_rut')) {
     function get_puntos_rut($originalRut, $incluyeDigitoVerificador = true){
         $originalRut = trim($originalRut);
         $originalRut = ltrim($originalRut, '0');
-        $input      = str_split($originalRut);
+        $guion_pos = strpos($originalRut, '-');
+        if(! $incluyeDigitoVerificador && $guion_pos !== FALSE){
+            $originalRut = substr($originalRut, 0, $guion_pos);
+        }
+        $input = str_split($originalRut);
         $cleanedRut = '';
 
         foreach ($input as $key => $chr) {
@@ -277,7 +281,11 @@ if (!function_exists('get_puntos_rut')) {
         if (strlen($cleanedRut) < 3)
             return false;
         
-        $rutTmp = explode("-",$cleanedRut);
-        return number_format($rutTmp[0], 0, "", ".") . '-' . $rutTmp[1];
+        if(strpos($cleanedRut, '-') !== FALSE){
+            $rutTmp = explode("-",$cleanedRut);
+            return number_format($rutTmp[0], 0, "", ".") . '-' . $rutTmp[1];
+        }
+        
+        return number_format($cleanedRut, 0, "", ".");
     }
 }
