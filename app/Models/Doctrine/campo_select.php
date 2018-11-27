@@ -38,6 +38,11 @@ class CampoSelect extends Campo
                         $(document).ready(function(){
                             $(".form-control-chosen").chosen();
 
+                                $("#'.$this->id.'").chosen().change(
+                                function (evt) {
+                                var label = $(this.options[this.selectedIndex]).closest("optgroup").prop("label");
+                
+                                });
                         });
                     </script>
     
