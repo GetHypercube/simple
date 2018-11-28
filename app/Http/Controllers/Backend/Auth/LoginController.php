@@ -33,6 +33,11 @@ class LoginController extends Controller
     protected $redirectTo = '/backend';
 
     public function credentials(Request $request){
+
+        if(\Request::server('HTTP_HOST') ==  env('APP_MAIN_DOMAIN')) {
+           return  ['password' => $request->password, 'email'=> $request->email];
+        }
+
         $http_post = explode('.', \Request::server('HTTP_HOST'));
         if(sizeof($http_post)<2){
             return redirect()->route('login');
