@@ -673,7 +673,7 @@ class Etapa extends Doctrine_Record
         }
 
         //Iniciar tareas próximas siempre y cuando todos los eventos externos han sido completados
-        $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($this->id, 0)->count();
+        $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($this->id, 1)->count();
         if ($pendientes == 0) {
             $tp = $etapa->getTareasProximas();
             if ($tp->estado == 'completado') {
