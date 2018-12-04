@@ -60,15 +60,18 @@ class TramitesController extends Controller
         if ($query) {
             $result = Tramite::search($query)->get();
 
-            if (array_key_exists('total', $result) && $result['total'] > 0) {
+            $matches = array();
+            foreach($result as $resultado){
+                array_push($matches, $resultado->id);
+            }
+            if(count($result) > 0){
                 $resultotal = "true";
-            } else {
+            }else{
                 $resultotal = "false";
             }
         }
 
         if ($resultotal == 'true') {
-            $matches = array_keys($result['matches']);
             $contador = Doctrine::getTable('Tramite')->findParticipadosMatched(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query)->count();
             $rowtramites = Doctrine::getTable('Tramite')->findParticipados(Auth::user()->id, Cuenta::cuentaSegunDominio(), $perpage, $offset, $matches, $query);
         } else {

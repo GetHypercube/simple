@@ -33,17 +33,28 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
 
         //Si $builder->query, es por que traera opciones adicionales, de no ser así, se trata como un multi_match solamente
         if (is_array($builder->query)) {
+            
             $query = array_get($builder->query, 'query');
             $filter = array_get($builder->query, 'filter', '');
-            $params['body']['query']['bool']['should']['multi_match']['query'] = $query;
+            $params['body']['query']['bool']['should'] = [
+                'multi_match' => [
+                    'query' => $query,
+                    'fields' => ["id", "etapas.dato_seguimientos.nombre", "etapas.dato_seguimientos.valor" ],
+                ],
+            ];
 
             //si queremos filtrar por varios terminos, basta con agregr 'terms' y no 'term',
             //lo siguiente sera un array asociativo donde su llave es la columna y el valor son todos los posibles filtros
             if (!empty($filter)) {
-                $params['body']['query']['bool']['filter']['terms'] = $filter;
+                // $params['body']['query']['bool']['filter']['terms'] = $filter;
             }
         } else {
-            $params['body']['query']['multi_match']['query'] = $builder->query;
+            $params['body']['query'] = [
+                'multi_match' => [
+                    'query' => $builder->query,
+                    'fields' => ["id", "etapas.dato_seguimientos.nombre", "etapas.dato_seguimientos.valor" ],
+                ],
+            ];
         }
 
         if ($sort = $this->sort($builder)) {
@@ -61,6 +72,15 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
             //$options['numericFilters']);
         }
 
+        // print_r($params);
+        // exit;
+
+        // $result =  $this->elastic->search($params);
+        // dd($result);
+
+        // $valor = array_key_exists('total', $result['hits']) && $result['hits']['total'] > 0 ? 'ok' : 'nok';
+        // echo $valor;
+        // exit;
         return $this->elastic->search($params);
     }
 
@@ -85,6 +105,7 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
         )->get()->keyBy($model->getKeyName());
 
         return collect($results['hits']['hits'])->map(function ($hit) use ($model, $models) {
+
             $result = isset($models[$hit['_id']]) ? $models[$hit['_id']] : null;
             //$result->highlight = isset($hit['highlight']) ? $hit['highlight'] : null;
             return $result;
