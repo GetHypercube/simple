@@ -1,6 +1,7 @@
 <?php
 require_once('accion.php');
 
+use App\Helpers\Doctrine;
 use Illuminate\Http\Request;
 
 class AccionDescargaDocumento extends Accion
@@ -34,7 +35,11 @@ class AccionDescargaDocumento extends Accion
 
     public function ejecutar($tramite_id)
     {
-        $etapa = Etapa::find($tramite_id);
+        if(method_exists('Etapa', "find")){
+            $etapa = Etapa::find($tramite_id); // Etapa es app/Models/Doctrine/etapa.php, no es app/Models/Etapa.php
+        }else{
+            $etapa = $tramite_id;
+        }
 
         $regla = new Regla($this->extra->documento);
         $documento = $regla->getExpresionParaOutput($etapa->id);

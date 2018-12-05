@@ -13,6 +13,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::post('/validador/documento', 'ValidatorController@documento')->name('validator.document');
 
     Route::post('/uploader/datos/{campo_id}/{etapa_id}', 'UploadController@datos');
+    Route::post('/uploader/datos_s3/{campo_id}/{etapa_id}/{multipart?}/{part_number?}/{total_segments?}', 'UploadController@datos_s3');
     Route::get('/uploader/datos_get/{id}/{token}', 'UploadController@datos_get');
 
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');

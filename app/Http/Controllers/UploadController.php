@@ -7,19 +7,109 @@ use Illuminate\Http\Request;
 use Doctrine_Query;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\FileUploader;
+use App\Helpers\FileS3Uploader;
+use App\Helpers\File;
 use Illuminate\Support\Facades\Log;
+use mysql_xdevapi\Exception;
+use App\Models\DatoSeguimiento;
 
 class UploadController extends Controller
 {
-    public function datos($campo_id, $etapa_id)
-    {
 
+    public function datos_s3(Request $request, $campo_id, $etapa_id, $multipart=null, $part_number=null, $total_segments=null){
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-
         if (Auth::user()->id != $etapa->usuario_id) {
             echo 'Usuario no tiene permisos para subir archivos en esta etapa';
             exit;
         }
+
+        $tramite_id = $etapa->tramite_id;
+
+        $campo = Doctrine_Query::create()
+            ->from('Campo c, c.Formulario.Pasos.Tarea.Etapas e')
+            ->where('c.id = ? AND e.id = ?', array($campo_id, $etapa_id))
+            ->fetchOne();
+        if (!$campo) {
+            echo 'Campo no existe';
+            exit;
+        }
+
+        // Tiempo de duracion por defecto es 1440 minutos
+        $file_expire_minutes = isset($campo->extra->expire_minutes) ? $campo->extra->expire_minutes: 1440;
+
+        // list of valid extensions, ex. array("jpeg", "xml", "bmp")
+        $allowedExtensions = array('gif', 'jpg', 'png', 'pdf', 'doc', 'docx', 'zip', 'rar', 'ppt', 'pptx', 'xls', 'xlsx', 'mpp', 'vsd', 'odt', 'odp', 'ods', 'odg');
+        if (isset($campo->extra->filetypes)) {
+            $allowedExtensions = $campo->extra->filetypes;
+        }
+        
+        if($request->headers->has('filename')){
+            $filename = urldecode($request->header('filename'));
+        }else{
+            die('No se envio el nombre de archivo.');
+        }
+
+        if( ! is_null($multipart) && $multipart == 'multi'){
+            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename);
+            $result = $s3_uploader->uploadPart(self::readFromSTDIN(), $etapa_id, $part_number, $total_segments);
+        }else{
+            if($file_size = $request->header('content-length') > FileS3Uploader::$sizeLimit){
+                die( json_encode(['error' => 'El archivo es muy grande'], JSON_UNESCAPED_UNICODE) );
+            }
+            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename);
+            $result = $s3_uploader->handleUpload();
+        }
+
+        if($part_number == $total_segments && array_key_exists('success', $result) && $result['success'] == true){
+            $file = Doctrine::getTable('File')->findOneByTipoAndFilename('s3', $s3_uploader->filename);
+            if( ! $file )
+                $file = new \File();
+
+            if(isset($result['URL']) && ! is_null($result['URL']) )
+                $this->storeURL($etapa_id, $result['URL']);
+            
+            $file->tramite_id = $etapa->Tramite->id;
+            $file->filename = $s3_uploader->filename;
+            $file->tipo = 's3';
+            $file->llave = strtolower(str_random(12));
+            $file->save();
+            
+            $result['id'] = $file->id;
+            $result['llave'] = $file->llave;
+            $result['file_name'] = $file->filename;
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
+
+    private function storeURL($etapa_id, $url){
+        $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId(FileS3Uploader::$magic_name, $etapa_id);
+        if(!$dato){
+            $dato = new \DatoSeguimiento();
+            $dato->etapa_id = $etapa_id;
+            $dato->nombre = FileS3Uploader::$magic_name;
+        }
+        
+        if( isset($dato->valor) && ! is_null($dato->valor) ){
+            $aux = json_decode(json_encode($dato->valor), true);
+        }else{
+            $aux = [];
+        }
+        
+        $aux['URL'] = $url;
+        $dato->valor = $aux;
+        $dato->save();
+        return true;
+    }
+
+    public function datos(Request $request, $campo_id, $etapa_id, $multipart=null, $part_number=null)
+    {
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        if (Auth::user()->id != $etapa->usuario_id) {
+            echo 'Usuario no tiene permisos para subir archivos en esta etapa';
+            exit;
+        }
+
+        $tramite_id = $etapa->tramite_id;
 
         $campo = Doctrine_Query::create()
             ->from('Campo c, c.Formulario.Pasos.Tarea.Etapas e')
@@ -35,7 +125,7 @@ class UploadController extends Controller
         if (isset($campo->extra->filetypes)) {
             $allowedExtensions = $campo->extra->filetypes;
         }
-
+        
         // max file size in bytes
         $sizeLimit = 20 * 1024 * 1024;
 
@@ -67,6 +157,16 @@ class UploadController extends Controller
         // to pass data through iframe you will need to encode all html tags
         //echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
+
+    private static function readFromSTDIN(){
+        $f_input = fopen("php://input", "rb");
+        $buff = [];
+        while (!feof($f_input)) {
+            $buff[] = fread($f_input, 4096);
+        }
+        fclose($f_input);
+        return implode($buff);
     }
 
     public function datos_get($id, $token)

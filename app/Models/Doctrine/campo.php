@@ -27,6 +27,8 @@ class Campo extends Doctrine_Record
             $campo = new CampoCheckbox();
         else if ($tipo == 'file')
             $campo = new CampoFile();
+        else if ($tipo == 'file_s3')
+            $campo = new CampoFileS3();
         else if ($tipo == 'date')
             $campo = new CampoDate();
         else if ($tipo == 'instituciones_gob')
@@ -92,6 +94,7 @@ class Campo extends Doctrine_Record
             'CampoRadio' => array('tipo' => 'radio'),
             'CampoCheckbox' => array('tipo' => 'checkbox'),
             'CampoFile' => array('tipo' => 'file'),
+            'CampoFileS3' => array('tipo' => 'file_s3'),
             'CampoDate' => array('tipo' => 'date'),
             'CampoInstitucionesGob' => array('tipo' => 'instituciones_gob'),
             'CampoComunas' => array('tipo' => 'comunas'),

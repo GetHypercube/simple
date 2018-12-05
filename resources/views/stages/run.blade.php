@@ -49,6 +49,7 @@
 @endsection
 
 @push('script')
+    <script src="{{asset('js/helpers/s3_upload.js')}}"></script>
     <script src="{{asset('js/helpers/fileuploader.js')}}"></script>
 
     <script src="{{asset('js/helpers/handsontable.full.min.js')}}"></script>
