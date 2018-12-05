@@ -63,12 +63,34 @@ class HomeController extends Controller
             }
         }
 
+        //$dominio = $_SERVER['HTTP_HOST'] ;
+        //$dominio= preg_replace("/((http|https|www)[^\s]+)/", '<a href="$1">$0</a>', $dominio);
+        $dominio = $request->getHost();
+        switch ($dominio) {
+            case('ssff.super.gob.cl'):
+            case('isl.super.gob.cl'):
+                $header = 'layouts.header_super';
+                $footer = 'layouts.footer_super';
+            break;
+            case('carabineros.gob.cl'):
+                $header = 'layouts.header_carabineros';
+                $footer = 'layouts.footer_carabineros';
+            break;
+            default:
+                $header = 'layouts.header';
+                $footer = 'layouts.footer';
+            break;
+        }
+        
+
         $data['title'] = 'Home';
         $data['num_destacados'] = $num_destacados;
         $data['num_otros'] = $num_otros;
         $data['procesos'] = $procesos;
         $data['categorias'] = $categorias;
         $data['sidebar'] = 'disponibles';
+        $data['dominio_header'] = $header;
+        $data['dominio_footer'] = $footer;
 
         if (Auth::check() && Auth::user()->registrado) {
             return view('home.user_index', $data);
