@@ -22,14 +22,16 @@
 </head>
 <body>
 <div id="app">
-    @include('layouts.header')
-
+    @include($dominio_header)
+    <!-- @ include('layouts.header')-->
+        
     <div class="main-container container">
         @yield('content')
         {!! isset($content) ? $content : '' !!}
     </div>
-
-    @include('layouts.footer')
+    @include($dominio_footer)
+    <!-- @ include( 'layouts.footer')-->
+        
 </div>
 
 <!-- Scripts -->
