@@ -14,6 +14,9 @@ class File extends Doctrine_Record
         $this->hasColumn('validez');
         $this->hasColumn('validez_habiles');
         $this->hasColumn('tramite_id');
+        if(\Schema::hasColumn('file', 'extra')){
+            $this->hasColumn('extra');
+        }
     }
 
     function setUp()
@@ -85,5 +88,23 @@ class File extends Doctrine_Record
 
 
     }
+    
+    public function setExtra($extra)
+    {
+        if (is_string($extra)) {
+            //Si es que no es un JSON lo que recibimos, lo codificamos nosotros.
+            $val = json_decode($extra);
+            if (!is_array($val) && !is_object($val))
+                $extra = json_encode($extra);
+        } else {
+            $extra = json_encode($extra);
+        }
 
+        $this->_set('extra', $extra);
+    }
+
+    public function getExtra()
+    {
+        return json_decode($this->_get('extra'));
+    }
 }
