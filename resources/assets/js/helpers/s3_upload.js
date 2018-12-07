@@ -14,6 +14,7 @@ function set_up(unique_id, url, token, block_size){
     c_s3.base_url = url;
     c_s3.url = null;
     c_s3.token = token;
+    c_s3.hidden_name_field = $('#'+unique_id);
     c_s3.file_input = $('#file_input_'+unique_id);
     c_s3.progress_file = $('#progress_file_'+unique_id);
     c_s3.but_stop = $('#but_stop_'+unique_id);
@@ -101,6 +102,7 @@ function start_upload(c_s3) {
         resetSend(c_s3);
         c_s3.stop_uploading = false;
         c_s3.but_stop.prop('disabled', false);
+        c_s3.but_send_file.prop('disabled', true);
         c_s3.progress_file.css('display', "inline-block");
         readBlock(c_s3);
     }
@@ -130,7 +132,7 @@ function onLoadHandler(c_s3){
         c_s3.count++;
         console.log(c_s3.count);
         if (c_s3.offset >= c_s3.fileSize) {
-            console.log('FIN');
+            console.log('Enviando el ultimo');
             send_chunk(evt.target.result, c_s3);
             return;
         }
@@ -145,7 +147,8 @@ function send_chunk(chunk, c_s3) {
     c_s3.XMLHttpRequest_arr.push(xhr);
 
     var chunk = new Uint8Array(chunk);
-    c_s3.progress_file.val(c_s3.count / c_s3.segments_count);
+    // el contador empieza en 1
+    c_s3.progress_file.val((c_s3.count - 1) / c_s3.segments_count);
     
     xhr.addEventListener("progress", function(c_s3, chunk_size){
         return function(evt){
@@ -167,7 +170,9 @@ function send_chunk(chunk, c_s3) {
                 readBlock(c_s3);
             else{
                 // fin de enviar el archivo completo :-D
-                console.log('Enviado');
+                console.debug('Codigo HTTP despues de terminar de subir: ' + xhr.status);
+                c_s3.progress_file.val( c_s3.progress_file.prop('max') );
+                c_s3.hidden_name_field.val(JSON.parse(xhr.response).URL);
             }
         }
     }(c_s3, part_number));

@@ -36,15 +36,21 @@ class CampoFileS3 extends Campo
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '
         <div class="controls">
+            <input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="" data-grizmio="grizmio" />
             <label for="file_input_'.$this->id.'">Archivo:</label>
             <input id="file_input_'.$this->id.'" type="file">
             <div id="parts_div_'.$this->id.'" style="display:none;">
                 <progress id="progress_file_'.$this->id.'" value=0 max=1></progress>
-                <label id="segments_sent_'.$this->id.'">0</label> de <label id="total_segments_'.$this->id.'">0</label> partes.
+                <label id="segments_sent_'.$this->id.'">0</label> de <label id="total_segments_'.$this->id.'">0</label> partes subidas.
             </div>
             <div>
-                <input id="but_send_file_'.$this->id.'" type="button" value="Subeme" disabled="true" />
-                <input id="but_stop_'.$this->id.'" type="button" value="Detener subida" disabled="true" />
+                <button id="but_send_file_'.$this->id.'" type="button" disabled="true" 
+                    class="btn btn-secondary"/>
+                    <i class="material-icons">file_upload</i>
+                    Subir archivo
+                </button>
+                <input id="but_stop_'.$this->id.'" type="button" value="Detener subida" disabled="true" 
+                    class="btn btn-secondary"/>
             </div>
         
             <script>            
@@ -56,14 +62,9 @@ class CampoFileS3 extends Campo
         ';
 
         if ($dato) {
-            $file = Doctrine::getTable('File')->findOneByTipoAndFilename('dato', $dato->valor);
-            if ($file) {
-                $display .= '<p class="link"><a href="' . url("uploader/datos_get/{$file->id}/{$file->llave}") . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
-                if (!($modo == 'visualizacion'))
-                    $display .= '(<a class="remove" href="#">X</a>)</p>';
-            } else {
-                $display .= '<p class="link">No se ha subido archivo.</p>';
-            }
+            $display .= '<p class="link"><a href="' . $dato->valor . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
+            if (!($modo == 'visualizacion'))    
+                $display .= '(<a class="remove" href="#">X</a>)</p>';
         } else {
             $display .= '<p class="link"></p>';
         }

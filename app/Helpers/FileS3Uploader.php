@@ -16,7 +16,8 @@ class FileS3Uploader
     private $file_expire_minutes;
     private $file;
     private $tramite_id;
-    public static $magic_name = 'S3MultiPart';
+    private $file_tipo = 's3';
+    public static $amazon_algo = 'md5';
     public $filename = null;
 
     function __construct($file_expire_minutes, array $allowedExtensions = array(), $tramite_id, $filename=null)
@@ -28,8 +29,8 @@ class FileS3Uploader
 
         $this->file = false;
         $this->filename = self::filenameToAscii($filename);
-        $this->filename = $tramite_id.'/'.$this->filename;
         $this->multipart_key = $tramite_id.'/'.$this->filename;
+        $this->filename = $tramite_id.'/'.$this->filename;
         $this->file_expire_minutes = $file_expire_minutes;
     }
 
@@ -51,16 +52,7 @@ class FileS3Uploader
         return $val;
     }
 
-    private function createMultiPartId($client, $table_seguimiento, $etapa_id){
-        $dato = $table_seguimiento->findOneByNombreAndEtapaId(self::$magic_name, $etapa_id);
-        
-        if(!$dato) {
-            $dato = new \DatoSeguimiento();
-            $dato->etapa_id = $etapa_id;
-            $dato->nombre = self::$magic_name;
-            $dato->valor = null;
-        }
-        $dato->valor = null;
+    private function createMultiPartId($client){
         $response = $client->CreateMultipartUpload(
             [
                 'Bucket'=> env('AWS_BUCKET'),
@@ -69,39 +61,48 @@ class FileS3Uploader
         );
 
         if($response) {
+            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->multipart_key, $this->file_tipo, $this->tramite_id);
+            // $permanent_url = Storage::disk('s3')->url($this->multipart_key);
+            if( ! $file ){
+                $file = new \File();
+                $file->filename = $this->multipart_key;
+                $file->llave = strtolower(str_random(12));
+                $file->tramite_id = $this->tramite_id;
+                $file->tipo = $this->file_tipo;
+            }
             $multipart_id = $response['UploadId'];
-            $aux = json_decode(json_encode($dato->valor), true);
+            $aux = json_decode(json_encode($file->extra), true);
             $aux['multipart_id'] = $multipart_id;
-            $dato->valor = $aux;
-            $dato->save();
+            // $aux['permanent_url'] = $permanent_url;
+            $file->extra = $aux;
+            $file->save();
             return $multipart_id;
         }
 
         return ['error'=>'ERROR al obtener UploadId', 'success' => false];
     }
 
-    private function getMultiPartId($table_seguimiento, $etapa_id){
-        $dato = $table_seguimiento->findOneByNombreAndEtapaId(self::$magic_name, $etapa_id);
-        if($dato && isset($dato->valor->multipart_id)){
-            return $dato->valor->multipart_id;
+    private function getMultiPartId(){
+        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->multipart_key, $this->file_tipo, $this->tramite_id);
+        if($file && isset($file->extra->multipart_id)){
+            return $file->extra->multipart_id;
         }
         
         return array('error'=>'ERROR al obtener el UploadId guardado', 'success'=> false);
     }
 
     function uploadPart($data, $etapa_id, $part_number, $total_segments){
-        $table_seguimiento = Doctrine::getTable('DatoSeguimiento');
         $disk = Storage::disk('s3');
         $driver = $disk->getDriver();
         $client = $driver->getAdapter()->getClient();
         
         if($part_number==1){
-            $multipart_id = $this->createMultiPartId($client, $table_seguimiento, $etapa_id);
+            $multipart_id = $this->createMultiPartId($client);
         }else{
-            $multipart_id = $this->getMultiPartId($table_seguimiento, $etapa_id);
+            $multipart_id = $this->getMultiPartId();
         }
         
-        $dato = $table_seguimiento->findOneByNombreAndEtapaId(self::$magic_name, $etapa_id); // en dato seguimiento ahora si esta multipart_id
+        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->multipart_key, $this->file_tipo, $this->tramite_id);
         $result = $client->uploadPart([
             'Bucket'=> env('AWS_BUCKET'),
             'Key'   => $this->multipart_key,
@@ -110,27 +111,47 @@ class FileS3Uploader
             'Body'       => $data
         ]);
         
-        $valor_arr = json_decode(json_encode($dato->valor),true);
+        $extra_arr = json_decode(json_encode($file->extra),true);
         
-        $valor_arr['parts'][$part_number] = ['ETag' => str_replace('"', '', $result['ETag']),
+        $extra_arr['parts'][$part_number] = ['ETag' => str_replace('"', '', $result['ETag']),
                                                 'PartNumber' => intval($part_number)];
         
-        $dato->valor = $valor_arr;
-        $dato->save();
+        $file->extra = $extra_arr;
+        $file->save();
         $temporaryUrl = '';
         if($part_number == $total_segments){
-            $dato = $table_seguimiento->findOneByNombreAndEtapaId(self::$magic_name, $etapa_id);
             $result = $client->CompleteMultipartUpload([
                 'Bucket'=> env('AWS_BUCKET'),
                 'Key'=> $this->multipart_key,
                 'UploadId'   => $multipart_id,
-                'MultipartUpload' => ['Parts' => json_decode(json_encode($dato->valor->parts), true)]
+                'MultipartUpload' => ['Parts' => json_decode(json_encode($file->extra->parts), true)]
             ]);
             $temporaryUrl = $disk->temporaryUrl($this->multipart_key, Carbon::now()->addMinutes($this->file_expire_minutes));
+            if(array_key_exists('success', $result) && $result['success'] == true){
+                $result['id'] = $file->id;
+                $result['llave'] = $file->llave;
+                $result['file_name'] = $file->filename;
+            }
+            
+            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->multipart_key, $this->file_tipo, $this->tramite_id);
+            // $permanent_url = Storage::disk('s3')->url($this->multipart_key);
+            if( ! $file ){
+                $file = new \File();
+                $file->filename = $this->multipart_key;
+                $file->llave = strtolower(str_random(12));
+                $file->tramite_id = $this->tramite_id;
+                $file->tipo = $this->file_tipo;
+            }
+            /*
+            // $aux['permanent_url'] = $permanent_url;
+            $aux = json_decode(json_encode($file->extra), true);
+            $file->extra = $aux;
+            */
+            
+            $file->save();
         }
         return [
             'success'=> $result['@metadata']['statusCode'] === 200 ? true: false,
-            'ETag'=>str_replace('"', '', $result['ETag']),
             'URL'=>$temporaryUrl
         ];
     }
@@ -167,19 +188,34 @@ class FileS3Uploader
         $metadata = ['Metadata' => ['tramite_id' => $this->tramite_id]];
         $status_bool = $disk->put($full_path, $f_input, $metadata);
         
-        $url = $disk->url($full_path); // "https://bucket.s3.eufoo.amazonaws.com/2/hello.jpg"
-        $temporaryUrl = $disk->temporaryUrl($this->multipart_key, Carbon::now()->addMinutes($this->file_expire_minutes));
-        $path = $disk->path($full_path); // 2/hello.jpg
-        $aws_metadata = $driver->getAdapter()->getMetadata($full_path);
-        
-        $result_success = ['success' => true, 'file_name' => $this->filename, 'full_path' => $full_path, 'status'=> $status_bool];
-        $result_success['hash'] = str_replace('"', '',$aws_metadata['etag']);
-        $result_success['algo'] = 'md5';
-        $result_success['filename'] = $aws_metadata['filename'];
-        $result_success['extension'] = $aws_metadata['extension'];
-        $result_success['URL'] = $temporaryUrl;
-        
         if ($status_bool) {
+            // $url = $disk->url($full_path);
+            // $path = $disk->path($full_path); // 2/hello.jpg
+            $temporaryUrl = $disk->temporaryUrl($this->filename, Carbon::now()->addMinutes($this->file_expire_minutes));
+
+            $aws_metadata = $driver->getAdapter()->getMetadata($full_path);
+            
+            $result_success = ['success' => true, 'file_name' => $this->filename, 'full_path' => $full_path, 'status'=> $status_bool];
+            $result_success['hash'] = str_replace('"', '',$aws_metadata['etag']);
+            $result_success['algo'] = self::$amazon_algo;
+            $result_success['filename'] = $aws_metadata['filename'];
+            $result_success['extension'] = $aws_metadata['extension'];
+            $result_success['URL'] = $temporaryUrl;
+            
+            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
+            // $permanent_url = Storage::disk('s3')->url($this->filename);
+            if( ! $file ){
+                $file = new \File();
+                $file->tipo = $this->file_tipo;
+                $file->llave = strtolower(str_random(12));
+                $file->tramite_id = $this->tramite_id;
+                $file->filename = $this->filename;
+            }
+            $extra = [
+                'URL' => $temporaryUrl
+            ];
+            $file->extra = $extra;
+            $file->save();
           return $result_success;
         } else {
             return ['error' => 'Could not save uploaded file.' .

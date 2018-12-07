@@ -49,56 +49,27 @@ class UploadController extends Controller
             die('No se envio el nombre de archivo.');
         }
 
+        
+        if($request->header('content-length') > FileS3Uploader::$sizeLimit){
+            echo json_encode(['error' => 'El archivo es muy grande'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }else if(! $request->hasHeader('content-length')){
+            echo json_encode(['error'=>'Cabeceras no contienen content-length'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
         if( ! is_null($multipart) && $multipart == 'multi'){
-            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename);
-            $result = $s3_uploader->uploadPart(self::readFromSTDIN(), $etapa_id, $part_number, $total_segments);
-        }else{
-            if($file_size = $request->header('content-length') > FileS3Uploader::$sizeLimit){
-                die( json_encode(['error' => 'El archivo es muy grande'], JSON_UNESCAPED_UNICODE) );
+            $data = self::readFromSTDIN();
+            if(strlen($data) > FileS3Uploader::$sizeLimit){
+                echo json_encode(['error'=>'Parte demasiado grande.'], JSON_UNESCAPED_UNICODE);
+                exit;
             }
+            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename);
+            $result = $s3_uploader->uploadPart($data, $etapa_id, $part_number, $total_segments);
+        }else{
             $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename);
             $result = $s3_uploader->handleUpload();
         }
-
-        if($part_number == $total_segments && array_key_exists('success', $result) && $result['success'] == true){
-            $file = Doctrine::getTable('File')->findOneByTipoAndFilename('s3', $s3_uploader->filename);
-            if( ! $file )
-                $file = new \File();
-
-            if(isset($result['URL']) && ! is_null($result['URL']) )
-                $this->storeURL($etapa_id, $result['URL']);
-            
-            $file->tramite_id = $etapa->Tramite->id;
-            $file->filename = $s3_uploader->filename;
-            $file->tipo = 's3';
-            $file->llave = strtolower(str_random(12));
-            $file->save();
-            
-            $result['id'] = $file->id;
-            $result['llave'] = $file->llave;
-            $result['file_name'] = $file->filename;
-        }
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
-    }
-
-    private function storeURL($etapa_id, $url){
-        $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId(FileS3Uploader::$magic_name, $etapa_id);
-        if(!$dato){
-            $dato = new \DatoSeguimiento();
-            $dato->etapa_id = $etapa_id;
-            $dato->nombre = FileS3Uploader::$magic_name;
-        }
-        
-        if( isset($dato->valor) && ! is_null($dato->valor) ){
-            $aux = json_decode(json_encode($dato->valor), true);
-        }else{
-            $aux = [];
-        }
-        
-        $aux['URL'] = $url;
-        $dato->valor = $aux;
-        $dato->save();
-        return true;
     }
 
     public function datos(Request $request, $campo_id, $etapa_id, $multipart=null, $part_number=null)
