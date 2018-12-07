@@ -498,8 +498,9 @@ class StagesController extends Controller
         $ruta_documentos = 'uploads/documentos/';
         $ruta_generados = 'uploads/datos/';
         $ruta_tmp = 'uploads/tmp/';
-        $fecha = new \DateTime();
-        $fecha = date_format($fecha, "Y-m-d");
+        $fecha_obj = new \DateTime();
+        $fecha = date_format($fecha_obj, "Y-m-d");
+        $time_stamp = date_format($fecha_obj, "Y-m-d_His");
 
         $tipoDocumento = "";
         switch ($opcionesDescarga) {
@@ -511,13 +512,10 @@ class StagesController extends Controller
                 break;
         }
 
-        // Set Header
-        $headers = array(
-            'Content-Type' => 'application/octet-stream',
-        );
-
         // Recorriendo los trámites
-        $zip = new ZipArchive;
+        $zip_path_filename = public_path($ruta_tmp).'tramites_'.$time_stamp.'.zip';
+        $files_to_be_added = [];
+        $non_existant_files = [];
         foreach ($tramites as $t) {
 
             if (empty($tipoDocumento)) {
@@ -544,89 +542,49 @@ class StagesController extends Controller
                             $tramite_nro = $tra_nro->valor;
                         }
                     }
-                    if ($f->tipo == 'documento' && !empty($nombre_documento)) {
-                        $path = $ruta_documentos . $f->filename;
-                        $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
-                        $tramite_nro = str_replace(" ", "", $tramite_nro);
-                        $nombre_archivo = pathinfo($path, PATHINFO_FILENAME);
-                        $ext = pathinfo($path, PATHINFO_EXTENSION);
-                        $nombre = $fecha . "_" . $t . "_" . $tramite_nro;
-                        $new_file = $ruta_tmp . $nombre_documento . "." . $nombre_archivo . "." . $tramite_nro . "." . $ext;
-                        copy($path, $new_file);
-                        //$zipName=
-                        $zip->open(public_path($ruta_tmp . $nombre) . '.zip', ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
-                        $zip->addFile($new_file);
-                        $zip->close();
-                        //Eliminación del archivo para no ocupar espacio en disco
-                        unlink($new_file);
-                    } elseif ($f->tipo == 'dato' && !empty($nombre_documento)) {
-                        $path = $ruta_generados . $f->filename;
-                        $zip->addFile($path);
+
+                    if (empty($nombre_documento)){
+                        continue;
+                    }elseif ($f->tipo == 'documento') {
+                        $ruta_base = $ruta_documentos;
+                    } elseif ($f->tipo == 'dato') {
+                        $ruta_base = $ruta_generados;
+                    } elseif ($f->tipo == 's3') {
+                        die('Error, no se pueden exportar archivos subidos a Amazon S3.');
+                    }else{
+                        continue;
                     }
-                }
-                if (count($tramites) > 1) {
-                    $tr = Doctrine::getTable('Tramite')->find($t);
-                    $tramite_nro = '';
-                    foreach ($tr->getValorDatoSeguimiento() as $tra_nro) {
-                        if ($tra_nro->nombre == 'tramite_ref') {
-                            $tramite_nro = $tra_nro->valor;
-                        }
-                    }
+                    $path = $ruta_base . $f->filename;
                     $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
-                    $nombre = $fecha . "_" . $t . "_" . $tramite_nro;
-                    //creando un zip por cada trámite
-                    //$this->zip->archive($ruta_tmp . $nombre . '.zip');
-                    $zip->open($ruta_tmp . $nombre . '.zip', ZipArchive::CREATE);
-                    // Close ZipArchive
-                    $zip->close();
+                    $tramite_nro = str_replace(" ", "", $tramite_nro);
+                    $nombre_archivo = pathinfo($path, PATHINFO_FILENAME);
+                    $ext = pathinfo($path, PATHINFO_EXTENSION);
+                    $nice_name = $nombre_documento . "_" . $nombre_archivo . "_" . $tramite_nro . "." . $ext;
+                    if(file_exists($path)){
+                        $files_to_be_added[] = [$path, $nice_name];
+                    }else{
+                        $non_existant_files[] = $path;
+                    }
                 }
             }
         }
-        if (count($tramites) > 1) {
-            foreach ($tramites as $t) {
-                $tr = Doctrine::getTable('Tramite')->find($t);
-                $tramite_nro = '';
-                foreach ($tr->getValorDatoSeguimiento() as $tra_nro) {
-                    if ($tra_nro->nombre == 'tramite_ref') {
-                        $tramite_nro = $tra_nro->valor;
-                    }
-                }
-                $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
-                $nombre = $fecha . "_" . $t . "_" . $tramite_nro;
-                $this->zip->read_file($ruta_tmp . $nombre . '.zip');
+        
+        if(count($files_to_be_added) > 0){
+            $zip = new ZipArchive;
+            $opened = $zip->open($zip_path_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            foreach($files_to_be_added as $file){
+                $zip->addFile($file[0], $file[1]);
             }
-
-            //Eliminando los archivos antes de descargar
-            foreach ($tramites as $t) {
-                $tr = Doctrine::getTable('Tramite')->find($t);
-                $tramite_nro = '';
-                foreach ($tr->getValorDatoSeguimiento() as $tra_nro) {
-                    if ($tra_nro->nombre == 'tramite_ref') {
-                        $tramite_nro = $tra_nro->valor;
-                    }
-                }
-                $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
-                $nombre = $fecha . "_" . $t . "_" . $tramite_nro;
-                unlink($ruta_tmp . $nombre . '.zip');
-            }
-
-            $this->zip->download('tramites.zip');
-        } else {
-            $tr = Doctrine::getTable('Tramite')->find($tramites);
-            $tramite_nro = '';
-            foreach ($tr->getValorDatoSeguimiento() as $tra_nro) {
-                if ($tra_nro->nombre == 'tramite_ref') {
-                    $tramite_nro = $tra_nro->valor;
-                }
-            }
-            $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
-            $nombre = str_replace(' ', '', $fecha . "_" . $t . "_" . $tramite_nro);
-
-
-            // Create Download Response
-            if (file_exists(public_path($ruta_tmp . $nombre . ".zip"))) {
-                return response()->download(public_path($ruta_tmp . $nombre . '.zip'), "{$nombre}.zip", $headers);
-            }
+            $zip->close();
+            if(count($non_existant_files)> 0)
+                $request->session()->flash('warning', 'No se pudieron encontrar todos los archivos requeridos para descargar.');
+            // archivo $zip tiene al menos 1 archivo
+            return response()
+                ->download($zip_path_filename, 'tramites_'.$fecha.'.zip', ['Content-Type' => 'application/octet-stream'])
+                ->deleteFileAfterSend(true);
+        }else{
+            $request->session()->flash('error', 'No se encontraron los archivos para descargar.');
+            return redirect()->back();
         }
     }
 
