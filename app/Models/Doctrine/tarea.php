@@ -100,12 +100,12 @@ class Tarea extends Doctrine_Record
     //$etapa_id indica la etapa hasta la cual se debe calcular la variable para obtener el grupo de usuario.
     public function getUsuarios($etapa_id)
     {
-        if ($this->acceso_modo == 'publico')
+        /*if ($this->acceso_modo == 'publico')
             return Doctrine::getTable('Usuario')->findByVacaciones(0);
         else if ($this->acceso_modo == 'registrados')
             return Doctrine::getTable('Usuario')->findByRegistradoAndVacaciones(1, 0);
         else if ($this->acceso_modo == 'claveunica')
-            return Doctrine::getTable('Usuario')->findByOpenIdAndVacaciones(1, 0);
+            return Doctrine::getTable('Usuario')->findByOpenIdAndVacaciones(1, 0);*/
 
 
         //Convertimos las variables e ids, separados por coma, en una arreglo de grupos de usuarios.
