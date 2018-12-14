@@ -14,6 +14,7 @@ function set_up(unique_id, url, token, block_size){
     c_s3.base_url = url;
     c_s3.url = null;
     c_s3.token = token;
+    c_s3.link_to_file = $("#link_to_file_"+unique_id);
     c_s3.hidden_name_field = $('#'+unique_id);
     c_s3.file_input = $('#file_input_'+unique_id);
     c_s3.progress_file = $('#progress_file_'+unique_id);
@@ -22,9 +23,9 @@ function set_up(unique_id, url, token, block_size){
     c_s3.total_segments = $('#total_segments_'+unique_id);
     c_s3.but_send_file = $('#but_send_file_'+unique_id);
     c_s3.parts_div = $('#parts_div_'+unique_id);
-    
+
     c_s3.segments_count = -1;
-    
+
     c_s3.send_start_time = -1;
     c_s3.send_end_time = -1;
     c_s3.file_load_start_time = -1;
@@ -54,7 +55,7 @@ function set_up(unique_id, url, token, block_size){
                 c_s3.parts_div.show();
             }else{
                 // debe ser single file
-                c_s3.parts_div.hide(); // solo se enviara una parte
+                c_s3.parts_div.show(); // solo se enviara una parte
                 c_s3.running_chunk_size = c_s3.single_file_max_size;
                 c_s3.url = c_s3.base_url + '/single';
                 c_s3.segments_count = Math.ceil(c_s3.fileSize/ c_s3.single_file_max_size);
@@ -68,10 +69,10 @@ function set_up(unique_id, url, token, block_size){
     c_s3.but_stop.on('click', function(){
         console.log('Se quiere detener la carga de archivo ' + unique_id);
         c_s3.stop_uploading = true;
-        while(c_s3.XMLHttpRequest_arr.length){  
+        while(c_s3.XMLHttpRequest_arr.length){
             var xhr = c_s3.XMLHttpRequest_arr.pop();
             xhr.abort();
-        } 
+        }
     });
     c_s3.but_send_file.on('click', start_upload(c_s3));
 }
@@ -149,7 +150,7 @@ function send_chunk(chunk, c_s3) {
     var chunk = new Uint8Array(chunk);
     // el contador empieza en 1
     c_s3.progress_file.val((c_s3.count - 1) / c_s3.segments_count);
-    
+
     xhr.addEventListener("progress", function(c_s3, chunk_size){
         return function(evt){
             // evt.loaded , evt.total = 0;
@@ -157,25 +158,31 @@ function send_chunk(chunk, c_s3) {
         }
     }(c_s3, chunk.byteLength));
 
-    xhr.addEventListener('load', function(c_s3, part_number){
+    xhr.addEventListener('load', function(c_s3, part_number, xhr){
         return function (evt) {
             c_s3.file_parts_status[part_number] = 1;
-            var pos = c_s3.XMLHttpRequest_arr.indexOf(this);
-            if(pos >= 0){
-                c_s3.XMLHttpRequest_arr.splice(pos, 1);
-            }
+
             c_s3.segments_sent.text(part_number);
             console.log('Se envio la parte: ' + part_number);
             if(c_s3.count < c_s3.segments_count)
                 readBlock(c_s3);
             else{
                 // fin de enviar el archivo completo :-D
+                console.log(xhr);
                 console.debug('Codigo HTTP despues de terminar de subir: ' + xhr.status);
+                console.log(xhr.response);
+                var upload_info = JSON.parse(xhr.response);
                 c_s3.progress_file.val( c_s3.progress_file.prop('max') );
+                c_s3.link_to_file.attr('href', upload_info.URL);
+                c_s3.link_to_file.text(upload_info.file_name);
                 c_s3.hidden_name_field.val(JSON.parse(xhr.response).URL);
             }
+            var pos = c_s3.XMLHttpRequest_arr.indexOf(this);
+            if(pos >= 0){
+                c_s3.XMLHttpRequest_arr.splice(pos, 1);
+            }
         }
-    }(c_s3, part_number));
+    }(c_s3, part_number, xhr));
 
     xhr.addEventListener("error", function(evt){
         c_s3.file_parts_status[part_number] = -1;

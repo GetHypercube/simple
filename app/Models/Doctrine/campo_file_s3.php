@@ -32,46 +32,53 @@ class CampoFileS3 extends Campo
         }
 
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-        
+
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '
         <div class="controls">
-            <input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="" data-grizmio="grizmio" />
+            <input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value=""  />
             <label for="file_input_'.$this->id.'">Archivo:</label>
             <input id="file_input_'.$this->id.'" type="file">
             <div id="parts_div_'.$this->id.'" style="display:none;">
                 <progress id="progress_file_'.$this->id.'" value=0 max=1></progress>
-                <label id="segments_sent_'.$this->id.'">0</label> de <label id="total_segments_'.$this->id.'">0</label> partes subidas.
+                <label id="segments_sent_'.$this->id.'">0</label><span>de</span><label id="total_segments_'.$this->id.'">0</label><span>partes subidas.</span>
             </div>
             <div>
-                <button id="but_send_file_'.$this->id.'" type="button" disabled="true" 
+                <button id="but_send_file_'.$this->id.'" type="button" disabled="true"
                     class="btn btn-secondary"/>
                     <i class="material-icons">file_upload</i>
                     Subir archivo
                 </button>
-                <input id="but_stop_'.$this->id.'" type="button" value="Detener subida" disabled="true" 
+                <input id="but_stop_'.$this->id.'" type="button" value="Detener subida" disabled="true"
                     class="btn btn-secondary"/>
             </div>
-        
-            <script>            
+
+            <script>
                 $(document).ready(function() {
-                    var token = $(\'meta[name="csrf-token"]\').attr(\'content\'); 
+                    var token = $(\'meta[name="csrf-token"]\').attr(\'content\');
                     set_up('.$this->id.', "'.url("uploader/datos_s3/" . $this->id . "/" . $etapa->id) .'", token, '.$this->block_size.');
                 });
             </script>
         ';
 
         if ($dato) {
-            $display .= '<p class="link"><a href="' . $dato->valor . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
-            if (!($modo == 'visualizacion'))    
-                $display .= '(<a class="remove" href="#">X</a>)</p>';
+            $file = Doctrine_Query::create()->from('File f')
+                    ->where("f.tipo = 's3' AND f.campo_id = ?", $this->id)
+                    ->orderBy('f.id DESC')
+                    ->fetchOne();
+
+            if($file != false && isset($file->extra->URL)&&!is_null($file->extra->URL)){
+                $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="' . $file->extra->URL . '" target="_blank">'.$file->filename.'</a>';
+                if (!($modo == 'visualizacion'))
+                  $display .= '(<a class="remove" href="#">X</a>)</p>';
+            }
         } else {
-            $display .= '<p class="link"></p>';
+            $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="#"></a></p>';
         }
 
         if ($this->ayuda)
             $display .= '<span class="form-text text-muted">' . $this->ayuda . '</span>';
-        
+
             $display .= '</div>';
         return $display;
     }
@@ -82,7 +89,7 @@ class CampoFileS3 extends Campo
         if (isset($this->extra->filetypes)) {
             $filetypes = $this->extra->filetypes;
         }
-        
+
         $info_s3 = '';
         if (isset($this->extra->info_s3)) {
             $info_s3 = ($this->extra->info_s3);
@@ -91,12 +98,12 @@ class CampoFileS3 extends Campo
         $file_expire_minutes = isset($this->extra->expire_time) ? $this->extra->expire_time : $this->file_expire_minutes;
 
         $output = <<<EOD
-        <br/>
+
         <div class="controls s3_variables">
             <label class="control-label">Almacenar respuesta en</label>
             <input type="text" class="form-control" name="extra[info_s3]" value="{$info_s3}"/>
         </div>
-        <br/>
+
         <div class="controls s3_upload_size">
             <label class="control-label">Tamaño de cada bloque</label>
             <select name="extra[block_size]" class="form-control">
@@ -106,13 +113,13 @@ class CampoFileS3 extends Campo
 
         <div class="controls s3_expire_time">
             <label class="control-label">Tiempo de vencimiento de enlace en minutos</label>
-            <input id="expire_time" type="number" name="extra[expire_time]" class="form-control" min=1 step=1 
+            <input id="expire_time" type="number" name="extra[expire_time]" class="form-control" min=1 step=1
             value='{$file_expire_minutes}'/>
         </div>
-        <br/>
+
 EOD;
         $output .= '<div class="controls s3_extra_files">';
-        $output .= '<label class="control-label">Tipos de archivos por extension</label>';
+        $output .= '<label class="control-label">Tipos de archivos por extensión</label>';
         $output .= '<select name="extra[filetypes][]" class="form-control" multiple>';
         $output .= '<option name="jpg" ' . (in_array('jpg', $filetypes) ? 'selected' : '') . '>jpg</option>';
         $output .= '<option name="png" ' . (in_array('png', $filetypes) ? 'selected' : '') . '>png</option>';
@@ -153,7 +160,7 @@ EOD;
             var min_vals = $min_vals;
             var old_vals = $(this).val().replace(/\s*/g, '').split('|');
             var pos = 0;
-            
+
             if( evt.which == 13 || evt.which == 32) {
                 // 13 enter, 32 espacio
                 evt.preventDefault();
