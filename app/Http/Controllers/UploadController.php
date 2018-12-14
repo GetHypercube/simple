@@ -42,14 +42,14 @@ class UploadController extends Controller
         if (isset($campo->extra->filetypes)) {
             $allowedExtensions = $campo->extra->filetypes;
         }
-        
+
         if($request->headers->has('filename')){
             $filename = urldecode($request->header('filename'));
         }else{
             die('No se envio el nombre de archivo.');
         }
 
-        
+
         if($request->header('content-length') > FileS3Uploader::$sizeLimit){
             echo json_encode(['error' => 'El archivo es muy grande'], JSON_UNESCAPED_UNICODE);
             exit;
@@ -63,10 +63,10 @@ class UploadController extends Controller
                 echo json_encode(['error'=>'Parte demasiado grande.'], JSON_UNESCAPED_UNICODE);
                 exit;
             }
-            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename);
+            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename, $campo);
             $result = $s3_uploader->uploadPart($data, $etapa_id, $part_number, $total_segments);
         }else{
-            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename);
+            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename, $campo);
             $result = $s3_uploader->handleUpload();
         }
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -96,7 +96,7 @@ class UploadController extends Controller
         if (isset($campo->extra->filetypes)) {
             $allowedExtensions = $campo->extra->filetypes;
         }
-        
+
         // max file size in bytes
         $sizeLimit = 20 * 1024 * 1024;
 

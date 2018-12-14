@@ -19,8 +19,9 @@ class FileS3Uploader
     private $file_tipo = 's3';
     public static $amazon_algo = 'md5';
     public $filename = null;
+    private $campo;
 
-    function __construct($file_expire_minutes, array $allowedExtensions = array(), $tramite_id, $filename=null)
+    function __construct($file_expire_minutes, array $allowedExtensions = array(), $tramite_id, $filename=null, $campo)
     {
       $this->tramite_id = $tramite_id;
         $allowedExtensions = array_map("strtolower", $allowedExtensions);
@@ -30,8 +31,8 @@ class FileS3Uploader
         $this->file = false;
         $this->filename = self::filenameToAscii($filename);
         $this->multipart_key = $tramite_id.'/'.$this->filename;
-        $this->filename = $tramite_id.'/'.$this->filename;
         $this->file_expire_minutes = $file_expire_minutes;
+        $this->campo = $campo;
     }
 
     private function toBytes($str)
@@ -61,11 +62,10 @@ class FileS3Uploader
         );
 
         if($response) {
-            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->multipart_key, $this->file_tipo, $this->tramite_id);
-            // $permanent_url = Storage::disk('s3')->url($this->multipart_key);
+            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
             if( ! $file ){
                 $file = new \File();
-                $file->filename = $this->multipart_key;
+                $file->filename = $this->filename;
                 $file->llave = strtolower(str_random(12));
                 $file->tramite_id = $this->tramite_id;
                 $file->tipo = $this->file_tipo;
@@ -83,11 +83,11 @@ class FileS3Uploader
     }
 
     private function getMultiPartId(){
-        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->multipart_key, $this->file_tipo, $this->tramite_id);
+        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
         if($file && isset($file->extra->multipart_id)){
             return $file->extra->multipart_id;
         }
-        
+
         return array('error'=>'ERROR al obtener el UploadId guardado', 'success'=> false);
     }
 
@@ -95,14 +95,14 @@ class FileS3Uploader
         $disk = Storage::disk('s3');
         $driver = $disk->getDriver();
         $client = $driver->getAdapter()->getClient();
-        
+
         if($part_number==1){
             $multipart_id = $this->createMultiPartId($client);
         }else{
             $multipart_id = $this->getMultiPartId();
         }
-        
-        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->multipart_key, $this->file_tipo, $this->tramite_id);
+
+        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
         $result = $client->uploadPart([
             'Bucket'=> env('AWS_BUCKET'),
             'Key'   => $this->multipart_key,
@@ -110,12 +110,12 @@ class FileS3Uploader
             'PartNumber' => $part_number,
             'Body'       => $data
         ]);
-        
+
         $extra_arr = json_decode(json_encode($file->extra),true);
-        
+
         $extra_arr['parts'][$part_number] = ['ETag' => str_replace('"', '', $result['ETag']),
                                                 'PartNumber' => intval($part_number)];
-        
+
         $file->extra = $extra_arr;
         $file->save();
         $temporaryUrl = '';
@@ -128,31 +128,35 @@ class FileS3Uploader
             ]);
             $temporaryUrl = $disk->temporaryUrl($this->multipart_key, Carbon::now()->addMinutes($this->file_expire_minutes));
             if(array_key_exists('success', $result) && $result['success'] == true){
+
                 $result['id'] = $file->id;
                 $result['llave'] = $file->llave;
                 $result['file_name'] = $file->filename;
             }
-            
-            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->multipart_key, $this->file_tipo, $this->tramite_id);
+
+            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
             // $permanent_url = Storage::disk('s3')->url($this->multipart_key);
             if( ! $file ){
                 $file = new \File();
-                $file->filename = $this->multipart_key;
                 $file->llave = strtolower(str_random(12));
                 $file->tramite_id = $this->tramite_id;
                 $file->tipo = $this->file_tipo;
             }
+            $file->filename = $this->filename;
+            $file->campo_id = $this->campo->id;
             /*
             // $aux['permanent_url'] = $permanent_url;
             $aux = json_decode(json_encode($file->extra), true);
             $file->extra = $aux;
             */
-            
+            $extra_arr['URL'] = $temporaryUrl;
+            $file->extra = $extra_arr;
             $file->save();
         }
         return [
             'success'=> $result['@metadata']['statusCode'] === 200 ? true: false,
-            'URL'=>$temporaryUrl
+            'URL'=>$temporaryUrl,
+            'file_name' => $this->filename
         ];
     }
 
@@ -174,7 +178,7 @@ class FileS3Uploader
         $ext = pathinfo($this->filename, PATHINFO_EXTENSION);
         if ($this->allowedExtensions && !in_array(strtolower($ext), $this->allowedExtensions)) {
             $these = implode(', ', $this->allowedExtensions);
-            return array('error' => 'ExtensiÃ³n de archivo invÃ¡lida. Solo puedes subir archivos con estas extensiones: ' . $these . '.',
+            return array('error' => 'Extensión de archivo inválida. Solo puedes subir archivos con estas extensiones: ' . $these . '.',
                         'success' => false);
         }
 
@@ -184,24 +188,24 @@ class FileS3Uploader
 
         $disk = Storage::disk('s3');
         $driver = $disk->getDriver();
-        
+
         $metadata = ['Metadata' => ['tramite_id' => $this->tramite_id]];
         $status_bool = $disk->put($full_path, $f_input, $metadata);
-        
+
         if ($status_bool) {
             // $url = $disk->url($full_path);
             // $path = $disk->path($full_path); // 2/hello.jpg
             $temporaryUrl = $disk->temporaryUrl($this->filename, Carbon::now()->addMinutes($this->file_expire_minutes));
 
             $aws_metadata = $driver->getAdapter()->getMetadata($full_path);
-            
+
             $result_success = ['success' => true, 'file_name' => $this->filename, 'full_path' => $full_path, 'status'=> $status_bool];
             $result_success['hash'] = str_replace('"', '',$aws_metadata['etag']);
             $result_success['algo'] = self::$amazon_algo;
             $result_success['filename'] = $aws_metadata['filename'];
             $result_success['extension'] = $aws_metadata['extension'];
             $result_success['URL'] = $temporaryUrl;
-            
+
             $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
             // $permanent_url = Storage::disk('s3')->url($this->filename);
             if( ! $file ){
@@ -209,17 +213,20 @@ class FileS3Uploader
                 $file->tipo = $this->file_tipo;
                 $file->llave = strtolower(str_random(12));
                 $file->tramite_id = $this->tramite_id;
-                $file->filename = $this->filename;
+
             }
+            $file->filename = $this->filename;
+            $file->campo_id = $this->campo->id;
             $extra = [
-                'URL' => $temporaryUrl
+                'URL' => $temporaryUrl,
+                'file_name' => $this->filename
             ];
             $file->extra = $extra;
             $file->save();
           return $result_success;
         } else {
             return ['error' => 'Could not save uploaded file.' .
-                'The upload was cancelled, or server error encountered', 
+                'The upload was cancelled, or server error encountered',
                     'success' => false];
         }
     }
@@ -229,13 +236,13 @@ class FileS3Uploader
         $filename = preg_replace('/\s+/', ' ', $filename);  //Le hacemos un trim
         //$filename = sha1(uniqid(mt_rand(),true));
         $filename = trim($filename);
-        $filename = str_replace(array('Ã¡', 'Ã ', 'Ã¤', 'Ã¢', 'Âª', 'Ã', 'Ã€', 'Ã‚', 'Ã„'),array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'),$filename);
-        $filename = str_replace(array('Ã©', 'Ã¨', 'Ã«', 'Ãª', 'Ã‰', 'Ãˆ', 'ÃŠ', 'Ã‹'), array('e', 'e', 'e', 'e', 'E', 'E', 'E', 'E'),$filename);
-        $filename = str_replace(array('Ã­', 'Ã¬', 'Ã¯', 'Ã®', 'Ã', 'ÃŒ', 'Ã', 'ÃŽ'), array('i', 'i', 'i', 'i', 'I', 'I', 'I', 'I'),$filename);
-        $filename = str_replace(array('Ã³', 'Ã²', 'Ã¶', 'Ã´', 'Ã“', 'Ã’', 'Ã–', 'Ã”'), array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'), $filename);
-        $filename = str_replace(array('Ãº', 'Ã¹', 'Ã¼', 'Ã»', 'Ãš', 'Ã™', 'Ã›', 'Ãœ'),array('u', 'u', 'u', 'u', 'U', 'U', 'U', 'U'),$filename);
-        $filename = str_replace(array('Ã±', 'Ã‘', 'Ã§', 'Ã‡'),array('n', 'N', 'c', 'C',), $filename);
-        $filename = str_replace(array("\\","Â¨","Âº","-","~","#","@","|","!","\"","Â·","$","%","&","/","(", ")","?","'","Â¡","Â¿","[","^","`","]","+","}","{","Â¨","Â´",">","< ",";", ",",":"," "),'',$filename);
+        $filename = str_replace(array('á', 'à', 'ä', 'â', 'ª', 'Á', 'À', 'Â', 'Ä'),array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'),$filename);
+        $filename = str_replace(array('é', 'è', 'ë', 'ê', 'É', 'È', 'Ê', 'Ë'), array('e', 'e', 'e', 'e', 'E', 'E', 'E', 'E'),$filename);
+        $filename = str_replace(array('í', 'ì', 'ï', 'î', 'Í', 'Ì', 'Ï', 'Î'), array('i', 'i', 'i', 'i', 'I', 'I', 'I', 'I'),$filename);
+        $filename = str_replace(array('ó', 'ò', 'ö', 'ô', 'Ó', 'Ò', 'Ö', 'Ô'), array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'), $filename);
+        $filename = str_replace(array('ú', 'ù', 'ü', 'û', 'Ú', 'Ù', 'Û', 'Ü'),array('u', 'u', 'u', 'u', 'U', 'U', 'U', 'U'),$filename);
+        $filename = str_replace(array('ñ', 'Ñ', 'ç', 'Ç'),array('n', 'N', 'c', 'C',), $filename);
+        $filename = str_replace(array("\\","¨","º","-","~","#","@","|","!","\"","·","$","%","&","/","(", ")","?","'","¡","¿","[","^","`","]","+","}","{","¨","´",">","< ",";", ",",":"," "),'',$filename);
         return $filename;
     }
 }
