@@ -17,6 +17,9 @@ class File extends Doctrine_Record
         if(\Schema::hasColumn('file', 'extra')){
             $this->hasColumn('extra');
         }
+        if(\Schema::hasColumn('file', 'campo_id')){
+            $this->hasColumn('campo_id');
+        }
     }
 
     function setUp()
@@ -88,7 +91,7 @@ class File extends Doctrine_Record
 
 
     }
-    
+
     public function setExtra($extra)
     {
         if (is_string($extra)) {
