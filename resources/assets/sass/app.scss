@@ -322,3 +322,51 @@ ul.steps li {
     padding: 11px 28%;
   }
 }
+
+progress {
+  width: 250px;
+  height: 14px;
+  -webkit-appearance: none;
+  border: none;
+}
+
+progress::-webkit-progress-bar {
+  background: #D8D8D8;
+  border-radius: 50px;
+  padding: 2px;
+  box-shadow: 0 1px 0px 0 rgba(255, 255, 255, 0.2);
+}
+
+.controls #parts_div_2 {
+  margin: 10px 0;
+}
+.controls #parts_div_2 label {
+  font-size: 14px;
+  padding-left: 5px;
+  font-weight: bold;
+}
+
+.controls #parts_div_2 span {
+  font-size: 12px;
+  padding-left: 5px;
+}
+
+progress::-webkit-progress-value {
+  border-radius: 50px;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
+  background:
+    -webkit-linear-gradient(45deg, transparent, transparent 33%, rgba(0, 0, 0, 0.1) 33%, rgba(0, 0, 0, 0.1) 66%, transparent 66%),
+    -webkit-linear-gradient(top, rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.2)),
+    -webkit-linear-gradient(left, #2E9AFE, #00BFFF);
+  background-size: 25px 14px, 100% 100%, 100% 100%;
+  -webkit-animation: move 5s linear 0 infinite;
+}
+
+@-webkit-keyframes move {
+  0% {background-position: 0px 0px, 0 0, 0 0}
+  100% {background-position: -100px 0px, 0 0, 0 0}
+}
+
+.controls .link {
+  padding-top: 15px;
+}
