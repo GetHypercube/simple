@@ -370,3 +370,49 @@ progress::-webkit-progress-value {
 .controls .link {
   padding-top: 15px;
 }
+
+.blog-header {line-height: 1;padding-top: 0!important;}
+.rowheader{height: 57px;background-color: #0A142D; margin-right: 0!important; margin-left: 0!important;}
+.rowheader ul {list-style: none;}
+.row2header ul {list-style: none;}
+.rowheader .logosuper {background: url(../img/logo_super.svg) no-repeat;display: block;height: 40px;width: 157px;margin-left: 42px;}
+.rowheader ul { margin-right: 10px;}
+.rowheader ul li {float: left;margin: 0 10px;position: relative;font-family: 'Roboto';font-size: 16px;    font-weight: 500;    line-height: 56px;}
+.rowheader ul li a {color: #FFF;text-decoration: underline;}
+.rowheader ul li:first-child a {border-right: 1px solid #fff;padding-right: 25px; }
+
+.row2header {background-color: #F7F7F7; width: 100%;}
+.row2header .rcntheader {margin-bottom: 20px}
+.row2header .rcntheader .navlogin {margin-top: 35px;}
+.row2header ul li {float: left;position: relative;font-family: 'Roboto';font-size: 21px;    font-weight: 500;    line-height: 50px;}
+//.row2header .ullogo .logoinst {background: url(img_css/Ministerio_bienes_nacionales-02.svg) no-repeat;display: block;height: 81px;width: 153px;}
+.row2header .ullogo li:last-child {margin-top: 42px;}
+.row2header .ullogo li:first-child a {display: block; height: 81px;width: 153px;margin-right: 20px;}
+.row2header .ullogo li a {color: #6A6A6A;}
+.row2header .ullogo li:last-child h2 {border-left: 1px solid #BFBFBF;padding-left: 22px;height: 39px;display: block;font-size: 21px;line-height: 55px;color: #6A6A6A;font-weight: 500;text-decoration: underline;}
+.row2header .ulsesion {float: right;margin: 40px 15px 0 0;}
+.row2header .ulsesion li {margin-left: 15px;}
+.row2header .ulsesion li .btn {font-family: 'Roboto';font-size: 13px;font-weight: 100;line-height: 25px;}
+.row2header .ulsesion li .btnclvn{color: #fff;background-color: #0D65B0;border: none;height: 35px;}
+.row2header .ulsesion li .btnssn{color: #FC303E;background-color: #fff;border: none;height: 35px;}
+
+.blog-footer {text-align: center;margin-top: 30px;margin-right: 0!important;margin-left: 0!important;}
+.blog-footer.footerntsp .splogosuperfooter {display: block;height: 40px;width: 132px;border-left: 1px solid #fff;padding-left: 15px;margin-top: 18px;padding-top: 10px;}
+.blog-footer .splogoinstfooter {display: block;height: 58px;width: 135px;}
+.blog-footer .logosuperfooter {background: url(../img/logo_super.svg) no-repeat;display: block;height: 40px;width: 132px;}
+//.blog-footer .logoinstfooter {background: url(img_css/Ministerio_bienes_nacionales-01.svg) no-repeat;display: block;height: 58px;width: 112px;}
+
+.blog-footer.footerntsp .rowfooter {padding: 0 0 2.5rem 0;background-color: #0A142D; color: #fff; width: 100%;}
+.blog-footer .rowfooter {background-color: #0A142D; color: #fff;margin-right: 0!important;margin-left: 0!important;}
+.blog-footer .rowfooter ul {list-style: none;}
+.blog-footer .rowfooter ul li {font-family: 'Roboto';font-size: 14px;    font-weight: 500;line-height: 24px;display: block;text-align: left;margin-bottom: 2px;}
+.blog-footer.footerntsp .rowfooter ul li:first-child {display: block;height: 60px;margin-bottom: 40px;}
+.blog-footer .rowfooter ul li a {color: #fff;text-decoration: underline;}
+.blog-footer .rowfooter .txtfooter {margin-top: 74px;font-family: 'Roboto';font-size: 14px;}
+.blog-footer .rowfooter .txtfooter a {color: #fff;}
+.blog-footer.footerntsp .rowfooter .txtfooter .spntxtfooter {position: absolute;bottom: 12px;right: 15px;}
+
+.blog-footer.footernlysp .splogosuperfooter {display: block;height: 40px;width: 157px;border-right: 1px solid #fff;padding-right: 15px;margin-top: 18px;padding-top: 10px;}
+.blog-footer.footernlysp .rowfooter ul:first-child li {padding-left: 35px; }
+.blog-footer.footernlysp .rowfooter ul li:last-child a:first-child {display: block;margin-top: 14px;}
+.blog-footer.footernlysp .rowfooter .navtxtfooter {margin-top: 50px;}

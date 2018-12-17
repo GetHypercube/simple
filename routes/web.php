@@ -64,6 +64,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
     Route::middleware('auth:usuario_backend')->group(function () {
         Route::get('/', 'HomeController@index')->name('home');
         Route::post('/uploader/logo', 'ConfigurationController@mySiteUploadLogo')->name('uploader.logo');
+        Route::post('/uploader/logof', 'ConfigurationController@mySiteUploadLogof')->name('uploader.logof');
         Route::post('/uploader/themes', 'ConfigurationController@mySiteUploadTheme')->name('uploader');
         Route::post('/uploader/timbre', 'UploaderController@timbre')->name('uploader.timbre');
         Route::get('/uploader/timbre_get/{filename}', 'UploaderController@timbre_get')->name('uploader.timbre_get');
@@ -238,6 +239,18 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::get('/configuracion/plantilla_eliminar/{plantilla_id}', 'ConfigurationController@deleteTemplate')->name('configuration.template.delete');
             Route::get('/configuracion/modelador/{conector_id?}', 'ConfigurationController@modeler')->name('configuration.modeler');
 
+            //Firmas Electronicas
+            Route::get('/configuracion/firmas_electronicas', 'ConfigurationController@electronicSignature')->name('configuration.electronic_signature');
+            Route::get('/configuracion/firmas_electronicas_editar', 'ConfigurationController@addElectronicSignature')->name('configuration.electronic_signature.add');
+            Route::post('/configuracion/firmas_electronicas_editar', 'ConfigurationController@storeElectronicSignature')->name('configuration.electronic_signature.store');
+            Route::get('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@editElectronicSignature')->name('configuration.electronic_signature.edit');
+            Route::put('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@updateElectronicSignature')->name('configuration.electronic_signature.update');
+            Route::delete('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@deleteElectronicSignature')->name('configuration.electronic_signature.delete');
+
+			//Mis estilos
+            Route::get('/configuracion/estilo', 'ConfigurationController@myStyle')->name('configuration.my_style');
+            Route::post('/configuracion/estilo', 'ConfigurationController@saveMyStyle')->name('configuration.my_style.save');
+
             Route::get('/configuracion/backend_usuarios', 'ConfigurationController@backendUsers')->name('configuration.backend_users');
             Route::get('/configuracion/backend_usuario_editar', 'ConfigurationController@addBackendUsers')->name('configuration.backend_users.add');
             Route::post('/configuracion/backend_usuario_editar', 'ConfigurationController@storeBackendUsers')->name('configuration.backend_users.store');
@@ -280,6 +293,7 @@ Route::prefix('manager')->namespace('Manager')->name('manager.')->group(function
 
     Route::middleware('auth:usuario_manager')->group(function () {
         Route::post('/uploader/logo', 'CategoryController@mySiteUploadLogo')->name('uploader.logo');
+        Route::post('/uploader/logof', 'CategoryController@mySiteUploadLogof')->name('uploader.logof');
         Route::get('/salir', 'Auth\LoginController@logout')->name('logout');
 
         //Cuentas

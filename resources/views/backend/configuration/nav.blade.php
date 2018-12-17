@@ -12,6 +12,8 @@
         <!--
         <a class="nav-link" href="#">Configuración Modelador</a>
         -->
+        <a class="nav-link {{strstr(Request::path(), 'backend/configuracion/estilo') ? 'active' : ''}}"
+           href="{{route('backend.configuration.my_style')}}">Estilos (Personalización)</a>
     </div>
     <div class="nav flex-column nav-pills">
         <a class="nav-link disabled" href="#">ACCESOS FRONTEND</a>

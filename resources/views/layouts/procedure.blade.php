@@ -11,8 +11,8 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
+    <link href="{{ asset('css/'.$estilo.'') }} " rel="stylesheet">
+  
     <meta name="google" content="notranslate"/>
 
     <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
@@ -34,12 +34,11 @@
             }
         };
     </script>
-
+     <style type="text/css">{{ $personalizacion }}</style>
 </head>
 <body>
 <div id="app">
-
-    @include('layouts.header')
+    @include($dominio_header)
 
     <div class="main-container container">
         <div class="row">
@@ -89,8 +88,7 @@
 
         </div>
     </div>
-
-    @include('layouts.footer')
+    @include($dominio_footer) 
 </div>
 
 @stack('script')
