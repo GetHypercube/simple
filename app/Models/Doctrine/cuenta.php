@@ -6,14 +6,17 @@ use Illuminate\Support\Facades\Log;
 class Cuenta extends Doctrine_Record
 {
 
-    function setTableDefinition()
+function setTableDefinition()
     {
         $this->hasColumn('id');
         $this->hasColumn('nombre');
         $this->hasColumn('nombre_largo');
         $this->hasColumn('mensaje');
         $this->hasColumn('logo');
-        $this->hasColumn('logof');
+        if(\Schema::hasColumn('cuenta', 'logof')){
+            $this->hasColumn('logof');
+        }
+
         $this->hasColumn('api_token');
         $this->hasColumn('descarga_masiva');
         $this->hasColumn('client_id');
@@ -23,11 +26,25 @@ class Cuenta extends Doctrine_Record
         if(\Schema::hasColumn('cuenta', 'entidad')){
             $this->hasColumn('entidad');
         }
-        $this->hasColumn('estilo');
-        $this->hasColumn('header');
-        $this->hasColumn('footer');
-        $this->hasColumn('personalizacion');
-        $this->hasColumn('personalizacion_estado');
+        if(\Schema::hasColumn('cuenta', 'estilo')){
+            $this->hasColumn('estilo');
+        }
+        if(\Schema::hasColumn('cuenta', 'header')){
+            $this->hasColumn('header');
+        }
+
+        if(\Schema::hasColumn('cuenta', 'footer')){
+            $this->hasColumn('footer');
+        }
+
+        if(\Schema::hasColumn('cuenta', 'personalizacion')){
+            $this->hasColumn('personalizacion');
+        }
+
+        if(\Schema::hasColumn('cuenta', 'personalizacion_estado')){
+            $this->hasColumn('personalizacion_estado');
+        }
+
     }
 
     function setUp()

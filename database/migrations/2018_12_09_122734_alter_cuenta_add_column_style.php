@@ -14,7 +14,7 @@ class AlterCuentaAddColumnStyle extends Migration
     public function up()
     {
         Schema::table('cuenta', function (Blueprint $table) {
-            $table->varchar('estilo',50)->default('app.css');
+            $table->string('estilo',50)->default('app.css');
         });
     }
 

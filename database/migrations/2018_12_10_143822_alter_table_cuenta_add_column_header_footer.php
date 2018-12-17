@@ -13,9 +13,9 @@ class AlterTableCuentaAddColumnHeaderFooter extends Migration
      */
     public function up()
     {
-        Schema::table('cuenta', function (Blueprint $table) 
-            $table->varchar('header',64)->default('layouts.header');
-            $table->varchar('footer',64)->default('layouts.footer');
+        Schema::table('cuenta', function (Blueprint $table){ 
+            $table->string('header',64)->default('layouts.header');
+            $table->string('footer',64)->default('layouts.footer');
         });
     }
 
