@@ -22,6 +22,7 @@ class StagesController extends Controller
         $iframe = $request->input('iframe');
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
+        $data = \Cuenta::configSegunDominio();
         $data['num_pasos'] = $etapa === false ? 0 : self::num_pasos($etapa->Tarea->id);
 
         if (!$etapa) {
@@ -117,6 +118,8 @@ class StagesController extends Controller
         } else {
             $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, "0", $buscar);
         }
+
+        $data = \Cuenta::configSegunDominio();
 
         $data['etapas'] = $rowetapas;
         $data['buscar'] = $buscar;
