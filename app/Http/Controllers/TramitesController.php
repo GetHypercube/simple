@@ -101,12 +101,7 @@ class TramitesController extends Controller
         $config['num_tag_close'] = '</li>';
 
         $data = \Cuenta::configSegunDominio();
-/*        $algo = \Cuenta::cuentaSegunDominio();
-        $data['estilo'] = $algo->estilo;
-        $data['dominio_header'] = $algo->header;
-        $data['dominio_footer'] = $algo->footer;
-        $data['personalizacion'] = ("1" === $algo->personalizacion_estado) ? $algo->personalizacion : '';
-*/
+
         $data['tramites'] = new LengthAwarePaginator(
             $rowtramites, // Only grab the items we need
             $contador, // Total items
@@ -125,12 +120,6 @@ class TramitesController extends Controller
     public function disponibles()
     {
         $data = \Cuenta::configSegunDominio();
-/*        $algo = \Cuenta::cuentaSegunDominio();
-        $data['estilo'] = $algo->estilo;
-        $data['dominio_header'] = $algo->header;
-        $data['dominio_footer'] = $algo->footer;
-        $data['personalizacion'] = ("1" === $algo->personalizacion_estado) ? $algo->personalizacion : '';
-*/
         $data['procesos'] = Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciar(Auth::user()->id, Cuenta::cuentaSegunDominio(), 'nombre', 'asc');
 
         $data['sidebar'] = 'disponibles';

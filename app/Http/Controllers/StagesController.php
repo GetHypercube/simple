@@ -196,6 +196,7 @@ class StagesController extends Controller
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
 
+        $data = \Cuenta::configSegunDominio();
         // $data['etapas'] = Doctrine::getTable('Etapa')->findSinAsignar(Auth::self::user()->id, Cuenta::cuentaSegunDominio());
         $data['etapas'] = new LengthAwarePaginator(
             $rowetapas, // Only grab the items we need
@@ -366,7 +367,7 @@ class StagesController extends Controller
         //    redirect();
         //    exit;
         //}
-
+        $data = \Cuenta::configSegunDominio();
         $data['etapa'] = $etapa;
         $data['tareas_proximas'] = $etapa->getTareasProximas();
         $data['qs'] = $request->getQueryString();
@@ -450,7 +451,7 @@ class StagesController extends Controller
     //Pagina que indica que la etapa se completo con exito. Solamente la ven los que acceden mediante iframe.
     public function ejecutar_exito()
     {
-
+        $data = \Cuenta::configSegunDominio();
         $data['title'] = 'Etapa completada con éxito';
 
         return view('backend.stages.ejecutar_exito', $data);
@@ -467,6 +468,7 @@ class StagesController extends Controller
 
         $paso = $etapa->getPasoEjecutable($secuencia);
 
+        $data = \Cuenta::configSegunDominio();
         $data['etapa'] = $etapa;
         $data['paso'] = $paso;
         $data['secuencia'] = $secuencia;
