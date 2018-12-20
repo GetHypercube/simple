@@ -34,7 +34,7 @@ build:
 
 build site:
   stage: build
-  image: node:8.14.0-stretch
+  image: node:10-stretch
   script:
     - apt-get update
     - apt-get -y install libpng16-16 libpng-tools libpng-dev
