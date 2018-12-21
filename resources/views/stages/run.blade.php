@@ -93,4 +93,5 @@
     </script>
 
     <script src="{{asset('js/helpers/common.js')}}"></script>
+    <script src="{{ asset('js/helpers/grilla_datos_externos.js') }}"></script>
 @endpush

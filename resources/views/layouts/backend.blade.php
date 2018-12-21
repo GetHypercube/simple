@@ -54,5 +54,6 @@
 <!-- Scripts -->
 @yield('script')
 <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=es"></script>
+<script src="{{ asset('js/helpers/grilla_datos_externos.js') }}"></script>
 </body>
 </html>
