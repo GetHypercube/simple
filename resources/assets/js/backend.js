@@ -125,3 +125,5 @@ $(document).ready(function () {
         }
     });
 });
+require('datatables/media/js/jquery.dataTables');
+require('datatables/media/css/jquery.dataTables.css');
