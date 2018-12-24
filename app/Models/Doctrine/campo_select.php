@@ -19,7 +19,7 @@ class CampoSelect extends Campo
 
         $display = '<div class="form-group">';
         $display .= '<label for="' . $this->id . '">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
-        $display .= '<select id="' . $this->id . '" class="form-control" name="' . $this->nombre . '" ' . ($modo == 'visualizacion' ? 'disabled' : '') . ' data-modo="' . $modo . '">';
+        $display .= '<select id="' . $this->id . '" class="form-control '.$this->id.'" name="' . $this->nombre . '" ' . ($modo == 'visualizacion' ? 'disabled' : '') . ' data-modo="' . $modo . '">';
         $display .= '<option value="">Seleccionar</option>';
         if ($this->datos) foreach ($this->datos as $d) {
             if ($dato) {
@@ -48,24 +48,29 @@ class CampoSelect extends Campo
     
                 ';
 
-
+        //Para la carga masiva  en select mediante web service
         if ($this->extra && $this->extra->ws) {
             $display .= '
             <script>
                 $(document).ready(function(){
                     var defaultValue = "' . ($dato && $dato->valor ? $dato->valor : $this->valor_default) . '";
-                    console.log(defaultValue);
                     $.ajax({
                         url: "' . $this->extra->ws . '",
                         dataType: "jsonp",
                         jsonpCallback: "callback",
                         success: function(data){
-                            var html="";
-                            $(data).each(function(i,el){
-                                html+="<option value=\""+el.valor+"\">"+el.etiqueta+"</option>";
+                            var html = "";
+                            $("#' . $this->id . '").html("");
+                            $.each(data, function (idx, obj) {
+                                html = "<option value=\""+obj.valor+"\">"+obj.etiqueta+"</option>";
+                                console.log(html);
+                                $("#' . $this->id . '").append(html);
                             });
-
-                            $("#' . $this->id . '").append(html).val(defaultValue).change();
+                            $("#' . $this->id . '").trigger("chosen:updated");
+                            $("#' . $this->id . '").chosen();
+                        },
+                        error: function (data) {
+                            alert("Error no hay datos");
                         }
                     });
                 });
