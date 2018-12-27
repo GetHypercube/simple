@@ -38,7 +38,7 @@ class CampoFileS3 extends Campo
             <input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value=""  />
             <label for="file_input_'.$this->id.'">Archivo:</label>
             <input id="file_input_'.$this->id.'" type="file">
-            <div id="parts_div_'.$this->id.'" style="display:none;">
+            <div id="parts_div_'.$this->id.'" style="display:none;" class="parts_div">
                 <progress id="progress_file_'.$this->id.'" value=0 max=1></progress>
                 <label id="segments_sent_'.$this->id.'">0</label><span>de</span><label id="total_segments_'.$this->id.'">0</label><span>partes subidas.</span>
             </div>

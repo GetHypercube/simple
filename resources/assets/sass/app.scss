@@ -337,16 +337,16 @@ progress::-webkit-progress-bar {
   box-shadow: 0 1px 0px 0 rgba(255, 255, 255, 0.2);
 }
 
-.controls #parts_div_2 {
+.controls .parts_div {
   margin: 10px 0;
 }
-.controls #parts_div_2 label {
+.controls .parts_div label {
   font-size: 14px;
   padding-left: 5px;
   font-weight: bold;
 }
 
-.controls #parts_div_2 span {
+.controls .parts_div span {
   font-size: 12px;
   padding-left: 5px;
 }
