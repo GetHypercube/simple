@@ -235,7 +235,7 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
 
         if(grillas_datatable[grilla_id].exportable_columns_indexes.length == 1){
             var index = grillas_datatable[grilla_id].exportable_columns_indexes[0];
-            var data = grillas_datatable[grilla_id].table.columns(index).data().toArray();
+            var data = grillas_datatable[grilla_id].table.columns(index).data().toArray()[0];
         }else{
             if(grillas_datatable[grilla_id].data_type == 'arrays'){
                 var indexes = grillas_datatable[grilla_id].exportable_columns_indexes;
