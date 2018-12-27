@@ -8,7 +8,6 @@ class CampoFileS3 extends Campo
     public $requiere_datos = false;
     public $min_validations = [];
     public $block_size = 8388608; // 8 MB
-    public $file_expire_minutes = 14400; // 24 horas
 
     protected function display($modo, $dato, $etapa_id = false)
     {
@@ -95,29 +94,13 @@ class CampoFileS3 extends Campo
             $info_s3 = ($this->extra->info_s3);
         }
 
-        $file_expire_minutes = isset($this->extra->expire_time) ? $this->extra->expire_time : $this->file_expire_minutes;
 
-        $output = <<<EOD
-
-        <div class="controls s3_variables">
-            <label class="control-label">Almacenar respuesta en</label>
-            <input type="text" class="form-control" name="extra[info_s3]" value="{$info_s3}"/>
-        </div>
-
-        <div class="controls s3_upload_size">
-            <label class="control-label">Tamaño de cada bloque</label>
-            <select name="extra[block_size]" class="form-control">
-                <option value="8388608" selected>8 MB</option>
-            </select>
-        </div>
-
-        <div class="controls s3_expire_time">
-            <label class="control-label">Tiempo de vencimiento de enlace en minutos</label>
-            <input id="expire_time" type="number" name="extra[expire_time]" class="form-control" min=1 step=1
-            value='{$file_expire_minutes}'/>
-        </div>
-
-EOD;
+        $output = '<div class="controls s3_upload_size">
+                        <label class="control-label">Tamaño de cada bloque</label>
+                        <select name="extra[block_size]" class="form-control">
+                            <option value="8388608" selected>8 MB</option>
+                        </select>
+                    </div>';
         $output .= '<div class="controls s3_extra_files">';
         $output .= '<label class="control-label">Tipos de archivos por extensión</label>';
         $output .= '<select name="extra[filetypes][]" class="form-control" multiple>';

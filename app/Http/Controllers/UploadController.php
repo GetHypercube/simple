@@ -34,9 +34,6 @@ class UploadController extends Controller
             exit;
         }
 
-        // Tiempo de duracion por defecto es 1440 minutos
-        $file_expire_minutes = isset($campo->extra->expire_minutes) ? $campo->extra->expire_minutes: 1440;
-
         // list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $allowedExtensions = array('gif', 'jpg', 'png', 'pdf', 'doc', 'docx', 'zip', 'rar', 'ppt', 'pptx', 'xls', 'xlsx', 'mpp', 'vsd', 'odt', 'odp', 'ods', 'odg');
         if (isset($campo->extra->filetypes)) {
@@ -58,16 +55,11 @@ class UploadController extends Controller
             exit;
         }
         if( ! is_null($multipart) && $multipart == 'multi'){
-            $data = self::readFromSTDIN();
-            if(strlen($data) > FileS3Uploader::$sizeLimit){
-                echo json_encode(['error'=>'Parte demasiado grande.'], JSON_UNESCAPED_UNICODE);
-                exit;
-            }
-            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename, $campo);
-            $result = $s3_uploader->uploadPart($data, $etapa_id, $part_number, $total_segments);
+            $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename);
+            $result = $s3_uploader->uploadPart($etapa_id, $part_number, $total_segments);
         }else{
-            $s3_uploader = new FileS3Uploader($file_expire_minutes, $allowedExtensions, $tramite_id, $filename, $campo);
-            $result = $s3_uploader->handleUpload();
+            $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename);
+            $result = $s3_uploader->singlePartUpload();
         }
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
     }
@@ -174,5 +166,50 @@ class UploadController extends Controller
         header('Content-Type: ' . get_mime_by_extension($path));
         header('Content-Length: ' . filesize($path));
         readfile($path);
+    }
+
+    public function datos_get_s3(Request $request, $id, $token)
+    {
+        // $request->session()->flash('error', 'No se encontraron los archivos para descargar.');
+        // return \Redirect::back();
+        
+        $file = Doctrine_Query::create()
+            ->from('File f, f.Tramite t, t.Etapas e, e.Usuario u')
+            ->where('f.id = ? AND f.llave = ?', array($id, $token))
+            ->fetchOne();
+        
+        if (!$file) {
+            abort(404, 'Archivo no encontrado.');
+        }
+        
+        $full_path_filename = 's3://'.$file->extra->s3_bucket.'/'.$file->extra->s3_filepath .'/'.$file->extra->file_name;
+        $remote_full = $file->extra->s3_filepath .'/'.$file->extra->file_name;
+        
+        header('Content-Type: ' . $file->extra->s3_mimetype);
+        if(isset($file->extra->s3_file_size))
+            header('Content-Length: ' . $file->extra->s3_file_size);
+        
+        header('Content-Disposition: attachment; filename="'.$file->extra->file_name.'"');
+        
+        $disk = \Storage::disk('s3');
+        
+        $driver = $disk->getDriver();
+        $client = $driver->getAdapter()->getClient();
+        $client->registerStreamWrapper();
+        if ($read_stream = fopen($full_path_filename, 'r')) {
+            while (!feof($read_stream)) {
+                $leido = fread($read_stream, 16384);
+                if($leido !== FALSE){
+                    echo $leido;
+                }else{
+                    // error ftp 401, no de http
+                    abort(401, 'S3 file read error.');
+                }
+            }
+            fflush($read_stream);
+            fclose($read_stream);
+        }else{
+            abort(404, 'Error al abrir el archivo para lectura.');
+        }
     }
 }
