@@ -25,19 +25,27 @@ var grilla_datos_externos_validar = function(grilla_id, url_for_validate){
 }
 
 var grilla_datos_externos_eliminar = function(grilla_id){
+    if(grillas_datatable[grilla_id].table.rows('.to_delete').data().length <= 0){
+        return;
+    }
     if(!confirm('Va a elimar las filas seleccionadas. ¿Desea continuar?')) return;
     grillas_datatable[grilla_id].table.rows('.to_delete').remove().draw(true);
 }
 
 var modal_agregar_a_grilla = function(grilla_id){
-    var modal_new_data = $("#modal-body-"+grilla_id, "form").find("input[name*=modal_input]");
-    var modal_grande = $("#addToTableModal_"+grilla_id);
+    var modal_new_data = $('#modal-body-'+grilla_id, 'form').find('.modal_input');
+    var modal_grande = $('#addToTableModal_'+grilla_id);
+    var eliminable = grillas_datatable[grilla_id].eliminable;
     var to_add = [];
-    // FIXME: cambiar of por algo mas comopatible
+
     for(var el of modal_new_data){
-        to_add.push(  $(el).val() );
+        el = $(el);
+	    to_add[el.data('column')] = [
+            el.val()
+        ]
     }
-    if(grillas_datatable[grilla_id].eliminable){
+    
+    if(eliminable){
         to_add.push(grid_eliminar);
     }
 
@@ -162,31 +170,19 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
     var modal_form = $("#addToTableModal_" + grilla_id + " .modal-body", "form");
 
     var thead_html = "<th scope='col'>{{text}}</th>\n";
-    var modal_form_input_html = '<div class="form-group"><label for="_" class="col-form-label">{{text}}:</label><input type="text" class="form-control" name="modal_input" data-col="{{column}}"></div>';
-    var modal_form_not_input = '<div class="form-group"><input type="hidden" name="modal_input" data-col=""></div>';
+    var modal_form_input_html = '<div class="form-group"><label for="_" class="col-form-label">{{text}}:</label><input type="text" class="form-control modal_input" ' +
+                                    ' data-column="{{column}}"></div>';
+    var modal_form_not_input = '<input type="hidden" class="modal_input" data-column="{{column}}">';
     grillas_datatable[grilla_id].cell_text_max_length = cell_text_max_length;
+    grillas_datatable[grilla_id].is_array = is_array;
     grillas_datatable[grilla_id].exportable_columns_indexes = [];
     grillas_datatable[grilla_id].exportable_columns_name = [];
-    for(i=0;i<columns.length;i++){
-        tr_header_obj.append(thead_html.replace("{{text}}", columns[i].header));
-        if( columns[i].is_exportable=="true")
-            grillas_datatable[grilla_id].exportable_columns_indexes.push(i)
-            grillas_datatable[grilla_id].exportable_columns_name.push(columns[i].header);
-        if(columns[i].is_input=="true"){
-            modal_form.append(modal_form_input_html.replace("{{text}}", columns[i].modal_add_text).replace("{{column}}", i));
-        }else{
-            modal_form.append(modal_form_not_input);
-        }
-    }
-
-    if(grillas_datatable[grilla_id].eliminable)
-        tr_header_obj.append(thead_html.replace("{{text}}", "Eliminar"));
-
     grillas_datatable[grilla_id].headers = [];
+
     for(var i=0;i<columns.length;i++){
-        if(is_array)
+        if(is_array){
             grillas_datatable[grilla_id].headers.push({title: columns[i].header});
-        else{
+        }else{
             if(typeof columns[i].object_field_name == 'undefined' || columns[i].object_field_name == null)
                 columns[i].object_field_name = columns[i].header;
 
@@ -195,7 +191,30 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
                 title: columns[i].header
             });
         }
+
+        tr_header_obj.append(thead_html.replace("{{text}}", columns[i].header));
+        if( columns[i].is_exportable=="true"){
+            grillas_datatable[grilla_id].exportable_columns_indexes.push(i)
+            grillas_datatable[grilla_id].exportable_columns_name.push(columns[i].header);
+        }
+        
+        if( typeof columns[i].modal_add_text == 'undefined' || columns[i].modal_add_text == null)
+                columns[i].modal_add_text = columns[i].header;
+        
+        var new_element;
+        if(columns[i].is_input=="true"){
+            new_element = modal_form_input_html;
+        }else{
+            new_element = modal_form_not_input;            
+        }
+        modal_form.append(
+            new_element.replace("{{text}}", columns[i].modal_add_text)
+                                 .replace("{{column}}", i)
+        );
     }
+
+    if(grillas_datatable[grilla_id].eliminable)
+        tr_header_obj.append(thead_html.replace("{{text}}", "Eliminar"));
 
     if(grillas_datatable[grilla_id].eliminable){
         if(is_array){
@@ -206,6 +225,14 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
             });
         }
     }
+
+    $('.modal_input').not('input:hidden').keypress(function(evt){
+        if ( evt.which == 13 ){
+            $(this).next().focus();
+            evt.preventDefault();
+            return false;
+        }
+    });
 
 
     grillas_datatable[grilla_id].table = $("#grilla-"+grilla_id).DataTable({language:
