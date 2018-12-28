@@ -113,7 +113,6 @@ class CampoGridDatosExternos extends Campo
                 if(count($data)){
                     $contador = 0;
                     foreach($data as $d){
-                        $arreglo_tmp = array();
                         $arreglo_tmp = array_values($d);
                         array_push($data_array, $arreglo_tmp);
                     }
