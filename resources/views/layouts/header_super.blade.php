@@ -9,7 +9,7 @@
         <div class="col-10">
           <div class="row">
             <div class="col-6 pt-1">
-              <a class="text-muted logosuper" href="#"></a>
+              <a class="text-muted logosuper" href="#"><img src="{{ asset('img/logo_super.png') }}"></a>
             </div>
             <div class="col-6 d-flex justify-content-end align-items-center">
               <ul>

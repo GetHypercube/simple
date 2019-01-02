@@ -13,7 +13,7 @@
                 </a>
               </span>
               <span class="float-left splogosuperfooter">
-                <a class="logosuperfooter" href="#"></a>
+                <a class="logosuperfooter" href="#"><img src="{{ asset('img/logo_super.svg') }}"></a>
               </span>
             </li>
             <li><a href="http://digital.gob.cl/">MINISTERIO DE BIENES NACIONALES</a></li>
