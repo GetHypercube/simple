@@ -13,8 +13,8 @@
             </div>
             <div class="col-6 d-flex justify-content-end align-items-center">
               <ul>
-                <li><a href="#">¿Qué es?</a></li>
-                <li><a href="#">Contáctanos</a></li>
+                <!--<li><a href="#">¿Qué es?</a></li>
+                <li><a href="#">Contáctanos</a></li>-->
               </ul>
             </div>
           </div>

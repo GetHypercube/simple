@@ -16,10 +16,10 @@
                 <a class="logosuperfooter" href="#"><img src="{{ asset('img/logo_super.svg') }}"></a>
               </span>
             </li>
-            <li><a href="http://digital.gob.cl/">MINISTERIO DE BIENES NACIONALES</a></li>
-            <li><a href="http://www.minsegpres.gob.cl/">Otros trámites de []</a></li>
+            <li><a href="http://www.bienesnacionales.cl/">MINISTERIO DE BIENES NACIONALES</a></li>
+            <!--<li><a href="http://www.minsegpres.gob.cl/">Otros trámites de []</a></li>
             <li><a href="#">Políticas de privacidad</a></li>
-            <li><a href="#">Término de uso</a></li>
+            <li><a href="#">Término de uso</a></li>-->
           </ul>
         </div>
         <div class="col-8 txtfooter">
