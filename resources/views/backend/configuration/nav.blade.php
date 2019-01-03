@@ -9,6 +9,8 @@
         -->
         <a class="nav-link {{strstr(Request::path(), 'backend/configuracion/modelador') ? 'active' : ''}}"
            href="{{route('backend.configuration.modeler')}}">Configuración Modelador</a>
+        <a class="nav-link {{strstr(Request::path(), 'backend/configuracion/firmas_electronicas') ? 'active' : ''}}"
+           href="{{route('backend.configuration.electronic_signature')}}">Firmas Electrónicas</a>
         <!--
         <a class="nav-link" href="#">Configuración Modelador</a>
         -->

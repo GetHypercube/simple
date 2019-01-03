@@ -135,13 +135,15 @@
                     </ul>
                 </div>
 
-                @if (isset($proceso->Cuenta->HsmConfiguraciones) && $proceso->Cuenta->HsmConfiguraciones->count())
-                    <label>Firma Electronica Avanzada (HSM)</label>
-                    <select name="hsm_configuracion_id">
+                @if($proceso->Cuenta->HsmConfiguraciones->count())
+                    <label>Firma Electronica Avanzada (HSM)</label><br>
+                    <select class="form-control col-5" name="hsm_configuracion_id">
                         <option value="">No firmar con HSM</option>
                         @foreach ($proceso->Cuenta->HsmConfiguraciones as $h)
+                            @if($h->estado == 1) 
                             <option value="<?= $h->id ?>" <?= $edit && $documento->hsm_configuracion_id == $h->id ? 'selected' : '' ?>>
-                                Firmar con <?= $h->nombre ?></option>
+                                Firmar con <?= $h->nombre ?> (<?= $h->rut ?>)</option>
+                            @endif
                         @endforeach
                     </select>
                 @endif

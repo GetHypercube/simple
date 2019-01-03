@@ -61,6 +61,8 @@ class Campo extends Doctrine_Record
             $campo = new CampoEstadoCivil();
         else if ($tipo == 'grid_datos_externos')
             $campo = new CampoGridDatosExternos();
+        else if ($tipo == 'provincias')
+            $campo = new CampoProvincias();
 
         $campo->assignInheritanceValues();
 
@@ -112,7 +114,8 @@ class Campo extends Doctrine_Record
             'CampoRecaptcha' => array('tipo' => 'recaptcha'),
             'CampoMaps' => array('tipo' => 'maps'),
             'CampoEstadoCivil' => array('tipo' => 'civiles'),
-            'CampoGridDatosExternos' => array('tipo' => 'grid_datos_externos')
+            'CampoGridDatosExternos' => array('tipo' => 'grid_datos_externos'),
+            'CampoProvincias' => array('tipo' => 'provincias'),
         ));
     }
 

@@ -24,19 +24,14 @@
 
 </head>
 <body>
-<div id="app">
-    
-    @include($dominio_header)
-    
-        
-    <div class="main-container container">
-        @yield('content')
-        {!! isset($content) ? $content : '' !!}
-    </div>
-    @include($dominio_footer)
-    <!-- @ include( 'layouts.footer')-->
-        
-</div>
+	<div id="app">
+    	@include($dominio_header)
+    	<div class="main-container container">
+        	@yield('content')
+        	{!! isset($content) ? $content : '' !!}
+    	</div>
+    	@include($dominio_footer)    
+	</div>
 
 <!-- Scripts -->
 <script src="{{ asset('js/app.js') }}"></script>

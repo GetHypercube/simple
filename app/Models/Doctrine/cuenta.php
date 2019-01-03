@@ -183,38 +183,15 @@ function setTableDefinition()
     // Retorna null en personalizacion si no esta activado (1) .
     public static function configSegunDominio()
     {
-        static $firstTime = true;
         static $configSegunDominio = null;
-        if ($firstTime) {
-            $firstTime = false;
-            $host = Request::server('HTTP_HOST');
-            Log::debug('$host: ' . $host);
-            $main_domain = env('APP_MAIN_DOMAIN');
-
-            if ($main_domain) {
-                Log::debug('$main_domain2: ' . $main_domain);
-                $main_domain = addcslashes($main_domain, '.');
-                preg_match('/(.+)\.' . $main_domain . '/', $host, $matches);
-                Log::debug('$main_domain2: ' . $main_domain);
-
-                if (isset ($matches[1])) {
-                    Log::debug('$matches: ' . $matches[1]);
-                    $configSegunDominio = Doctrine::getTable('Cuenta')->findOneByNombre($matches[1]);
-                } else {
-                    $configSegunDominio = Doctrine_Query::create()->from('Cuenta c')->limit(1)->fetchOne();
-                }
-
-            } else {
-                $configSegunDominio = Doctrine_Query::create()
-                                    ->from('Cuenta c')
-                                    ->limit(1)->fetchOne();
-            }
+        if(is_null($configSegunDominio ) ){
+            $configSegunDominio = self::cuentaSegunDominio();
+            $configDominio['estilo'] = $configSegunDominio->estilo;
+            $configDominio['dominio_header'] = $configSegunDominio->header;
+            $configDominio['dominio_footer'] = $configSegunDominio->footer;
+            $configDominio['personalizacion'] = "1" == $configSegunDominio->personalizacion_estado ? $configSegunDominio->personalizacion : '';
+            $configDominio['personalizacion_estado'] = $configSegunDominio->personalizacion_estado;
         }
-        $configDominio['estilo'] = $configSegunDominio->estilo;
-        $configDominio['dominio_header'] = $configSegunDominio->header;
-        $configDominio['dominio_footer'] = $configSegunDominio->footer;
-        $configDominio['personalizacion'] = ("1" == $configSegunDominio->personalizacion_estado) ? $configSegunDominio->personalizacion : '';
-        $configDominio['personalizacion_estado'] = $configSegunDominio->personalizacion_estado;
         return $configDominio;
     }
 

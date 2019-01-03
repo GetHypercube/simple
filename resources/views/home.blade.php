@@ -1,4 +1,4 @@
-@extends('layouts.app', [$dominio_header, $dominio_footer])
+@extends('layouts.app')
 
 @section('title', 'Home')
 

@@ -93,6 +93,9 @@
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'paises')">
                         Paises
                     </button>
+                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'provincias')">
+                        Provincias
+                    </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'comunas')">
                         Comunas
                     </button>

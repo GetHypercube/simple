@@ -84,8 +84,10 @@
                                 @endif
                                 <div class="media-body">
                                     <p class="card-text">
-                                        {{$c->nombre}}
-                                        {{$c->descripcion}}
+                                        {{$c->nombre}} 
+                                        <font size="3">
+                                            <br/>{{$c->descripcion}}
+                                        </font>
                                     </p>
                                 </div>
                             </div>

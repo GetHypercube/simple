@@ -55,7 +55,9 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('backend.auth.login');
+        $data = \Cuenta::configSegunDominio();
+
+        return view('backend.auth.login', $data);
     }
 
     /**
