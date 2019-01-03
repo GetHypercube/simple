@@ -68,9 +68,6 @@ class CampoSelect extends Campo
                             });
                             $("#' . $this->id . '").trigger("chosen:updated");
                             $("#' . $this->id . '").chosen();
-                        },
-                        error: function (data) {
-                            alert("Error no hay datos");
                         }
                     });
                 });
