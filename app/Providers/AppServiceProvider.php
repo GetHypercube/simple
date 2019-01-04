@@ -224,8 +224,13 @@ class AppServiceProvider extends ServiceProvider
         if (class_exists('Cuenta')) {
             $cuenta = \Cuenta::cuentaSegunDominio();
 
+            $mail_from = env('MAIL_FROM_ADDRESS');
+            if(empty($mail_from)) {
+                $mail_from = $cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost');
+            }
+
             $data = [
-                'address' => $cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'),
+                'address' => $mail_from,
                 'name' => $cuenta->nombre_largo,
             ];
 
