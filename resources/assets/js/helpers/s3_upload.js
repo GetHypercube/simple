@@ -11,7 +11,7 @@ function set_up(unique_id, url, token, block_size){
     c_s3.chunk_size = block_size;
     c_s3.running_chunk_size = -1;
     c_s3.XMLHttpRequest_arr = [];
-    c_s3.parts_info = {};
+    c_s3.parts_info = [];
     c_s3.algorithm = '';
     c_s3.unique_id = unique_id;
     c_s3.base_url = url;
@@ -178,11 +178,11 @@ function send_chunk(chunk, c_s3) {
             c_s3.file_parts_status[part_number] = 1;
             c_s3.segments_sent.text(part_number);
 
-            c_s3.parts_info[xhr_response.part_number] = {
+            c_s3.parts_info[xhr_response.part_number -1 ] = {
                 'hash': xhr_response.hash, 
                 'algorithm': xhr_response.algorithm
             }
-            debugger;
+            
             if(c_s3.count < c_s3.segments_count){
                 readBlock(c_s3);
             }else if(xhr_response.hasOwnProperty('success')){

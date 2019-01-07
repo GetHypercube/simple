@@ -127,11 +127,13 @@ class FileS3Uploader
                 'MultipartUpload' => ['Parts' => json_decode(json_encode($file->extra->parts), true)]
             ]);
             
-            if(array_key_exists('success', $result) && $result['success'] == true){
+            // if(array_key_exists('success', $result) && $result['success'] == true){
+            if(isset($result['@metadata'])&& $result['@metadata']['statusCode'] == 200){
                 $result['id'] = $file->id;
                 $result['llave'] = $file->llave;
                 $result['file_name'] = $file->filename;
             }else{
+                Log::error($result);
                 $err_msg = 'Ocurrió un error al completar la carga del archivo.';
                 return ['error'=> $err_msg, 'success'=> false];
             }
