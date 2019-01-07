@@ -72,8 +72,8 @@ class FileS3Uploader
             $file->save();
             return $multipart_id;
         }
-
-        return ['error'=>'ERROR al obtener UploadId', 'success' => false];
+        $err_msg = 'Ocurrió un error al obtener el identificador de parte.';
+        return ['error'=> $err_msg, 'success' => false];
     }
 
     private function getMultiPartId(){
@@ -81,8 +81,8 @@ class FileS3Uploader
         if($file && isset($file->extra->multipart_id)){
             return $file->extra->multipart_id;
         }
-
-        return array('error'=>'ERROR al obtener el UploadId guardado', 'success'=> false);
+        $err_msg = 'Ocurrió un error al obtener el identificador de parte almacenado.';
+        return array('error'=> $err_msg, 'success'=> false);
     }
 
     function uploadPart($etapa_id, $part_number, $total_segments){
@@ -95,6 +95,9 @@ class FileS3Uploader
             $multipart_id = $this->createMultiPartId($client);
         }else{
             $multipart_id = $this->getMultiPartId();
+        }
+        if(is_array($multipart_id) && isset($multipart_id['success']) && ! $multipart_id['sucess']){
+            return $multipart_id;
         }
 
         $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
@@ -128,6 +131,9 @@ class FileS3Uploader
                 $result['id'] = $file->id;
                 $result['llave'] = $file->llave;
                 $result['file_name'] = $file->filename;
+            }else{
+                $err_msg = 'Ocurrió un error al completar la carga del archivo.';
+                return ['error'=> $err_msg, 'success'=> false];
             }
 
             $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
@@ -177,7 +183,8 @@ class FileS3Uploader
         $ext = pathinfo($this->filename, PATHINFO_EXTENSION);
         if ($this->allowedExtensions && !in_array(strtolower($ext), $this->allowedExtensions)) {
             $these = implode(', ', $this->allowedExtensions);
-            return array('error' => 'Extensión de archivo inválida. Solo puedes subir archivos con estas extensiones: ' . $these . '.',
+            $err_msg = 'Extensión de archivo inválida. Solo puedes subir archivos con estas extensiones: ' . $these . '.';
+            return array('error' => $err_msg,
                         'success' => false);
         }
 
@@ -188,7 +195,17 @@ class FileS3Uploader
         $driver = $disk->getDriver();
 
         $metadata = ['Metadata' => ['tramite_id' => $this->tramite_id]];
-        $status_bool = $disk->put($full_path, $f_input, $metadata);
+        try{
+            $status_bool = $disk->put($full_path, $f_input, $metadata);
+        }catch(\Aws\S3\Exception\S3Exception $e){
+            Log::error($e);
+            $status_bool = false;
+            $err_msg = 'Ocurrió un error con S3 durante la carga del archivo.';
+        }catch(\Exception $e){
+            Log::error($e);
+            $status_bool = false;
+            $err_msg = 'Ocurrió un error durante la carga del archivo.';
+        }
 
         if ($status_bool) {
             $aws_metadata = $driver->getAdapter()->getMetadata($full_path);            
@@ -223,11 +240,9 @@ class FileS3Uploader
                 'hash' => str_replace('"', '',$aws_metadata['etag']),
                 'algorithm' => self::$amazon_algo
             ];
-        } else {
-            return ['error' => 'Could not save uploaded file.' .
-                'The upload was cancelled, or server error encountered',
-                    'success' => false];
-        }
+        } 
+        
+        return ['error' => $err_msg, 'success' => false];
     }
 
     public static function filenameToAscii($filename){

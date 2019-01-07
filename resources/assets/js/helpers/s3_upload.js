@@ -2,12 +2,11 @@
 var s3_fields = {};
 
 function set_up(unique_id, url, token, block_size){
-    var magic_key = 'campo_s3_'+unique_id;
-    if(! (magic_key in s3_fields) ){
-        s3_fields[magic_key] = {};
+    if(! (unique_id in s3_fields) ){
+        s3_fields[unique_id] = {};
     }
 
-    var c_s3 = s3_fields[magic_key];
+    var c_s3 = s3_fields[unique_id];
     c_s3.single_file_max_size = 20971520;  // 20 megabytes
     c_s3.chunk_size = block_size;
     c_s3.running_chunk_size = -1;
@@ -127,14 +126,13 @@ function onLoadHandler(c_s3){
             return;
         }
         if(c_s3.stop_uploading){
-            console.log('Stopeando! ' + c_s3.unique_id);
+            console.log('Deteniendo	! ' + c_s3.unique_id);
             return;
         }
         c_s3.offset += evt.target.result.byteLength;
         
         c_s3.count++;
         if (c_s3.offset >= c_s3.fileSize) {
-            console.log('Enviando el ultimo');
             send_chunk(evt.target.result, c_s3);
             return;
         }
@@ -160,21 +158,31 @@ function send_chunk(chunk, c_s3) {
 
     xhr.addEventListener('load', function(c_s3, part_number, xhr){
         return function (evt) {
-            c_s3.file_parts_status[part_number] = 1;
-
-            c_s3.segments_sent.text(part_number);
             try{
                 var xhr_response = JSON.parse( xhr.response );
             }catch(e){
                 console.error(e);
+                alert('Error al cargar el archivo.');
                 return;
             }
-            
+            if(! xhr_response.success) {
+                c_s3.file_parts_status[part_number] = -3;
+                console.error('Error al enviar', evt);
+                var pos = c_s3.XMLHttpRequest_arr.indexOf(this);
+                if(pos >= 0){
+                    c_s3.XMLHttpRequest_arr.splice(pos, 1);
+                }
+                alert(xhr_response.error);
+                return;
+            }
+            c_s3.file_parts_status[part_number] = 1;
+            c_s3.segments_sent.text(part_number);
+
             c_s3.parts_info[xhr_response.part_number] = {
                 'hash': xhr_response.hash, 
                 'algorithm': xhr_response.algorithm
             }
-            
+            debugger;
             if(c_s3.count < c_s3.segments_count){
                 readBlock(c_s3);
             }else if(xhr_response.hasOwnProperty('success')){
