@@ -89,7 +89,6 @@ class CampoProvincias extends Campo
                             });
                             $("select.provincias[data-id=' . $this->id . ']").html(html).change(function(event){
                                 var selectedId=$(this).find("option:selected").attr("data-id");
-                                console.log(\'ESSSSSS>\'+selectedId);
                                 updateComunas(selectedId);
                             });
 

@@ -79,13 +79,21 @@
         <legend><?= $title ?> configuraci&oacute;n de Header</legend>
         <hr>
         <label>Header</label>
-        <input type="header" name="header" class="form-control" value="<?= $cuenta->header ?>">
+        <!--<input type="header" name="header" class="form-control" value="<?= $cuenta->header ?>">-->
+        <select name="header" class="form-control">
+            <option value="<?=$cuenta->header?>" <?= ($cuenta->header == 'layouts.header') ? 'selected' : '' ?>>layouts.header</option>
+            <option value="<?=$cuenta->header?>" <?= ($cuenta->header == 'layouts.header_super') ? 'selected' : '' ?>>layouts.header_super</option>
+        </select>
     </fieldset>
     <fieldset>
         <legend><?= $title ?> configuraci&oacute;n de Footer</legend>
         <hr>
         <label>Footer</label>
-        <input type="footer" name="footer" class="form-control" value="<?= $cuenta->footer ?>">
+        <!--<input type="footer" name="footer" class="form-control" value="<?= $cuenta->footer ?>">-->
+        <select name="footer" class="form-control">
+            <option value="<?=$cuenta->footer?>" <?= ($cuenta->footer == 'layouts.footer') ? 'selected' : '' ?>>layouts.footer</option>
+            <option value="<?=$cuenta->footer?>" <?= ($cuenta->footer == 'layouts.footer_super') ? 'selected' : '' ?>>layouts.footer_super</option>
+        </select>
     </fieldset>
     <!--<fieldset>
         <legend><?= $title ?> configuraci&oacute;n de Css Frontend</legend>
