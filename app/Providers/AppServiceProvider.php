@@ -226,12 +226,12 @@ class AppServiceProvider extends ServiceProvider
 
             $mail_from = env('MAIL_FROM_ADDRESS');
             if(empty($mail_from)) {
-                $mail_from = $cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost');
+                $mail_from = $cuenta['nombre'] . '@' . env('APP_MAIN_DOMAIN', 'localhost');
             }
 
             $data = [
                 'address' => $mail_from,
-                'name' => $cuenta->nombre_largo,
+                'name' => $cuenta['nombre_largo'],
             ];
 
             config(['mail.from' => $data]);
