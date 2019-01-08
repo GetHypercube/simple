@@ -68,6 +68,7 @@ class FileS3Uploader
             $multipart_id = $response['UploadId'];
             $aux = json_decode(json_encode($file->extra), true);
             $aux['multipart_id'] = $multipart_id;
+            $aux['file_name'] = $this->filename;
             $file->extra = $aux;
             $file->save();
             return $multipart_id;
