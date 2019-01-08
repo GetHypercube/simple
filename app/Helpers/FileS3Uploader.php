@@ -101,6 +101,11 @@ class FileS3Uploader
         }
 
         $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
+        if(! $file ){
+            Log::error('No se encontro en la base el registro correspondiente al archivo que esta siendo cargado.');
+            $err_msg = 'Ocurrió un error al iniciar la carga de archivo.';
+            return ['error'=> $err_msg, 'success'=> false];
+        }
         $result = $client->uploadPart([
             'Bucket'=> env('AWS_BUCKET'),
             'Key'   => $this->multipart_key,
@@ -217,10 +222,10 @@ class FileS3Uploader
                 $file->tipo = $this->file_tipo;
                 $file->llave = strtolower(str_random(12));
                 $file->tramite_id = $this->tramite_id;
+                $file->filename = $this->filename;
                 $file->save();
             }
             
-            $file->filename = $this->filename;
             $extra_arr = [];
 
             $f_info = pathinfo($this->filename);
