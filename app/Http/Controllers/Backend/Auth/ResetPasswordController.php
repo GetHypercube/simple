@@ -51,9 +51,11 @@ class ResetPasswordController extends Controller
      */
     public function showResetForm(Request $request, $token = null)
     {
-        return view('backend.auth.passwords.reset')->with(
-            ['token' => $token, 'email' => $request->email]
-        );
+        $data = \Cuenta::configSegunDominio();
+        $data['token'] = $token;
+        $data['email'] = '';
+
+        return view('backend.auth.passwords.reset', $data);
     }
 
     /**
