@@ -81,7 +81,6 @@
         <label>Header</label>
         <!--<input type="header" name="header" class="form-control" value="<?= $cuenta->header ?>">-->
         <select name="header" class="form-control">
-            <option value="">Seleccionar ...</option>
             <option value="layouts.header" <?= ($cuenta->header == 'layouts.header') ? 'selected' : '' ?>>layouts.header</option>
             <option value="layouts.header_super" <?= ($cuenta->header == 'layouts.header_super') ? 'selected' : '' ?>>layouts.header_super</option>
         </select>
@@ -92,7 +91,6 @@
         <label>Footer</label>
         <!--<input type="footer" name="footer" class="form-control" value="<?= $cuenta->footer ?>">-->
         <select name="footer" class="form-control">
-            <option value="">Seleccionar ...</option>
             <option value="layouts.footer" <?= ($cuenta->footer == 'layouts.footer') ? 'selected' : '' ?>>layouts.footer</option>
             <option value="layouts.footer_super" <?= ($cuenta->footer == 'layouts.footer_super') ? 'selected' : '' ?>>layouts.footer_super</option>
         </select>
