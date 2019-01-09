@@ -32,6 +32,33 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/backend';
 
+    // public function credentials(Request $request){
+
+    //     if(\Request::server('HTTP_HOST') ==  env('APP_MAIN_DOMAIN')) {
+    //        return  ['password' => $request->password, 'email'=> $request->email];
+    //     }
+
+    //     $http_post = explode('.', \Request::server('HTTP_HOST'));
+    //     if(sizeof($http_post)<2){
+    //         return redirect()->route('login');
+    //     }
+    //     $account_name = $http_post[0];
+    //     if(is_null($account_name)||empty($account_name)){
+    //         return redirect()->route('login');
+    //     }
+    //     $account = \Doctrine_Query::create()
+    //         ->select('c.id')
+    //         ->from('Cuenta c')
+    //         ->where('c.nombre = ?', $account_name)
+    //         ->fetchOne();
+    //     if (!$account) {
+    //         abort(404);
+    //     }
+        
+    //     return ['cuenta_id'=> $account->id, 'password' => $request->password, 'email'=> $request->email];
+    // }
+
+
     /**
      * Create a new controller instance.
      *

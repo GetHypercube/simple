@@ -251,3 +251,41 @@ if (!function_exists('random_string')) {
         }
     }
 }
+
+if (!function_exists('get_puntos_rut')) {
+    function get_puntos_rut($originalRut, $incluyeDigitoVerificador = true){
+        $originalRut = trim($originalRut);
+        $originalRut = ltrim($originalRut, '0');
+        $guion_pos = strpos($originalRut, '-');
+        if(! $incluyeDigitoVerificador && $guion_pos !== FALSE){
+            $originalRut = substr($originalRut, 0, $guion_pos);
+        }
+        $input = str_split($originalRut);
+        $cleanedRut = '';
+
+        foreach ($input as $key => $chr) {
+
+            //Digito Verificador
+            if ((($key + 1) == count($input)) && ($incluyeDigitoVerificador)){
+                if (is_numeric($chr) || ($chr == 'k') || ($chr == 'K'))
+                    $cleanedRut .= '-'.strtoupper($chr);
+                else
+                    return false;
+            }
+
+            //Números del RUT
+            elseif (is_numeric($chr))
+                    $cleanedRut .= $chr;
+        }
+        
+        if (strlen($cleanedRut) < 3)
+            return false;
+        
+        if(strpos($cleanedRut, '-') !== FALSE){
+            $rutTmp = explode("-",$cleanedRut);
+            return number_format($rutTmp[0], 0, "", ".") . '-' . $rutTmp[1];
+        }
+        
+        return number_format($cleanedRut, 0, "", ".");
+    }
+}
