@@ -35,15 +35,25 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
         if (is_array($builder->query)) {
             $query = array_get($builder->query, 'query');
             $filter = array_get($builder->query, 'filter', '');
-            $params['body']['query']['bool']['should']['multi_match']['query'] = $query;
+            $params['body']['query']['bool']['should'] = [
+                'multi_match' => [
+                    'query' => $query,
+                    'fields' => ["id", "etapas.dato_seguimientos.nombre", "etapas.dato_seguimientos.valor" ],
+                ],
+            ];
 
             //si queremos filtrar por varios terminos, basta con agregr 'terms' y no 'term',
             //lo siguiente sera un array asociativo donde su llave es la columna y el valor son todos los posibles filtros
             if (!empty($filter)) {
-                $params['body']['query']['bool']['filter']['terms'] = $filter;
+                //$params['body']['query']['bool']['filter']['terms'] = $filter;
             }
         } else {
-            $params['body']['query']['multi_match']['query'] = $builder->query;
+                $params['body']['query'] = [
+                    'multi_match' => [
+                        'query' => $builder->query,
+                        'fields' => ["id", "etapas.dato_seguimientos.nombre", "etapas.dato_seguimientos.valor" ],
+                    ],
+                ];
         }
 
         if ($sort = $this->sort($builder)) {

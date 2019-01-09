@@ -59,7 +59,7 @@ class AdminElasticsearch extends Command
             $response = $client->request('PUT', env('ELASTICSEARCH_HOST') . '/' . env('ELASTICSEARCH_INDEX'), [
                 'json' => [
                     'mappings' => [
-                        'procesos' => [
+                        'proceso' => [
                             'properties' => [
                                 'query' => [
                                     'type' => 'completion'
@@ -69,12 +69,22 @@ class AdminElasticsearch extends Command
                         'tramite' => [
                             'properties' => [
                                 'id' => [
-                                    'type' => 'integer'
+                                    'type' => 'keyword',
                                 ],
                                 'proceso_id' => [
                                     'type' => 'integer'
                                 ],
                                 'created_at' => [
+                                    'type' => 'date',
+                                    'format' => 'yyyy-MM-dd HH:mm:ss'
+                                    //'fielddata' => true
+                                ],
+                                'updated_at' => [
+                                    'type' => 'date',
+                                    'format' => 'yyyy-MM-dd HH:mm:ss'
+                                    //'fielddata' => true
+                                ],
+                                'ended_at' => [
                                     'type' => 'date',
                                     'format' => 'yyyy-MM-dd HH:mm:ss'
                                     //'fielddata' => true
@@ -89,7 +99,7 @@ class AdminElasticsearch extends Command
                 $this->call('scout:import', ['model' => 'App\Models\Tramite']);
             }
 
-            if (!$model || $model == 'procesos') {
+            if (!$model || $model == 'proceso') {
                 $this->call('scout:import', ['model' => 'App\Models\Proceso']);
             }
 
