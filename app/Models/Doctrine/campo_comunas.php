@@ -19,11 +19,11 @@ class CampoComunas extends Campo
 
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
-        $display .= '<select class="regiones form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[region]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
+        $display .= '<select class="regiones form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[region]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione región</option>';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<select class="comunas form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
+        $display .= '<select class="comunas form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione comuna</option>';
         $display .= '</select>';
         if ($this->ayuda)
@@ -33,12 +33,17 @@ class CampoComunas extends Campo
         $display .= '
             <script>
                 $(document).ready(function(){
+
+					$(".regiones").select2({
+                        placeholder:"Por favor Seleccione la Regi\u00F3n "    
+                    });
+
                     var justLoadedRegion=true;
                     var justLoadedComuna=true;
                     var defaultRegion="' . ($dato && $dato->valor ? $dato->valor->region : $valor_default->region) . '";
                     var defaultComuna="' . ($dato && $dato->valor ? $dato->valor->comuna : $valor_default->comuna) . '";
                     var opcion = "'. (isset($this->extra->codigo) && $this->extra->codigo ? "codigo" : "nombre") .'";
-                        
+
                     updateRegiones();
                     
                     function updateRegiones(){
@@ -61,6 +66,11 @@ class CampoComunas extends Campo
                     }
                     
                     function updateComunas(regionId){
+
+                        $(".comunas").select2({
+                            placeholder:"Por favor Seleccione la Comuna "    
+                        });
+
                         if(!regionId)
                             return;
                         

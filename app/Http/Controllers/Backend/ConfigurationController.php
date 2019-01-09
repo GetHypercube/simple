@@ -8,6 +8,7 @@ use App\Models\Cuenta;
 use App\Models\GrupoUsuarios;
 use App\Models\UsuarioBackend;
 use App\User;
+use App\Models\FirmaElectronica;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -61,6 +62,7 @@ class ConfigurationController extends Controller
         $data->mensaje = is_null($request->input('message')) ? '' : $request->input('message', '');
         $data->descarga_masiva = $request->has('massive_download') ? 1 : 0;
         $data->logo = $request->input('logo');
+        $data->logof = $request->input('logof');
         $data->save();
 
         $request->session()->flash('status', 'Cuenta modificada con éxito');
@@ -234,6 +236,137 @@ class ConfigurationController extends Controller
         return view('backend.configuration.modeler.index', $data);
     }
 
+    /* FIRMAS ELECTRONICAS*/
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function electronicSignature()
+    {
+        $firmas_electronicas = FirmaElectronica::all();
+        //$data['firmas_electronicas'] = Doctrine::getTable('HsmConfiguracion')->findAll();  //Categoria
+        //$data['title'] = 'Firmas Electrónicas';
+        //$data['content'] = view('backend.configuration.electronic_signature.index', $data);
+        return view('backend.configuration.electronic_signature.index', compact('firmas_electronicas') );
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function addElectronicSignature()
+    {
+        $cuenta_id = Auth::user()->cuenta_id;
+        $cuenta = Doctrine::getTable('Cuenta')->findOneById($cuenta_id);
+        
+        if($cuenta->entidad == NULL) {
+            $mostrar = "Por favor Comuniquese con el Administrador";
+        }
+        else {
+            //$mostrar = "<input name='entidad' id='name' type='text class='form-control' value='$cuenta->entidad' disabled>";
+            $mostrar = $cuenta->entidad;
+        }
+        
+        $data['entidad1'] = $mostrar;
+        $data['form'] = new FirmaElectronica();
+        $data['edit'] = false;
+        $data['title'] = "Registro de Firma";
+        $data['proposito'] = '';
+        
+        return view('backend.configuration.electronic_signature.edit', $data);
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function editElectronicSignature($id)
+    {
+        $cuenta_id = Auth::user()->cuenta_id;
+        $cuenta = Doctrine::getTable('Cuenta')->findOneById($cuenta_id);
+        //$array = $cuenta->toArray();
+        if($cuenta->entidad == NULL) {
+            $mostrar = "Por favor Comuniquese con el Administrador";
+        }
+        else {
+            //$mostrar = "<input name='entidad' id='name' type='text class='form-control' value='$cuenta->entidad' disabled>";
+            $mostrar = $cuenta->entidad;
+        }
+        
+        $cuenta = Doctrine::getTable('HsmConfiguracion')->findOneById($id);
+
+        $data['entidad1'] = $mostrar;
+        $data['form'] = FirmaElectronica::find($id);
+        $data['edit'] = true;
+        $data['title'] = "Edición de Firma";
+        $data['proposito'] = $cuenta->proposito;
+
+        return view('backend.configuration.electronic_signature.edit', $data);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function storeElectronicSignature(Request $request)
+    {
+        $this->saveElectronicSignature($request, new FirmaElectronica());
+
+        $request->session()->flash('status', 'Firma registrada con éxito');
+
+        return redirect()->route('backend.configuration.electronic_signature');
+    }
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateElectronicSignature(Request $request, $id)
+    {
+        $this->saveElectronicSignature($request, FirmaElectronica::find($id), true);
+
+        $request->session()->flash('status', 'Datos de la Firma editados con éxito');
+
+        return redirect()->route('backend.configuration.electronic_signature');
+    }
+
+    /**
+     * @param Request $request
+     * @param ElectronicSignature $user
+     * @return ElectronicSignature
+     */
+    public function saveElectronicSignature(Request $request, FirmaElectronica $user, $edit = false)
+    {
+        $cuenta_id = Auth::user()->cuenta_id;
+        $cuenta = Doctrine::getTable('Cuenta')->findOneById($cuenta_id);
+        
+        $this->validate($request, [
+            'rut' => 'required|max:8',
+            'nombre' => 'required|max:128',
+            //'entidad' => 'required|max:256',
+            'proposito' => 'required|max:64',
+            'estado' => 'required|max:1'
+        ]);
+        
+        $user->rut = $request->input('rut');
+        $user->nombre = $request->input('nombre');
+        $user->entidad = $cuenta->entidad;
+        $user->proposito = $request->input('proposito');
+        $user->estado = $request->input('estado');
+        $user->cuenta_id = Auth::user()->cuenta_id;
+        $user->save();
+
+        return $user;
+    }
+    
+    public function deleteElectronicSignature(Request $request, $id)
+    {
+        FirmaElectronica::destroy($id);
+
+        $request->session()->flash('status', 'Firma eliminada con éxito');
+
+        return redirect()->route('backend.configuration.electronic_signature');
+    }
+    
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -294,6 +427,61 @@ class ConfigurationController extends Controller
         return redirect()->route('backend.configuration.backend_users');
     }
 
+    /* ESTILOS CONFIGURACION*/
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function myStyle()
+    {
+        $data = Auth::user()->Cuenta;
+
+        return view('backend.configuration.my_style.index', compact('data'));
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveMyStyle(Request $request)
+    {
+        $cuenta_id = Auth::user()->cuenta_id; //1
+        $data = Cuenta::find(Auth::user()->cuenta_id); //datos de la cuenta identificada con el id
+        $this->validate($request, [
+            'boton_iniciar_sesion' => 'required',
+            'texto_iniciar_sesion' => 'required',   
+            'boton_iniciar_sesion_on_mouse' => 'required',
+            'texto_iniciar_sesion_on_mouse' => 'required',
+            'tarjeta_header' => 'required',         
+            'texto_tarjeta_header' => 'required',   
+            'tarjeta_footer' => 'required',         
+            'texto_tarjeta_footer' => 'required',   
+            'tramite_boton1' => 'required',
+            'texto_tramite_boton1' => 'required',
+            'tramite_boton2' => 'required',         //boton siguiente
+            'texto_tramite_boton2' => 'required',
+            'tramite_boton2_on_mouse' => 'required',         //boton siguiente
+            'texto_tramite_boton2_on_mouse' => 'required',
+            'tramite_boton3' => 'required',         //boton volver
+            'texto_tramite_boton3' => 'required',
+            'tramite_boton3_on_mouse' => 'required',         
+            'texto_tramite_boton3_on_mouse' => 'required',
+            'tramite_linea' => 'required',
+            'activo' => 'required'
+        ]);
+        
+        $estilos = "a.nav-link:hover{border-radius:4px;color:".$request->input('texto_iniciar_sesion_on_mouse').";background-color: ".$request->input('boton_iniciar_sesion_on_mouse')."}.nav-item.login.btn-white a.nav-link {color: ".$request->input('texto_iniciar_sesion').";-webkit-transition: all .2s ease;transition: all .2s ease;background-color: ".$request->input('boton_iniciar_sesion').";}.card .card-header.draft {color: ".$request->input('texto_tarjeta_header').";background: ".$request->input('tarjeta_header').";}.card a.card-footer {border: none;color: ".$request->input('texto_tarjeta_footer')."font-size: 16px;text-align: left;background-color: ".$request->input('tarjeta_footer').";}.simple-list-menu a.list-group-item.active, .simple-list-menu a.list-group-item:hover {background-color: ".$request->input('tramite_boton1').";color: ".$request->input('texto_tramite_boton1').";}.btn-danger {color: ".$request->input('texto_tramite_boton2').";background-color: ".$request->input('tramite_boton2').";border-color: ".$request->input('tramite_boton2').";}.btn-danger:hover{color: ".$request->input('texto_tramite_boton2_on_mouse').";background-color: ".$request->input('tramite_boton2_on_mouse').";border-color: ".$request->input('tramite_boton2_on_mouse').";}.btn-light {color: ".$request->input('texto_tramite_boton3').";background-color: ".$request->input('tramite_boton3').";border-color: ".$request->input('tramite_boton3').";}.btn-light:hover{color: ".$request->input('texto_tramite_boton3_on_mouse').";background-color: ".$request->input('tramite_boton3_on_mouse').";border-color: ".$request->input('tramite_boton3_on_mouse').";}ul.steps li.active {border-bottom: 8px solid ".$request->input('tramite_linea').";}";
+        $estilos = json_encode(addslashes($estilos));
+
+        $cuenta = Doctrine::getTable('cuenta')->findOneById($cuenta_id);
+        $cuenta->personalizacion = $estilos;
+        $cuenta->personalizacion_estado = $request->activo;
+        $cuenta->save();        
+        
+        $request->session()->flash('status', 'Estilos guardados con éxito');
+        
+        return redirect()->route('backend.configuration.my_style');
+    }
+    
     /**
      * @param Request $request
      * @param UsuarioBackend $user
@@ -587,6 +775,19 @@ class ConfigurationController extends Controller
         return $response;
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function mySiteUploadLogof(Request $request)
+    {
+        $allowedExtensions = ['jpg', 'png'];
+        $pathLogos = public_path('logos/');
+        $response = (new FileUploader($allowedExtensions))->handleUpload($pathLogos);
+
+        return $response;
+    }
+    
     /**
      * @param Request $request
      * @return array

@@ -7,6 +7,10 @@
 
 require('./bootstrap');
 
+window.select = require('select2');
+require('select2/dist/css/select2.min.css');
+require('select2/dist/js/select2.min.js');
+
 window.moment = require('moment');
 
 import draggable from "jquery-ui";
@@ -84,3 +88,5 @@ $(document).on("submit", ".ajaxForm", function () {
     }
     return false;
 });
+require('datatables/media/js/jquery.dataTables');
+require('datatables/media/css/jquery.dataTables.css');

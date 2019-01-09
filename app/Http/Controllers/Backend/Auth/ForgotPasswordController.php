@@ -38,7 +38,8 @@ class ForgotPasswordController extends Controller
      */
     public function showLinkRequestForm()
     {
-        return view('backend.auth.passwords.email');
+        $data = \Cuenta::configSegunDominio();
+        return view('backend.auth.passwords.email', $data);
     }
 
     /**

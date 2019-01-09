@@ -18,12 +18,19 @@
         <input class="form-control col-6" type="text" name="nombre_largo" value="<?= $cuenta->nombre_largo ?>"/>
         <label>Mensaje de bienvenida (Puede contener HTML)</label>
         <textarea name="mensaje" class="form-control col-6"><?= $cuenta->mensaje ?></textarea>
-        <label>Logo</label>
+        <label>Logo Header</label>
         <div id="file-uploader"></div>
         <input type="hidden" name="logo" value="<?= $cuenta->logo ?>"/>
         <img class="logo"
              src="<?= $cuenta->logo ? asset('logos/' . $cuenta->logo) : asset('img/simple.png') ?>"
              alt="logo"/>
+        <br/>     
+        <label>Logo Footer</label>
+        <div id="file-uploaderf"></div>
+        <input type="hidden" name="logof" value="<?= $cuenta->logof ?>"/>
+        <img class="logof"
+             src="<?= $cuenta->logof ? asset('logos/' . $cuenta->logof) : asset('img/simple.png') ?>"
+             alt="logof"/>    
     </fieldset>
     </br>
     <fieldset>
@@ -62,6 +69,37 @@
         <label>Dominio</label>
         <input type="text" name="domain" class="form-control col-3" value="<?= $calendar->getDomain() ?>"/>
     </fieldset>
+    <fieldset>
+        <legend><?= $title ?> configuraci&oacute;n de Firma Electrónica</legend>
+        <hr>
+        <label>Entidad</label>
+        <input type="text" name="entidad" value="<?= $cuenta->entidad ?>" class="form-control col-3"/>
+    </fieldset>
+    <fieldset>
+        <legend><?= $title ?> configuraci&oacute;n de Header</legend>
+        <hr>
+        <label>Header</label>
+        <!--<input type="header" name="header" class="form-control" value="<?= $cuenta->header ?>">-->
+        <select name="header" class="form-control">
+            <option value="layouts.header" <?= ($cuenta->header == 'layouts.header') ? 'selected' : '' ?>>layouts.header</option>
+            <option value="layouts.header_super" <?= ($cuenta->header == 'layouts.header_super') ? 'selected' : '' ?>>layouts.header_super</option>
+        </select>
+    </fieldset>
+    <fieldset>
+        <legend><?= $title ?> configuraci&oacute;n de Footer</legend>
+        <hr>
+        <label>Footer</label>
+        <!--<input type="footer" name="footer" class="form-control" value="<?= $cuenta->footer ?>">-->
+        <select name="footer" class="form-control">
+            <option value="layouts.footer" <?= ($cuenta->footer == 'layouts.footer') ? 'selected' : '' ?>>layouts.footer</option>
+            <option value="layouts.footer_super" <?= ($cuenta->footer == 'layouts.footer_super') ? 'selected' : '' ?>>layouts.footer_super</option>
+        </select>
+    </fieldset>
+    <!--<fieldset>
+        <legend><?= $title ?> configuraci&oacute;n de Css Frontend</legend>
+        <hr>
+        <label>Css Predefinidos</label>
+        <input type="estilo" name="estilo" class="form-control" value="<?= $cuenta->estilo ?>" disabled="disabled" hidden>-->
     <script src="{{asset('js/helpers/fileuploader.js')}}"></script>
     <script>
         var uploader = new qq.FileUploader({

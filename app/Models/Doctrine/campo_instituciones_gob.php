@@ -12,7 +12,7 @@ class CampoInstitucionesGob extends Campo
     {
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
-        $display .= '<select class="entidades form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[entidad]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
+        $display .= '<select class="entidades form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[entidad]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width: 100%">';
         $display .= '<option></option>';
         $display .= '</select>';
         $display .= '<br />';
@@ -26,6 +26,12 @@ class CampoInstitucionesGob extends Campo
         $display .= '
             <script>
                 $(document).ready(function(){
+
+                    $(".entidades").select2({
+                        placeholder:"Por favor Seleccione el Ministerio u Organismo Principal "    
+                    });
+
+
                     var justLoadedEntidad=true;
                     var justLoadedInstitucion=true;
                     var defaultEntidad="' . ($dato && $dato->valor ? $dato->valor->entidad : '') . '";
@@ -34,6 +40,13 @@ class CampoInstitucionesGob extends Campo
                     updateEntidades();
                     
                     function updateEntidades(){
+
+                        $(".instituciones").select2({     
+                            placeholder:"Por favor Seleccione la Instituci\u00F3n ",
+                            allowClear:"true",    
+                            width:"100%"     
+                        });
+
                         $.getJSON("https://apis.digital.gob.cl/instituciones/api/entidades?callback=?",function(data){
                             var html="<option></option>";
                             $(data.items).each(function(i,el){

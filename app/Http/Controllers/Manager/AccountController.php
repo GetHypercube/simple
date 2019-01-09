@@ -69,14 +69,20 @@ class AccountController extends Controller
                 'nombre' => 'required',
                 'nombre_largo' => 'required',
                 //'appkey' => 'required'
-                'domain' => 'required'
-            ];
+                'domain' => 'required',
+                //'estilo' => 'required',
+                'header' => 'required',
+                'footer' => 'required',
+             ];
 
             $messages = [
                 'nombre.required' => 'El campo Nombre es obligatorio',
                 'nombre_largo.required' => 'El campo Nombre largo es obligatorio',
                 'domain.required' => 'El campo Dominio es obligatorio',
-                'appkey.required' => 'El campo Clave App es obligatorio'
+                'appkey.required' => 'El campo Clave App es obligatorio',
+                'estilo.required' => 'Debe seleccionar un estilo',
+                'header.required' => 'Debe seleccionar un header',
+                'footer.required' => 'Debe seleccionar un footer'
             ];
 
             //$this->form_validation->set_rules('nombre', 'Nombre', 'required|url_title');
@@ -92,7 +98,11 @@ class AccountController extends Controller
             $cuenta->nombre = $request->input('nombre');
             $cuenta->nombre_largo = $request->has('nombre_largo') && !is_null($request->input('nombre_largo')) ? $request->input('nombre_largo') : '';
             $cuenta->mensaje = $request->has('mensaje') && !is_null($request->input('mensaje')) ? $request->input('mensaje') : '';
-
+            $cuenta->entidad = $request->has('entidad') && !is_null($request->input('entidad')) ? $request->input('entidad') : '';
+            //$cuenta->estilo = $request->input('estilo');
+            $cuenta->header = $request->input('header');
+            $cuenta->footer = $request->input('footer');
+            
             if ($request->input('desarrollo') == 'on') {
                 $cuenta->ambiente = 'dev';
                 $cuenta->vinculo_produccion = $request->input('vinculo_produccion');
@@ -107,8 +117,10 @@ class AccountController extends Controller
 
             $cuenta->client_id = $request->has('client_id') && !is_null($request->input('client_id')) ? $request->input('client_id') : NULL;
             $cuenta->client_secret = $request->has('client_secret') && !is_null($request->input('client_secret')) ? $request->input('client_secret') : NULL;
+            $cuenta->entidad = $request->has('entidad') && !is_null($request->input('entidad')) ? $request->input('entidad') : '';
 
             $cuenta->logo = $request->input('logo');
+            $cuenta->logof = $request->input('logof');
             $cuenta->save();
             $cuenta_id = (int)$cuenta->id;
 

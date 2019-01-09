@@ -6,19 +6,45 @@ use Illuminate\Support\Facades\Log;
 class Cuenta extends Doctrine_Record
 {
 
-    function setTableDefinition()
+function setTableDefinition()
     {
         $this->hasColumn('id');
         $this->hasColumn('nombre');
         $this->hasColumn('nombre_largo');
         $this->hasColumn('mensaje');
         $this->hasColumn('logo');
+        if(\Schema::hasColumn('cuenta', 'logof')){
+            $this->hasColumn('logof');
+        }
+
         $this->hasColumn('api_token');
         $this->hasColumn('descarga_masiva');
         $this->hasColumn('client_id');
         $this->hasColumn('client_secret');
         $this->hasColumn('ambiente');
         $this->hasColumn('vinculo_produccion');
+        if(\Schema::hasColumn('cuenta', 'entidad')){
+            $this->hasColumn('entidad');
+        }
+        if(\Schema::hasColumn('cuenta', 'estilo')){
+            $this->hasColumn('estilo');
+        }
+        if(\Schema::hasColumn('cuenta', 'header')){
+            $this->hasColumn('header');
+        }
+
+        if(\Schema::hasColumn('cuenta', 'footer')){
+            $this->hasColumn('footer');
+        }
+
+        if(\Schema::hasColumn('cuenta', 'personalizacion')){
+            $this->hasColumn('personalizacion');
+        }
+
+        if(\Schema::hasColumn('cuenta', 'personalizacion_estado')){
+            $this->hasColumn('personalizacion_estado');
+        }
+
     }
 
     function setUp()
@@ -110,6 +136,14 @@ class Cuenta extends Doctrine_Record
             return asset('img/logo.png');
     }
 
+    public function getLogofADesplegar()
+    {
+        if ($this->logof)
+            return asset('logos/' . $this->logof);
+        else
+            return asset('img/logof.png');
+    }
+
     public function usesClaveUnicaOnly()
     {
         foreach ($this->Procesos as $p) {
@@ -143,6 +177,22 @@ class Cuenta extends Doctrine_Record
             ->execute();
 
         return $procesos;
+    }
+
+    // Retorna el valor de header, footer, css  perteneciente a este dominio.
+    // Retorna null en personalizacion si no esta activado (1) .
+    public static function configSegunDominio()
+    {
+        static $configSegunDominio = null;
+        if(is_null($configSegunDominio ) ){
+            $configSegunDominio = self::cuentaSegunDominio();
+            $configDominio['estilo'] = $configSegunDominio->estilo;
+            $configDominio['dominio_header'] = $configSegunDominio->header;
+            $configDominio['dominio_footer'] = $configSegunDominio->footer;
+            $configDominio['personalizacion'] = "1" == $configSegunDominio->personalizacion_estado ? $configSegunDominio->personalizacion : '';
+            $configDominio['personalizacion_estado'] = $configSegunDominio->personalizacion_estado;
+        }
+        return $configDominio;
     }
 
 }

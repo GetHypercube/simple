@@ -11,26 +11,27 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
+    <link href="{{ asset('css/'.$estilo.'') }} " rel="stylesheet">
+    
     <meta name="google" content="notranslate"/>
 
     <!-- fav and touch icons -->
     <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
 
     @yield('css')
+
+    <style type="text/css">{{ $personalizacion }}</style>
+
 </head>
 <body>
-<div id="app">
-    @include('layouts.header')
-
-    <div class="main-container container">
-        @yield('content')
-        {!! isset($content) ? $content : '' !!}
-    </div>
-
-    @include('layouts.footer')
-</div>
+	<div id="app">
+    	@include($dominio_header)
+    	<div class="main-container container">
+        	@yield('content')
+        	{!! isset($content) ? $content : '' !!}
+    	</div>
+    	@include($dominio_footer)    
+	</div>
 
 <!-- Scripts -->
 <script src="{{ asset('js/app.js') }}"></script>

@@ -141,10 +141,12 @@ class LoginController extends Controller
     }
 
     public function showLoginForm(Request $request)
-    {
+    {        
+        $data = \Cuenta::configSegunDominio();
+
         if ($request->has('redirect')) {
             $request->session()->put('redirect', $request->input('redirect'));
         }
-        return view('auth.login');
+        return view('auth.login',$data);
     }
 }

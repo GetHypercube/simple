@@ -43,7 +43,7 @@
                                           class="form-control">{{$data->mensaje}}</textarea>
                             </div>
                             <div class="form-group">
-                                <label for="logo">Logo</label>
+                                <label for="logo">Logo Header(Preferiblemente Ancho:153px x Alto:81px)</label>
                                 <div id="file-uploader"></div>
                                 <input type="hidden" name="logo" value="{{$data->logo}}"/>
 
@@ -51,6 +51,17 @@
                                     <img class="logo" src="{{asset("logos/{$data->logo}")}}" alt="logo"/>
                                 @else
                                     <img class="logo" src="" alt=""/>
+                                @endif
+                            </div>
+                            <div class="form-group">
+                                <label for="logof">Logo Footer(Preferiblemente Ancho:112px x Alto:58px)</label>
+                                <div id="file-uploaderf"></div>
+                                <input type="hidden" name="logof" value="{{$data->logof}}"/>
+
+                                @if(!empty($data->logof) && file_exists(public_path("logos/{$data->logof}")))
+                                    <img class="logof" src="{{asset("logos/{$data->logof}")}}" alt="logof"/>
+                                @else
+                                    <img class="logof" src="" alt=""/>
                                 @endif
                             </div>
                             <div class="form-check">
@@ -82,6 +93,17 @@
             onComplete: function (id, filename, respuesta) {
                 $("input[name=logo]").val(respuesta.file_name);
                 $("img.logo").attr("src", "/logos/" + respuesta.file_name);
+            }
+        });
+
+       
+        var uploader = new qq.FileUploader({
+            element: document.getElementById('file-uploaderf'),
+            params: {_token: '{{csrf_token()}}'},
+            action: '/backend/uploader/logof',
+            onComplete: function (id, filename, respuesta) {
+                $("input[name=logof]").val(respuesta.file_name);
+                $("img.logof").attr("src", "/logos/" + respuesta.file_name);
             }
         });
     </script>

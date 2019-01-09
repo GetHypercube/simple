@@ -68,10 +68,15 @@
                     </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'file')">File
                     </button>
+                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'file_s3')">FileS3
+                    </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'date')">Date
                     </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'grid')">
                         Grilla
+                    </button>
+                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'grid_datos_externos')">
+                        Grilla de Datos Externos
                     </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'agenda')">
                         Agenda
@@ -88,6 +93,9 @@
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'paises')">
                         Paises
                     </button>
+                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'provincias')">
+                        Provincias
+                    </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'comunas')">
                         Comunas
                     </button>
@@ -101,6 +109,8 @@
                         Javascript
                     </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'maps')">Mapa
+                    </button>
+					<button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'civiles')">Estado Civil
                     </button>
                 </div>
             </div>

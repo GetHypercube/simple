@@ -9,9 +9,13 @@
         -->
         <a class="nav-link {{strstr(Request::path(), 'backend/configuracion/modelador') ? 'active' : ''}}"
            href="{{route('backend.configuration.modeler')}}">Configuración Modelador</a>
+        <a class="nav-link {{strstr(Request::path(), 'backend/configuracion/firmas_electronicas') ? 'active' : ''}}"
+           href="{{route('backend.configuration.electronic_signature')}}">Firmas Electrónicas</a>
         <!--
         <a class="nav-link" href="#">Configuración Modelador</a>
         -->
+        <a class="nav-link {{strstr(Request::path(), 'backend/configuracion/estilo') ? 'active' : ''}}"
+           href="{{route('backend.configuration.my_style')}}">Estilos (Personalización)</a>
     </div>
     <div class="nav flex-column nav-pills">
         <a class="nav-link disabled" href="#">ACCESOS FRONTEND</a>
