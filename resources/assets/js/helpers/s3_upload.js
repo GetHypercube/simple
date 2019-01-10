@@ -78,6 +78,15 @@ function set_up(unique_id, url, token, block_size){
         }
     });
     c_s3.but_send_file.on('click', start_upload(c_s3));
+
+    var hidden_new_value = {
+        URL: '',
+        info: {
+            parts: c_s3.parts_info,
+            part_max_size: c_s3.running_chunk_size
+        }
+    }
+    c_s3.hidden_name_field.val(JSON.stringify(hidden_new_value));
 }
 
 function resetSend(c_s3){
