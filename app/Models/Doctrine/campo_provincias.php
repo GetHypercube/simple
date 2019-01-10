@@ -24,11 +24,9 @@ class CampoProvincias extends Campo
         $display .= '<option value="">Seleccione Regi&oacute;n</option>';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<br />';
         $display .= '<select class="form-control" id="provincias_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[provincia]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione Provincia</option>';
         $display .= '</select>';
-        $display .= '<br />';
         $display .= '<br />';
         $display .= '<select class="form-control" id="comunas_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione Comuna</option>';
@@ -47,6 +45,10 @@ class CampoProvincias extends Campo
                     var defaultProvincia="' . ($dato && $dato->valor ? $dato->valor->provincia : $valor_default->provincia) . '";
                     var defaultComuna="' . ($dato && $dato->valor ? $dato->valor->comuna : $valor_default->comuna) . '";
                     
+                    $("#regiones_'.$this->id.'").chosen({placeholder_text: "Seleccione Regi\u00F3n"});
+                    $("#provincias_'.$this->id.'").chosen({placeholder_text: "Seleccione Provincia"});
+                    $("#comunas_'.$this->id.'").chosen({placeholder_text: "Selecciona Comuna"});
+
                     function updateRegiones(){
                         var regiones_obj = $("#regiones_'.$this->id.'");
                         $.getJSON("https://apis.digital.gob.cl/dpa/regiones?callback=?",function(data){
@@ -112,16 +114,13 @@ class CampoProvincias extends Campo
                         updateProvincias(selectedId);
                         updateComunas(0);
                     });
-                    $("#regiones_'.$this->id.'").chosen();
                     
                     $("#provincias_'.$this->id.'").change(function(event){
                         var selectedId = $("#provincias_'.$this->id.'").find("option:selected").attr("data-id");
                         updateComunas(selectedId);
                         
                     });
-                    $("#provincias_'.$this->id.'").chosen();
-
-                    $("#comunas_'.$this->id.'").chosen();
+                    
                     updateRegiones();
                 });
                 

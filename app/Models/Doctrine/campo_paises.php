@@ -20,6 +20,7 @@ class CampoPaises extends Campo{
                     var justLoadedPais=true;
                     var defaultPais="'.($dato && $dato->valor?$dato->valor:'').'";
                     
+                    $("#paises_'.$this->id.'").chosen({placeholder_text: "Selecciona Pa\u00cds"});
                     
                     function updatePaises(){
                         var paises_obj = $("#paises_'.$this->id.'");
@@ -36,7 +37,6 @@ class CampoPaises extends Campo{
                         paises_obj.trigger("chosen:updated");
                     }
                     
-                    $("#paises_'.$this->id.'").chosen();
                     updatePaises();
                 });
                 

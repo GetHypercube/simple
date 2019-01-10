@@ -23,7 +23,6 @@ class CampoComunas extends Campo
         $display .= '<option value="">Seleccione Regi&oacute;n</option>';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<br />';
         $display .= '<select class="form-control" id="comunas_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione Comuna</option>';
         $display .= '</select>';
@@ -40,6 +39,9 @@ class CampoComunas extends Campo
                     var defaultComuna="' . ($dato && $dato->valor ? $dato->valor->comuna : $valor_default->comuna) . '";
                     var opcion = "'. (isset($this->extra->codigo) && $this->extra->codigo ? "codigo" : "nombre") .'";
 
+                    $("#regiones_'.$this->id.'").chosen({placeholder_text: "Seleccione Regi\u00F3n"});
+                    $("#comunas_'.$this->id.'").chosen({placeholder_text: "Seleccione Comuna"});
+
                     updateRegiones();
                     
                     function updateRegiones(){
@@ -47,7 +49,6 @@ class CampoComunas extends Campo
                             
                             var regiones_obj = $("#regiones_'.$this->id.'");
                             regiones_obj.empty();
-                            regiones_obj.append("<option value=\'\'>Seleccione Regi&oacute;n</option>");
                             $.each(data, function(idx, el){
                                 regiones_obj.append("<option data-id=\""+el.codigo+"\" value=\""+el.nombre+"\">"+el.nombre+"</option>");
                             });
@@ -68,7 +69,7 @@ class CampoComunas extends Campo
                     function updateComunas(regionId){
                         var comunas_obj = $("#comunas_'.$this->id.'");
                         comunas_obj.empty();
-                        comunas_obj.append("<option value=\'\'>Seleccione Comuna</option>");
+                        
                         if(typeof regionId === "undefined")
                             return;
                         
@@ -84,10 +85,9 @@ class CampoComunas extends Campo
                                 comunas_obj.val(defaultComuna).change();
                                 justLoadedComuna=false;
                             }
+                            comunas_obj.trigger("chosen:updated");
                         });
                     }
-                    $("#regiones_'.$this->id.'").chosen();
-                    $("#comunas_'.$this->id.'").chosen();
                 });
                 
             </script>';
