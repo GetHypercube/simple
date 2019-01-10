@@ -174,25 +174,23 @@ $(document).ready(function () {
 
                 existe = true;
 
-                if ($(el).css("display") !== 'none' && $(el).attr("type") !== 'hidden' && $(el).parents(".campo").css("opacity") != '0.5' && !visible && $(el).is(":visible")) {
-                    var input = $(el).serializeArray();
-                    for (var j in input) {
-                        if (tipo == "regex") {
-                            var regex = new RegExp(valor);
-                            if (regex.test(input[j].value)) {
-                                visible = true;
-                            }
-                        } else {
-                            if (input[j].value == valor) {
-                                visible = true;
-                            }
+                var input = $(el).serializeArray();
+                for (var j in input) {
+                    if (tipo == "regex") {
+                        var regex = new RegExp(valor);
+                        if (regex.test(input[j].value)) {
+                            visible = true;
                         }
-                        if (relacion == "!=") {
-                            visible = !visible;
+                    } else {
+                        if (input[j].value == valor) {
+                            visible = true;
                         }
-                        if (visible) {
-                            break;
-                        }
+                    }
+                    if (relacion == "!=") {
+                        visible = !visible;
+                    }
+                    if (visible) {
+                        break;
                     }
                 }
             });
