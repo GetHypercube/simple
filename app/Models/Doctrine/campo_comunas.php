@@ -76,7 +76,6 @@ class CampoComunas extends Campo
                             if(data){
                                 $.each(data, function(idx, el){
                                     var op = el[opcion];
-                                    console.log("op: " + op);
                                     comunas_obj.append("<option data-id=\""+el.codigo+"\" value=\""+op+"\" >"+el.nombre+"</option>"); 
                                 });
                             }
