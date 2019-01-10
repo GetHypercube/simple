@@ -42,6 +42,15 @@ function set_up(unique_id, url, token, block_size){
 
     c_s3.stop_uploading = false;
 
+    var hidden_default_value = {
+        'URL': '',
+        'info': {
+            'parts': [],
+            'part_max_size': -1
+        }
+    }
+    c_s3.hidden_name_field.val(JSON.stringify(hidden_default_value));
+
     c_s3.file_input.on('change', function(c_s3){
         return function(evt){
             c_s3.but_send_file.prop('disabled', false);
@@ -78,15 +87,6 @@ function set_up(unique_id, url, token, block_size){
         }
     });
     c_s3.but_send_file.on('click', start_upload(c_s3));
-
-    var hidden_new_value = {
-        URL: '',
-        info: {
-            parts: c_s3.parts_info,
-            part_max_size: c_s3.running_chunk_size
-        }
-    }
-    c_s3.hidden_name_field.val(JSON.stringify(hidden_new_value));
 }
 
 function resetSend(c_s3){
