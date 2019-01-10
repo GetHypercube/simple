@@ -19,12 +19,13 @@ class CampoComunas extends Campo
 
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
-        $display .= '<select class="regiones form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[region]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
-        $display .= '<option value="">Seleccione región</option>';
+        $display .= '<select class="form-control" id="regiones_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[region]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
+        $display .= '<option value="">Seleccione Regi&oacute;n</option>';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<select class="comunas form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
-        $display .= '<option value="">Seleccione comuna</option>';
+        $display .= '<br />';
+        $display .= '<select class="form-control" id="comunas_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
+        $display .= '<option value="">Seleccione Comuna</option>';
         $display .= '</select>';
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
@@ -33,11 +34,6 @@ class CampoComunas extends Campo
         $display .= '
             <script>
                 $(document).ready(function(){
-
-					$(".regiones").select2({
-                        placeholder:"Por favor Seleccione la Regi\u00F3n "    
-                    });
-
                     var justLoadedRegion=true;
                     var justLoadedComuna=true;
                     var defaultRegion="' . ($dato && $dato->valor ? $dato->valor->region : $valor_default->region) . '";
@@ -48,48 +44,51 @@ class CampoComunas extends Campo
                     
                     function updateRegiones(){
                         $.getJSON("https://apis.digital.gob.cl/dpa/regiones?callback=?",function(data){
-                            var html="<option value=\'\'>Seleccione region</option>";
-                            $(data).each(function(i,el){
-                                var op = el[opcion];
-                                html+="<option data-id=\""+el.codigo+"\" value=\""+op+"\">"+el.nombre+"</option>";
+                            
+                            var regiones_obj = $("#regiones_'.$this->id.'");
+                            regiones_obj.empty();
+                            regiones_obj.append("<option value=\'\'>Seleccione Regi&oacute;n</option>");
+                            $.each(data, function(idx, el){
+                                regiones_obj.append("<option data-id=\""+el.codigo+"\" value=\""+el.nombre+"\">"+el.nombre+"</option>");
                             });
-                            $("select.regiones[data-id=' . $this->id . ']").html(html).change(function(event){
+                            
+                            regiones_obj.change(function(event){
                                 var selectedId=$(this).find("option:selected").attr("data-id");
                                 updateComunas(selectedId);
                             });
                             
                             if(justLoadedRegion){
-                                $("select.regiones[data-id=' . $this->id . ']").val(defaultRegion).change();
+                                regiones_obj.val(defaultRegion).change();
                                 justLoadedRegion=false;
                             }
+                            regiones_obj.trigger("chosen:updated");
                         });
                     }
                     
                     function updateComunas(regionId){
-
-                        $(".comunas").select2({
-                            placeholder:"Por favor Seleccione la Comuna "    
-                        });
-
-                        if(!regionId)
+                        var comunas_obj = $("#comunas_'.$this->id.'");
+                        comunas_obj.empty();
+                        comunas_obj.append("<option value=\'\'>Seleccione Comuna</option>");
+                        if(typeof regionId === "undefined")
                             return;
                         
                         $.getJSON("https://apis.digital.gob.cl/dpa/regiones/"+regionId+"/comunas?callback=?",function(data){
-                            var html="<option value=\'\'>Seleccione comuna</option>";
                             if(data){
-                                $(data).each(function(i,el){
+                                $.each(data, function(idx, el){
                                     var op = el[opcion];
-                                    html+="<option data-id=\""+el.codigo+"\" value=\""+op+"\" >"+el.nombre+"</option>";
+                                    console.log("op: " + op);
+                                    comunas_obj.append("<option data-id=\""+el.codigo+"\" value=\""+op+"\" >"+el.nombre+"</option>"); 
                                 });
                             }
-                            $("select.comunas[data-id=' . $this->id . ']").html(html);
-
+                            comunas_obj.trigger("chosen:updated");
                             if(justLoadedComuna){
-                                $("select.comunas[data-id=' . $this->id . ']").val(defaultComuna).change();
+                                comunas_obj.val(defaultComuna).change();
                                 justLoadedComuna=false;
                             }
                         });
                     }
+                    $("#regiones_'.$this->id.'").chosen();
+                    $("#comunas_'.$this->id.'").chosen();
                 });
                 
             </script>';
