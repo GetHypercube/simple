@@ -132,6 +132,19 @@ class CategoryController extends Controller
 
         return $response;
     }
+    
+        /**
+     * @param Request $request
+     * @return array
+     */
+    public function mySiteUploadLogof(Request $request)
+    {
+        $allowedExtensions = ['jpg', 'png'];
+        $pathLogos = public_path('uploads/logos/');
+        $response = (new FileUploader($allowedExtensions))->handleUpload($pathLogos);
+
+        return $response;
+    }
 
     /**
      * @param $title

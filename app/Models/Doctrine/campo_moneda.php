@@ -15,7 +15,7 @@ class CampoMoneda extends Campo{
     protected function display($modo, $dato) {
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display.='<div class="controls">';
-        $display.='<select class="select-semi-large" name="' . $this->nombre . '" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
+        $display.='<select id="moneda" class="select-semi-large" name="' . $this->nombre . '" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
         $display.='<option value="">Seleccione moneda</option>';
         $display.='<optgroup label="Comunes">';
         foreach (CampoMoneda::$monedas['comunes'] as $codigo => $moneda){
@@ -32,8 +32,20 @@ class CampoMoneda extends Campo{
             $display.='<span class="help-block">'.$this->ayuda.'</span>';
         $display.='</div>';
 
-        
-        
+        $display .= '
+                    <script>
+                        $(document).ready(function(){
+                            $(".form-control-chosen").chosen();
+
+                            $("#moneda").chosen().change(
+            function (evt) {
+                var label = $(this.options[this.selectedIndex]).closest("optgroup").prop("label");
+        });
+
+                        });
+                    </script>
+    
+                ';
         return $display;
     }
     

@@ -190,6 +190,13 @@ Para ejecutar los Tests solo debes ejecutar el siguiente comando:
 vendor/bin/phpunit
 ```
 
-## Adicionales, 
+## Adicionales 
 
 Si desea poder utilizar una acción de tipo Soap, debe tener habilitada la librería Soap en su php.ini
+
+## Queue worker para indexar contenido de trámites
+Para indexar el contenido de los trámites cada vez que se avanza dentro del flujo, es necesario dejar corriendo el worker con el siguiente comando:
+
+```
+php artisan queue:work --timeout=0
+```

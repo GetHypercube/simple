@@ -6,10 +6,12 @@ class HsmConfiguracion extends Doctrine_Record
     function setTableDefinition()
     {
         $this->hasColumn('id');
+        $this->hasColumn('rut');
         $this->hasColumn('nombre');
         $this->hasColumn('cuenta_id');
         $this->hasColumn('entidad');
         $this->hasColumn('proposito');
+        $this->hasColumn('estado');
     }
 
     function setUp()

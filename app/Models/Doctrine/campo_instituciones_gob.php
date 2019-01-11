@@ -12,12 +12,10 @@ class CampoInstitucionesGob extends Campo
     {
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
-        $display .= '<select class="entidades form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[entidad]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
-        $display .= '<option></option>';
+        $display .= '<select class="form-control" id="entidades_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[entidad]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width: 100%">';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<select class="instituciones form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[servicio]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
-        $display .= '<option></option>';
+        $display .= '<select class="form-control" id="instituciones_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[servicio]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . '>';
         $display .= '</select>';
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
@@ -26,6 +24,9 @@ class CampoInstitucionesGob extends Campo
         $display .= '
             <script>
                 $(document).ready(function(){
+                    $("#entidades_'.$this->id.'").chosen({placeholder_text: "Por favor Seleccione el Ministerio u Organismo Principal"});
+                    $("#instituciones_'.$this->id.'").chosen({placeholder_text: "Por favor Seleccione la Instituci\u00F3n"});
+
                     var justLoadedEntidad=true;
                     var justLoadedInstitucion=true;
                     var defaultEntidad="' . ($dato && $dato->valor ? $dato->valor->entidad : '') . '";
@@ -34,44 +35,45 @@ class CampoInstitucionesGob extends Campo
                     updateEntidades();
                     
                     function updateEntidades(){
+                        var entidades_obj = $("#entidades_'.$this->id.'");
+                        
                         $.getJSON("https://apis.digital.gob.cl/instituciones/api/entidades?callback=?",function(data){
-                            var html="<option></option>";
                             $(data.items).each(function(i,el){
-                                html+="<option value=\""+el.nombre+"\" data-id=\""+el.codigo+"\">"+el.nombre+"</option>";
+                                entidades_obj.append("<option value=\""+el.nombre+"\" data-id=\""+el.codigo+"\">"+el.nombre+"</option>");
                             });
-                            $("select.entidades[data-id=' . $this->id . ']").html(html).change(function(event){
+                            entidades_obj.change(function(event){
                                 var selectedId=$(this).find("option:selected").data("id");
                                 updateInstituciones(selectedId);
                             });
                             
                             if(justLoadedEntidad){
-                                $("select.entidades[data-id=' . $this->id . ']").val(defaultEntidad).change();
+                                entidades_obj.val(defaultEntidad).change();
                                 justLoadedEntidad=false;
                             }
+                            entidades_obj.trigger("chosen:updated");
                         });
                     }
                     
                     function updateInstituciones(entidadId){
-                        
+                        var instituciones_obj = $("#instituciones_'.$this->id.'");
+                        instituciones_obj.empty();
                         $.getJSON("https://apis.digital.gob.cl/instituciones/api/entidades/"+entidadId+"/instituciones?callback=?",function(data){
-                            var html="<option></option>";
                             if(data){
                                 $(data.items).each(function(i,el){
-                                    html+="<option value=\""+el.nombre+"\">"+el.nombre+"</option>";
+                                     instituciones_obj.append("<option value=\""+el.nombre+"\">"+el.nombre+"</option>");
                                 });
                             }
-                            $("select.instituciones[data-id=' . $this->id . ']").html(html);
-
+                            
                             if(justLoadedInstitucion){
-                                $("select.instituciones[data-id=' . $this->id . ']").val(defaultInstitucion).change();
+                                instituciones_obj.val(defaultInstitucion).change();
                                 justLoadedInstitucion=false;
                             }
+                            instituciones_obj.trigger("chosen:updated");
                         });
+                        
                     }
-                });
-                
 
-                
+                });              
             </script>';
 
         return $display;

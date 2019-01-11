@@ -55,6 +55,7 @@ class ElasticsearchEngine extends \ScoutEngines\Elasticsearch\ElasticsearchEngin
                     'fields' => ["id", "etapas.dato_seguimientos.nombre", "etapas.dato_seguimientos.valor" ],
                 ],
             ];
+
         }
 
         if ($sort = $this->sort($builder)) {

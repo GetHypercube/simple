@@ -155,7 +155,21 @@ class AccionRest extends Accion
 
             $request = '';
             if (isset($this->extra->request)) {
-                $r = new Regla($this->extra->request);
+                $request = $this->extra->request;
+                // Si es de tipo array, debemos quitar las comillas dobles que encierran a la variable
+                if(preg_match_all('/\"@@(\w+)\"/', $request, $out) > 0){
+                    $datoSeguimiento_table = Doctrine::getTable('DatoSeguimiento');
+                    $out = array_unique($out[0]);
+                    foreach($out as $found_str){
+                        $nombre_dato = substr($found_str, 3, -1);
+                        $dato = $datoSeguimiento_table->findByNombreHastaEtapa($nombre_dato, $etapa->id);
+                        if( $dato !== false && ( is_array($dato->valor)|| is_object($dato->valor))){
+                            $request = str_replace($found_str, json_encode($dato->valor), $request);
+                        }
+                    }
+                }
+
+                $r = new Regla($request);
                 $request = $r->getExpresionParaOutput($etapa->id);
             }
 
@@ -167,10 +181,10 @@ class AccionRest extends Accion
             if (isset($this->extra->header)) {
                 $r = new Regla($this->extra->header);
                 $header = $r->getExpresionParaOutput($etapa->id);
-                $headers = json_decode($header);
+                $headers = json_decode($header,true);
             }
 
-            array_push($config, ['headers' => $headers]);
+            $config['headers'] = $headers;
             $client = new GuzzleHttp\Client($config);
 
             //se verifica si existe numero de reintentos

@@ -106,6 +106,15 @@
         $('#nombre').bind('paste', function (e) {
             e.preventDefault();
         });
+
+
+		$(document).on('keypress', '#validacion', function (e) {
+            return !(e.keyCode == 32);
+        });
+
+        $('#validacion').bind('paste', function (e) {
+            e.preventDefault();
+        });
     });
 </script>
 
@@ -199,13 +208,14 @@
                 <input style="display: none;" class='validacion' type="text" name="validacion"
                        value="<?= $edit ? implode('|', $campo->validacion) : 'required' ?>"/>
                 <?php } else { ?>
+					<br/>
                 <label>Reglas de validación
                     <a href="/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html#validacion_campos"
                        target="_blank">
                         <span class="glyphicon glyphicon-info-sign"></span>
                     </a>
                 </label>
-                <input class='validacion form-control' type="text" name="validacion"
+                <input class='validacion form-control' type="text" id="validacion" name="validacion"
                        value="<?= $edit ? implode('|', $campo->validacion) : 'required' ?>"/>
                 <?php } ?>
 
@@ -415,10 +425,53 @@
                                 $(this).closest('tr').remove();
                             });
                         });
+
+                        //Para la carga mediante archivo
+                        document.getElementById('file-input').addEventListener('change', leerArchivo, false);
+
+                        function leerArchivo(e){
+                            var archivo = e.target.files[0];
+                            if(!archivo){
+                                return;
+                            }
+                            var lector = new FileReader();
+                            lector.onload = function(e){
+                                var contenido = e.target.result;
+                                var etiqueta = contenido.split(';');
+                                mostrarContenido(contenido);
+                            };
+                            lector.readAsText(archivo);
+                        }
+
+                        function mostrarContenido(contenido){
+                            var lines = contenido.split('\n');
+                            var pos = $('#formEditarCampo .datos table tbody tr').length;
+                            $.each(lines, function(lineNo, line){
+                                var items = line.split(',');
+                                $.each(items, function(itemNo, item){
+                                    var separado =(item.split(';',2));
+                                    var html = '<tr>';
+                                    html += '<td><input type="text" name="datos[' + pos + '][etiqueta]" class="form-control" value="'+separado[0]+'"/></td>';
+                                    html += '<td><input class="form-control" type="text" name="datos[' + pos + '][valor]" value="'+separado[1]+'"/></td>';
+                                    html += '<td><button type="button" class="btn btn-light eliminar"><i class="material-icons">close</i> Eliminar</button></td>';
+                                    html += '</tr>';
+                                    pos++;
+                                    $('#formEditarCampo .datos table tbody').append(html);
+                                });
+                                
+                            });
+                            //var elemento = document.getElementById('contenido-archivo');
+                            //elemento.innerHTML = contenido;
+                            document.getElementsByName('extra[ws]')[0].value='';
+                        }
                     </script>
                     <h4>Datos</h4>
                     <button class="btn btn-light nuevo" type="button"><i class="material-icons">add</i> Nuevo
                     </button>
+                    <br/>
+                    Para cargar registros masivos mediante archivo, en formato .CSV, separado por punto y coma(;).
+                    <input type="file" name="file-input" id="file-input"/>
+                    <!--<pre id="contenido-archivo"></pre>-->
                     <table class="table mt-3">
                         <thead>
                         <tr>

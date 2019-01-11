@@ -59,7 +59,6 @@ class TramitesController extends Controller
 
         if ($query) {
             $result = Tramite::search($query)->get();
-
             $matches = array();
             foreach($result as $resultado){
                 array_push($matches, $resultado->id);
@@ -103,6 +102,7 @@ class TramitesController extends Controller
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
 
+        $data = \Cuenta::configSegunDominio();
 
         $data['tramites'] = new LengthAwarePaginator(
             $rowtramites, // Only grab the items we need
@@ -121,6 +121,7 @@ class TramitesController extends Controller
 
     public function disponibles()
     {
+        $data = \Cuenta::configSegunDominio();
         $data['procesos'] = Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciar(Auth::user()->id, Cuenta::cuentaSegunDominio(), 'nombre', 'asc');
 
         $data['sidebar'] = 'disponibles';

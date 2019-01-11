@@ -63,6 +63,8 @@ class HomeController extends Controller
             }
         }
 
+        $data = \Cuenta::configSegunDominio();
+
         $data['title'] = 'Home';
         $data['num_destacados'] = $num_destacados;
         $data['num_otros'] = $num_otros;
@@ -86,6 +88,8 @@ class HomeController extends Controller
         $procesos = Doctrine::getTable('Proceso')->findProcesosDisponiblesParaIniciarByCategoria(Auth::user()->id, $categoria_id, Cuenta::cuentaSegunDominio(), 'nombre', 'asc');
         $categoria = Doctrine::getTable('Categoria')->find($categoria_id);
 
+        $data = \Cuenta::configSegunDominio();
+        
         $data['procesos'] = $procesos;
         $data['categoria'] = $categoria;
         $data['sidebar'] = 'categorias';

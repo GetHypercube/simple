@@ -106,6 +106,7 @@ class Documento extends Doctrine_Record
     {
 
         $uploadDirectory = 'uploads/documentos/';
+        $cuenta_entidad = Doctrine::getTable('Cuenta')->find(Cuenta::cuentaSegunDominio()->id);
         if ($this->tipo == 'certificado') {
             $obj = new CertificadoPDF($this->tamano);
 
@@ -130,6 +131,8 @@ class Documento extends Doctrine_Record
                 $regla = new Regla($firmador_servicio);
                 $firmador_servicio = $regla->getExpresionParaOutput($etapa_id);
             }
+
+            //$cuenta_entidad = Doctrine::getTable('Cuenta')->find(Auth::user()->cuenta_id);
 
             $obj->content = $contenido;
             $obj->id = $identifier;
@@ -176,7 +179,7 @@ class Documento extends Doctrine_Record
                 $file_path = $uploadDirectory . $filename;
                 $fechatime = time();
                 $expiracion = date("Y-m-d", $fechatime) . 'T' . date("H:i:s", $fechatime);
-                $resultadoFirma = $hsm->firmar($file_path, $this->HsmConfiguracion->entidad, $this->HsmConfiguracion->nombre, $expiracion, $this->HsmConfiguracion->proposito);
+                $resultadoFirma = $hsm->firmar($file_path, $cuenta_entidad->entidad, $this->HsmConfiguracion->rut, $expiracion, $this->HsmConfiguracion->proposito);
             }
         } else {
             $obj->Output($filename);

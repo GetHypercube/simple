@@ -8,7 +8,7 @@ use Laravel\Socialite\Two\ProviderInterface;
 
 class ClaveUnicaProvider extends AbstractProvider implements ProviderInterface
 {
-    protected $scopes = ['openid', 'run', 'name'];
+    protected $scopes = ['openid', 'run', 'name', 'email'];
 
     protected $scopeSeparator = ' ';
 

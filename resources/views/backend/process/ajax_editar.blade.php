@@ -18,11 +18,7 @@
                     <label>Tamaño de la Grilla</label>
                     <div class="form-group form-inline">
                         <input type="text" name="width" value="<?=$proceso->width?>" class="form-control col-4"/> X
-                        <input
-                                type="text"
-                                name="height"
-                                value="<?=$proceso->height?>"
-                                class="form-control col-4"/>
+                        <input type="text" name="height" value="<?=$proceso->height?>" class="form-control col-4"/>
                     </div>
                 </div>
                 <div style="width: 45%;float: right">
@@ -58,7 +54,6 @@
                     <label>Descripción</label>
                     <textarea class="form-control" id="descripcion" name="descripcion" rows="5" cols="10">{{$proceso->descripcion}}</textarea>
                 </div>
-
             </form>
         </div>
         <div class="modal-footer">
