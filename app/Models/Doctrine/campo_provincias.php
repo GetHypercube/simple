@@ -20,18 +20,16 @@ class CampoProvincias extends Campo
 
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
-        $display .= '<select class="regiones form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[region]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
-        $display .= '<option value="">Seleccione región</option>';
+        $display .= '<select class="form-control" id="regiones_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[region]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
+        $display .= '<option value="">Seleccione Regi&oacute;n</option>';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<br />';
-        $display .= '<select class="provincias form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[provincia]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
-        $display .= '<option value="">Seleccione provincia</option>';
+        $display .= '<select class="form-control" id="provincias_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[provincia]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
+        $display .= '<option value="">Seleccione Provincia</option>';
         $display .= '</select>';
         $display .= '<br />';
-        $display .= '<br />';
-        $display .= '<select class="comunas form-control" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
-        $display .= '<option value="">Seleccione comuna</option>';
+        $display .= '<select class="form-control" id="comunas_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
+        $display .= '<option value="">Seleccione Comuna</option>';
         $display .= '</select>';
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
@@ -40,11 +38,6 @@ class CampoProvincias extends Campo
         $display .= '
             <script>
                 $(document).ready(function(){
-
-					$(".regiones").select2({
-                        placeholder:"Por favor Seleccione la Regi\u00F3n "    
-                    });
-
                     var justLoadedRegion=true;
                     var justLoadedProvincia=true;
                     var justLoadedComuna=true;
@@ -52,77 +45,83 @@ class CampoProvincias extends Campo
                     var defaultProvincia="' . ($dato && $dato->valor ? $dato->valor->provincia : $valor_default->provincia) . '";
                     var defaultComuna="' . ($dato && $dato->valor ? $dato->valor->comuna : $valor_default->comuna) . '";
                     
+                    $("#regiones_'.$this->id.'").chosen({placeholder_text: "Seleccione Regi\u00F3n"});
+                    $("#provincias_'.$this->id.'").chosen({placeholder_text: "Seleccione Provincia"});
+                    $("#comunas_'.$this->id.'").chosen({placeholder_text: "Selecciona Comuna"});
 
-                    updateRegiones();
-                    
                     function updateRegiones(){
+                        var regiones_obj = $("#regiones_'.$this->id.'");
                         $.getJSON("https://apis.digital.gob.cl/dpa/regiones?callback=?",function(data){
-                            var html="<option value=\'\'>Seleccione region</option>";
-                            $(data).each(function(i,el){
-                                html+="<option data-id=\""+el.codigo+"\" value=\""+el.nombre+"\">"+el.nombre+"</option>";
-                            });
-                            $("select.regiones[data-id=' . $this->id . ']").html(html).change(function(event){
-                                var selectedId=$(this).find("option:selected").attr("data-id");
-                                updateProvincias(selectedId);
+                            $.each(data, function(i,el){
+                                regiones_obj.append("<option data-id=\""+el.codigo+"\" value=\""+el.nombre+"\">"+el.nombre+"</option>");
                             });
                             
                             if(justLoadedRegion){
-                                $("select.regiones[data-id=' . $this->id . ']").val(defaultRegion).change();
+                                regiones_obj.val(defaultRegion).change();
                                 justLoadedRegion=false;
                             }
+                            regiones_obj.trigger("chosen:updated");
                         });
                     }
                     
                     function updateProvincias(regionId){
-
-                        $(".provincias").select2({
-                            placeholder:"Por favor Seleccione la Provincia! "    
-                        });
-
+                        var provincias_obj = $("#provincias_'.$this->id.'");
+                        provincias_obj.empty();
+                        provincias_obj.append("<option value=\'\'>Seleccione Provincia</option>");
                         if(!regionId)
                             return;
                         
                         $.getJSON("https://apis.digital.gob.cl/dpa/regiones/"+regionId+"/provincias?callback=?",function(data){
-                            var html="<option value=\'\'>Seleccione provincia!</option>";
-                            $(data).each(function(i,el){
-                                html+="<option data-id=\""+el.codigo+"\" value=\""+el.nombre+"\">"+el.nombre+"</option>";
-                            });
-                            $("select.provincias[data-id=' . $this->id . ']").html(html).change(function(event){
-                                var selectedId=$(this).find("option:selected").attr("data-id");
-                                updateComunas(selectedId);
+                            $.each(data, function(i,el){
+                                provincias_obj.append("<option data-id=\""+el.codigo+"\" value=\""+el.nombre+"\">"+el.nombre+"</option>");
                             });
 
                             if(justLoadedProvincia){
-                                $("select.provincias[data-id=' . $this->id . ']").val(defaultProvincia).change();
+                                provincias_obj.val(defaultProvincia).change();
                                 justLoadedProvincia=false;
                             }
+                            provincias_obj.trigger("chosen:updated");
                         });
+                        
                     }
 
                     function updateComunas(provinciaId){
-
-                        $(".comunas").select2({
-                            placeholder:"Por favor Seleccione la Comuna "    
-                            });
-
-                        if(!provinciaId)
+                        var comunas_obj = $("#comunas_'.$this->id.'");
+                        comunas_obj.empty();
+                        comunas_obj.append("<option value=\'\'>Seleccione Comuna</option>");
+                        if(!provinciaId){
+                            comunas_obj.trigger("chosen:updated");
                             return;
-                        
+                        }
                         $.getJSON("https://apis.digital.gob.cl/dpa/provincias/"+provinciaId+"/comunas?callback=?",function(data){
-                            var html="<option value=\'\'>Seleccione comuna</option>";
                             if(data){
-                                $(data).each(function(i,el){
-                                    html+="<option value=\""+el.nombre+"\">"+el.nombre+"</option>";
+                                $.each(data, function(i,el){
+                                    comunas_obj.append("<option value=\""+el.nombre+"\">"+el.nombre+"</option>");
                                 });
                             }
-                            $("select.comunas[data-id=' . $this->id . ']").html(html);
-
+                            
                             if(justLoadedComuna){
-                                $("select.comunas[data-id=' . $this->id . ']").val(defaultComuna).change();
+                                comunas_obj.val(defaultComuna).change();
                                 justLoadedComuna=false;
                             }
+                            comunas_obj.trigger("chosen:updated");
                         });
                     }
+
+                    
+                    $("#regiones_'.$this->id.'").change(function(event){
+                        var selectedId = $("#regiones_'.$this->id.'").find("option:selected").attr("data-id");
+                        updateProvincias(selectedId);
+                        updateComunas(0);
+                    });
+                    
+                    $("#provincias_'.$this->id.'").change(function(event){
+                        var selectedId = $("#provincias_'.$this->id.'").find("option:selected").attr("data-id");
+                        updateComunas(selectedId);
+                        
+                    });
+                    
+                    updateRegiones();
                 });
                 
             </script>';
