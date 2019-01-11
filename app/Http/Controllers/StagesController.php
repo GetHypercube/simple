@@ -14,6 +14,7 @@ use Doctrine_Manager;
 use Illuminate\Support\Facades\URL;
 use Cuenta;
 use ZipArchive;
+use App\Jobs\IndexStages;
 
 class StagesController extends Controller
 {
@@ -62,6 +63,8 @@ class StagesController extends Controller
             $etapa->iniciarPaso($paso);
             $etapa->finalizarPaso($paso);
             $etapa->avanzar();
+            //Job para indexar contenido cada vez que se avanza de etapa
+            $this->dispatch(new IndexStages());
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1));
         } else {
             $etapa->iniciarPaso($paso);
@@ -297,6 +300,8 @@ class StagesController extends Controller
                 $etapa->iniciarPaso($prox_paso);
                 $etapa->finalizarPaso($prox_paso);
                 $etapa->avanzar();
+                //Job para indexar contenido cada vez que se avanza de etapa
+                $this->dispatch(new IndexStages());
                 $respuesta->redirect = '/etapas/ver/' . $etapa->id . '/' . (count($pasosEjecutables) - 1);
             } else {
                 $respuesta->redirect = '/etapas/ejecutar/' . $etapa_id . '/' . ($secuencia + 1) . ($qs ? '?' . $qs : '');
@@ -314,6 +319,8 @@ class StagesController extends Controller
                 $etapa->iniciarPaso($prox_paso);
                 $etapa->finalizarPaso($prox_paso);
                 $etapa->avanzar();
+                //Job para indexar contenido cada vez que se avanza de etapa
+                $this->dispatch(new IndexStages());
                 $respuesta->redirect = '/etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1);
             } else {
                 $respuesta->redirect = '/etapas/ejecutar/' . $etapa_id . '/' . ($secuencia + 1) . ($qs ? '?' . $qs : '');
@@ -434,6 +441,9 @@ class StagesController extends Controller
         } catch (Exception $err) {
             Log::error($err->getMessage());
         }
+
+        //Job para indexar contenido cada vez que se avanza de etapa
+        $this->dispatch(new IndexStages());
 
         if ($request->input('iframe')) {
             return response()->json([
