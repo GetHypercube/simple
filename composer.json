@@ -29,7 +29,8 @@
     "rollbar/rollbar-laravel": "2.4.1",
     "siturra/doctrine1-php7": "^1.2",
     "siturra/tcpdf-laravel": "^5.5",
-    "tamayo/laravel-scout-elastic": "^3.0"
+    "tamayo/laravel-scout-elastic": "^3.0",
+    "vladimir-yuldashev/laravel-queue-rabbitmq": "^6.0.0"
   },
   "require-dev": {
     "filp/whoops": "~2.0",

@@ -179,6 +179,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Rollbar\Laravel\RollbarServiceProvider::class,
+        VladimirYuldashev\LaravelQueueRabbitMQ\LaravelQueueRabbitMQServiceProvider::class,
     ],
 
     /*
