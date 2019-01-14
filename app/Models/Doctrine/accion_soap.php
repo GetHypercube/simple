@@ -109,7 +109,8 @@ class AccionSoap extends Accion
         $etapa = $tramite_id;
 
         //Se declara el cliente soap
-        $client = new \App\Helpers\nusoap\lib\nusoap_client($this->extra->wsdl, 'wsdl');
+        $timeout = isset($this->extra->timeout) ? $this->extra->timeout : 30;
+        $client = new \App\Helpers\nusoap\lib\nusoap_client($this->extra->wsdl,'wsdl',false,false,false,false,0,$timeout);
 
         if (isset($this->extra->idSeguridad) && strlen($this->extra->idSeguridad) > 0 && $this->extra->idSeguridad > 0) {
             $seguridad = new SeguridadIntegracion();
@@ -119,8 +120,6 @@ class AccionSoap extends Accion
         // Se asigna valor de timeout
         $client->soap_defencoding = 'UTF-8';
         $client->decode_utf8 = true;
-        $client->timeout = $this->extra->timeout;
-        $client->response_timeout = $this->extra->timeout;
 
         try {
             //$CI = &get_instance();
