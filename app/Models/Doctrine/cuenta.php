@@ -45,6 +45,9 @@ function setTableDefinition()
             $this->hasColumn('personalizacion_estado');
         }
 
+        if(\Schema::hasColumn('cuenta', 'seo_tags')){
+            $this->hasColumn('seo_tags');
+        }
     }
 
     function setUp()
@@ -195,4 +198,36 @@ function setTableDefinition()
         return $configDominio;
     }
 
+    public static function seo_tags($cuenta_id = null){
+        static $seo_tags = null;
+        if(is_null($seo_tags)){
+            if(is_null($cuenta_id)){
+                $seo = isset(self::cuentaSegunDominio()->seo_tags) ? self::cuentaSegunDominio()->seo_tags: null;
+            }else{
+                $cuenta = Doctrine::getTable('Cuenta')->findOneById($cuenta_id);
+                $seo = $cuenta ? $cuenta->seo_tags : null;
+            }
+            
+            $seo_tags = json_decode($seo);
+            // corregimos cualquier posible caso invalido
+            $seo_tags = ( ! is_null($seo_tags ) && is_object($seo_tags)) ? $seo_tags : new StdClass();
+            
+            $default_tags = [
+                'title' => config('app.name', 'Laravel'),
+                'description' => 'Simple',
+                'keywords' => 'Simple'
+             ];
+            foreach ($default_tags as $key => $value) {
+                if(! isset($seo_tags->$key)){
+                    $seo_tags->$key = $value;
+                }
+            }
+            $seo_tags->title = ucwords($seo_tags->title);
+            if( is_array($seo_tags->keywords) ){
+                $seo_tags->keywords = implode(',', $seo_tags->keywords);
+            }
+        }
+           
+        return $seo_tags;
+    }
 }
