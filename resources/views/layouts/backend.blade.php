@@ -8,7 +8,9 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'Laravel'))</title>
+    <title>{{  \Cuenta::seo_tags()->title }}</title>
+    <meta name="description" content="{{ \Cuenta::seo_tags()->description }}">
+    <meta name="keywords" content="{{ \Cuenta::seo_tags()->keywords }}">
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{asset('css/bootstrap-timepicker.css')}}">

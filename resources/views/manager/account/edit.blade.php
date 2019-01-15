@@ -24,7 +24,7 @@
         <img class="logo"
              src="<?= $cuenta->logo ? asset('logos/' . $cuenta->logo) : asset('img/simple.png') ?>"
              alt="logo"/>
-        <br/>     
+        <br>     
         <label>Logo Footer</label>
         <div id="file-uploaderf"></div>
         <input type="hidden" name="logof" value="<?= $cuenta->logof ?>"/>
@@ -32,7 +32,7 @@
              src="<?= $cuenta->logof ? asset('logos/' . $cuenta->logof) : asset('img/simple.png') ?>"
              alt="logof"/>    
     </fieldset>
-    </br>
+    <br>
     <fieldset>
         <legend><?= $title ?> configuración ambiente de desarrollo</legend>
         <hr>
@@ -50,7 +50,7 @@
             </select>
         </div>
     </fieldset>
-    </br>
+    <br>
     <fieldset>
         <legend><?= $title ?> Claveúnica</legend>
         <hr>
@@ -59,7 +59,7 @@
         <label>Client Secret</label>
         <input class="form-control col-6" type="text" name="client_secret" value="<?= $cuenta->client_secret ?>"/>
     </fieldset>
-    </br>
+    <br>
     <fieldset>
         <legend><?= $title ?> configuraci&oacute;n de agenda</legend>
         <hr>
@@ -81,6 +81,7 @@
         <label>Header</label>
         <!--<input type="header" name="header" class="form-control" value="<?= $cuenta->header ?>">-->
         <select name="header" class="form-control">
+            <option value="">Seleccionar ...</option>
             <option value="layouts.header" <?= ($cuenta->header == 'layouts.header') ? 'selected' : '' ?>>layouts.header</option>
             <option value="layouts.header_super" <?= ($cuenta->header == 'layouts.header_super') ? 'selected' : '' ?>>layouts.header_super</option>
         </select>
@@ -91,10 +92,23 @@
         <label>Footer</label>
         <!--<input type="footer" name="footer" class="form-control" value="<?= $cuenta->footer ?>">-->
         <select name="footer" class="form-control">
+            <option value="">Seleccionar ...</option>
             <option value="layouts.footer" <?= ($cuenta->footer == 'layouts.footer') ? 'selected' : '' ?>>layouts.footer</option>
             <option value="layouts.footer_super" <?= ($cuenta->footer == 'layouts.footer_super') ? 'selected' : '' ?>>layouts.footer_super</option>
         </select>
     </fieldset>
+    <hr>
+     
+    <fieldset>
+        <legend><?= $title ?> configuraci&oacute;n avanzada</legend>
+        <label>Descripci&oacute;n</label>
+        <input class="form-control col-6" type="text" name="seo_tags[description]" value="<?= (isset($seo_tags->description)?$seo_tags->description: '' ) ?>"/>
+        <label>Keywords</label>
+        <input class="form-control col-6" type="text" name="seo_tags[keywords]" value="<?= isset($seo_tags->keywords)?$seo_tags->keywords: ''  ?>"/>
+        <label>T&iacute;tulo de p&aacute;gina</label>
+        <input class="form-control col-6" type="text" name="seo_tags[title]" value="<?= isset($seo_tags->title)?$seo_tags->title: ''  ?>"/>
+    </fieldset>
+    <br>
     <!--<fieldset>
         <legend><?= $title ?> configuraci&oacute;n de Css Frontend</legend>
         <hr>
@@ -112,7 +126,7 @@
             }
         });
     </script>
-    </br>
+    <br>
     <div class="form-actions">
         <button class="btn btn-primary" type="submit">Guardar</button>
         <a class="btn btn-light" href="<?= url('manager/cuentas') ?>">Cancelar</a>
