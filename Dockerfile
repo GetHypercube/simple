@@ -25,35 +25,27 @@ RUN docker-php-ext-install \
   mcrypt \
   gd \
   bcmath \
-  && { \
-  echo "log_errors = On"; \
-  echo "error_log = /dev/stderr"; \
-  echo "error_reporting = E_ALL"; \
-  echo "post_max_size = 100M"; \
-  echo "upload_max_filesize = 100M"; \
-  } > /usr/local/etc/php/php.ini \
-  # Install Node.js v8
-  && curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-  && apt-get install -yq nodejs build-essential \
-  && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-  && npm i npm@latest -g \
+  sockets
+
+# Configuraciones PHP
+RUN echo -e "\
+  log_errors = On\n \
+  error_log = /dev/stderr\n \
+  error_reporting = E_ALL\n \
+  post_max_size = 100M\n \
+  upload_max_filesize = 100M" \
+  > /usr/local/etc/php/php.ini
+# Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
   && apt-get remove --purge -y curl \
   && apt-get autoremove -y \
-  && apt-get clean \
-  && apt-get autoclean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  && apt-get clean
 
 COPY . $DIRECTORY_PROJECT
 
 RUN composer install
-RUN npm install && npm run prod
 
 RUN chown -R www-data:www-data storage/
-
-# TO DO SEGPRES
-#RUN find $DIRECTORY_PROJECT -type f -exec chmod 644 {} \; \
-#    && find $DIRECTORY_PROJECT -type d -exec chmod 755 {} \; \
-#    && chown -R www-data:www-data $DIRECTORY_PROJECT 
 
 ENV LANG es_CL.UTF-8
 ENV LANGUAGE es_CL:es
