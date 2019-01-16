@@ -8,19 +8,22 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Support\Facades\Artisan;
+use App\Models\Tramite;
 
 class IndexStages implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $tramite_id;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($tramite_id)
     {
-        //
+        $this->tramite_id=$tramite_id;
     }
 
     /**
@@ -30,6 +33,8 @@ class IndexStages implements ShouldQueue
      */
     public function handle()
     {
-        Artisan::call('elasticsearch:admin', ['operation' => 'index']);
+        $tramite = Tramite::find($this->tramite_id);
+        $tramite->save();
+        $tramite->searchable();
     }
 }
