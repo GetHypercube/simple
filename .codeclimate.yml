@@ -44,18 +44,21 @@ plugins:
   duplication:
     enabled: true
   phpcodesniffer:
-    enabled: true
+    enabled: false
   phpmd:
-    enabled: true
+    enabled: false
   sonar-php:
     enabled: true
   fixme:
-    enabled: true
+    enabled: false
   nodesecurity:
     enabled: true
+  structure:
+    enabled: false
 exclude_patterns:
   - "tests/"
   - "config/"
   - "database/"
   - "vendor/"
-  - "node_modules/"
+  - "resources/"
+  - "public/calendar"
