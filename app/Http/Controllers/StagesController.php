@@ -64,7 +64,7 @@ class StagesController extends Controller
             $etapa->finalizarPaso($paso);
             $etapa->avanzar();
             //Job para indexar contenido cada vez que se avanza de etapa
-            $this->dispatch(new IndexStages());
+            $this->dispatch(new IndexStages($etapa->Tramite->id));
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1));
         } else {
             $etapa->iniciarPaso($paso);
@@ -301,7 +301,7 @@ class StagesController extends Controller
                 $etapa->finalizarPaso($prox_paso);
                 $etapa->avanzar();
                 //Job para indexar contenido cada vez que se avanza de etapa
-                $this->dispatch(new IndexStages());
+                $this->dispatch(new IndexStages($etapa->Tramite->id));
                 $respuesta->redirect = '/etapas/ver/' . $etapa->id . '/' . (count($pasosEjecutables) - 1);
             } else {
                 $respuesta->redirect = '/etapas/ejecutar/' . $etapa_id . '/' . ($secuencia + 1) . ($qs ? '?' . $qs : '');
@@ -320,7 +320,7 @@ class StagesController extends Controller
                 $etapa->finalizarPaso($prox_paso);
                 $etapa->avanzar();
                 //Job para indexar contenido cada vez que se avanza de etapa
-                $this->dispatch(new IndexStages());
+                $this->dispatch(new IndexStages($etapa->Tramite->id));
                 $respuesta->redirect = '/etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1);
             } else {
                 $respuesta->redirect = '/etapas/ejecutar/' . $etapa_id . '/' . ($secuencia + 1) . ($qs ? '?' . $qs : '');
@@ -443,7 +443,7 @@ class StagesController extends Controller
         }
 
         //Job para indexar contenido cada vez que se avanza de etapa
-        $this->dispatch(new IndexStages());
+        $this->dispatch(new IndexStages($etapa->Tramite->id));
 
         if ($request->input('iframe')) {
             return response()->json([
