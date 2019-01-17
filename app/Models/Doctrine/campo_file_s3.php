@@ -11,6 +11,10 @@ class CampoFileS3 extends Campo
 
     protected function display($modo, $dato, $etapa_id = false)
     {
+        $set_default = true;
+        if(isset($this->validacion) && is_array($this->validacion) && in_array('required', $this->validacion)){
+            $set_default = false;
+        }
         if(isset($this->extra->block_size)&& is_numeric($this->extra->block_size)){
             $this->block_size = intval($this->extra->block_size);
         }
@@ -56,6 +60,7 @@ class CampoFileS3 extends Campo
                 $(document).ready(function() {
                     var token = $(\'meta[name="csrf-token"]\').attr(\'content\');
                     set_up('.$this->id.', "'.url("uploader/datos_s3/" . $this->id . "/" . $etapa->id) .'", token, '.$this->block_size.');
+                    set_default_s3('.$this->id.', '.($set_default ? "true": "false").');
                 });
             </script>
         ';
@@ -66,7 +71,7 @@ class CampoFileS3 extends Campo
                     ->orderBy('f.id DESC')
                     ->fetchOne();
 
-            if($file != false && isset($file->extra->URL)&&!is_null($file->extra->URL)){
+            if($file != false && isset($file->extra->URL)){
                 $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="' . $file->extra->URL . '" target="_blank">'.$file->filename.'</a>';
                 if (!($modo == 'visualizacion'))
                   $display .= '(<a class="remove" href="#">X</a>)</p>';
