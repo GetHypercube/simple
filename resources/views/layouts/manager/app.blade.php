@@ -8,7 +8,9 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', isset($title) ? $title : 'Manager')</title>
+    <title>{{  \Cuenta::seo_tags()->title . ' - Manager' }}</title>
+    <meta name="description" content="{{ \Cuenta::seo_tags()->description }}">
+    <meta name="keywords" content="{{ \Cuenta::seo_tags()->keywords }}">
 
     <!-- Styles -->
     <link href="{{ asset('css/manager.css') }}" rel="stylesheet">

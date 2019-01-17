@@ -44,8 +44,8 @@ class AccountController extends Controller
             $cuenta = new Cuenta();
             $calendar = new Connect_services();
         }
-
-
+        
+        $data['seo_tags'] = \Cuenta::seo_tags($cuenta->id);
         $data['cuenta'] = $cuenta;
         $data['calendar'] = $calendar;
         $data['title'] = $cuenta->id ? 'Editar' : 'Crear';
@@ -102,7 +102,8 @@ class AccountController extends Controller
             //$cuenta->estilo = $request->input('estilo');
             $cuenta->header = $request->input('header');
             $cuenta->footer = $request->input('footer');
-            
+            $cuenta->seo_tags = $request->has('seo_tags') && !is_null($request->input('seo_tags')) ? $request->input('seo_tags') : NULL;
+            $cuenta->seo_tags = json_encode($cuenta->seo_tags, JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
             if ($request->input('desarrollo') == 'on') {
                 $cuenta->ambiente = 'dev';
                 $cuenta->vinculo_produccion = $request->input('vinculo_produccion');
