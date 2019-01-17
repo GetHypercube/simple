@@ -249,12 +249,14 @@ class StagesController extends Controller
         $validations = [];
 
         if ($modo == 'edicion') {
+            $campos_nombre_etiqueta = [];
             foreach ($formulario->Campos as $c) {
                 // Validamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
                 if ($c->isEditableWithCurrentPOST($request, $etapa_id)) {
                     $validate = $c->formValidate($request, $etapa->id);
                     if (!empty($validate[0]) && !empty($validate[1])) {
                         $validations[$validate[0]] = $validate[1];
+                        $campos_nombre_etiqueta[$validate[0]] = "\"$c->etiqueta\"";
                     }
                 }
                 if ($c->tipo == 'recaptcha') {
@@ -262,7 +264,7 @@ class StagesController extends Controller
                 }
             }
 
-            $request->validate($validations);
+            $request->validate( $validations, [], $campos_nombre_etiqueta );
 
             // Almacenamos los campos
             foreach ($formulario->Campos as $c) {
