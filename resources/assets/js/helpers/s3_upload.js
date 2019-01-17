@@ -42,15 +42,6 @@ function set_up(unique_id, url, token, block_size){
 
     c_s3.stop_uploading = false;
 
-    var hidden_default_value = {
-        'URL': '',
-        'info': {
-            'parts': [],
-            'part_max_size': -1
-        }
-    }
-    c_s3.hidden_name_field.val(JSON.stringify(hidden_default_value));
-
     c_s3.file_input.on('change', function(c_s3){
         return function(evt){
             c_s3.but_send_file.prop('disabled', false);
@@ -242,4 +233,19 @@ function send_chunk(chunk, c_s3) {
     xhr.setRequestHeader('filename', c_s3.filename);
     xhr.setRequestHeader('Content-Type', 'application/octet-stream');
     xhr.send(chunk);
+}
+
+function set_default_s3(unique_id, setit){
+    if (setit == false){
+        return;
+    }
+    var c_s3 = s3_fields[unique_id];
+    var hidden_default_value = {
+        'URL': '',
+        'info': {
+            'parts': [],
+            'part_max_size': -1
+        }
+    }
+    c_s3.hidden_name_field.val(JSON.stringify(hidden_default_value));
 }
