@@ -596,57 +596,24 @@ class Proceso extends Doctrine_Record
             ->execute();
     }
 
-    public function findIdProcesoActivo($root, $cuenta_id)
+    public function findIdProcesoActivo($proceso_id, $cuenta_id)
     {
         $procesos = Doctrine_Query::create()
             ->from('Proceso p, p.Cuenta c')
-            ->where('(p.root = ? OR p.id = ?) AND p.estado="public" AND c.id = ?', array($root, $root, $cuenta_id))
+            ->where('p.id = ? AND c.id = ?', array($proceso_id, $cuenta_id))
             ->execute();
 
         return $procesos[0];
     }
 
-    public function findProcesosByRoot($root, $cuenta_id)
+    public function findProcesosById($proceso_id, $cuenta_id)
     {
         $procesos = Doctrine_Query::create()
             ->from('Proceso p, p.Cuenta c')
-            ->where('(p.root = ? OR p.id = ?) AND c.id = ?', array($root, $root, $cuenta_id))
+            ->where('p.id = ? AND c.id = ?', array($proceso_id, $cuenta_id))
             ->execute();
 
         return $procesos;
-    }
-
-    public function findProcesosArchivados($root)
-    {
-        Log::info('Buscando archivados para proceso root: ' . $root);
-
-        $procesos = Doctrine_Query::create()
-            ->from('Proceso p')
-            ->where('(p.root = ? OR p.id = ?)', array($root, $root))
-            ->orderBy('p.version desc')
-            ->execute();
-
-        Log::info('Se ejecuta query procesos archivados');
-
-        $data = array();
-        foreach ($procesos as $proceso_rel) {
-            $data[] = array(
-                "id" => $proceso_rel->id,
-                "nombre" => $proceso_rel->nombre . '-' . $proceso_rel->estado,
-                "version" => $proceso_rel->version
-            );
-        }
-        return $data;
-    }
-
-    public function findDraftProceso($root, $cuenta_id)
-    {
-        $draft = Doctrine_Query::create()
-            ->from('Proceso p, p.Cuenta c')
-            ->where('(p.root = ? OR p.id = ?) AND p.estado="draft" AND c.id = ?', array($root, $root, $cuenta_id))
-            ->execute();
-
-        return $draft[0];
     }
 
     public function findMaxVersion($root, $cuenta_id)

@@ -16,12 +16,7 @@
         <?php if ($p->destacado == 1 || $sidebar == 'categorias'): ?>
         <div class="{{$login ? 'col-md-6' : 'col-md-4' }} item">
             <div class="card text-center">
-                @if ($p->estado == 'draft')
-                    <div class="card-header draft">
-                        Borrador
-                    </div>
-                @endif
-                <div class="card-body {{($p->estado == 'draft') ? 'draft' : ''}}">
+                <div class="card-body">
                     <div class="media">
                         @if($p->icon_ref)
                             <img src="<?= asset('img/icon/' . $p->icon_ref) ?>" class="img-service">
@@ -113,12 +108,7 @@
                     <div class="{{$login ? 'col-md-6' : 'col-md-4' }} item">
 
                         <div class="card text-center">
-                            @if ($p->estado == 'draft')
-                                <div class="card-header draft">
-                                    Borrador
-                                </div>
-                            @endif
-                            <div class="card-body {{($p->estado == 'draft') ? 'draft' : ''}}">
+                            <div class="card-body">
                                 <div class="media">
                                     @if($p->icon_ref)
                                         <img src="<?= asset('img/icon/' . $p->icon_ref) ?>"

@@ -23,16 +23,13 @@ class ProcessController extends Controller
         $cuenta_id = Auth::user()->cuenta_id;
         $data['procesos'] = Doctrine_Query::create()
             ->from('Proceso p, p.Cuenta c')
-            ->where('p.activo=1 AND p.estado!="arch" AND c.id = ? 
-                AND ((SELECT COUNT(proc.id) FROM Proceso proc WHERE proc.cuenta_id = ? AND (proc.root = p.id OR proc.root = p.root) AND proc.estado = "draft") = 0 
-                OR p.estado = "draft")
-                ', array($cuenta_id, $cuenta_id))
+            ->where('p.activo=1 AND c.id = ?', array($cuenta_id))
             ->orderBy('p.nombre asc')
             ->execute();
 
         $data['procesos_eliminados'] = Doctrine_Query::create()
             ->from('Proceso p, p.Cuenta c')
-            ->where('p.activo=0 AND p.estado!="arch" AND c.id = ?', Auth::user()->cuenta_id)
+            ->where('p.activo=0 AND c.id = ?', Auth::user()->cuenta_id)
             ->orderBy('p.nombre asc')
             ->execute();
 
@@ -62,9 +59,7 @@ class ProcessController extends Controller
         $proceso = new \Proceso();
         $proceso->nombre = 'Proceso';
         $proceso->cuenta_id = Auth::user()->cuenta_id;
-        $proceso->estado = 'draft';
-        $proceso->version = 0;
-
+        $proceso->activo = 1;
         $proceso->save();
 
         return redirect()->route('backend.procesos.edit', [$proceso->id]);
@@ -141,12 +136,7 @@ class ProcessController extends Controller
         $registro_auditoria->detalles = json_encode($proceso_array);
         $registro_auditoria->save();
 
-        if ($proceso->estado != 'public') {
-            $proceso->delete();
-        } else {
-            $proceso->delete_logico($proceso_id);
-        }
-
+        $proceso->delete_logico($proceso_id);
         $request->session()->flash('success', 'Proceso eliminado con éxito.');
 
         return response()->json([
@@ -163,54 +153,8 @@ class ProcessController extends Controller
         Log::info('editar ($proceso_id [' . $proceso_id . '])');
 
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
-
-        if ($proceso->estado != 'public') {
-            session()->forget('nueva_version');
-            $nueva_version = false;
-        } else {
-            $nueva_version = session()->get('nueva_version');
-        }
-
-        Log::debug('$proceso->estado [' . $proceso->estado . '])');
-
-        // Verificar si es draft o un proceso publicado
-        if ($proceso->estado == 'public' && $nueva_version) { //no es draft
-            //Se crea Draft
-            Log::info("Creando Draft para proceso id " . $proceso_id);
-            $proceso = $this->crearDraft($proceso);
-        } elseif ($proceso->estado == 'arch') {
-            $root = $proceso_id;
-
-            Log::info("Editando proceso id " . $proceso_id);
-
-            if (isset($proceso->root) && strlen($proceso->root) > 0) {
-                $root = $proceso->root;
-            }
-            $proceso_draft = $proceso->findDraftProceso($root, Auth::user()->cuenta_id);
-
-            Log::info("Se obtiene draft con id " . $proceso_draft->id);
-
-            if (isset($proceso_draft) && $proceso_draft->id > 0) {
-                $proceso_draft->estado = 'arch';
-                $proceso_draft->save();
-            }
-            $proceso->estado = 'draft';
-            $proceso->save();
-        }
-        Log::debug('$proceso->activo [' . $proceso->activo . '])');
-
-        if ($proceso->cuenta_id != Auth::user()->cuenta_id || $proceso->activo != true) {
-            echo 'Usuario no tiene permisos para editar este proceso';
-            exit;
-        }
-
-        $procesosArchivados = $proceso->findProcesosArchivados($proceso->root);
-        $data['procesos_arch'] = $procesosArchivados;
-
         $data['proceso'] = $proceso;
-
         $data['proceso_id'] = $proceso_id;
-
         $data['title'] = 'Modelador';
         $data['content'] = 'backend/procesos/editar';
 
@@ -684,115 +628,6 @@ class ProcessController extends Controller
     }
 
     /**
-     * @param $proceso_draft_id
-     */
-    public function publicar($proceso_draft_id)
-    {
-
-        Log::info("ID Draft: " . $proceso_draft_id);
-
-        $proceso_draft = Doctrine::getTable('Proceso')->find($proceso_draft_id);
-
-        Log::info("Root Draft: " . $proceso_draft->root);
-
-        Log::info("Auth::user()->cuenta_id: " . Auth::user()->cuenta_id);
-
-
-        $activo = $proceso_draft->findIdProcesoActivo($proceso_draft->root, Auth::user()->cuenta_id);
-
-        Log::info("Recuperado activo: [" . $activo->id . "]");
-
-        if (strlen($activo->id) > 0) { // Existe proceso activo
-            Log::info("Existe Proceso Activo");
-
-            $activo->estado = 'arch';
-            $activo->save();
-            Log::info("Save() Estado arch Proceso Activo");
-        } else {
-            $proceso_draft->root = $proceso_draft->id;
-        }
-
-        $proceso_draft->estado = 'public';
-        $proceso_draft->save();
-
-        $cuenta = Doctrine::getTable('Cuenta')->find(Auth::user()->cuenta_id);
-
-        if ($cuenta->ambiente == 'dev') {
-
-            Log::info("Cuenta DEV");
-
-            $fecha = new \DateTime();
-            Log::info("Posterior a DateTime");
-
-            Log::info("Previo proceso_draft->findIdProcesoActivo(proceso_draft->root [" . $proceso_draft->root . "], cuenta->vinculo_produccion [" . $cuenta->vinculo_produccion . "])");
-            $proc_produccion = $proceso_draft->findIdProcesoActivo($proceso_draft->root, $cuenta->vinculo_produccion);
-            Log::info("Posterior proceso_draft->findIdProcesoActivo");
-
-            Log::info("proc_produccion->id [" . $proc_produccion->id . "]");
-            Log::info("strlen proc_produccion->id [" . strlen($proc_produccion->id) . "]");
-
-            if (strlen($proc_produccion->id) > 0) { // Existe proceso productivo
-
-                // Auditar
-                $registro_auditoria = new \AuditoriaOperaciones();
-                $registro_auditoria->fecha = $fecha->format("Y-m-d H:i:s");
-                $registro_auditoria->operacion = 'Eliminación de Proceso en cuenta productiva';
-                $registro_auditoria->motivo = "Publicación de nueva versión";
-                $usuario = Auth::user();
-                $registro_auditoria->usuario = $usuario->nombre . ' ' . $usuario->apellidos . ' <' . $usuario->email . '>';
-                $registro_auditoria->proceso = $proc_produccion->nombre;
-                $registro_auditoria->cuenta_id = $cuenta->vinculo_produccion;
-                // Detalles
-                $proceso_array['proceso'] = $proc_produccion->toArray(false);
-                $registro_auditoria->detalles = json_encode($proceso_array);
-                $registro_auditoria->save();
-
-                $proc_produccion->delete();
-            }
-
-            // Auditar
-            Log::info("Inicio Auditoria");
-
-            $registro_auditoria = new \AuditoriaOperaciones();
-            $registro_auditoria->fecha = $fecha->format("Y-m-d H:i:s");
-            $registro_auditoria->operacion = 'Publicación de Proceso a cuenta productiva';
-            $registro_auditoria->motivo = "Publicación de nueva versión";
-            $usuario = Auth::user();
-            $registro_auditoria->usuario = $usuario->nombre . ' ' . $usuario->apellidos . ' <' . $usuario->email . '>';
-            $registro_auditoria->proceso = $proceso_draft->nombre;
-            $registro_auditoria->cuenta_id = $cuenta->id;
-            // Detalles
-
-            $proceso_array['proceso'] = $proceso_draft->toArray(false);
-            $registro_auditoria->detalles = json_encode($proceso_array);
-            $registro_auditoria->save();
-            Log::info("Fin Auditoria");
-
-
-            Log::debug('previo a Proceso::importComplete($proceso_draft->exportComplete());');
-            $proceso = \Proceso::importComplete($proceso_draft->exportComplete(), false);
-            Log::debug('$cuenta->vinculo_produccion [' . $cuenta->vinculo_produccion);
-            $proceso->cuenta_id = $cuenta->vinculo_produccion;
-            $proceso->save();
-            Log::debug('post a $proceso->save();');
-
-            $this->migrarSeguridadAcciones($proceso);
-            $this->migrarSuscriptores($proceso);
-            $this->migrarEventosExternos($proceso);
-
-            $this->migrarGrupos($proceso, $cuenta);
-
-        }
-
-        Log::info("Proceso actualizado");
-
-        return response()->json([
-            'validacion' => true,
-            'redirect' => route('backend.procesos.index')
-        ]);
-    }
-
-    /**
      * @param $proceso
      * @param $cuenta
      */
@@ -929,59 +764,6 @@ class ProcessController extends Controller
                 }
             }
         }
-    }
-
-    /**
-     * @param $proceso
-     * @return mixed
-     */
-    private function crearDraft($proceso)
-    {
-
-        $proceso_id = $proceso->id;
-
-        Log::info("Buscando si proceso ya tiene draft creado");
-
-        $root = $proceso_id;
-        if (isset($proceso->root) && strlen($proceso->root) > 0) {
-            $root = $proceso->root;
-        }
-
-        Log::info("Buscando draft con root: " . $root);
-
-        $draft = $proceso->findDraftProceso($root, Auth::user()->cuenta_id);
-
-        Log::info("Draft: *" . $draft->id . "*");
-        //Log::info("Draft2: ".$draft[0]->id);
-
-        if (strlen($draft->id) == 0) { //No existe draft
-            Log::info("Draft no existe");
-            $proceso = \Proceso::importComplete($proceso->exportComplete());
-
-            Log::info("Buscando última version");
-            $max_version = $proceso->findMaxVersion($root, Auth::user()->cuenta_id);
-            Log::info("Ultima version recuperada. " . $max_version);
-
-            $proceso->version = $max_version + 1;
-            $proceso->estado = 'draft';
-
-            if (!isset($proceso->root) || strlen($proceso->root) == 0) {
-                $proceso->root = $proceso_id;
-            }
-
-            $proceso->save();
-
-            $this->migrarSeguridadAcciones($proceso);
-            $this->migrarSuscriptores($proceso);
-            $this->migrarEventosExternos($proceso);
-
-        } else {
-            Log::info("Redirigiendo a edición de Draft con id: " . $draft->id);
-            $proceso = $draft;//Doctrine::getTable('Proceso')->find($draft[0]["id"]);
-        }
-
-        return $proceso;
-
     }
 
     /**
@@ -1134,20 +916,4 @@ class ProcessController extends Controller
         return view('backend.process.ajax_editar_proceso', $data);
 
     }
-
-    /**
-     * @param $proceso_id
-     * @param int $publicado
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function editar_publicado($proceso_id, $publicado = 0)
-    {
-        $nueva_version = $publicado == 1 ? false : true;
-
-        session()->put('nueva_version', $nueva_version);
-        session()->save();
-
-        return redirect()->route('backend.procesos.edit', $proceso_id);
-    }
-
 }

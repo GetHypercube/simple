@@ -12,24 +12,9 @@ class ProcesoTable extends Doctrine_Table
 
         $cuenta = Doctrine::getTable('Cuenta')->find(Cuenta::cuentaSegunDominio()->id); // UsuarioBackendSesion::usuario()->cuenta_id);
 
-        $estados = "'public'";
-        if ($cuenta->ambiente == 'dev') {
-            $estados = $estados . ", 'draft'";
-        } else {
-            Log::debug('$cuenta->id: ' . $cuenta->id);
-            $cuenta_dev = $cuenta->getAmbienteDev($cuenta->id);
-            Log::debug('cuenta_dev: ' . $cuenta_dev);
-            Log::debug('cuenta_dev: ' . count($cuenta_dev));
-            if (count($cuenta_dev) == 0) {
-                $estados = $estados . ", 'draft'";
-            }
-        }
-
-        Log::debug('estados: ' . $estados);
-
         $query = Doctrine_Query::create()
             ->from('Proceso p, p.Cuenta c, p.Tareas t')
-            ->where('p.activo = 1 AND p.estado IN (' . $estados . ') AND t.inicial = 1')
+            ->where('p.activo = 1 AND t.inicial = 1')
             //Si el usuario tiene permisos de acceso
             //->andWhere('(t.acceso_modo="grupos_usuarios" AND u.id = ?) OR (t.acceso_modo = "registrados") OR (t.acceso_modo = "claveunica") OR (t.acceso_modo="publico")',$usuario->id)
             //Si la tarea se encuentra activa
@@ -58,7 +43,7 @@ class ProcesoTable extends Doctrine_Table
 
         $query = Doctrine_Query::create()
             ->from('Proceso p, p.Cuenta c, p.Tareas t')
-            ->where('t.inicial = 1  AND p.estado !="arch" AND p.categoria_id = ' . $categoria_id)
+            ->where('t.inicial = 1 AND p.categoria_id = ' . $categoria_id)
             // Si el usuario tiene permisos de acceso
             // ->andWhere('(t.acceso_modo="grupos_usuarios" AND u.id = ?) OR (t.acceso_modo = "registrados") OR (t.acceso_modo = "claveunica") OR (t.acceso_modo="publico")',$usuario->id)
             // Si la tarea se encuentra activa
@@ -84,10 +69,10 @@ class ProcesoTable extends Doctrine_Table
     {
         if ($cuenta_id && strlen($cuenta_id) > 0) {
             Log::info('Si tiene id');
-            $sql = "select p.id, p.nombre, t.nombre as tarea, t.id as id_tarea, t.exponer_tramite, t.previsualizacion,c.id as id_cuenta, c.nombre_largo as nombre_cuenta, p.estado, p.version from proceso p, tarea t, cuenta c where p.id = t.proceso_id and p.cuenta_id=c.id and t.exponer_tramite=1 and p.activo=1 and p.estado in ('draft', 'public') and p.cuenta_id=" . $cuenta_id . ";";
+            $sql = "select p.id, p.nombre, t.nombre as tarea, t.id as id_tarea, t.exponer_tramite, t.previsualizacion,c.id as id_cuenta, c.nombre_largo as nombre_cuenta from proceso p, tarea t, cuenta c where p.id = t.proceso_id and p.cuenta_id=c.id and t.exponer_tramite=1 and p.activo=1 and p.cuenta_id=" . $cuenta_id . ";";
         } else {
             Log::info('No tiene id');
-            $sql = "select p.id, p.nombre, t.nombre as tarea, t.id as id_tarea, t.exponer_tramite, t.previsualizacion,c.id as id_cuenta, c.nombre_largo as nombre_cuenta, p.estado, p.version from proceso p, tarea t, cuenta c where p.id = t.proceso_id and p.cuenta_id=c.id and t.exponer_tramite=1 and p.activo=1 and p.estado in ('draft', 'public') ;";
+            $sql = "select p.id, p.nombre, t.nombre as tarea, t.id as id_tarea, t.exponer_tramite, t.previsualizacion,c.id as id_cuenta, c.nombre_largo as nombre_cuenta from proceso p, tarea t, cuenta c where p.id = t.proceso_id and p.cuenta_id=c.id and t.exponer_tramite=1 and p.activo=1 ;";
         }
         $stmn = Doctrine_Manager::getInstance()->connection();
         $result = $stmn->execute($sql)

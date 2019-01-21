@@ -22,7 +22,7 @@ class TracingController extends Controller
     public function index()
     {
         $data ['procesos'] = Doctrine_Query::create()->from('Proceso p, p.Cuenta c')
-            ->where('p.activo=1 AND p.estado = "public" AND c.id = ?', Auth::user()->cuenta_id)
+            ->where('p.activo=1 AND c.id = ?', Auth::user()->cuenta_id)
             ->orderBy('p.nombre asc')->execute();
 
         return view('backend.tracing.index', $data);
@@ -39,18 +39,18 @@ class TracingController extends Controller
         Log::info("Detalle de seguimiento para proceso id: " . $proceso_id);
 
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
-        if (is_null($proceso->root)) {
-            $proceso->root = $proceso->id;
-        }
-        $procesos_archivados = $proceso->findProcesosArchivados($proceso->root);
-        $id_archivados = array();
-        Log::info("Buscando procesos relacionados archivados");
+        // if (is_null($proceso->root)) {
+        //     $proceso->root = $proceso->id;
+        // }
+        // $procesos_archivados = $proceso->findProcesosArchivados($proceso->root);
+        // $id_archivados = array();
+        // Log::info("Buscando procesos relacionados archivados");
 
-        foreach ($procesos_archivados as $proc_arch) {
-            $id_archivados[] = $proc_arch['id'];
-        }
+        // foreach ($procesos_archivados as $proc_arch) {
+        //     $id_archivados[] = $proc_arch['id'];
+        // }
 
-        Log::info("Procesos relacionados archivados: " . $this->varDump($id_archivados));
+        // Log::info("Procesos relacionados archivados: " . $this->varDump($id_archivados));
 
         if (Auth::user()->cuenta_id != $proceso->cuenta_id) {
             echo 'Usuario no tiene permisos';
@@ -79,7 +79,7 @@ class TracingController extends Controller
 
         $doctrine_query = Doctrine_Query::create()->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
             ->where('p.activo=1')
-            ->andWhereIn('p.root', $id_archivados)
+            ->andWhereIn('p.id', $proceso_id)
             ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')-> // Mostramos solo los que se han avanzado o tienen datos
             groupBy('t.id')->orderBy($order . ' ' . $direction)->limit($per_page)->offset($offset);
 
@@ -110,7 +110,7 @@ class TracingController extends Controller
         }
 
         if ($query) {
-            $result = Tramite::search(['query' => $query, 'filter' => ['proceso_id' => $id_archivados]])->get();
+            $result = Tramite::search(['query' => $query, 'filter' => ['proceso_id' => $proceso_id]])->get();
 
             if (!$result->isEmpty()) {
                 $matches = $result->groupBy('id')->keys()->toArray();
