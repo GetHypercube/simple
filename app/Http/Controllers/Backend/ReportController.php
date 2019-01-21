@@ -22,7 +22,7 @@ class ReportController extends Controller
     {
         $data['procesos'] = Doctrine_Query::create()
             ->from('Proceso p, p.Cuenta c')
-            ->where('c.id = ? AND p.estado = "public"', Auth::user()->cuenta_id)
+            ->where('c.id = ?', Auth::user()->cuenta_id)
             ->orderBy('p.nombre asc')
             ->execute();
 
@@ -39,7 +39,7 @@ class ReportController extends Controller
         $proceso = Doctrine::getTable('Proceso')->find($id);
         $reportes = Doctrine_query::create()
             ->from('Reporte r')
-            ->where('r.proceso_id = ? or r.proceso_id = ?', array($id, $proceso->root))
+            ->where('r.proceso_id = ? or r.proceso_id = ?', array($id, $proceso->id))
             ->orderBy('r.id desc')->execute();
 
         if (!is_null(Auth::user()->procesos) && !in_array($id, explode(',', Auth::user()->procesos))) {
@@ -101,12 +101,7 @@ class ReportController extends Controller
         } else {
             $reporte = new \Reporte();
             $proceso_id = $request->input('proceso_id');
-            $proceso_root = $request->input('proceso_root');
-            if (isset($proceso_root) && strlen($proceso_root) > 0) {
-                $reporte->proceso_id = $proceso_root;
-            } else {
-                $reporte->proceso_id = $proceso_id;
-            }
+            $reporte->proceso_id = $proceso_id;
         }
 
         if (!is_null(Auth::user()->procesos) &&
@@ -183,15 +178,10 @@ class ReportController extends Controller
 
         // Reporte del proceso
         $proceso_reporte = $reporte->Proceso;
+        $proceso_activo = $proceso_reporte->findIdProcesoActivo($proceso_reporte->id, $reporte->Proceso->cuenta_id);
+        $procesos = $proceso_reporte->findProcesosById($proceso_reporte->id, $reporte->Proceso->cuenta_id);
 
-        Log::debug("Se recupera proceso de reporte con id: " . $proceso_reporte->id . " Y root: " . $proceso_reporte->root);
-        $proceso_activo = $proceso_reporte->findIdProcesoActivo($proceso_reporte->root, $reporte->Proceso->cuenta_id);
 
-        Log::debug("Se recupera proceso activo con id: " . $proceso_activo->id);
-
-        $procesos = $proceso_reporte->findProcesosByRoot($proceso_reporte->root, $reporte->Proceso->cuenta_id);
-
-        Log::debug("Procesos recuperados según root: " . count($procesos));
 
         $tramites_completos = 0;
         $tramites_vencidos = 0;

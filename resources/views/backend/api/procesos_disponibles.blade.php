@@ -15,8 +15,6 @@
                     <tr>
                         <th>Nombre del Proceso</th>
                         <th>Tarea</th>
-                        <th>Estado</th>
-                        <th>Versión</th>
                         <th>Descripción</th>
                         <th>Url</th>
                     </tr>
@@ -24,8 +22,6 @@
                         <tr>
                             <td>{{$item['nombre']}}</td>
                             <td>{{$item['tarea']}}</td>
-                            <td>{{$item['estado']}}</td>
-                            <td>{{$item['version']}}</td>
                             <td></td>
                             <td>
                                 <a class="btn btn-light" target="_blank"

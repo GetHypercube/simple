@@ -30,25 +30,6 @@
 
         @include('backend.process.nav')
 
-        <div class="row">
-            <div class="col-12 mt-3">
-                <form id="procArchivadoForm" class="form-inline mt-3" method="GET" action="">
-                    <div class="form-group">
-                        <label for="proc_arch_id">Versiones anteriores </label>
-                        <select id="proc_arch_id" name="proc_arch_id"
-                                class="AlignText form-control form-control-sm">
-                            @foreach($procesos_arch as $proceso_arch)
-                                <option value="<?=$proceso_arch['id']?>" <?=$proceso_arch['id'] == $proceso->id ? 'selected' : ''?>><?=$proceso_arch['nombre'] . '-' . $proceso_arch['version']?></option>
-                            @endforeach
-                        </select>
-                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/versionamiento.html" target="_blank">
-                            <i class="material-icons">help</i>
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div id="areaDibujo">
             <div class="row">
                 <div class="col-12 mt-3">
