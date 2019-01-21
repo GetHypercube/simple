@@ -24,7 +24,7 @@ class CampoGridDatosExternos extends Campo
         $columns = $this->extra->columns;
         $eliminable = 'false';
         // FIXME: Comparar contra el tipo correcto
-        if(isset($this->extra->eliminable) && ($this->extra->eliminable === "true" || $this->extra->eliminable === true || $this->extra->eliminable == 1)){
+        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true'){
             $eliminable = true;
         }else{
             $eliminable = false;
@@ -39,10 +39,6 @@ class CampoGridDatosExternos extends Campo
             $botones[] = '<button type="button" class="btn btn-outline-secondary" style="" onclick="grilla_datos_externos_eliminar('.$this->id.')">Eliminar</button>';
         }
 
-        if(isset($this->extra->validable) && $this->extra->validable && isset($this->extra->validate_url) && ! is_null($this->extra->validate_url)){
-            $botones[] = '<button type="button" class="btn btn-outline-secondary" onclick="grilla_datos_externos_validar('.$this->id.',\''.$this->extra->validate_url.'\')">Validar</button>';
-        }
-
         if( isset($this->extra->buttons_position) && $this->extra->buttons_position === 'bottom' ){
             $botones_position = $this->extra->buttons_position;
         }else{
@@ -50,11 +46,11 @@ class CampoGridDatosExternos extends Campo
         }
 
         $display_modal = '
-        <div class="modal fade modalgrid" id="addToTableModal_'.$this->id.'" tabindex="-1" role="dialog" aria-labelledby="addToTableModal'.$this->id.'Label" aria-hidden="true">
+        <div class="modal fade modalgrid" id="table_alter_modal_'.$this->id.'" tabindex="-1" role="dialog" aria-labelledby="add_to_table_modal_label_'.$this->id.'" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addToTableModal'.$this->id.'Label">Nuevo registro</h5>
+                        <h5 class="modal-title" id="add_to_table_modal_label_'.$this->id.'">Nuevo registro</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
@@ -63,7 +59,7 @@ class CampoGridDatosExternos extends Campo
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="modal_agregar_a_grilla( '.$this->id.')">Agregar</button>
+                        <button type="button" id="modal_accept_button_'.$this->id.'" class="btn btn-outline-secondary">Guardar</button>
                     </div>
                 </div>
             </div>
@@ -108,20 +104,22 @@ class CampoGridDatosExternos extends Campo
                 $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
                 $regla = new Regla($this->valor_default);
                 $data = $regla->getExpresionParaOutput($etapa->id);
-                $data = json_decode($data,true);
-                $data_array = array();
-                if(count($data)){
-                    $contador = 0;
-                    foreach($data as $d){
-                        $arreglo_tmp = array_values($d);
-                        array_push($data_array, $arreglo_tmp);
+                $data = json_decode($data,true);                
+                if($data !== false){
+                    $data_array = array();
+                    if(count($data)){
+                        $contador = 0;
+                        foreach($data as $d){
+                            $arreglo_tmp = array_values($d);
+                            array_push($data_array, $arreglo_tmp);
+                        }
                     }
                 }
             }
         }
 
         $valor_default = json_decode($valor_default, true);
-        $data = (isset($valor_default) && ! is_null($valor_default) && is_array($valor_default) ) ? $valor_default: [];
+        $data = (isset($valor_default) && is_array($valor_default) ) ? $valor_default: [];
         $data = json_encode($data);
         $cell_max_length = (isset($this->extra->cell_text_max_length) ? $this->extra->cell_text_max_length: $this->cell_text_max_length_default);
 
@@ -132,16 +130,16 @@ class CampoGridDatosExternos extends Campo
                     var is_array = '.(count($data) > 0 ? "Array.isArray(data[0])" : "false" ).';
                     var columns = '.json_encode($columns).';
                     grillas_datatable['.$this->id.'] = {};
-                    grillas_datatable['.$this->id.'].validate_url = "'.(isset($this->extra->validate_url) ? $this->extra->validate_url : '' ).'";
-                    grillas_datatable['.$this->id.'].validate_method = "'.(isset($this->extra->method) ? $this->extra->method : '' ).'";
                     grillas_datatable['.$this->id.'].eliminable = '.($eliminable ? 'true': 'false').';
                     grillas_datatable['.$this->id.'].columns_length = columns.length;
                     if('.($eliminable ? 'true': 'false').'){
                         grillas_datatable['.$this->id.'].columns_length++;
                     }
-
+                    
                     init_tables('.$this->id.', "'.$modo.'",columns,'.$cell_max_length.',is_array);
-                    if(data.length > 0){
+                    grillas_datatable['.$this->id.'].table.draw(true);
+                    
+                    if(data.length > 0){    
                         if(is_array){
                             grilla_populate_arrays('.$this->id.', data);
                         }else{
@@ -174,34 +172,30 @@ class CampoGridDatosExternos extends Campo
             $eliminable = true;
         }
 
-        $checked = true;
-        if(isset($this->extra->validable)&& !$this->extra->validable){
-            $checked = false;
+        $editable = false;
+        if(isset($this->extra->editable) && $this->extra->editable == 'true'){
+            $editable = true;
         }
 
         $precarga = isset($this->extra->precarga) ? $this->extra->precarga : null;
 
-        $hidden_arr = ['<input type="hidden" name="extra[validable]" value="'.($checked ? 'true': 'false').'" />'];
         $hidden_arr[] = '<input type="hidden" name="extra[agregable]" value="'.($agregable ? 'true': 'false').'" />';
         $hidden_arr[] = '<input type="hidden" name="extra[eliminable]" value="'.($eliminable ? 'true': 'false').'"/>';
-        $hidden_arr[] = '<input type="hidden" name="extra[importable]" value="true"/>';
+        $hidden_arr[] = '<input type="hidden" name="extra[editable]" value="'.($editable ? 'true': 'false').'"/>';
         $output = implode("\n", $hidden_arr);
 
         $column_template_html = "<tr>
                     <td><input type='text' name='extra[columns][{{column_pos}}][header]' class='form-control' value='{{header}}' /></td>
-                    <td><select class='form-control' name='extra[columns][{{column_pos}}][type]' >
-                            <option {{text_selected}}>text</option>
-                            <option {{numeric_selected}}>numeric</option>
-                        </select></td>
-                        <td><input class='form-control' type='checkbox' {{is_input_checked}} onclick='return cambiar_estado_entrada(this, {{column_pos}});'>
-                        <input type='hidden' name='extra[columns][{{column_pos}}][is_input]' value='{{is_input}}' />
-                        </td><td>
+                        <td>
                         <input class='form-control' type='input' name='extra[columns][{{column_pos}}][modal_add_text]' value='{{modal_add_text}}'/>
                         </td><td>
                         <input class='form-control' type='input' name='extra[columns][{{column_pos}}][object_field_name]' value='{{object_field_name}}'/>
                         </td><td>
                         <input class='form-control' type='checkbox' onclick='return cambiar_exportable(this,{{column_pos}});' {{is_exportable_checked}}>
                         <input type='hidden' name='extra[columns][{{column_pos}}][is_exportable]' value='{{is_exportable}}' />
+                        <td><input class='form-control' type='checkbox' {{is_input_checked}} onclick='return cambiar_estado_entrada(this, {{column_pos}});'>
+                        <input type='hidden' name='extra[columns][{{column_pos}}][is_input]' value='{{is_input}}' />
+                        </td>
                         </td><td><button type='button' class='btn btn-outline-secondary eliminar'><i class='material-icons'>close</i> Eliminar</button></td>
                         </tr>";
 
@@ -217,36 +211,21 @@ class CampoGridDatosExternos extends Campo
 
         $output .= '
             <br />
-            <!--<div class="form-group">
-                <label for="grilla_data_precarga">Variable de precarga</label>
-                <input class="form-control" type="text" name="extra[precarga]" placeholder="@@data" id="grilla_data_precarga" value="'.$precarga.'"/>
-            </div>
-            <div class="form-group">
-                <label for="grilla_validable">Es validable</label>
-                <input class="form-control" type="checkbox" id="grilla_validable" onclick="toggleValidable(this)" '.($checked ? "checked": "").' />
-            </div>
-            <div class="input-group">
-            <label for="grilla_datos_externos_validate_method">Metodo</label>
-                <select name="extra[validate_method]" id="grilla_datos_externos_validate_method">
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label for="grilla_datos_externos_validate_url">URL</label>
-                <input class="form-control" type="text" name="extra[validate_url]" placeholder="http://foo.com/bar" id="grilla_datos_externos_validate_url"/>
-            </div>-->
             <div class="input-group controls">
-                <label class="controls-label-inputt" for="cella_datos_externos_table_text_max_length">Largo m&aacute;ximo del texto en las celdas:&nbsp;</label>
-                <input class="form-control col-1" type="text" name="extra[cell_text_max_length]" id="cella_datos_externos_table_text_max_length" value="'.$cell_text_max_length.'"/>
+                <label class="controls-label-inputt" for="grilla_datos_externos_table_text_max_length">Largo m&aacute;ximo del texto en las celdas:&nbsp;</label>
+                <input class="form-control col-1" type="text" name="extra[cell_text_max_length]" id="grilla_datos_externos_table_text_max_length" value="'.$cell_text_max_length.'"/>
             </div>
             <div class="input-group controls">
                 <label for="grilla_agregable">Se puede Agregar</label>
-                <input class="controls-inputchk" type="checkbox" id="grilla_agregable" onclick="toggleAgregable(this)" '.($agregable ? "checked": "").'/>
+                <input class="controls-inputchk" type="checkbox" id="grilla_agregable" onclick="toggle_checkbox(\'agregable\', this)" '.($agregable ? "checked": "").'/>
             </div>
             <div class="input-group controls">
-                <label for="grilla_eliminable">Se puede eliminar</label>
-                <input class="controls-inputchk" type="checkbox" id="grilla_eliminable" onclick="toggleEliminable(this)" '.($eliminable ? 'checked': "").'/>
+                <label for="grilla_eliminable">Se puede Eliminar</label>
+                <input class="controls-inputchk" type="checkbox" id="grilla_eliminable" onclick="toggle_checkbox(\'eliminable\', this)" '.($eliminable ? 'checked': "").'/>
+            </div>
+            <div class="input-group controls">
+                <label for="grilla_eliminable">Se puede Editar</label>
+                <input class="controls-inputchk" type="checkbox" id="grilla_editable" onclick="toggle_checkbox(\'editable\', this)" '.($editable ? 'checked': "").'/>
             </div>
             <div class="input-group controls">
                 <label class="controls-label-inputt" for="grilla_datos_externos_posicion_botones">Posicion botones</label>
@@ -255,12 +234,7 @@ class CampoGridDatosExternos extends Campo
                     <option value="right_side" '.($buttons_position == "right_side" ? 'selected=selected': '').'>Al lado</option>
                 </select>
             </div>
-            <!--
-                        <div class="input-group">
-                            <label for="grilla_datos_externos_import_posicion">Importable</label>
-                            <input type="checkbox" onclick="(this)" checked />
-                        </div>
-            -->
+            
             <div class="columnas">
                 <script type="text/javascript">
                     var column_template = "'.$column_template_html.'";
@@ -280,8 +254,9 @@ class CampoGridDatosExternos extends Campo
                             reindex_columns(table);
                         });
                     });
-                    $("#cella_datos_externos_table_text_max_length").keydown(function(evt){
+                    $("#grilla_datos_externos_table_text_max_length").keydown(function(evt){
                         var key_code = evt.which;
+                        // solo numeros
                         if( key_code != 13 && key_code != 9 && key_code != 8 && ( key_code < 48 || key_code > 57 ) ) {
                             // 13 enter, 9 tab, 8 backspace
                             evt.preventDefault();
@@ -297,10 +272,9 @@ class CampoGridDatosExternos extends Campo
                     <thead>
                         <tr>
                             <th>Etiqueta</th>
-                            <th>Tipo</th>
-                            <th>Es entrada</th>
                             <th>Texto al agregar</th>
-                            <th>Nombre del campo<br/>si es objeto</th>
+                            <th>Nombre del campo</th>
+                            <th>Es entrada</th>
                             <th>Exportable</th>
                             <th>Acciones</th>
                         </tr>
@@ -324,13 +298,7 @@ class CampoGridDatosExternos extends Campo
                     $column = str_replace('{{is_input}}', 'false', $column);
                     $column = str_replace('{{is_input_checked}}', '', $column);
                 }
-                if(isset($c->type) && $c->type == 'numeric'){
-                    $column = str_replace('{{numeric_selected}}', 'selected', $column);
-                    $column = str_replace('{{text_selected}}', '', $column);
-                }else{
-                    $column = str_replace('{{numeric_selected}}', '', $column);
-                    $column = str_replace('{{text_selected}}', 'selected', $column);
-                }
+                
                 if(isset($c->is_exportable) && $c->is_exportable=="true"){
                     $column = str_replace('{{is_exportable}}', 'true', $column);
                     $column = str_replace('{{is_exportable_checked}}', 'checked', $column);
