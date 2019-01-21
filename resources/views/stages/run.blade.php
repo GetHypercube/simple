@@ -6,13 +6,6 @@
 @endsection
 
 @section('content')
-    <ul class="steps">
-        @for ($i = 0; $i < $num_pasos; $i++)
-            <li class="{{($i <= $secuencia) ? 'active' : '' }}" style="width: {{round(100 / $num_pasos)}}%;">
-                <span>Paso {{$i + 1}}</span>
-            </li>
-        @endfor
-    </ul>
     <div style="clear: both;"></div>
     @if ($etapa->Tarea->vencimiento)
         <div class="alert alert-warning">Atención. Esta etapa {{$etapa->getFechaVencimientoAsString()}}.</div>
