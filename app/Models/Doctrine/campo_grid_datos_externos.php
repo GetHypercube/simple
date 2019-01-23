@@ -13,23 +13,8 @@ class CampoGridDatosExternos extends Campo
 
     protected function display($modo, $dato, $etapa_id = false)
     {
-        if ($etapa_id) {
-            $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-            $regla = new Regla($this->valor_default);
-            $valor_default = $regla->getExpresionParaOutput($etapa->id);
-        } else {
-            $valor_default = $this->valor_default;
-        }
-
         $columns = $this->extra->columns;
-        $eliminable = 'false';
-        // FIXME: Comparar contra el tipo correcto
-        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true'){
-            $eliminable = true;
-        }else{
-            $eliminable = false;
-        }
-
+        
         $botones = [];
 
         if(isset($this->extra->agregable) && $this->extra->agregable == 'true'){
@@ -43,6 +28,21 @@ class CampoGridDatosExternos extends Campo
             $botones_position = $this->extra->buttons_position;
         }else{
             $botones_position = 'right_side';
+        }
+
+        $editable = false;
+        if((isset($this->extra->editable) && $this->extra->editable == 'true')){
+            $editable = true;
+        }
+
+        $eliminable = false;
+        if((isset($this->extra->eliminable) && $this->extra->eliminable == 'true')){
+            $eliminable = true;
+        }
+
+        $tiene_acciones = false;
+        if( $eliminable || $editable ){
+            $tiene_acciones = true;
         }
 
         $display_modal = '
@@ -59,7 +59,7 @@ class CampoGridDatosExternos extends Campo
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="modal_accept_button_'.$this->id.'" class="btn btn-outline-secondary">Guardar</button>
+                        <button type="button" id="modal_accept_button_'.$this->id.'" class="btn btn-outline-secondary">Aceptar</button>
                     </div>
                 </div>
             </div>
@@ -98,45 +98,49 @@ class CampoGridDatosExternos extends Campo
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
 
-        $data_array = array();
-        if ($this->valor_default) {
-            if($etapa_id) {
-                $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-                $regla = new Regla($this->valor_default);
-                $data = $regla->getExpresionParaOutput($etapa->id);
-                $data = json_decode($data,true);                
-                if($data !== false){
-                    $data_array = array();
-                    if(count($data)){
-                        $contador = 0;
-                        foreach($data as $d){
-                            $arreglo_tmp = array_values($d);
-                            array_push($data_array, $arreglo_tmp);
+        $data = [];
+        if($dato && count($dato->valor) > 0 ){
+            if(is_string($dato->valor))
+                $data = json_decode($dato->valor, true);
+            else
+                $data = $dato->valor;
+            if( ! $this->is_array_associative($data) ){
+                // hay que corregir llenando con vacios cuando la columna no sea exportable
+                $data_temp = [];
+                for($i=0; $i<count($data);$i++){
+                    for( $j=0; $j < count($columns); $j++){
+                        
+                        if( $columns[$j]->is_exportable == 'false'){
+                            array_splice($data[$i], $j, 0, '');
+                            
                         }
                     }
                 }
             }
+        }else if ($etapa_id ){
+            $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+            $regla = new Regla($this->valor_default);
+            $data = $regla->getExpresionParaOutput($etapa->id);
         }
-
-        $valor_default = json_decode($valor_default, true);
-        $data = (isset($valor_default) && is_array($valor_default) ) ? $valor_default: [];
-        $data = json_encode($data);
+        if( is_string($data))
+            $data = json_decode($data, true);
         $cell_max_length = (isset($this->extra->cell_text_max_length) ? $this->extra->cell_text_max_length: $this->cell_text_max_length_default);
 
         $display .='
         <script>
                 $(document).ready(function(){
-                    var data = '.$data.';
+                    var data = '.json_encode($data).';
                     var is_array = '.(count($data) > 0 ? "Array.isArray(data[0])" : "false" ).';
                     var columns = '.json_encode($columns).';
                     grillas_datatable['.$this->id.'] = {};
-                    grillas_datatable['.$this->id.'].eliminable = '.($eliminable ? 'true': 'false').';
-                    grillas_datatable['.$this->id.'].columns_length = columns.length;
-                    if('.($eliminable ? 'true': 'false').'){
-                        grillas_datatable['.$this->id.'].columns_length++;
+                    grillas_datatable['.$this->id.'].tiene_acciones = '.($tiene_acciones ? 'true': 'false').';
+                    grillas_datatable['.$this->id.'].editable = '.($editable ? 'true': 'false').';
+                    grillas_datatable['.$this->id.'].cantidad_columnas = columns.length;
+                    if('.($tiene_acciones ? 'true': 'false').'){
+                        grillas_datatable['.$this->id.'].cantidad_columnas++;
                     }
                     
-                    init_tables('.$this->id.', "'.$modo.'",columns,'.$cell_max_length.',is_array);
+                    init_tables('.$this->id.', "'.$modo.'",columns,'.$cell_max_length.',is_array, '.json_encode($editable).','.json_encode($eliminable).');
                     grillas_datatable['.$this->id.'].table.draw(true);
                     
                     if(data.length > 0){    
@@ -330,4 +334,9 @@ class CampoGridDatosExternos extends Campo
         $request->validate(['extra.columns' => 'required']);
     }
 
+    private function is_array_associative($arr)
+    {
+        if ([] === $arr) return false;
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
 }
