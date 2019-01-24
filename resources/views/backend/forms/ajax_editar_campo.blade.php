@@ -11,6 +11,21 @@
         line-height: 20px;
     }
 </style>
+
+<script src="{{asset('js/helpers/fileuploader.js')}}"></script>
+<script>
+    var uploader = new qq.FileUploader({
+        element: document.getElementById('file-uploader'),
+        params: {_token: '{{csrf_token()}}'},
+        action: '/backend/uploader/masiva',
+        onComplete: function (id, filename, respuesta) {
+            $("input[name=logo]").val(respuesta.file_name);
+            $("img.logo").attr("src", "/logos/" + respuesta.file_name);
+            $('#file_carga_masiva').val(respuesta.file_name);
+        }
+    });
+</script>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $('.validacion').typeahead({
@@ -427,7 +442,7 @@
                         });
 
                         //Para la carga mediante archivo
-                        document.getElementById('file-input').addEventListener('change', leerArchivo, false);
+                        // document.getElementById('file-input').addEventListener('change', leerArchivo, false);
 
                         function leerArchivo(e){
                             var archivo = e.target.files[0];
@@ -469,8 +484,8 @@
                     <button class="btn btn-light nuevo" type="button"><i class="material-icons">add</i> Nuevo
                     </button>
                     <br/>
-                    Para cargar registros masivos mediante archivo, en formato .CSV, separado por punto y coma(;).
-                    <input type="file" name="file-input" id="file-input"/>
+                    <!-- Para cargar registros masivos mediante archivo, en formato .CSV, separado por punto y coma(;).
+                    <input type="file" name="file-input" id="file-input"/> -->
                     <!--<pre id="contenido-archivo"></pre>-->
                     <table class="table mt-3">
                         <thead>

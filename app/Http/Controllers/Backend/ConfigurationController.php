@@ -876,4 +876,14 @@ class ConfigurationController extends Controller
 
         return response()->json(array('code' => $code, 'mensaje' => $mensaje));
     }
+
+    public function masiva(Request $request)
+    {
+        $allowedExtensions = ['csv'];
+        $pathLogos = public_path('uploads/tmp/');
+        is_dir(public_path('uploads/tmp/')) ? TRUE : mkdir(public_path('uploads/tmp/'));
+        $puede_escribir = is_writable($pathLogos) ? 1 : 0;
+        $response = (new FileUploader($allowedExtensions))->handleUpload($pathLogos);
+        return $response;
+    }
 }
