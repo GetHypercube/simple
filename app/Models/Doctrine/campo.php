@@ -57,8 +57,6 @@ class Campo extends Doctrine_Record
             $campo = new CampoRecaptcha();
         else if ($tipo == 'maps')
             $campo = new CampoMaps();
-        else if ($tipo == 'civiles')
-            $campo = new CampoEstadoCivil();
         else if ($tipo == 'grid_datos_externos')
             $campo = new CampoGridDatosExternos();
         else if ($tipo == 'provincias')
@@ -113,7 +111,6 @@ class Campo extends Doctrine_Record
             'CampoAgenda' => array('tipo' => 'agenda'),
             'CampoRecaptcha' => array('tipo' => 'recaptcha'),
             'CampoMaps' => array('tipo' => 'maps'),
-            'CampoEstadoCivil' => array('tipo' => 'civiles'),
             'CampoGridDatosExternos' => array('tipo' => 'grid_datos_externos'),
             'CampoProvincias' => array('tipo' => 'provincias'),
         ));

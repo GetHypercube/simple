@@ -110,8 +110,6 @@
                     </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'maps')">Mapa
                     </button>
-					<button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'civiles')">Estado Civil
-                    </button>
                 </div>
             </div>
 
