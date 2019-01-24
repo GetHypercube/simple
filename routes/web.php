@@ -17,6 +17,8 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/uploader/datos_get/{id}/{token}', 'UploadController@datos_get');
     Route::get('/uploader/datos_get_s3/{id}/{token}', 'UploadController@datos_get_s3');
 
+
+
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::get('login/claveunica', 'Auth\LoginController@redirectToProvider')->name('login.claveunica');
     Route::get('login/claveunica/callback', 'Auth\LoginController@handleProviderCallback')->name('login.claveunica.callback');
@@ -75,6 +77,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::get('/uploader/logo_certificado_get/{filename}', 'UploaderController@logo_certificado_get')->name('uploader.logo_certificado_get');
         Route::view('/cuentas', 'backend.cuentas')->name('cuentas');
         Route::post('/cuentas', 'ConfigurationController@saveMyAccount')->name('cuentas.save');
+        Route::post('/uploader/masiva', 'ConfigurationController@masiva')->name('uploader.masiva');
 
         //Home
         Route::get('gestion/widget_load/{widget_id}', 'ManagementController@widget_load')->name('management.widget_load');

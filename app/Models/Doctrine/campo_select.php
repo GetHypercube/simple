@@ -100,6 +100,12 @@ callback([
                 </pre>
                 </div>';
 
+        $html .= 'Para cargar registros masivos mediante archivo, en formato .CSV, separado por punto y coma(;).<br>';
+        $html .= '<div class="controls">';
+        // $html .= '<div id="file-uploader" data-action="'.url('uploader/masiva').'"></div>';
+        $html .= '<div id="file-uploader"></div>';
+        $html .= '<input id="file_carga_masiva" type="hidden" name="file_carga_masiva" /></div>';
+
         return $html;
     }
 
