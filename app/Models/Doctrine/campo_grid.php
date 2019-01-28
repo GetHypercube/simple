@@ -100,8 +100,36 @@ class CampoGrid extends Campo
                         });
                         $("#formEditarCampo .columnas").on("click",".eliminar",function(){
                             $(this).closest("tr").remove();
+                            reindex_columns();
                         });
                     });
+
+                    function reindex_columns(){
+                        var table = $("#formEditarCampo table").first()
+                        var num = -2; // la primera fila (0) es headers
+                        table.find("tr").each(
+                            function(tr_index, tr_ele){
+                                num++;
+                                $(this).find("td").each(
+                                    function(td_index, td_ele){
+                                        $(this).find(":input").each(function(child_index, child_ele){
+                                            var old_name= $(child_ele).attr("name");
+                                            if( typeof old_name === "undefined"){
+                                                // this un elemento que usa name
+                                                $(this).data("rownum", num);
+                                                return;
+                                            }
+                    
+                                            var new_name = old_name.substring(0, old_name.indexOf("[", old_name.indexOf("[") + 1) + 1);
+                                            new_name += num;
+                                            new_name += old_name.substring(old_name.indexOf("]", old_name.indexOf("]") + 1) );
+                                            $(this).attr("name", new_name);
+                                        })
+                                    }
+                                )
+                            }
+                        )
+                    }                    
                 </script>
                 <h4>Columnas</h4>
                 <button class="btn btn-light nuevo" type="button"><i class="material-icons">add</i> Nuevo</button>
