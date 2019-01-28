@@ -188,20 +188,29 @@ class CampoGridDatosExternos extends Campo
         $hidden_arr[] = '<input type="hidden" name="extra[editable]" value="'.($editable ? 'true': 'false').'"/>';
         $output = implode("\n", $hidden_arr);
 
-        $column_template_html = "<tr>
-                    <td><input type='text' name='extra[columns][{{column_pos}}][header]' class='form-control' value='{{header}}' /></td>
+        $column_template_html = "
+                    <tr>
                         <td>
-                        <input class='form-control' type='input' name='extra[columns][{{column_pos}}][modal_add_text]' value='{{modal_add_text}}'/>
-                        </td><td>
-                        <input class='form-control' type='input' name='extra[columns][{{column_pos}}][object_field_name]' value='{{object_field_name}}'/>
-                        </td><td>
-                        <input class='form-control' type='checkbox' onclick='return cambiar_exportable(this,{{column_pos}});' {{is_exportable_checked}}>
-                        <input type='hidden' name='extra[columns][{{column_pos}}][is_exportable]' value='{{is_exportable}}' />
-                        <td><input class='form-control' type='checkbox' {{is_input_checked}} onclick='return cambiar_estado_entrada(this, {{column_pos}});'>
-                        <input type='hidden' name='extra[columns][{{column_pos}}][is_input]' value='{{is_input}}' />
+                            <input type='text' name='extra[columns][{{column_pos}}][header]' class='form-control' value='{{header}}' />
                         </td>
-                        </td><td><button type='button' class='btn btn-outline-secondary eliminar'><i class='material-icons'>close</i> Eliminar</button></td>
-                        </tr>";
+                        <td>
+                            <input class='form-control' type='input' name='extra[columns][{{column_pos}}][modal_add_text]' value='{{modal_add_text}}'/>
+                        </td>
+                        <td>
+                            <input class='form-control' type='input' name='extra[columns][{{column_pos}}][object_field_name]' value='{{object_field_name}}'/>
+                        </td>
+                        <td>
+                            <input class='form-control' type='checkbox' {{is_input_checked}} onclick='return cambiar_estado_entrada(this, {{column_pos}});'>
+                            <input type='hidden' name='extra[columns][{{column_pos}}][is_input]' value='{{is_input}}' />
+                        </td>
+                        <td>
+                            <input class='form-control' type='checkbox' onclick='return cambiar_exportable(this,{{column_pos}});' {{is_exportable_checked}}>
+                            <input type='hidden' name='extra[columns][{{column_pos}}][is_exportable]' value='{{is_exportable}}' />
+                        </td>
+                        <td>
+                            <button type='button' class='btn btn-outline-secondary eliminar'><i class='material-icons'>close</i> Eliminar</button>
+                        </td>
+                    </tr>";
 
         $column_template_html = str_replace("\n", "", $column_template_html);
 
