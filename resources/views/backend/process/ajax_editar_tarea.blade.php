@@ -156,6 +156,21 @@
             return false;
         });
 
+        //Permite que los eventos sean reordenables
+        $(".tab-eventos table tbody").sortable({
+            revert: true,
+            stop: function () {
+                //Reordenamos las posiciones
+                $(this).find("tr").each(function (i, e) {
+                    $(e).find("td:nth-child(1)").text(i + 1);
+                    $(e).find("input[name*=accion_id]").attr("name", "eventos[" + (i + 1) + "][accion_id]");
+                    $(e).find("input[name*=regla]").attr("name", "eventos[" + (i + 1) + "][regla]");
+                    $(e).find("input[name*=instante]").attr("name", "eventos[" + (i + 1) + "][instante]");
+                    $(e).find("input[name*=paso_id]").attr("name", "eventos[" + (i + 1) + "][paso_id]");
+                });
+            }
+        });
+
         //$("#modalEditarTarea form input[name=socket_id_emisor]").val(socketId);
         //$("#modalEditarTarea .botonEliminar").attr("href",function(i,href){return href+"?socket_id_emisor="+socketId;})
     });
