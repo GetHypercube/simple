@@ -1,20 +1,23 @@
 
 var nombre_columna_acciones = '_acciones_';
-var grid_accion_eliminar = "<div style='float: left;'><input type='checkbox' onclick='selectToDelete(event, this)' />\
-<button type='button' class='btn btn-outline-secondary btn_grid_action' onclick='deleteRow(event, this)'>\
-<i class='material-icons'>delete</i></button></div>";
+var grid_accion_eliminar = "<input type='checkbox' onclick='selectToDelete(event, this)' \
+style='margin:0;vertical-align:middle;' />\
+<button type='button' class='btn btn-outline-secondary btn_grid_action' onclick='deleteRow(event, this)' \
+style='margin:0;'>\
+<i class='material-icons'>delete</i></button>";
 
-var grid_accion_editar = "<button style='float:right;' type='button' class='btn btn-outline-secondary btn_grid_action' onclick='edit_row(event, this)'>\
+var grid_accion_editar = "<button type='button' class='btn btn-outline-secondary btn_grid_action' \
+style='margin:0;' onclick='edit_row(event, this)'>\
 <i class='material-icons'>edit</i></button>";
 
-var grid_acciones = "{{accion_eliminar}}{{accion_editar}}";
+var grid_acciones = "<div>{{accion_eliminar}}{{accion_editar}}</div>";
 var grillas_datatable = {};
 
 var grilla_datos_externos_eliminar = function(grilla_id){
     if(grillas_datatable[grilla_id].table.rows('.to_delete').data().length <= 0){
         return;
     }
-    if(!confirm('Va a elimar las filas seleccionadas. ¿Desea continuar?')) return;
+    if(!confirm('Va a eliminar las filas seleccionadas. ¿Desea continuar?')) return;
     grillas_datatable[grilla_id].table.rows('.to_delete').remove().draw(true);
 }
 
@@ -48,13 +51,14 @@ var modal_agregar_a_grilla = function(grilla_id){
     modal_grande.modal("hide");
 
     grillas_datatable[grilla_id].table.row.add( to_add ).draw( true );
+    grillas_datatable[grilla_id].table.columns.adjust();
 }
 
 var deleteRow = function(evt, obj){
     evt.stopPropagation();
     evt.preventDefault();
     evt.cancelBubble = true;
-    if(!confirm('Va a elimar la fila. ¿Desea continuar?')) return;
+    if(!confirm('Va a eliminar la fila. ¿Desea continuar?')) return;
     var c_tr = $(obj).closest('tr:parent');
     var grilla_id = $(obj).closest('table:parent').data('grilla_id');
     grillas_datatable[grilla_id].table.row(c_tr).remove().draw(true);
@@ -156,7 +160,7 @@ var add_tooltips = function(grilla_id){
         // this es tr
 
         $(tr_element).find('td').each(function(index, td_element){
-            if(index > last_column_index)
+            if(index >= last_column_index)
                 return;
             var td_jquery = $(td_element);
             var text = td_jquery.text();
@@ -334,7 +338,13 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
         if( ! grillas_datatable[grilla_id].editable) {
             return function(){}
         }
-        return function() {
+        return function(event) {
+            
+            if( (event.target.tagName.toLocaleLowerCase() == 'td' || event.target.tagName.toLocaleLowerCase() == 'div' ) && $(event.target).children('button').length > 0 ){
+                
+                return;
+            }
+            
             var j_row = $(this);
             var dt_row = grillas_datatable[grilla_id].table.row( this );
             var modal = $("#table_alter_modal_" + grilla_id );
@@ -410,7 +420,11 @@ var toggle_checkbox = function(name, obj){
 
 var open_add_modal = function(grilla_id) {
     var modal = $("#table_alter_modal_" + grilla_id );
-    $('#add_to_table_modal_label_'+grilla_id).text('Nuevo Registro')
+    $('#add_to_table_modal_label_'+grilla_id).text('Nuevo Registro');
+    $('#modal-body-'+grilla_id, 'form').find(':input:not([type=hidden])').each(function(idx, elemento) {
+        $(elemento).val("");
+    });
+    
     $('#modal_accept_button_' + grilla_id).prop("onclick", null).off("click");
     $('#modal_accept_button_' + grilla_id).on("click", function(grilla_id){
         return function() {

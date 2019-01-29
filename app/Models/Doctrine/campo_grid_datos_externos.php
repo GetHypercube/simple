@@ -143,15 +143,15 @@ class CampoGridDatosExternos extends Campo
                     init_tables('.$this->id.', "'.$modo.'",columns,'.$cell_max_length.',is_array, '.json_encode($editable).','.json_encode($eliminable).');
                     grillas_datatable['.$this->id.'].table.draw(true);
                     
-                    if(data.length > 0){    
+                    if(data != null && data.length > 0){    
                         if(is_array){
                             grilla_populate_arrays('.$this->id.', data);
                         }else{
                             grilla_populate_objects('.$this->id.', data);
                         }
-                    }else{
-                        grillas_datatable['.$this->id.'].table.draw(true);
                     }
+                    grillas_datatable['.$this->id.'].table.draw(true);
+                    grillas_datatable['.$this->id.'].table.columns.adjust();
                 });
             </script>
         ';
