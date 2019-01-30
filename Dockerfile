@@ -34,7 +34,7 @@ RUN echo -e "\
   error_reporting = E_ALL\n \
   post_max_size = 100M\n \
   upload_max_filesize = 100M\n \
-  max_execution_time = 1200s" \
+  max_execution_time = 12000s" \
   > /usr/local/etc/php/php.ini
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
