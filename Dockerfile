@@ -28,14 +28,14 @@ RUN docker-php-ext-install \
   sockets
 
 # Configuraciones PHP
-RUN echo -e "\
-  log_errors = On\n \
-  error_log = /dev/stderr\n \
-  error_reporting = E_ALL\n \
-  post_max_size = 100M\n \
-  upload_max_filesize = 100M\n \
-  max_execution_time = 12000s" \
-  > /usr/local/etc/php/php.ini
+RUN echo "\
+log_errors = On\n\
+error_log = /dev/stderr\n\
+error_reporting = E_ALL\n\
+post_max_size = 100M\n\
+upload_max_filesize = 100M\n\
+max_execution_time = 12000s" > /usr/local/etc/php/php.ini
+
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
   && apt-get remove --purge -y curl \
