@@ -13,21 +13,21 @@ class FileS3Uploader
     private $multipart_key = null;
     private $allowedExtensions = array();
     public static $sizeLimit = 20 * 1024 * 1024;
-    private $file;
     private $tramite_id;
-    private $file_tipo = 's3';
+    public static $file_tipo = 's3';
     public static $amazon_algo = 'md5';
     public $filename = null;
     private $bucket_path;
+    private $campo_id;
 
-    function __construct(array $allowedExtensions = array(), $tramite_id, $filename=null)
+    function __construct(array $allowedExtensions = array(), $tramite_id, $filename, $campo_id)
     {
         $this->tramite_id = $tramite_id;
         $this->allowedExtensions = array_map("strtolower", $allowedExtensions);
-        $this->file = false;
         $this->filename = self::filenameToAscii($filename);
         $this->multipart_key = $tramite_id.'/'.$this->filename;
         $this->bucket_path = $tramite_id.'/'.$filename;
+        $this->campo_id = $campo_id;
     }
 
     private function toBytes($str)
@@ -57,13 +57,14 @@ class FileS3Uploader
         );
 
         if($response) {
-            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
+            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, self::$file_tipo, $this->tramite_id);
             if( ! $file ){
                 $file = new \File();
                 $file->filename = $this->filename;
                 $file->llave = strtolower(str_random(12));
                 $file->tramite_id = $this->tramite_id;
-                $file->tipo = $this->file_tipo;
+                $file->tipo = self::$file_tipo;
+                $file->campo_id = $this->campo_id;
             }
             $multipart_id = $response['UploadId'];
             $aux = json_decode(json_encode($file->extra), true);
@@ -78,7 +79,7 @@ class FileS3Uploader
     }
 
     private function getMultiPartId(){
-        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
+        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, self::$file_tipo, $this->tramite_id);
         if($file && isset($file->extra->multipart_id)){
             return $file->extra->multipart_id;
         }
@@ -101,7 +102,7 @@ class FileS3Uploader
             return $multipart_id;
         }
 
-        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
+        $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, self::$file_tipo, $this->tramite_id);
         if(! $file ){
             Log::error('No se encontro en la base el registro correspondiente al archivo que esta siendo cargado.');
             $err_msg = 'Ocurrió un error al iniciar la carga de archivo.';
@@ -144,15 +145,8 @@ class FileS3Uploader
                 return ['error'=> $err_msg, 'success'=> false];
             }
 
-            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
-            if( ! $file ){
-                $file = new \File();
-                $file->llave = strtolower(str_random(12));
-                $file->tramite_id = $this->tramite_id;
-                $file->tipo = $this->file_tipo;
-            }
-            $file->filename = $this->filename;
-
+            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, self::$file_tipo, $this->tramite_id);
+            
             $s3_multipart_metadata = $driver->getAdapter()->getMetadata($this->multipart_key);
             $extra_arr['s3_filepath'] = $s3_multipart_metadata['dirname'];
             $extra_arr['s3_bucket'] = $result['Bucket'];
@@ -167,7 +161,7 @@ class FileS3Uploader
             'part_number' => $part_number,
             'success'=> $result['@metadata']['statusCode'] === 200 ? true: false,
             'file_name' => $this->filename,
-            'URL' => '/uploader/datos_get_s3/'.$file->id.'/' . $file->llave,
+            'URL' => '/uploader/datos_get_s3/'.$file->id.'/'.$this->campo_id. '/' . $file->llave,
             'hash' => $hash,
             'algorithm' => self::$amazon_algo
         ];
@@ -203,39 +197,44 @@ class FileS3Uploader
         $driver = $disk->getDriver();
 
         $metadata = ['Metadata' => ['tramite_id' => $this->tramite_id]];
+        
         try{
             $status_bool = $disk->put($full_path, $f_input, $metadata);
         }catch(\Aws\S3\Exception\S3Exception $e){
             Log::error($e);
             $status_bool = false;
             $err_msg = 'Ocurrió un error con S3 durante la carga del archivo.';
+            Log::error($err_msg);
         }catch(\Exception $e){
             Log::error($e);
             $status_bool = false;
             $err_msg = 'Ocurrió un error durante la carga del archivo.';
+            Log::error($err_msg);
         }
 
         if ($status_bool) {
-            $aws_metadata = $driver->getAdapter()->getMetadata($full_path);            
-            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, $this->file_tipo, $this->tramite_id);
+            $aws_metadata = $driver->getAdapter()->getMetadata($full_path);
+            $file = Doctrine::getTable('File')->findOneByFilenameAndTipoAndTramiteId($this->filename, self::$file_tipo, $this->tramite_id);
             if( ! $file ){
                 $file = new \File();
-                $file->tipo = $this->file_tipo;
+                $file->tipo = self::$file_tipo;
                 $file->llave = strtolower(str_random(12));
                 $file->tramite_id = $this->tramite_id;
                 $file->filename = $this->filename;
+                $file->campo_id = $this->campo_id;
                 $file->save();
             }
             
+            $hash = str_replace('"', '',$aws_metadata['etag']);
             $extra_arr = [];
 
-            $f_info = pathinfo($this->filename);
             $extra_arr['file_name'] = $this->filename;
             $extra_arr['s3_bucket'] = env('AWS_BUCKET');  // no viene en los metadatos
             $extra_arr['s3_filepath'] = $aws_metadata['dirname'];
             
             $extra_arr['s3_file_size'] = $aws_metadata['size'];
             $extra_arr['s3_mimetype'] = $aws_metadata['mimetype'];
+            $extra_arr['hash'] = $hash;
             $file->extra = $extra_arr;
             $file->save();
           
@@ -244,13 +243,13 @@ class FileS3Uploader
                 'part_number' => 1,
                 'success'=> true,
                 'file_name' => $this->filename,
-                'URL' => '/uploader/datos_get_s3/'.$file->id.'/' . $file->llave,
+                'URL' => '/uploader/datos_get_s3/'.$file->id.'/'.$this->campo_id.'/' . $file->llave,
                 'hash' => str_replace('"', '',$aws_metadata['etag']),
                 'algorithm' => self::$amazon_algo
             ];
         } 
         
-        return ['error' => $err_msg, 'success' => false];
+        return ['error' => $status_bool, 'success' => false];
     }
 
     public static function filenameToAscii($filename){

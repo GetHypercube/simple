@@ -2,12 +2,13 @@
 require_once('campo.php');
 
 use App\Helpers\Doctrine;
+use function GuzzleHttp\json_decode;
 
 class CampoFileS3 extends Campo
 {
     public $requiere_datos = false;
     public $min_validations = [];
-    public $block_size = 8388608; // 8 MB
+    public $block_size = 5242880; // 5 MB
 
     protected function display($modo, $dato, $etapa_id = false)
     {
@@ -15,6 +16,26 @@ class CampoFileS3 extends Campo
         if(isset($this->validacion) && is_array($this->validacion) && in_array('required', $this->validacion)){
             $set_default = false;
         }
+
+        $saved_url = null; // string
+        $saved_info = null; // json
+        
+        if($dato && isset($dato->valor) && isset($dato->valor->URL) && strlen($dato->valor->URL) > 1){
+            $saved_url = isset($dato->valor->URL) ? $dato->valor->URL: $saved_url; // string
+            $saved_info_obj = isset($dato->valor->info) ? $dato->valor->info: $saved_info; // obj
+            $saved_info = json_encode($saved_info_obj);
+        }else if ($etapa_id ){
+            $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+            $regla = new Regla($this->valor_default);
+            $data = $regla->getExpresionParaOutput($etapa->id);
+            if($data)
+                $data = json_decode($data, false);
+            
+            $saved_url = isset($data->URL) ? $data->URL: $saved_url; // string
+            $saved_info_obj = isset($data->info) ? $data->info: $saved_info; // obj
+            $saved_info = json_encode($saved_info_obj);
+        }
+
         if(isset($this->extra->block_size)&& is_numeric($this->extra->block_size)){
             $this->block_size = intval($this->extra->block_size);
         }
@@ -40,6 +61,9 @@ class CampoFileS3 extends Campo
         $display .= '
         <div class="controls">
             <input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value=""  />
+            ';
+        if ($modo != 'visualizacion'){
+            $display .= '
             <label for="file_input_'.$this->id.'">Archivo:</label>
             <input id="file_input_'.$this->id.'" type="file">
             <div id="parts_div_'.$this->id.'" style="display:none;" class="parts_div">
@@ -54,35 +78,32 @@ class CampoFileS3 extends Campo
                 </button>
                 <input id="but_stop_'.$this->id.'" type="button" value="Detener subida" disabled="true"
                     class="btn btn-secondary"/>
-            </div>
-
+            </div>';
+        } // fin if visualizacion
+        $display .= '
             <script>
                 $(document).ready(function() {
                     var token = $(\'meta[name="csrf-token"]\').attr(\'content\');
-                    set_up('.$this->id.', "'.url("uploader/datos_s3/" . $this->id . "/" . $etapa->id) .'", token, '.$this->block_size.');
-                    set_default_s3('.$this->id.', '.($set_default ? "true": "false").');
-                });
-            </script>
-        ';
-
-        if ($dato) {
-            $file = Doctrine_Query::create()->from('File f')
-                    ->where("f.tipo = 's3' AND f.campo_id = ?", $this->id)
-                    ->orderBy('f.id DESC')
-                    ->fetchOne();
-
-            if($file != false && isset($file->extra->URL)){
-                $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="' . $file->extra->URL . '" target="_blank">'.$file->filename.'</a>';
-                if (!($modo == 'visualizacion'))
-                  $display .= '(<a class="remove" href="#">X</a>)</p>';
+                    set_up('.$this->id.', "'.url("uploader/datos_s3/" . $this->id . "/" . $etapa->id) .'", 
+                            token, '.$this->block_size.','.env('AWS_S3_MAX_SINGLE_PART', 5242800).');
+                    '.($set_default ? 'set_default_s3_hidden('.$this->id.');': '');
+            if( ! is_null($saved_url)){
+                $display .= 'set_s3_hidden('.$this->id.',"'.$saved_url.'",'.$saved_info.');';
             }
-        } else {
+            $display .= '
+                });</script>';
+
+        if(is_null($saved_url)){
             $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="#"></a></p>';
+        } else {
+            $etapa = Doctrine::getTable('Etapa')->findOneById($etapa_id);
+            $file_key = substr($saved_url, strrpos($saved_url, '/') + 1);
+            $file = Doctrine::getTable('File')->findOneByLlaveAndTipoAndTramiteId($file_key, \App\Helpers\FileS3Uploader::$file_tipo, $etapa->tramite_id);
+            $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="' . $saved_url . '" target="_blank">'.(isset($file->filename) ? $file->filename: '').'</a>';
         }
 
         if ($this->ayuda)
             $display .= '<span class="form-text text-muted">' . $this->ayuda . '</span>';
-
             $display .= '</div>';
         return $display;
     }
@@ -98,14 +119,21 @@ class CampoFileS3 extends Campo
         if (isset($this->extra->info_s3)) {
             $info_s3 = ($this->extra->info_s3);
         }
+        
+        if(isset($this->extra->block_size)&& is_numeric($this->extra->block_size)){
+            $this->block_size = intval($this->extra->block_size);
+        }
 
-
+        $block_sizes = [ 5242880 => '5MB', 6291456 => '6MB', 8388608 => '8MB'];
         $output = '<div class="controls s3_upload_size">
                         <label class="control-label">Tamaño de cada bloque</label>
-                        <select name="extra[block_size]" class="form-control">
-                            <option value="8388608" selected>8 MB</option>
-                        </select>
-                    </div>';
+                        <select name="extra[block_size]" class="form-control">';
+        foreach ($block_sizes as $block_size => $text) {
+            $output .= "<option value='".$block_size."' ".(($this->block_size == $block_size) ? 'selected="selected"': '')." >".$text."</option>\n";
+        }
+
+        $output .= '</select>
+                </div>';
         $output .= '<div class="controls s3_extra_files">';
         $output .= '<label class="control-label">Tipos de archivos por extensión</label>';
         $output .= '<select name="extra[filetypes][]" class="form-control" multiple>';
