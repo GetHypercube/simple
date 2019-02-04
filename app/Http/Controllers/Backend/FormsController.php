@@ -215,6 +215,7 @@ class FormsController extends Controller
         $campo->documento_id = $request->input('documento_id');
         $campo->extra = $request->input('extra');
         $campo->agenda_campo = $request->input('agenda_campo');
+        $campo->condiciones_extra_visible = $request->has('condiciones') ? json_encode($request->input('condiciones')) : NULL;
         $campo->save();
 
         return response()->json(['validacion' => true, 'redirect' => route('backend.forms.edit', [$campo->Formulario->id])]);

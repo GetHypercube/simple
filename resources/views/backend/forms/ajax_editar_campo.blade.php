@@ -247,178 +247,241 @@
                 <?php } ?>
                 <?php endif ?>
                 <label>Visible solo si</label>
-                <div class="campoDependientes">
-                    <div class="form-inline">
-                        <input type="text" class="form-control col-4" name="dependiente_campo"
-                               value="<?=$campo->dependiente_campo?>"/>
-                        <div class="btn-group dependiente ml-1" style="display: inline-block; vertical-align: top;">
-                            <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
-                                <i class="material-icons">view_list</i> <span class="caret align-middle"></span>
-                            </a>
-                            <div class="dropdown-menu">
-                                <button class="dropdown-item" type="button"><b>Campos</b></button>
-                                @foreach ($formulario->Proceso->getCampos() as $c)
-                                    <a class="dropdown-item" href="#"><?= $c->nombre ?></a>
-                                @endforeach
-                                <div class="dropdown-divider"></div>
-                                <button class="dropdown-item" type="button"><b>Variables</b></button>
-                                @foreach ($formulario->Proceso->getVariables() as $v)
-                                    <a class="dropdown-item" href="#"><?= $v->extra->variable ?></a>
-                                @endforeach
+                    <div class="campoDependientes">
+                        <div class="form-inline">
+                            <input type="text" class="form-control col-4" name="dependiente_campo"
+                                   value="<?=$campo->dependiente_campo?>"/>
+                            <div class="btn-group dependiente ml-1" style="display: inline-block; vertical-align: top;">
+                                <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="material-icons">view_list</i> <span class="caret align-middle"></span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <button class="dropdown-item" type="button"><b>Campos</b></button>
+                                    @foreach ($formulario->Proceso->getCampos() as $c)
+                                        <a class="dropdown-item" href="#"><?= $c->nombre ?></a>
+                                    @endforeach
+                                    <div class="dropdown-divider"></div>
+                                    <button class="dropdown-item" type="button"><b>Variables</b></button>
+                                    @foreach ($formulario->Proceso->getVariables() as $v)
+                                        <a class="dropdown-item" href="#"><?= $v->extra->variable ?></a>
+                                    @endforeach
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- <select class="input-medium" name="dependiente_campo"> -->
-                        <!-- </select> -->
+                            <!-- <select class="input-medium" name="dependiente_campo"> -->
+                            <!-- </select> -->
 
-                        <div class="btn-group ml-3 mr-3">
-                            <button type="button" class="buttonIgualdad btn btn-secondary">=</button>
-                            <button type="button" class="buttonDesigualdad btn btn-secondary">!=</button>
-                        </div>
+                            <div class="btn-group ml-3 mr-3">
+                                <button type="button" class="buttonIgualdad btn btn-secondary">=</button>
+                                <button type="button" class="buttonDesigualdad btn btn-secondary">!=</button>
+                            </div>
 
-                        <input type="hidden" name="dependiente_relacion"
-                               value="<?=isset($campo) && $campo->dependiente_relacion ? $campo->dependiente_relacion : '==' ?>"/>
+                            <input type="hidden" name="dependiente_relacion"
+                                   value="<?=isset($campo) && $campo->dependiente_relacion ? $campo->dependiente_relacion : '==' ?>"/>
 
-                        <span class="input-append">
-                        <input type="text" class="form-control" name="dependiente_valor"
-                               value="<?= isset($campo) ? $campo->dependiente_valor : '' ?>"/>
-                        <button type="button" class="buttonString btn btn-secondary">String</button>
-                        <button type="button" class="buttonRegex btn btn-secondary">Regex</button>
-                    </span>
-                        <input type="hidden" name="dependiente_tipo"
-                               value="<?=isset($campo) && $campo->dependiente_tipo ? $campo->dependiente_tipo : 'string' ?>"/>
+                            <span class="input-append">
+                            <input type="text" class="form-control" name="dependiente_valor"
+                                   value="<?= isset($campo) ? $campo->dependiente_valor : '' ?>"/>
+                            <button type="button" class="buttonString btn btn-secondary">String</button>
+                            <button type="button" class="buttonRegex btn btn-secondary">Regex</button>
+                        </span>
+                            <input type="hidden" name="dependiente_tipo"
+                                   value="<?=isset($campo) && $campo->dependiente_tipo ? $campo->dependiente_tipo : 'string' ?>"/>
 
-                        @if (isset($campo->datos_mapa) && $campo->datos_mapa)
-                            <script type="text/javascript">
-                                $(function () {
-                                    $("[name=readonly]").click(function () {
-                                        if (this.checked) {
-                                            $('.columnas').show();
-                                        } else {
-                                            $("#formEditarCampo .columnas table tbody tr").remove();
-                                            $('.columnas').hide();
-                                        }
+                            @if (isset($campo->datos_mapa) && $campo->datos_mapa)
+                                <script type="text/javascript">
+                                    $(function () {
+                                        $("[name=readonly]").click(function () {
+                                            if (this.checked) {
+                                                $('.columnas').show();
+                                            } else {
+                                                $("#formEditarCampo .columnas table tbody tr").remove();
+                                                $('.columnas').hide();
+                                            }
+                                        });
                                     });
-                                });
-                            </script>
-                        @endif
-                    </div>
+                                </script>
+                            @endif
+                        </div>
 
-                    <?php if (isset($campo->datos_agenda) && $campo->datos_agenda): ?>
-                    <div class="form-group">
-                        <label>Pertenece a: </label>
-                        <div class="input-group mb-3">
-                            <select id="selectgrupo" class="form-control col-4" name="grupos_usuarios"></select>
-                            <div class="input-group-append">
-                                <button class="btn btn_filtrar_agenda vtop btn-light" type="button">Filtrar</button>
+                        <?php if (isset($campo->datos_agenda) && $campo->datos_agenda): ?>
+                        <div class="form-group">
+                            <label>Pertenece a: </label>
+                            <div class="input-group mb-3">
+                                <select id="selectgrupo" class="form-control col-4" name="grupos_usuarios"></select>
+                                <div class="input-group-append">
+                                    <button class="btn btn_filtrar_agenda vtop btn-light" type="button">Filtrar</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Agenda:</label>
-                        <select id="miagenda" class="form-control col-4" name="agenda_campo">
-                            <option value="1">Seleccione(Opcional)</option>
-                        </select>
-                    </div>
-                    <script type="text/javascript">
-                        $(function () {
-                            $("#selectgrupo").select2({
-                                placeholder: "Seleccione(Opcional)",
-                                allowClear: true,
-                                multiple: false,
-                                templateSelection: selection,
-                                templateResult: format
-                            });
+                        <div class="form-group">
+                            <label>Agenda:</label>
+                            <select id="miagenda" class="form-control col-4" name="agenda_campo">
+                                <option value="1">Seleccione(Opcional)</option>
+                            </select>
+                        </div>
+                        <script type="text/javascript">
+                            $(function () {
+                                $("#selectgrupo").select2({
+                                    placeholder: "Seleccione(Opcional)",
+                                    allowClear: true,
+                                    multiple: false,
+                                    templateSelection: selection,
+                                    templateResult: format
+                                });
 
-                            $("#selectgrupo").change(function () {
-                                $("#miagenda").html('');
-                                var idseleccionado = $(this).val();
-                                $.ajax({
-                                    url: '<?= route('backend.forms.ajax_mi_calendario') ?>',
-                                    dataType: "json",
-                                    data: {
-                                        pertenece: idseleccionado
-                                    },
-                                    success: function (data) {
-                                        if (data.code == 200) {
-                                            var items = data.calendars;
-                                            $('#miagenda').html('');
-                                            if (items.length > 0) {
-                                                $("#miagenda").removeAttr('disabled');
-                                                $.each(items, function (index, element) {
-                                                    $("#miagenda").append('<option value="' + element.id + '">' + element.name + '</option>');
-                                                });
-                                                var swedit = <?php echo (isset($edit) && $edit) ? 1 : 0; ?>;
-                                                if (swedit == 1) {
-                                                    var idagenda = <?= $idagendaeditar ?>;
-                                                    $('#miagenda').val(idagenda);
+                                $("#selectgrupo").change(function () {
+                                    $("#miagenda").html('');
+                                    var idseleccionado = $(this).val();
+                                    $.ajax({
+                                        url: '<?= route('backend.forms.ajax_mi_calendario') ?>',
+                                        dataType: "json",
+                                        data: {
+                                            pertenece: idseleccionado
+                                        },
+                                        success: function (data) {
+                                            if (data.code == 200) {
+                                                var items = data.calendars;
+                                                $('#miagenda').html('');
+                                                if (items.length > 0) {
+                                                    $("#miagenda").removeAttr('disabled');
+                                                    $.each(items, function (index, element) {
+                                                        $("#miagenda").append('<option value="' + element.id + '">' + element.name + '</option>');
+                                                    });
+                                                    var swedit = <?php echo (isset($edit) && $edit) ? 1 : 0; ?>;
+                                                    if (swedit == 1) {
+                                                        var idagenda = <?= $idagendaeditar ?>;
+                                                        $('#miagenda').val(idagenda);
+                                                    }
                                                 }
                                             }
                                         }
+                                    });
+                                });
+
+                                $.ajax({
+                                    url: '<?= route('backend.forms.listarPertenece') ?>',
+                                    dataType: "json",
+                                    success: function (data) {
+                                        if (data.code == 200) {
+                                            var items = data.resultado.items;
+                                            $.each(items, function (index, element) {
+                                                console.log(element);
+                                                var icon = 'person';
+                                                if (element.tipo == 1) {
+                                                    icon = 'group';
+                                                }
+                                                $("#selectgrupo").append('<option value="' + element.id + '" data-icon="' + icon + '" >' + element.nombre + '</option>');
+                                            });
+                                        }
                                     }
                                 });
-                            });
-
-                            $.ajax({
-                                url: '<?= route('backend.forms.listarPertenece') ?>',
-                                dataType: "json",
-                                success: function (data) {
-                                    if (data.code == 200) {
-                                        var items = data.resultado.items;
-                                        $.each(items, function (index, element) {
-                                            console.log(element);
-                                            var icon = 'person';
-                                            if (element.tipo == 1) {
-                                                icon = 'group';
-                                            }
-                                            $("#selectgrupo").append('<option value="' + element.id + '" data-icon="' + icon + '" >' + element.nombre + '</option>');
-                                        });
-                                    }
+                                var swedit = <?php echo (isset($edit) && $edit) ? 1 : 0; ?>;
+                                if (swedit == 1) {
+                                    var idagenda = <?= $idagendaeditar ?>;
+                                    cargar_service(idagenda);
                                 }
                             });
-                            var swedit = <?php echo (isset($edit) && $edit) ? 1 : 0; ?>;
-                            if (swedit == 1) {
-                                var idagenda = <?= $idagendaeditar ?>;
-                                cargar_service(idagenda);
+
+                            function format(icon) {
+                                var originalOption = icon.element;
+                                return $('<span><i class="material-icons" style="top: 1px;">' + $(originalOption).data('icon') + '</i>&nbsp;&nbsp;' + icon.text + '</span>');
                             }
-                        });
 
-                        function format(icon) {
-                            var originalOption = icon.element;
-                            return $('<span><i class="material-icons" style="top: 1px;">' + $(originalOption).data('icon') + '</i>&nbsp;&nbsp;' + icon.text + '</span>');
-                        }
+                            function selection(icon) {
+                                var originalOption = icon.element;
+                                return $('<span><i class="material-icons" style="top: 7px;">' + $(originalOption).data('icon') + '</i>&nbsp;&nbsp;' + icon.text + '</span>');
+                            }
 
-                        function selection(icon) {
-                            var originalOption = icon.element;
-                            return $('<span><i class="material-icons" style="top: 7px;">' + $(originalOption).data('icon') + '</i>&nbsp;&nbsp;' + icon.text + '</span>');
-                        }
-
-                        function cargar_service(idagenda) {
-                            $.ajax({
-                                url: '<?= route('backend.forms.obtener_agenda') ?>',
-                                dataType: "json",
-                                data: {
-                                    idagenda: idagenda
-                                },
-                                success: function (data) {
-                                    if (data.code == 200) {
-                                        var options = $('#selectgrupo').find('option');
-                                        var owner = data.calendario_owner;
-                                        var indexpertenece = 0;
-                                        var v = 0;
-                                        $.each(options, function (index, value) {
-                                            if ($(value).text().indexOf(owner) >= 0) {
-                                                indexpertenece = index;
-                                            }
-                                        });
-                                        $("#selectgrupo").select2("val", options[indexpertenece].value);
+                            function cargar_service(idagenda) {
+                                $.ajax({
+                                    url: '<?= route('backend.forms.obtener_agenda') ?>',
+                                    dataType: "json",
+                                    data: {
+                                        idagenda: idagenda
+                                    },
+                                    success: function (data) {
+                                        if (data.code == 200) {
+                                            var options = $('#selectgrupo').find('option');
+                                            var owner = data.calendario_owner;
+                                            var indexpertenece = 0;
+                                            var v = 0;
+                                            $.each(options, function (index, value) {
+                                                if ($(value).text().indexOf(owner) >= 0) {
+                                                    indexpertenece = index;
+                                                }
+                                            });
+                                            $("#selectgrupo").select2("val", options[indexpertenece].value);
+                                        }
                                     }
-                                }
+                                });
+                            }
+                        </script>
+                        <?php endif; ?>
+
+                        <br><br>
+                        <label>Condiciones de visibilidad adicionales</label><br><button class="btn btn-light condicion" type="button"><i class="material-icons">add</i>Nuevo</button>
+                        <div class="camposDependientesAdicionales">
+                        
+                            <?php if ($campo->condiciones_extra_visible): ?>
+                            <?php $i = 0 ?>
+                            <?php foreach ($campo->condiciones_extra_visible as $key => $d): ?>
+                            <div class="item form-inline">
+                                <input type="text" class="form-control col-4" name="condiciones[<?= $i ?>][campo]" value="<?=$d->campo?>"/>
+
+                                <div class="btn-group col-8">
+                                    <select name="condiciones[<?= $i ?>][igualdad]" class="form-control col-3">
+                                        <option value="==" <?=$d->igualdad=='=' ? 'selected="selected"' : '' ?>>es igual a</button>
+                                        <option value="!=" <?=$d->igualdad=='!=' ? 'selected="selected"' : '' ?>>distinto a</button>
+                                    </select>
+                                    <span class="input-append"></span>
+                                    <input type="text" class="form-control" name="condiciones[<?= $i ?>][valor]" value="<?=$d->valor?>" />
+                                    <select name="condiciones[<?= $i ?>][tipo]" class="form-control">
+                                        <option value="string" <?=$d->tipo=='string' ? 'selected="selected"' : '' ?>>String</button>
+                                        <option value="regex" <?=$d->tipo=='regex' ? 'selected="selected"' : '' ?>>Regex</button>
+                                    </select>
+                                    <button type="button" class="btn btn-light delete-condition"><i class="material-icons">close</i>Eliminar</button>
+                                </div>
+                            </div>
+                            <?php $i++ ?>
+                            <?php endforeach; ?>
+                            <?php endif ?>
+
+                        </div>
+
+                        <script type="text/javascript">
+                            $('#formEditarCampo .campoDependientes .condicion').click(function () {
+                                var registro = $('#formEditarCampo .campoDependientes .camposDependientesAdicionales .item').length;
+                                var html = '<div class="item form-inline">';
+                                
+                                html += '<input type="text" class="form-control col-4" name="condiciones['+registro+'][campo]"/>';
+                                
+                                html += '<div class="btn-group col-8">';
+                                html += '<select name="condiciones['+registro+'][igualdad]" class="form-control col-3">';
+                                html += '<option value="==">es igual a</button>';
+                                html += '<option value="!=">distinto a</button>';
+                                html += '</select>';
+                                html += '<span class="input-append"></span>';
+                                html += '<input type="text" class="form-control" name="condiciones['+registro+'][valor]" />';                                
+                                html += '<select name="condiciones['+registro+'][tipo]" class="form-control">';
+                                html += '<option value="string">String</button>';
+                                html += '<option value="regex">Regex</button>';
+                                html += '</select>';
+                                html += '<button type="button" class="btn btn-light delete-condition"><i class="material-icons">close</i>Eliminar</button>';
+                                html += '</div>';
+
+                                html += '</div>';
+                                $('#formEditarCampo .campoDependientes .camposDependientesAdicionales').append(html);
                             });
-                        }
-                    </script>
-                    <?php endif; ?>
-                </div>
+
+                            $('#formEditarCampo .campoDependientes .camposDependientesAdicionales').on('click', '.delete-condition', function () {
+                                $(this).closest('.item').remove();
+                            });
+                        </script>
+
+                    </div>
+                    
+
 
                 <?=$campo->extraForm() ? $campo->extraForm() : '' ?>
 

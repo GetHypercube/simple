@@ -169,49 +169,94 @@ $(document).ready(function () {
             var valor = $(el).data("dependiente-valor");
             var existe = false;
             var visible = false;
+            var condicion_final = $(el).data("condicion");
+            if(condicion_final!='no-condition'){
+                var myarr = condicion_final.split("&&");
+                var resultados = [];
+                for(x=0;x<myarr.length;x++){
+                    var evaluacion = myarr[x].split(";");
+                    var resultado = false;
+                    if(evaluacion[1]=="=="){
 
-            $(form).find(":input[name='" + campo + "']").each(function (i, el) {
+                        $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
+                            var input = $(el).serializeArray();
+                            for(var j in input){
+                                if(evaluacion[3]=='string'){
+                                    if(input[j].value==evaluacion[2]){
+                                        resultado = true;
+                                    }
+                                }else if(evaluacion[3]=='regex'){
+                                    var regex = new RegExp(evaluacion[2]);
+                                    if (regex.test(input[j].value)) {
+                                        resultado = true;
+                                    }
+                                }
+                            }
+                        });
 
-                existe = true;
-
-                var input = $(el).serializeArray();
-                for (var j in input) {
-                    if (tipo == "regex") {
-                        var regex = new RegExp(valor);
-                        if (regex.test(input[j].value)) {
-                            visible = true;
-                        }
-                    } else {
-                        if (input[j].value == valor) {
-                            visible = true;
-                        }
+                    }else if(evaluacion[1]=="!="){
+                        $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
+                            var input = $(el).serializeArray();
+                            for(var j in input){
+                                if(input[j].value!=evaluacion[2]){
+                                    resultado = true;
+                                }else if(evaluacion[3]=='regex'){
+                                    var regex = new RegExp(evaluacion[2]);
+                                    if (regex.test(input[j].value)) {
+                                        resultado = true;
+                                    }
+                                }
+                            }
+                        });
                     }
-                    if (relacion == "!=") {
-                        visible = !visible;
-                    }
-                    if (visible) {
-                        break;
-                    }
+                    resultados.push(resultado);
                 }
-            });
+                if(resultados.indexOf(false)>-1){
+                    $(el).hide();
+                }else{
+                    $(el).show();
+                }
+            }else{
+                $(form).find(":input[name='" + campo + "']").each(function (i, el) {
+                    existe = true;
+                    var input = $(el).serializeArray();
+                    for (var j in input) {
+                        if (tipo == "regex") {
+                            var regex = new RegExp(valor);
+                            if (regex.test(input[j].value)) {
+                                visible = true;
+                            }
+                        } else {
+                            if (input[j].value == valor) {
+                                visible = true;
+                            }
+                        }
+                        if (relacion == "!=") {
+                            visible = !visible;
+                        }
+                        if (visible) {
+                            break;
+                        }
+                    }
+                });
+                if (existe) {
+                    if (visible) {
+                        if ($(form).hasClass("debugForm"))
+                            $(el).css("opacity", "1.0");
+                        else
+                            $(el).show();
 
-            if (existe) {
-                if (visible) {
-                    if ($(form).hasClass("debugForm"))
-                        $(el).css("opacity", "1.0");
-                    else
-                        $(el).show();
+                        if (!$(el).data("readonly"))
+                            $(el).find(":input").addClass("enabled-temp");
 
-                    if (!$(el).data("readonly"))
-                        $(el).find(":input").addClass("enabled-temp");
+                    } else {
+                        if ($(form).hasClass("debugForm"))
+                            $(el).css("opacity", "0.5");
+                        else
+                            $(el).hide();
 
-                } else {
-                    if ($(form).hasClass("debugForm"))
-                        $(el).css("opacity", "0.5");
-                    else
-                        $(el).hide();
-
-                    $(el).find(":input").addClass("disabled-temp");
+                        $(el).find(":input").addClass("disabled-temp");
+                    }
                 }
             }
         });

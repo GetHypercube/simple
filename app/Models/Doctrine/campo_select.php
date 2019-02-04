@@ -19,7 +19,7 @@ class CampoSelect extends Campo
 
         $display = '<div class="form-group">';
         $display .= '<label for="' . $this->id . '">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
-        $display .= '<select id="' . $this->id . '" class="form-control '.$this->id.'" name="' . $this->nombre . '" ' . ($modo == 'visualizacion' ? 'disabled' : '') . ' data-modo="' . $modo . '">';
+        $display .= '<select id="' . $this->id . '" class="form-control '.$this->id.'" name="' . $this->nombre . '" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' data-modo="' . $modo . '">';
         $display .= '<option value="">Seleccionar</option>';
         if ($this->datos) foreach ($this->datos as $d) {
             if ($dato) {

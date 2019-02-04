@@ -88,6 +88,7 @@ class Campo extends Doctrine_Record
         $this->hasColumn('extra');
         $this->hasColumn('agenda_campo');
         $this->hasColumn('exponer_campo');
+        $this->hasColumn('condiciones_extra_visible');
 
         $this->setSubclasses(array(
             'CampoText' => array('tipo' => 'text'),
@@ -405,7 +406,6 @@ class Campo extends Doctrine_Record
                     break;
             }
         }
-
         return $visible;
     }
 
@@ -627,5 +627,10 @@ class Campo extends Doctrine_Record
         $ret_val = ob_get_contents();
         ob_end_clean();
         return $ret_val;
+    }
+
+    public function getCondicionesExtraVisible()
+    {
+        return json_decode($this->_get('condiciones_extra_visible'));
     }
 }
