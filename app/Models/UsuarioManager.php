@@ -12,4 +12,6 @@ class UsuarioManager extends Authenticatable
     protected $guarded = 'usuario_manager';
 
     protected $table = 'usuario_manager';
+    
+    public $user_type = 'manager';
 }

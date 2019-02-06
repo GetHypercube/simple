@@ -51,6 +51,8 @@ Route::middleware(['auth_user'])->group(function () {
 
     //Agenda
     Route::get('/agenda/ajax_modal_calendar', 'AppointmentController@ajax_modal_calendar')->name('agenda.ajax_modal_calendar');
+
+    Route::get('/descargar_archivo/{user_id}/{job_id}/{file_name}', 'StagesController@descargar_archivo')->name('stage.descargar_archivo');
 });
 
 Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function () {

@@ -14,6 +14,8 @@ class UsuarioBackend extends Authenticatable
 
     protected $table = 'usuario_backend';
 
+    public $user_type = 'backend';
+
     protected $fillable = [
         'email',
     ];
