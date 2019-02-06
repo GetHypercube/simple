@@ -639,7 +639,15 @@ class StagesController extends Controller
             return redirect()->back();
         }
         
-        if(count($files_list) > 0){
+        $files_to_compress_not_empty = false;
+        foreach($files_list as $tipo => $f_array ){
+            if( count($files_list[$tipo]) > 0 ){
+                $files_to_compress_not_empty = true;
+                break;
+            }
+        }
+
+        if($files_to_compress_not_empty){
             $zip = new ZipArchive;
             $opened = $zip->open($zip_path_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
             foreach($files_list as $tipo => $f_array ){
@@ -663,7 +671,7 @@ class StagesController extends Controller
                 ->download($zip_path_filename, 'tramites_'.$fecha.'.zip', ['Content-Type' => 'application/octet-stream'])
                 ->deleteFileAfterSend(true);
         }else{
-            $request->session()->flash('error', 'No se encontraron los archivos para descargar.');
+            $request->session()->flash('error', 'No se encontraron archivos para descargar.');
             return redirect()->back();
         }
     }
