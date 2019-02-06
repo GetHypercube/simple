@@ -85,6 +85,11 @@ SCOUT_DRIVER: driver para agregar búsquedas de texto completo a sus modelos Elo
 ELASTICSEARCH_INDEX: Nombre lógico que interpretara elasticsearch como índice.
 ELASTICSEARCH_HOST: Aquí puede proporcionar la dirección de host de elasticsearch.
 
+AWS_S3_MAX_SINGLE_PART: Al superar este límite en bytes, los archivos se subirán a Amazon S3 usando multipartes.
+
+DOWNLOADS_FILE_MAX_SIZE: Al igualar o superar este límite en bytes, se usará un JOB para empaquetar y luego enviar el enlace de descarga por correo electrónico a la dirección registrada para ese nombre de usuario.
+DOWNLOADS_MAX_JOBS_PER_USER: Cantidad máxima de JOBS, de archivos a descargar, simultaneos permitidos por cada usuario.
+
 ```
 
 ### Instalar las dependencias con composer
