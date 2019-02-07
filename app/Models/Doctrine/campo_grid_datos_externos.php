@@ -152,7 +152,6 @@ class CampoGridDatosExternos extends Campo
                     }
                     grillas_datatable['.$this->id.'].table.draw(true);
                     grillas_datatable['.$this->id.'].table.columns.adjust();
-                    $("#grilla-"+'.$this->id.').parents("form").find(":submit").html("Validar");
                 });
             </script>
         ';
