@@ -20,4 +20,5 @@ Route::namespace('Backend')->group(function () {
     //Procesos
     Route::get('/procesos/{proceso_id?}/{recurso?}', 'ApiController@procesos');
     Route::post('/notificar/{tramite_id}', 'ApiController@notificar');
+    Route::post('/estados/{tramite_id}', 'ApiController@estados');
 });

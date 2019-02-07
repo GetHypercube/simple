@@ -13,6 +13,7 @@ use Doctrine_Core;
 use stdClass;
 use Cuenta;
 use Regla;
+use Carbon\Carbon;
 
 class ApiController extends Controller
 {
@@ -464,6 +465,224 @@ class ApiController extends Controller
         }
         header('Content-type: application/json');
         echo json_indent(json_encode($respuesta));
+    }
+
+    public function estados(Request $request, $tramite_id = null)
+    {
+        if (!is_numeric($tramite_id)) {
+            return response()->json('ID inválido.');
+        }
+
+        $t = Doctrine::getTable('Tramite')->find($tramite_id);
+        $etapa_id = $t->getUltimaEtapa()->id;
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id, 1)->count();
+        if ($pendientes > 0) {
+
+            $json = json_decode($request->getContent(), true);
+
+            $historial_estados = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("historial_estados",$etapa_id);
+            if(!$historial_estados)
+                $array_estados = array();
+            else
+                $array_estados = $historial_estados->valor;
+
+            //Token
+            if(count($json)>0){
+                $existe_token = false;
+                foreach($json as $key => $value){
+                    if($key=='token'){
+                        $api_token = $value;
+                        $cuenta = Cuenta::cuentaSegunDominio();
+
+                        if (!$cuenta->api_token)
+                            return response()->json(['status' => 'ERROR', 'message' => 'Usuario no tiene permisos para ejecutar esta etapa.'], 403);
+
+                        if ($cuenta->api_token != $api_token) {
+                            return response()->json(['status' => 'ERROR', 'message' => 'Usuario no tiene permisos para ejecutar esta etapa.'], 403);
+                        }
+                        $existe_token = true;
+                    }
+                }
+                if(!$existe_token)
+                    return response()->json(['status' => 'ERROR', 'message' => 'Usuario no tiene permisos para ejecutar esta etapa.'], 403);
+            }
+            //Fin token
+
+            if (count($json) > 0) {
+                $associativeArray = array();
+                foreach ($json as $key => $value) {
+                    $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa_id);
+                    if (!$dato)
+                        $dato = new DatoSeguimiento();
+                    $key = str_replace("-", "_", $key);
+                    $key = str_replace(" ", "_", $key);
+                    $dato->nombre = $key;
+                    $dato->valor = $value;
+                    $dato->etapa_id = $etapa_id;
+                    $dato->save();
+
+                    switch ($key) {
+                        case 'status':
+                            $associativeArray['status'] = $dato->valor;
+                            break;
+                        case 'description':
+                            $associativeArray['description'] = $dato->valor;
+                            break;
+                        case 'message':
+                            $associativeArray['message'] = $dato->valor;
+                            break;
+                        case 'service_application_id':
+                            $associativeArray['service_application_id'] = $dato->valor;
+                            break;
+                        case 'stage':
+                            $associativeArray['stage'] = $dato->valor;
+                            break;
+                    }
+                }
+                $associativeArray['created_at'] = Carbon::now('America/Santiago')->format('d-m-Y H:i:s');
+                array_push($array_estados, $associativeArray);
+                $historial_estados = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("historial_estados",$etapa_id);
+                if(!$historial_estados)
+                    $historial_estados = new DatoSeguimiento();
+
+                $historial_estados->nombre = 'historial_estados';
+                $historial_estados->valor = $array_estados;
+                $historial_estados->etapa_id = $etapa_id;
+                $historial_estados->save();
+            }
+
+            // Ejecutar eventos antes de la tarea
+            /*
+            $eventos=Doctrine_Query::create()->from('Evento e')
+                    ->where('e.tarea_id = ? AND e.instante = ? AND e.paso_id IS NULL',array($e->Tarea->id,'antes'))
+                    ->execute();
+            foreach ($eventos as $e) {
+                    $r = new Regla($e->regla);
+                    if ($r->evaluar($this->id))
+                        $e->Accion->ejecutar($etapa);
+            }
+            */
+
+            $acontecimientos = Doctrine_Query::create()
+                ->from('Acontecimiento a')
+                ->where('a.etapa_id = ? AND a.estado = ?', array($etapa_id, 1))
+                ->orderBy('a.id asc')
+                ->execute();
+
+
+            foreach ($acontecimientos as $clave => $a) {
+
+                $evento = Doctrine::getTable('EventoExterno')->find($a->EventoExterno->id);
+                $regla = new Regla($evento->regla);
+                $tarea_id = $a->Etapa->Tarea->id;
+
+                //Ejecutar eventos antes del evento externo
+                $eventos = Doctrine_Query::create()->from('Evento e')
+                    ->where('e.tarea_id = ? AND e.instante = ? AND e.evento_externo_id = ?', array($a->Etapa->Tarea->id, 'antes', $evento->id))
+                    ->orderBy('e.id asc')
+                    ->execute();
+                foreach ($eventos as $e) {
+                    $r = new Regla($e->regla);
+                    if ($r->evaluar($etapa_id)) {
+                        $e->Accion->ejecutar($etapa);
+                    }
+                }
+
+                if ($regla->evaluar($a->Etapa->id)) {
+
+                    $regla = new Regla($evento->mensaje);
+                    $msg = $regla->getExpresionParaOutput($a->Etapa->id);
+                    $regla = new Regla($evento->url);
+                    $url = $regla->getExpresionParaOutput($a->Etapa->id);
+                    $regla = new Regla($evento->opciones);
+                    $opciones = $regla->getExpresionParaOutput($a->Etapa->id);
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+                    $metodos = array('POST', 'PUT');
+                    if (in_array($evento->metodo, $metodos)) {
+                        curl_setopt($ch, CURLOPT_POST, TRUE);
+                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $evento->metodo);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $msg);
+                    }
+                    $opciones_httpheader = array('cache-control: no-cache', 'Content-Type: application/json');
+                    if (!is_null($opciones)) {
+                        array_push($opciones_httpheader, $opciones);
+                    }
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, $opciones_httpheader);
+                    $response = curl_exec($ch);
+                    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    $err = curl_error($ch);
+                    curl_close($ch);
+
+                    if (($httpcode == 200 or $httpcode == 201) && isJSON($response)) {
+                        $js = json_decode($response);
+                        foreach ($js as $key => $value) {
+                            $key = str_replace("-", "_", $key);
+                            $key = str_replace(" ", "_", $key);
+                            $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $a->Etapa->id);
+                            if (!$dato)
+                                $dato = new DatoSeguimiento();
+                            $dato->nombre = $key;
+                            $dato->valor = $value;
+                            $dato->etapa_id = $a->Etapa->id;
+                            $dato->save();
+                        }
+                    }
+                    $a->estado = 0;
+                    $a->save();
+
+                    //Ejecutar eventos despues del evento externo
+                    $eventos = Doctrine_Query::create()->from('Evento e')
+                        ->where('e.tarea_id = ? AND e.instante = ? AND e.evento_externo_id = ?', array($tarea_id, 'despues', $evento->id))
+                        ->orderBy('e.id asc')
+                        ->execute();
+
+                    foreach ($eventos as $e) {
+                        $r = new Regla($e->regla);
+                        if ($r->evaluar($etapa_id))
+                            $e->Accion->ejecutar($etapa);
+                    }
+                }
+            }
+
+            // Ejecutar eventos despues de tareas
+            /*
+            $eventos=Doctrine_Query::create()
+                    ->from('Evento e')
+                    ->where('e.tarea_id = ? AND e.instante = ? AND e.paso_id IS NULL',array($tarea_id,'despues'))
+                    ->orderBy('e.id asc')
+                    ->execute();
+            //echo $eventos->getSqlQuery();
+            //exit;
+            foreach ($eventos as $e) {
+                    $r = new Regla($e->regla);
+                    if ($r->evaluar($etapa_id))
+                        $e->Accion->ejecutar($etapa);
+            }
+            */
+
+        }
+
+        $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id,1)->count();
+        if ($pendientes == 0) {
+            $tp = $etapa->getTareasProximas();
+            if ($tp->estado == 'completado') {
+                $ejecutar_eventos = FALSE;
+                $t->cerrar($ejecutar_eventos);
+            } else {
+                $etapa->avanzar();
+            }
+        }
+
+        if($historial_estados)
+            return response()->json(['status' => 'OK',], 200);
+        else
+            return response()->json(['status' => 'OK',], 200);
+
     }
 
 }

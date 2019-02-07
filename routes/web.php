@@ -41,6 +41,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/etapas/descargar/{tramites}', 'StagesController@descargar')->name('stage.download');
     Route::post('/etapas/descargar_form', 'StagesController@descargar_form')->name('stage.descargar_form');
     Route::get('/documentos/get/{filename}', 'DocumentController@get')->name('document.get');
+    Route::get('/etapas/estados/{tramite_id}', 'StagesController@estados')->name('stage.estados');
 
     Route::get('/consultas', 'ConsultController@index')->name('consulta');
     Route::post('/consultas', 'ConsultController@index')->name('consulta');

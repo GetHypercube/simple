@@ -110,6 +110,20 @@
                     <a href="#" onclick="return descargarDocumentos(<?=$t->id?>);">Descargar</a>
                     <?php endif; ?>
                     <?php endif; ?>
+
+                    <?php
+                        $tramite_nro = '';
+                        foreach ($t->getValorDatoSeguimientoAll() as $tra_nro) {
+                            if ($tra_nro->nombre == 'historial_estados') {
+                                $tramite_nro = $tra_nro->valor;
+                            }
+                        }
+                        if(!empty($tramite_nro)):
+                    ?>
+                    <br>
+                    <a href="#" onclick="return verEstados(<?=$t->id?>);">Estados</a>
+                    <?php endif; ?>
+
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -138,6 +152,9 @@
         <?php endif; ?>
     </div>
 </div>
+
+<div class="modal hide" id="modal"></div>
+<div class="modal hide" id="modalSelectIcon"></div>
 
 @push('script')
     <script>
@@ -185,6 +202,13 @@
                 $("#modal").modal();
                 return false;
             }
+        }
+
+        function verEstados(tramiteId) {
+            $("#modal").load("/etapas/estados/" + tramiteId);
+            $("#modal").modal();
+
+            return false;
         }
     </script>
 @endpush
