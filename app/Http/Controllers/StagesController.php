@@ -710,4 +710,17 @@ class StagesController extends Controller
             abort(404);
         }
     }
+
+    public function estados($tramite_id)
+    {
+        $tramite = Doctrine::getTable('Tramite')->find($tramite_id);
+        $datos = $tramite->getValorDatoSeguimientoAll();
+        foreach ($datos as $dato) {
+            if ($dato->nombre == 'historial_estados') {
+                $historial = $dato->valor;
+            }
+        }
+        $data['historial'] = $historial;
+        return view('stages.estados',$data);
+    }
 }
