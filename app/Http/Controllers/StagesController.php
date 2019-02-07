@@ -6,6 +6,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Proceso;
 use App\Models\Tramite;
 use App\Models\Job;
+use App\Models\File;
 use App\Rules\Captcha;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -16,7 +17,6 @@ use Illuminate\Support\Facades\URL;
 use Cuenta;
 use ZipArchive;
 use App\Jobs\IndexStages;
-use App\Models\File;
 use App\Jobs\FilesDownload;
 
 
