@@ -25,11 +25,16 @@ var modal_agregar_a_grilla = function(grilla_id){
     var modal_grande = $('#table_alter_modal_'+grilla_id);
     var tiene_acciones = grillas_datatable[grilla_id].tiene_acciones;
     var is_array = grillas_datatable[grilla_id].is_array;
+    var is_eliminable = grillas_datatable[grilla_id].is_eliminable;
     var to_add = is_array ? []: {};
-    var headers = grillas_datatable[grilla_id].headers
+    var headers = grillas_datatable[grilla_id].headers;
+    var some_count = 0;
 
     $('#modal-body-'+grilla_id, 'form').find('.modal_input').each(function(idx, elemento) {
         var el = $(elemento);
+        if(el.val().toString().length > 0)
+            some_count++;
+        
         if(is_array){
             to_add.push(el.val());
         }else{
@@ -49,9 +54,11 @@ var modal_agregar_a_grilla = function(grilla_id){
     }
     
     modal_grande.modal("hide");
-
+    
+    if( ( is_eliminable && some_count <= 1 ) || ( ! is_eliminable && some_count <= 0 )  )
+        return;
+    
     grillas_datatable[grilla_id].table.row.add( to_add ).draw( true );
-    grillas_datatable[grilla_id].table.columns.adjust();
 }
 
 var deleteRow = function(evt, obj){
