@@ -28,8 +28,6 @@
             <thead>
             <tr>
                 <th>Proceso</th>
-                <th>Estado</th>
-                <th>Version</th>
                 <th>Acciones
                     <a href="/ayuda/simple/backend/export-import.html" target="_blank">
                         <span class="glyphicon glyphicon-info-sign"></span>
@@ -41,32 +39,15 @@
             @foreach($procesos as $p)
                 <tr>
                     <td>{{$p->nombre}}</td>
-                    <td>{{$p->estado == 'public' ? 'Publicado' : 'Draft'}}</td>
-                    <td>{{$p->version}}</td>
                     <td>
-                        @if ($editar_proceso && $p->estado == 'public')
-                            <a class="btn btn-primary" onclick="return editarProceso(<?=$p->id?>);" href="#">
-                                <i class="material-icons">edit</i> Editar
-                            </a>
-                        @else
-                            <a class="btn btn-primary" href="{{route('backend.procesos.edit', [$p->id])}}">
+                        <a class="btn btn-primary" href="{{route('backend.procesos.edit', [$p->id])}}">
                                 <i class="material-icons">edit</i> Editar</a>
-                        @endif
                         <a class="btn btn-light" href="{{route('backend.procesos.export', [$p->id])}}">
                             <i class="material-icons">file_download</i> Exportar</a>
                         <a class="btn btn-danger" href="#" onclick="return eliminarProceso({{$p->id}});">
                             <i class="material-icons">delete</i> Eliminar
                         </a>
-                        @if ($p->estado == 'draft')
-                            <a class="btn btn-primary" href="#" onclick="return publicarProceso({{$p->id}});">
-                                <i class="material-icons">brush</i> Publicar
-                            </a>
-
-                            <a href="/ayuda/simple/backend/modelamiento-del-proceso/versionamiento.html"
-                               target="_blank">
-                                <i class="material-icons align-middle">info</i>
-                            </a>
-                        @endif
+                        
                     </td>
                 </tr>
             @endforeach
@@ -79,7 +60,6 @@
                     <thead>
                     <tr>
                         <th>Procesos Eliminados</th>
-                        <th>Version</th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
@@ -87,7 +67,6 @@
                     @foreach($procesos_eliminados as $pe)
                         <tr>
                             <td><?=$pe->nombre?></td>
-                            <td><?=$pe->version?></td>
                             <td>
                                 <a class="btn btn-primary" href="#" onclick="return activarProceso(<?=$pe->id?>);">
                                     <i class="material-icons">share</i> Activar

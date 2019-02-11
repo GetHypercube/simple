@@ -225,4 +225,12 @@ class Tramite extends Doctrine_Record
         );
     }
 
+    public function getValorDatoSeguimientoAll()
+    {
+        return Doctrine_Query::create()
+            ->from("DatoSeguimiento d, d.Etapa e, e.Tramite t")
+            ->where("t.id = ?   AND e.pendiente IN (0,1)", $this->id)
+            ->execute();
+    }
+
 }

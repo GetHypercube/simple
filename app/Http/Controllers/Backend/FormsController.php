@@ -207,10 +207,15 @@ class FormsController extends Controller
 
         $campo->dependiente_valor = $request->input('dependiente_valor');
         $campo->dependiente_relacion = $request->input('dependiente_relacion');
-        $campo->datos = $request->input('datos');
+        if($request->has('datos'))
+            $campo->datos = $request->input('datos');
+        else
+            $campo->datos = $this->procesar_datos_csv($request->input('file_carga_masiva'));
+        
         $campo->documento_id = $request->input('documento_id');
         $campo->extra = $request->input('extra');
         $campo->agenda_campo = $request->input('agenda_campo');
+        $campo->condiciones_extra_visible = $request->has('condiciones') ? json_encode($request->input('condiciones')) : NULL;
         $campo->save();
 
         return response()->json(['validacion' => true, 'redirect' => route('backend.forms.edit', [$campo->Formulario->id])]);
@@ -344,6 +349,26 @@ class FormsController extends Controller
         $owner = (isset($_GET['pertenece']) && is_numeric($_GET['pertenece'])) ? $_GET['pertenece'] : 0;
         $agenda = new \App\Http\Controllers\AppointmentController();
         $agenda->ajax_mi_calendario($owner);
+    }
+
+    private function procesar_datos_csv($file_carga_masiva = null){
+        if(is_null($file_carga_masiva))
+            return null;
+        $path = public_path('uploads/tmp/').$file_carga_masiva;
+        $array_final = array();
+        if(($handle = fopen($path, "r")) !== FALSE){
+            while(($data = fgetcsv($handle, 1000, ";")) !== FALSE){
+                $num = count($data);
+                $associativeArray = array();
+                $associativeArray['etiqueta'] = $data[0];
+                $associativeArray['valor'] = $data[1];
+                array_push($array_final, $associativeArray);
+            }
+            fclose($handle);
+        }
+        if (file_exists($path))
+            unlink($path);
+        return $array_final;
     }
 
 }

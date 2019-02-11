@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Proceso;
 use App\Models\Tramite;
+use App\Models\Job;
+use App\Models\File;
 use App\Rules\Captcha;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +17,8 @@ use Illuminate\Support\Facades\URL;
 use Cuenta;
 use ZipArchive;
 use App\Jobs\IndexStages;
+use App\Jobs\FilesDownload;
+
 
 class StagesController extends Controller
 {
@@ -249,12 +253,14 @@ class StagesController extends Controller
         $validations = [];
 
         if ($modo == 'edicion') {
+            $campos_nombre_etiqueta = [];
             foreach ($formulario->Campos as $c) {
                 // Validamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
                 if ($c->isEditableWithCurrentPOST($request, $etapa_id)) {
                     $validate = $c->formValidate($request, $etapa->id);
                     if (!empty($validate[0]) && !empty($validate[1])) {
                         $validations[$validate[0]] = $validate[1];
+                        $campos_nombre_etiqueta[$validate[0]] = "\"$c->etiqueta\"";
                     }
                 }
                 if ($c->tipo == 'recaptcha') {
@@ -262,7 +268,7 @@ class StagesController extends Controller
                 }
             }
 
-            $request->validate($validations);
+            $request->validate( $validations, [], $campos_nombre_etiqueta );
 
             // Almacenamos los campos
             foreach ($formulario->Campos as $c) {
@@ -499,13 +505,13 @@ class StagesController extends Controller
     public function descargar_form(Request $request)
     {
         if (!Cuenta::cuentaSegunDominio()->descarga_masiva) {
-            echo 'Servicio no tiene permisos para descargar.';
-            exit;
+            $request->session()->flash('error', 'Servicio no tiene permisos para descargar.');
+            return redirect()->back();
         }
 
         if (!Auth::user()->registrado) {
-            echo 'Usuario no tiene permisos para descargar.';
-            exit;
+            $request->session()->flash('error', 'Usuario no tiene permisos para descargar.');
+            return redirect()->back();
         }
         $tramites = $request->input('tramites');
         $opcionesDescarga = $request->input('opcionesDescarga');
@@ -520,32 +526,34 @@ class StagesController extends Controller
         $tipoDocumento = "";
         switch ($opcionesDescarga) {
             case 'documento':
-                $tipoDocumento = 'documento';
+                $tipoDocumento = ['documento'];
                 break;
-            case 'dato':
-                $tipoDocumento = 'dato';
+            case 'dato': // s3 son archivos subidos al igual que los dato
+                $tipoDocumento = ['dato', 's3'];
                 break;
         }
 
         // Recorriendo los trámites
         $zip_path_filename = public_path($ruta_tmp).'tramites_'.$time_stamp.'.zip';
-        $files_to_be_added = [];
+        $files_list = ['documento' => [], 'dato'=> [], 's3' => []];
         $non_existant_files = [];
+        $docs_total_space = 0;
+        $s3_missing_file_info_ids = [];
         foreach ($tramites as $t) {
-
             if (empty($tipoDocumento)) {
                 $files = Doctrine::getTable('File')->findByTramiteId($t);
             } else {
-                $files = Doctrine::getTable('File')->findByTramiteIdAndTipo($t, $tipoDocumento);
+                $files = \Doctrine_Query::create()->from('File f')->where('f.tramite_id=?', $t)->andWhereIn('tipo', $tipoDocumento)->execute();
             }
+            
             if (count($files) > 0) {
                 // Recorriendo los archivos
                 foreach ($files as $f) {
                     $tr = Doctrine::getTable('Tramite')->find($t);
                     $participado = $tr->usuarioHaParticipado(Auth::user()->id);
                     if (!$participado) {
-                        echo 'Usuario no ha participado en el trámite.';
-                        exit;
+                        $request->session()->flash('error', 'Usuario no ha participado en el trámite.');
+                        return redirect()->back();
                     }
                     $nombre_documento = $tr->id;
                     $tramite_nro = '';
@@ -558,25 +566,47 @@ class StagesController extends Controller
                         }
                     }
 
+                    $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
+                    $tramite_nro = str_replace(" ", "", $tramite_nro);
+
                     if (empty($nombre_documento)){
                         continue;
-                    }elseif ($f->tipo == 'documento') {
+                    }
+                    if ($f->tipo == 'documento') {
                         $ruta_base = $ruta_documentos;
                     } elseif ($f->tipo == 'dato') {
                         $ruta_base = $ruta_generados;
-                    } elseif ($f->tipo == 's3') {
-                        die('Error, no se pueden exportar archivos subidos a Amazon S3.');
-                    }else{
-                        continue;
+                    }else if($f->tipo == 's3'){
+                        $ruta_base = 's3';
                     }
+                    
                     $path = $ruta_base . $f->filename;
-                    $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
-                    $tramite_nro = str_replace(" ", "", $tramite_nro);
-                    $nombre_archivo = pathinfo($path, PATHINFO_FILENAME);
-                    $ext = pathinfo($path, PATHINFO_EXTENSION);
-                    $nice_name = $nombre_documento . "_" . $nombre_archivo . "_" . $tramite_nro . "." . $ext;
-                    if(file_exists($path)){
-                        $files_to_be_added[] = [$path, $nice_name];
+                    $proceso_nombre = str_replace(' ', '_', $tr->Proceso->nombre);
+                    $proceso_nombre = \App\Helpers\FileS3Uploader::filenameToAscii($proceso_nombre);
+                    $directory = "{$proceso_nombre}/{$tr->id}/{$f->tipo}";
+                    if( $f->tipo == 's3' ){
+                        $extra = $f->extra;
+                        if( ! $extra ){
+                            $s3_missing_file_info_ids[] = $f->id;
+                        }else{
+                            $docs_total_space += $extra->s3_file_size;
+                            $files_list[$f->tipo][] = ['file_name' => $f->filename,
+                                                       'bucket' => $extra->s3_bucket,
+                                                       'file_path' => $extra->s3_filepath,
+                                                       'tramite' => $tr->Proceso->nombre,
+                                                       'proceso' => $directory,
+                                                       'tramite_id' => $tr->id,
+                                                       'directory' => $directory];
+                        }
+                    }else if(file_exists($path)){
+                        $docs_total_space += filesize($path);
+                        $files_list[$f->tipo][] = [
+                            'ori_path' => $path,
+                            'nice_name' => $f->filename, 
+                            'directory' => $directory, 
+                            'tramite_id' => $tr->id,
+                            'tramite' => $tr->Proceso->nombre
+                        ];
                     }else{
                         $non_existant_files[] = $path;
                     }
@@ -584,11 +614,54 @@ class StagesController extends Controller
             }
         }
         
-        if(count($files_to_be_added) > 0){
+        $max_space_before_email_link = env('DOWNLOADS_FILE_MAX_SIZE', 1 * 1024 * 1024);
+        if($docs_total_space > $max_space_before_email_link){
+
+            $running_jobs = Job::where('user_id', Auth::user()->id)
+                               ->whereIn('status', [Job::$running, Job::$created])
+                               ->where('user_type', Auth::user()->user_type)
+                               ->count();
+            if($running_jobs >= env('DOWNLOADS_MAX_JOBS_PER_USER', 1)){
+                $request->session()->flash('error', 
+                    "Ya tiene trabajos en ejecuci&oacute;n pendientes, por favor espere a que este termine.");
+                return redirect()->back();
+            }
+            $http_host = request()->getSchemeAndHttpHost();
+            // email, aplicar un job
+            $email_to = Auth::user()->email;
+            $name_to = Auth::user()->nombres;
+            $email_subject = 'Enlace para descargar archivos.';
+            // $user_id, $file_list, $email_to, $email_subject, $host
+            $this->dispatch(new FilesDownload(Auth::user()->id, Auth::user()->user_type, $files_list, $email_to, 
+                                              $name_to, $email_subject, $http_host));
+            
+            $request->session()->flash('success', "Se enviar&aacute; un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: {$email_to}");
+            return redirect()->back();
+        }
+        
+        $files_to_compress_not_empty = false;
+        foreach($files_list as $tipo => $f_array ){
+            if( count($files_list[$tipo]) > 0 ){
+                $files_to_compress_not_empty = true;
+                break;
+            }
+        }
+
+        if($files_to_compress_not_empty){
             $zip = new ZipArchive;
             $opened = $zip->open($zip_path_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-            foreach($files_to_be_added as $file){
-                $zip->addFile($file[0], $file[1]);
+            foreach($files_list as $tipo => $f_array ){
+                if( count($files_list[$tipo]) === 0){
+                    continue;
+                }
+                foreach($f_array as $file){
+                    $dir = "{$file['tramite']}/{$file['tramite_id']}/{$tipo}/";
+                    if($zip->locateName($dir) === FALSE){
+                        $zip->addEmptyDir($dir);
+                    }
+                    $zip->addFile(public_path($file['ori_path']), $dir.$file['nice_name']);
+                    $zip->setCompressionName($dir.$file['nice_name'], ZipArchive::CM_STORE);
+                }
             }
             $zip->close();
             if(count($non_existant_files)> 0)
@@ -598,9 +671,56 @@ class StagesController extends Controller
                 ->download($zip_path_filename, 'tramites_'.$fecha.'.zip', ['Content-Type' => 'application/octet-stream'])
                 ->deleteFileAfterSend(true);
         }else{
-            $request->session()->flash('error', 'No se encontraron los archivos para descargar.');
+            $request->session()->flash('error', 'No se encontraron archivos para descargar.');
             return redirect()->back();
         }
     }
 
+    public function descargar_archivo(Request $request, $user_id, $job_id, $file_name){
+        if (!Cuenta::cuentaSegunDominio()->descarga_masiva) {
+            $request->session()->flash('error', 'Servicio no tiene permisos para descargar.');
+            return redirect()->back();
+        }
+
+        if (!Auth::user()->registrado) {
+            $request->session()->flash('error', 'Usuario no tiene permisos para descargar.');
+            return redirect()->back();
+        }
+        
+        if (Auth::user()->id != $user_id) {
+            $request->session()->flash('error', 'Usuario no tiene permisos para descargar.');
+            return redirect()->back();
+        }
+
+        // validar que user_id y job_id sean enteros
+
+        $job_info = Job::where('user_id', Auth::user()->id)
+                        ->where('id', $job_id)
+                        ->where('filename', $file_name)->first();
+        
+        $full_path = $job_info->filepath.DIRECTORY_SEPARATOR.$job_info->filename;
+        if(file_exists($full_path)){
+            header('Content-Type: ' . get_mime_by_extension($full_path));
+            header('Content-Length: ' . filesize($full_path));
+            readfile($full_path);
+            $job_info->downloads += 1;
+            $job_info->save();
+            unlink($full_path);
+        }else{
+            abort(404);
+        }
+    }
+
+    public function estados($tramite_id)
+    {
+        $tramite = Doctrine::getTable('Tramite')->find($tramite_id);
+        $datos = $tramite->getValorDatoSeguimientoAll();
+        foreach ($datos as $dato) {
+            if ($dato->nombre == 'historial_estados') {
+                $historial = $dato->valor;
+            }
+        }
+        $data['historial'] = $historial;
+        return view('stages.estados',$data);
+    }
 }

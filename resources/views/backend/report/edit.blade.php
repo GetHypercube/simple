@@ -31,7 +31,6 @@
                         <div class="validacion"></div>
                         @if(!$edit)
                             <input type="hidden" name="proceso_id" value="{{$proceso->id}}">
-                            <input type="hidden" name="proceso_root" value="{{$proceso->root}}"/>
                         @endif
                         <label>Nombre</label>
                         <input type="text" class="form-control col-2" name="nombre"

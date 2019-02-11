@@ -176,7 +176,7 @@ function setTableDefinition()
 
         $procesos = Doctrine_Query::create()
             ->from('Proceso p, p.Cuenta c')
-            ->where('p.estado="public" AND p.activo=1 AND c.id = ?', $this->id)
+            ->where('p.activo=1 AND c.id = ?', $this->id)
             ->execute();
 
         return $procesos;

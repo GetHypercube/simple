@@ -15,7 +15,9 @@ Route::middleware(['auth_user'])->group(function () {
     Route::post('/uploader/datos/{campo_id}/{etapa_id}', 'UploadController@datos');
     Route::post('/uploader/datos_s3/{campo_id}/{etapa_id}/{multipart?}/{part_number?}/{total_segments?}', 'UploadController@datos_s3');
     Route::get('/uploader/datos_get/{id}/{token}', 'UploadController@datos_get');
-    Route::get('/uploader/datos_get_s3/{id}/{token}', 'UploadController@datos_get_s3');
+    Route::get('/uploader/datos_get_s3/{id}/{campo_id}/{token}', 'UploadController@datos_get_s3');
+
+
 
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::get('login/claveunica', 'Auth\LoginController@redirectToProvider')->name('login.claveunica');
@@ -39,6 +41,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/etapas/descargar/{tramites}', 'StagesController@descargar')->name('stage.download');
     Route::post('/etapas/descargar_form', 'StagesController@descargar_form')->name('stage.descargar_form');
     Route::get('/documentos/get/{filename}', 'DocumentController@get')->name('document.get');
+    Route::get('/etapas/estados/{tramite_id}', 'StagesController@estados')->name('stage.estados');
 
     Route::get('/consultas', 'ConsultController@index')->name('consulta');
     Route::post('/consultas', 'ConsultController@index')->name('consulta');
@@ -49,6 +52,8 @@ Route::middleware(['auth_user'])->group(function () {
 
     //Agenda
     Route::get('/agenda/ajax_modal_calendar', 'AppointmentController@ajax_modal_calendar')->name('agenda.ajax_modal_calendar');
+
+    Route::get('/descargar_archivo/{user_id}/{job_id}/{file_name}', 'StagesController@descargar_archivo')->name('stage.descargar_archivo');
 });
 
 Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function () {
@@ -75,6 +80,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::get('/uploader/logo_certificado_get/{filename}', 'UploaderController@logo_certificado_get')->name('uploader.logo_certificado_get');
         Route::view('/cuentas', 'backend.cuentas')->name('cuentas');
         Route::post('/cuentas', 'ConfigurationController@saveMyAccount')->name('cuentas.save');
+        Route::post('/uploader/masiva', 'ConfigurationController@masiva')->name('uploader.masiva');
 
         //Home
         Route::get('gestion/widget_load/{widget_id}', 'ManagementController@widget_load')->name('management.widget_load');

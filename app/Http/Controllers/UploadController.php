@@ -55,10 +55,10 @@ class UploadController extends Controller
             exit;
         }
         if( ! is_null($multipart) && $multipart == 'multi'){
-            $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename);
+            $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename, $campo->id);
             $result = $s3_uploader->uploadPart($etapa_id, $part_number, $total_segments);
         }else{
-            $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename);
+            $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename, $campo->id);
             $result = $s3_uploader->singlePartUpload();
         }
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -168,14 +168,14 @@ class UploadController extends Controller
         readfile($path);
     }
 
-    public function datos_get_s3(Request $request, $id, $token)
+    public function datos_get_s3(Request $request, $id, $campo_id, $token)
     {
         // $request->session()->flash('error', 'No se encontraron los archivos para descargar.');
         // return \Redirect::back();
         
         $file = Doctrine_Query::create()
             ->from('File f, f.Tramite t, t.Etapas e, e.Usuario u')
-            ->where('f.id = ? AND f.llave = ?', array($id, $token))
+            ->where('f.id = ? AND f.llave = ? AND f.campo_id = ? ', array($id, $token, $campo_id))
             ->fetchOne();
         
         if (!$file) {

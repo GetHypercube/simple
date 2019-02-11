@@ -57,8 +57,6 @@ class Campo extends Doctrine_Record
             $campo = new CampoRecaptcha();
         else if ($tipo == 'maps')
             $campo = new CampoMaps();
-        else if ($tipo == 'civiles')
-            $campo = new CampoEstadoCivil();
         else if ($tipo == 'grid_datos_externos')
             $campo = new CampoGridDatosExternos();
         else if ($tipo == 'provincias')
@@ -90,6 +88,7 @@ class Campo extends Doctrine_Record
         $this->hasColumn('extra');
         $this->hasColumn('agenda_campo');
         $this->hasColumn('exponer_campo');
+        $this->hasColumn('condiciones_extra_visible');
 
         $this->setSubclasses(array(
             'CampoText' => array('tipo' => 'text'),
@@ -113,7 +112,6 @@ class Campo extends Doctrine_Record
             'CampoAgenda' => array('tipo' => 'agenda'),
             'CampoRecaptcha' => array('tipo' => 'recaptcha'),
             'CampoMaps' => array('tipo' => 'maps'),
-            'CampoEstadoCivil' => array('tipo' => 'civiles'),
             'CampoGridDatosExternos' => array('tipo' => 'grid_datos_externos'),
             'CampoProvincias' => array('tipo' => 'provincias'),
         ));
@@ -408,7 +406,6 @@ class Campo extends Doctrine_Record
                     break;
             }
         }
-
         return $visible;
     }
 
@@ -630,5 +627,10 @@ class Campo extends Doctrine_Record
         $ret_val = ob_get_contents();
         ob_end_clean();
         return $ret_val;
+    }
+
+    public function getCondicionesExtraVisible()
+    {
+        return json_decode($this->_get('condiciones_extra_visible'));
     }
 }

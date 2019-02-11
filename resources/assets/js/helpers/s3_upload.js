@@ -1,13 +1,13 @@
 
 var s3_fields = {};
 
-function set_up(unique_id, url, token, block_size){
+function set_up(unique_id, url, token, block_size, single_file_max_size){
     if(! (unique_id in s3_fields) ){
         s3_fields[unique_id] = {};
     }
 
     var c_s3 = s3_fields[unique_id];
-    c_s3.single_file_max_size = 20971520;  // 20 megabytes
+    c_s3.single_file_max_size = single_file_max_size; // l: 16 -1 || b: 5 - 1
     c_s3.chunk_size = block_size;
     c_s3.running_chunk_size = -1;
     c_s3.XMLHttpRequest_arr = [];
@@ -42,15 +42,6 @@ function set_up(unique_id, url, token, block_size){
 
     c_s3.stop_uploading = false;
 
-    var hidden_default_value = {
-        'URL': '',
-        'info': {
-            'parts': [],
-            'part_max_size': -1
-        }
-    }
-    c_s3.hidden_name_field.val(JSON.stringify(hidden_default_value));
-
     c_s3.file_input.on('change', function(c_s3){
         return function(evt){
             c_s3.but_send_file.prop('disabled', false);
@@ -58,7 +49,7 @@ function set_up(unique_id, url, token, block_size){
             c_s3.file = c_s3.file_input[0].files[0];
             c_s3.filename = encodeURI(c_s3.file.name);
             c_s3.fileSize = c_s3.file.size;
-            if(c_s3.fileSize > c_s3.single_file_max_size){
+            if(c_s3.fileSize >= c_s3.single_file_max_size){
                 // debe ser multiupload
                 c_s3.running_chunk_size = c_s3.chunk_size;
                 c_s3.url = c_s3.base_url + '/multi';
@@ -68,9 +59,9 @@ function set_up(unique_id, url, token, block_size){
             }else{
                 // debe ser single file
                 c_s3.parts_div.show(); // solo se enviara una parte
-                c_s3.running_chunk_size = c_s3.single_file_max_size;
+                c_s3.running_chunk_size = c_s3.fileSize;
                 c_s3.url = c_s3.base_url + '/single';
-                c_s3.segments_count = Math.ceil(c_s3.fileSize/ c_s3.single_file_max_size);
+                c_s3.segments_count = 1;
             }
 
             resetSend(c_s3);
@@ -94,6 +85,7 @@ function resetSend(c_s3){
     c_s3.count = 0;
     c_s3.file_parts_status = {};
     c_s3.offset = 0;
+    c_s3.parts_div.hide();
     for(var i=0;i<c_s3.segments_count;i++){
         c_s3.file_parts_status[i] = 0;
     }
@@ -124,6 +116,7 @@ function start_upload(c_s3) {
 function readBlock(c_s3) {
     var r = new FileReader();
     var blob = c_s3.file.slice(c_s3.offset, c_s3.running_chunk_size + c_s3.offset);
+    console.log(c_s3.offset, c_s3.running_chunk_size + c_s3.offset);
     r.onload = onLoadHandler(c_s3);
     r.readAsArrayBuffer(blob);
 }
@@ -141,10 +134,6 @@ function onLoadHandler(c_s3){
         c_s3.offset += evt.target.result.byteLength;
         
         c_s3.count++;
-        if (c_s3.offset >= c_s3.fileSize) {
-            send_chunk(evt.target.result, c_s3);
-            return;
-        }
         send_chunk(evt.target.result, c_s3);
     }
 }
@@ -242,4 +231,25 @@ function send_chunk(chunk, c_s3) {
     xhr.setRequestHeader('filename', c_s3.filename);
     xhr.setRequestHeader('Content-Type', 'application/octet-stream');
     xhr.send(chunk);
+}
+
+function set_default_s3_hidden(unique_id){
+    var c_s3 = s3_fields[unique_id];
+    var hidden_default_value = {
+        'URL': '',
+        'info': {
+            'parts': [],
+            'part_max_size': -1
+        }
+    }
+    c_s3.hidden_name_field.val(JSON.stringify(hidden_default_value));
+}
+
+function set_s3_hidden(unique_id, url, info){
+    var c_s3 = s3_fields[unique_id];
+    var hidden_value = {
+        'URL': url,
+        'info': info
+    }
+    c_s3.hidden_name_field.val(JSON.stringify(hidden_value));
 }
