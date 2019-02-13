@@ -58,8 +58,6 @@ class DocumentController extends Controller
         $data['documento'] = $documento;
         $data['edit'] = TRUE;
         $data['proceso'] = $documento->Proceso;
-        $procesosArchivados = $data['proceso']->findProcesosArchivados($data['proceso']->root);
-        $data['procesos_arch'] = $procesosArchivados;
         $data['title'] = 'Edición de Documento';
 
         return view('backend.document.edit', $data);
