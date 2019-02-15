@@ -59,7 +59,7 @@ class FilesDownload implements ShouldQueue
         $this->link_host = $host;
         $this->cuenta = $cuenta;
 
-        $this->_base_dir = public_path('async_downloader');
+        $this->_base_dir = public_path('uploads/tmp/async_downloader');
         if( ! file_exists($this->_base_dir) ) {
             mkdir($this->_base_dir, 0777, true);
         }
