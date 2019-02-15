@@ -55,16 +55,15 @@ function set_up(unique_id, url, token, block_size, single_file_max_size){
                 c_s3.url = c_s3.base_url + '/multi';
                 c_s3.segments_count = Math.ceil(c_s3.fileSize/ c_s3.running_chunk_size);
                 c_s3.running_chunk_size = c_s3.chunk_size;
-                c_s3.parts_div.show();
             }else{
                 // debe ser single file
-                c_s3.parts_div.show(); // solo se enviara una parte
                 c_s3.running_chunk_size = c_s3.fileSize;
                 c_s3.url = c_s3.base_url + '/single';
                 c_s3.segments_count = 1;
             }
 
             resetSend(c_s3);
+            c_s3.parts_div.show();
             c_s3.total_segments.text(c_s3.segments_count);
         }
     }(c_s3)
@@ -104,7 +103,6 @@ function start_upload(c_s3) {
         if(c_s3.file == null){
             return;
         }
-        resetSend(c_s3);
         c_s3.stop_uploading = false;
         c_s3.but_stop.prop('disabled', false);
         c_s3.but_send_file.prop('disabled', true);
