@@ -1,4 +1,5 @@
-@section('title', $title)
+@extends('layouts.consult')
+
 @section('content')
     <div class="container" id="main">
         <div class="row">
@@ -7,7 +8,7 @@
                 <h2><i class="material-icons">home</i> <?= Cuenta::cuentaSegunDominio()->nombre_largo ?></h2>
 
                 <p>
-                    <i class="material-icons">help</i> A través de esta pequeña y simple aplicación puedes dar
+                    <i class="material-icons">help</i> En esta sección puedes dar
                     seguimiento a cualquier trámite que se ha ingresado
                 </p>
             </div>
