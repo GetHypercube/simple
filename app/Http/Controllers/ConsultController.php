@@ -37,9 +37,8 @@ class ConsultController extends Controller
 
         $data['nrotramite'] = $nrotramite;
         $data['tareas'] = $query;
-        $data['content'] = view('consult.index', $data);
 
-        return view('layouts.app', $data);
+        return view('consult.index', $data);
     }
 
     public function ver_etapas($id_etapa)
