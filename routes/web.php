@@ -213,6 +213,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::get('reportes/editar/{reporte_id}', 'ReportController@edit')->name('report.edit');
             Route::post('reportes/editar/{reporte_id}', 'ReportController@store')->name('report.update');
             Route::get('reportes/eliminar/{reporte_id}', 'ReportController@delete')->name('report.delete');
+            Route::get('reportes/descargar_archivo/{user_id}/{job_id}/{file_name}', 'ReportController@descargar_archivo')->name('report.descargar_archivo');
         });
 
         //Auditoría

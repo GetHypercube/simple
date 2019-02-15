@@ -78,9 +78,9 @@
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'grid_datos_externos')">
                         Grilla de Datos Externos
                     </button>
-                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'agenda')">
+                    <!-- <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'agenda')">
                         Agenda
-                    </button>
+                    </button> -->
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'recaptcha')">
                         Recaptcha
                     </button>
