@@ -18,8 +18,14 @@
             <td>
                 <select class="eventoInstante form-control">
                     <option value="antes">Antes</option>
+                    <option value="durante">Durante</option>
                     <option value="despues">Después</option>
-                </select>
+                    </select>
+            </td>
+            <td>
+                <input class="eventoCampoAsociado col-md-10" 
+                    type="text" placeholder="@@@campo">
+                <p class="messageEventoAsociado" style="color: red; display: block;"></p>
             </td>
             <td>
                 <select class="eventoPasoId form-control">
@@ -42,9 +48,10 @@
         </tr>
         <tr>
             <th>#</th>
-            <th>Accion</th>
+            <th>Acción</th>
             <th>Condición</th>
             <th>Instante</th>
+            <th>Botón</th>
             <th>Momento</th>
             <th></th>
         </tr>
@@ -58,6 +65,7 @@
             </td>
             <td><?= $p->regla ?></td>
             <td><?= $p->instante ?></td>
+            <td><?= (isset($p->campo_asociado) ? $p->campo_asociado : '' ) ?></td>
             <td><?=$p->paso_id ? '<abbr title="' . $p->Paso->Formulario->nombre . '">Ejecutar Paso ' . $p->Paso->orden . '</abbr>' : ($p->evento_externo_id ? '<abbr title="' . $p->EventoExterno->nombre . '">Evento Externo ' . $p->EventoExterno->nombre . '</abbr>' : 'Ejecutar Tarea')?></td>
             <td>
                 <input type="hidden" name="eventos[<?= $key + 1 ?>][accion_id]"
@@ -66,6 +74,8 @@
                        value="<?= $p->regla ?>"/>
                 <input type="hidden" name="eventos[<?= $key + 1 ?>][instante]"
                        value="<?= $p->instante ?>"/>
+                <input type="hidden" name="eventos[<?= $key + 1 ?>][campo_asociado]"
+                       value="<?=(isset($p->campo_asociado) ? $p->campo_asociado : '' ) ?>"/>
                 <?php
                 $paso_ee_id = !is_null($p->paso_id) ? $p->paso_id : $p->evento_externo_id;
                 ?>
@@ -84,3 +94,63 @@
         </a>
     </label>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('.eventoInstante').change(function(evt){
+            if(evt.target.value === 'durante'){
+                // habilitar campo
+                $('.eventoCampoAsociado').prop('disabled', false);
+            }else{
+                // deshabilitar campo
+                $('.eventoCampoAsociado').prop('disabled', true);
+            }
+        });
+
+        $('.eventoPasoId.form-control').change(function(evt){
+            var form_id = $('.eventoPasoId.form-control')[0].value;
+            $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").html('');
+            $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").hide();
+            if( form_id == ''){
+                $('.eventoCampoAsociado').prop('disabled', true);
+                return;
+            }
+            $('.eventoCampoAsociado').prop('disabled', false);
+            $('.eventoCampoAsociado').trigger('blur');
+        });
+
+        $('.eventoCampoAsociado').blur(function(evt){
+            var form_id = $('.eventoPasoId.form-control')[0].value;
+            if(form_id == '') return;  // es ejecutar tarea
+            var campo = evt.target.value;
+            if(campo == '' || typeof campo === 'undefined') return;
+            $.ajax({
+                url: '<?=url('backend/form/existe_campo_en_form')?>',
+                data: {
+                    campo_nombre: campo,
+                    form_id: form_id
+                },
+                method: 'GET',
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    if( ! data.resultado ) {
+                        $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").html(data.mensaje);
+                        $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").show();
+                    }else{
+                        $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").html('');
+                        $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").hide();
+                    }
+                }
+            });
+            evt.stopPropagation();
+        });
+
+        $('.eventoCampoAsociado').focus(function (evt) {
+            $(this).parent().find(".messageEventoAsociado").hide();
+            evt.stopPropagation();
+        });
+
+        $('.eventoInstante').trigger('change');
+    })
+</script>

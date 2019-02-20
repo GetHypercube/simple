@@ -371,4 +371,28 @@ class FormsController extends Controller
         return $array_final;
     }
 
+    public function existeCampoEnForm(Request $request){
+        $campo_nombre = $request->has('campo_nombre') ? $request->input('campo_nombre') : FALSE;
+        $form_id = $request->has('form_id') ? $request->input('form_id') : FALSE;
+        if ($campo_nombre === FALSE || $form_id === FALSE){
+            $response = array('mensaje' => 'Error', 'resultado' => FALSE);
+            return response()->json($response);
+        }
+        
+        $campo_nombre = str_replace('@', '', $campo_nombre);
+        $q = Doctrine_Query::create()
+            ->select("id")
+            ->from("Campo")
+            ->where("nombre = ?", $campo_nombre)->andWhere('formulario_id = ?', $form_id);
+        
+        $campos = $q->execute()->toArray();
+        
+        if(empty($campos)){
+            $response = ['resultado' => FALSE, 'mensaje' => "El campo @@{$campo_nombre}<br>no existe"];
+        }else{
+            $response = ['resultado' => TRUE, 'mensaje' => ''];
+        }
+        
+        return response()->json($response);
+    }
 }

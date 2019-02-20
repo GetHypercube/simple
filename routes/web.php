@@ -82,6 +82,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::view('/cuentas', 'backend.cuentas')->name('cuentas');
         Route::post('/cuentas', 'ConfigurationController@saveMyAccount')->name('cuentas.save');
         Route::post('/uploader/masiva', 'ConfigurationController@masiva')->name('uploader.masiva');
+        Route::get('/form/existe_campo_en_form', 'FormsController@existeCampoEnForm')->name('form.existe_campo_en_form');
 
         //Home
         Route::get('gestion/widget_load/{widget_id}', 'ManagementController@widget_load')->name('management.widget_load');
