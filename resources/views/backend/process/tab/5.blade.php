@@ -108,10 +108,10 @@
         });
 
         $('.eventoPasoId.form-control').change(function(evt){
-            var form_id = $('.eventoPasoId.form-control')[0].value;
+            var paso_id = $('.eventoPasoId.form-control')[0].value;
             $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").html('');
             $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").hide();
-            if( form_id == ''){
+            if( paso_id == ''){
                 $('.eventoCampoAsociado').prop('disabled', true);
                 return;
             }
@@ -120,15 +120,15 @@
         });
 
         $('.eventoCampoAsociado').blur(function(evt){
-            var form_id = $('.eventoPasoId.form-control')[0].value;
-            if(form_id == '') return;  // es ejecutar tarea
+            var paso_id = $('.eventoPasoId.form-control')[0].value;
+            if(paso_id == '') return;  // es ejecutar tarea
             var campo = evt.target.value;
             if(campo == '' || typeof campo === 'undefined') return;
             $.ajax({
                 url: '<?=url('backend/form/existe_campo_en_form')?>',
                 data: {
                     campo_nombre: campo,
-                    form_id: form_id
+                    paso_id: paso_id
                 },
                 method: 'GET',
                 dataType: "json",
