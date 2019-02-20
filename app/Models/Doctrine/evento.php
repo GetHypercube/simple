@@ -10,6 +10,9 @@ class Evento extends Doctrine_Record {
         $this->hasColumn('tarea_id');
         $this->hasColumn('paso_id');
         $this->hasColumn('evento_externo_id');
+        if(\Schema::hasColumn('evento', 'campo_asociado')){
+            $this->hasColumn('campo_asociado');
+        }
     }
 
     function setUp() {
