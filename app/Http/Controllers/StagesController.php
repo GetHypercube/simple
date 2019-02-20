@@ -744,4 +744,41 @@ class StagesController extends Controller
         $data['historial'] = $historial;
         return view('stages.estados',$data);
     }
+
+    public function saveForm(Request $request,$etapa_id){
+
+        //Se guardan los datos del formulario en la etapa correspondiente
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        $input = $request->all();
+        $protected_vars = array('_token','_method','paso');
+        foreach($input as $key => $value){
+            if($key=='paso')
+                $paso = $etapa->getPasoEjecutable($value);        
+            if(!in_array($key,$protected_vars)){
+                $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa_id);
+                if (!$dato)
+                    $dato = new \DatoSeguimiento();
+                $dato->nombre = $key;
+                $dato->valor = $value;
+
+                if (!is_object($dato->valor) && !is_array($dato->valor)) {
+                    if (preg_match('/^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/', $dato->valor)) {
+                        $dato->valor = preg_replace("/^(\d{4})[\/\-](\d{2})[\/\-](\d{2})/i", "$3-$2-$1", $dato->valor);
+                    }
+                }
+                $dato->etapa_id = $etapa_id;
+                $dato->save();
+            }
+        }
+
+        //se ejecutan acciones durante el paso
+        $etapa->ejecutarPaso($paso);
+
+        //retorno
+        $response = array(
+          'status' => 'success',
+          'etapa' => $etapa_id,
+        );
+        return response()->json($response);
+    }
 }

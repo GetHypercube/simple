@@ -22,6 +22,8 @@
 
     @yield('css')
 
+    <!-- <meta name="csrf-token" content="{{ csrf_token() }}"> -->
+
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= env('MAP_KEY') ?>&libraries=places&language=ES"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     <script type="text/javascript">
@@ -35,6 +37,12 @@
                 });
             }
         };
+
+        $.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
     </script>
      <style type="text/css">{{ $personalizacion }}</style>
 </head>

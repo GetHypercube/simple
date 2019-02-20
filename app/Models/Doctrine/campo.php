@@ -61,6 +61,8 @@ class Campo extends Doctrine_Record
             $campo = new CampoGridDatosExternos();
         else if ($tipo == 'provincias')
             $campo = new CampoProvincias();
+        else if ($tipo == 'btn_asincrono')
+            $campo = new CampoBtnAsincrono();
 
         $campo->assignInheritanceValues();
 
@@ -114,6 +116,7 @@ class Campo extends Doctrine_Record
             'CampoMaps' => array('tipo' => 'maps'),
             'CampoGridDatosExternos' => array('tipo' => 'grid_datos_externos'),
             'CampoProvincias' => array('tipo' => 'provincias'),
+            'CampoBtnAsincrono' => array('tipo' => 'btn_asincrono'),
         ));
     }
 

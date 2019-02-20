@@ -728,4 +728,18 @@ class Etapa extends Doctrine_Record
         ob_end_clean();
         return $ret_val;
     }
+
+    public function ejecutarPaso(Paso $paso)
+    {
+        //Ejecutamos los eventos durante el paso
+        $eventos = Doctrine_Query::create()->from('Evento e')
+            ->where('e.paso_id = ? AND e.instante = ?', array($paso->id, 'durante'))
+            ->execute();
+        foreach ($eventos as $e) {
+            $r = new Regla($e->regla);
+            if ($r->evaluar($this->id)) {
+                $e->Accion->ejecutar($this);
+            }
+        }
+    }
 }

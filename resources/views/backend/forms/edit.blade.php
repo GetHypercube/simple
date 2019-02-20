@@ -111,6 +111,12 @@
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'maps')">Mapa
                     </button>
                 </div>
+                <div class="btn-group ml-1 mb-1">
+                    <button class="btn btn-secondary"
+                            onclick="return agregarCampo(<?= $formulario->id ?>,'btn_asincrono')">
+                        Botón asíncrono
+                    </button>
+                </div>
             </div>
 
             <div class="row">

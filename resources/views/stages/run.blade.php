@@ -50,6 +50,7 @@
             @endif
             <button class="btn btn-simple btn-danger" type="submit">Siguiente</button>
         </div>
+        <input type="hidden" name="paso" value="{{$secuencia}}">
     </form>
     <div id="modalcalendar" class="modal hide modalconfg modcalejec"></div>
     <input type="hidden" id="urlbase" value="<?= URL::to('/') ?>"/>
