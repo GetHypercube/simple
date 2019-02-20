@@ -256,6 +256,9 @@ class Tarea extends Doctrine_Record
                 $evento->accion_id = $p['accion_id'];
                 $evento->paso_id = $paso_id;
                 $evento->evento_externo_id = $evento_externo_id;
+                $c_asociado = str_replace('@', '', $p['campo_asociado']);
+                $campo_asociado = '@@'.$c_asociado;
+                $evento->campo_asociado = $campo_asociado;
                 $this->Eventos[] = $evento;
 
             }
