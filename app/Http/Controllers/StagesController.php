@@ -634,7 +634,7 @@ class StagesController extends Controller
             $http_host = request()->getSchemeAndHttpHost();
             
             if(strpos(url()->current(), 'https://') === 0){
-                $http_host = str_replace('http://', 'https://', $http_host, 1);
+                $http_host = str_replace('http://', 'https://', $http_host);
             }
             
             $email_to = Auth::user()->email;
