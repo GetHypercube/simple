@@ -619,7 +619,7 @@ class StagesController extends Controller
             }
         }
         
-        $max_space_before_email_link = env('DOWNLOADS_FILE_MAX_SIZE', 500 * 1024 * 1024);
+        $max_space_before_email_link = env('DOWNLOADS_FILE_MAX_SIZE', 500) * 1024 * 1024;
         if( ( array_key_exists('s3', $files_list) && count($files_list['s3']) > 0 ) 
                 || $docs_total_space > $max_space_before_email_link ) {
             $running_jobs = Job::where('user_id', Auth::user()->id)
@@ -634,7 +634,7 @@ class StagesController extends Controller
             $http_host = request()->getSchemeAndHttpHost();
             
             if(strpos(url()->current(), 'https://') === 0){
-                $http_host = str_replace('http://', 'https://', $http_host, 1);
+                $http_host = str_replace('http://', 'https://', $http_host);
             }
             
             $email_to = Auth::user()->email;
