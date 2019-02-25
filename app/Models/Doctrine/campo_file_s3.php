@@ -92,14 +92,15 @@ class CampoFileS3 extends Campo
             }
             $display .= '
                 });</script>';
-
+        
         if(is_null($saved_url)){
             $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="#"></a></p>';
         } else {
             $etapa = Doctrine::getTable('Etapa')->findOneById($etapa_id);
-            $file_key = substr($saved_url, strrpos($saved_url, '/') + 1);
+            $url_pieces = explode('/', $saved_url);
+            $file_key = $url_pieces[ count($url_pieces) - 2 ];
             $file = Doctrine::getTable('File')->findOneByLlaveAndTipoAndTramiteId($file_key, \App\Helpers\FileS3Uploader::$file_tipo, $etapa->tramite_id);
-            $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="' . $saved_url . '" target="_blank">'.(isset($file->filename) ? $file->filename: '').'</a>';
+            $display .= '<p class="link"><a id="link_to_file_'.$this->id.'" href="' . $saved_url . '" target="_blank">'.(isset($file->filename) ? $file->filename: 'Archivo').'</a>';
         }
 
         if ($this->ayuda)
