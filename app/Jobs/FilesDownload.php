@@ -7,7 +7,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use \App\Helpers\FileS3Uploader;
@@ -98,7 +97,7 @@ class FilesDownload implements ShouldQueue
         // empaquetar los archivos
         $compress_status = self::zip_dir_recursive($this->temp_path, $this->zip_filename, FALSE, \ZipArchive::CM_STORE);
         if( $compress_status === FALSE){
-            echo "Error al crear el archivo zip: $this->$zip_filename\n";
+            echo "Error al crear el archivo zip: $this->zip_filename\n";
         }
         
         switch($this->zip_name_type){

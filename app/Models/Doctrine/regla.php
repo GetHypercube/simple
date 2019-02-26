@@ -135,8 +135,6 @@ class Regla
     // Esta es una representacion con las variables reemplazadas. No es una expresion evaluable. (Los arrays y strings no estan definidos como tal)
     public function getExpresionParaOutput($etapa_id, $evaluar = false)
     {
-        // print_r( stdClass::__set_state(array( 'region' => 'Antofagasta', 'comuna' => 'San Pedro de Atacama' )));
-        // exit;
         $new_regla = $this->regla;
         Log::debug("############# En getExpresionParaOutput");
         $new_regla = preg_replace_callback('/@@(\w+)((->\w+|\[\w+\])*)/', function ($match) use ($etapa_id, $evaluar) {

@@ -27,6 +27,7 @@
                     <option value="continuar_tramite">Continuar Trámite</option>
                     <option value="webhook">Notificaciones</option>
                     <option value="descarga_documento">Descargar Documento</option>
+                    <option value="redirect">Redirección</option>
                 </select>
             </form>
         </div>

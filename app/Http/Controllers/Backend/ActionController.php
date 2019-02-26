@@ -12,6 +12,7 @@ use AccionNotificaciones;
 use AccionIniciarTramite;
 use AccionContinuarTramite;
 use AccionDescargaDocumento;
+use AccionRedirect;
 use App\Helpers\Doctrine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -118,6 +119,8 @@ class ActionController extends Controller
             $accion = new AccionContinuarTramite();
         else if ($tipo == 'descarga_documento')
             $accion = new AccionDescargaDocumento();
+        else if ($tipo == 'redirect')
+            $accion = new AccionRedirect();
 
         $data['edit'] = FALSE;
         $data['proceso'] = $proceso;
@@ -184,6 +187,8 @@ class ActionController extends Controller
                 $accion = new AccionContinuarTramite();
             else if ($request->input('tipo') == 'descarga_documento')
                 $accion = new AccionDescargaDocumento();
+            else if ($request->input('tipo') == 'redirect')
+                $accion = new AccionRedirect();
             $accion->proceso_id = $request->input('proceso_id');
             $accion->tipo = $request->input('tipo');
         }

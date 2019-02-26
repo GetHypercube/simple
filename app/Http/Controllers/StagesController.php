@@ -70,9 +70,18 @@ class StagesController extends Controller
             $etapa->avanzar();
             //Job para indexar contenido cada vez que se avanza de etapa
             $this->dispatch(new IndexStages($etapa->Tramite->id));
+
+            if(session()->has('redirect_url')){
+                return redirect()->away(session()->get('redirect_url'));
+            }
+
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1));
         } else {
             $etapa->iniciarPaso($paso);
+
+            if(session()->has('redirect_url')){
+                return redirect()->away(session()->get('redirect_url'));
+            }
 
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
@@ -361,6 +370,11 @@ class StagesController extends Controller
 
     public function ejecutar_fin(Request $request, $etapa_id)
     {
+
+        if(session()->has('redirect_url')){
+            return redirect()->away(session()->get('redirect_url'));
+        }
+
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
         if ($etapa->usuario_id != Auth::user()->id) {

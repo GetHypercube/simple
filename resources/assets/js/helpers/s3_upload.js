@@ -183,19 +183,18 @@ function send_chunk(chunk, c_s3) {
                 readBlock(c_s3);
             }else if(xhr_response.hasOwnProperty('success')){
                 // fin de enviar el archivo completo :-D
-                
                 if(xhr_response.success){
-                    
+
                     c_s3.progress_file.val( c_s3.progress_file.prop('max') );
-                    c_s3.link_to_file.attr('href', xhr_response.URL);
+                    c_s3.link_to_file.attr('href', xhr_response.URL + '/' + xhr_response.file_name);
                     c_s3.link_to_file.text(xhr_response.file_name);
                     var hidden_new_value = {
-                        URL: window.location.origin + xhr_response.URL,
+                        URL: window.location.origin + xhr_response.URL + '/' + xhr_response.file_name,
                         info: {
                             parts: c_s3.parts_info,
                             part_max_size: c_s3.running_chunk_size
                         }
-                    }
+                    }   
                     c_s3.hidden_name_field.val(JSON.stringify(hidden_new_value));
                 }else{
                     alert(xhr_response.error);
