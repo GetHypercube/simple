@@ -10,40 +10,23 @@ class CampoGridDatosExternos extends Campo
 
     public $requiere_datos = false;
     private $cell_text_max_length_default = 50;
+    
+    private $cell_text_max_length;
+    private $columns;
+    private $agregable;
+    private $eliminable;
+    private $editable;
+    private $export_as;
+    private $input_is_array;
+    private $tiene_acciones;
+    private $botones;
+    private $botones_position;
+    private $hidden_arr;
+    private $ayuda;
 
     protected function display($modo, $dato, $etapa_id = false)
     {
-        $columns = $this->extra->columns;
-        
-        $botones = [];
-
-        if(isset($this->extra->agregable) && $this->extra->agregable == 'true'){
-            $botones[] = '<button type="button" class="btn btn-outline-secondary" onclick="open_add_modal('.$this->id.')">Agregar</button>';
-        }
-        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true'){
-            $botones[] = '<button type="button" class="btn btn-outline-secondary" style="" onclick="grilla_datos_externos_eliminar('.$this->id.')">Eliminar</button>';
-        }
-
-        if( isset($this->extra->buttons_position) && $this->extra->buttons_position === 'bottom' ){
-            $botones_position = $this->extra->buttons_position;
-        }else{
-            $botones_position = 'right_side';
-        }
-
-        $editable = false;
-        if((isset($this->extra->editable) && $this->extra->editable == 'true')){
-            $editable = true;
-        }
-
-        $eliminable = false;
-        if((isset($this->extra->eliminable) && $this->extra->eliminable == 'true')){
-            $eliminable = true;
-        }
-
-        $tiene_acciones = false;
-        if( $eliminable || $editable ){
-            $tiene_acciones = true;
-        }
+        $this->load_extra_config();
 
         $display_modal = '
         <div class="modal fade modalgrid" id="table_alter_modal_'.$this->id.'" tabindex="-1" role="dialog" aria-labelledby="add_to_table_modal_label_'.$this->id.'" aria-hidden="true">
@@ -79,12 +62,12 @@ class CampoGridDatosExternos extends Campo
                                     </div>
                                     <div class="col-auto colautogrid" style="transform:translateY(+50%);">
                                     <!-- Al lado -->
-                                        '.($botones_position == "right_side" ? implode("<br /><br />", $botones) : '').'
+                                        '.($this->botones_position == "right_side" ? implode("<br /><br />", $this->botones) : '').'
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="">
-                                        '.($botones_position == "bottom" ? implode("\n", $botones) : '').'
+                                        '.($this->botones_position == "bottom" ? implode("\n", $this->botones) : '').'
                                     </div>
                                     <div class="">
                                     </div>
@@ -92,9 +75,7 @@ class CampoGridDatosExternos extends Campo
                             </div>
                         </div>
                     </div>';
-        $grilla_con_datos = '';
-
-        // $display .= '<input type="hidden" name="' . $this->nombre . '" value=\'' . ($dato ? json_encode($dato->valor) : $valor_default) . '\' />';
+        
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
 
@@ -108,9 +89,9 @@ class CampoGridDatosExternos extends Campo
                 // hay que corregir llenando con vacios cuando la columna no sea exportable
                 $data_temp = [];
                 for($i=0; $i<count($data);$i++){
-                    for( $j=0; $j < count($columns); $j++){
+                    for( $j=0; $j < count($this->columns); $j++){
                         
-                        if( $columns[$j]->is_exportable == 'false'){
+                        if( $this->columns[$j]->is_exportable == 'false'){
                             array_splice($data[$i], $j, 0, '');
                             
                         }
@@ -124,26 +105,27 @@ class CampoGridDatosExternos extends Campo
         }
         if( is_string($data))
             $data = json_decode($data, true);
-        $cell_max_length = (isset($this->extra->cell_text_max_length) ? $this->extra->cell_text_max_length: $this->cell_text_max_length_default);
 
         $display .='
         <script>
                 $(document).ready(function(){
                     var data = '.json_encode($data).';
-                    var is_array = '.(count($data) > 0 ? "Array.isArray(data[0])" : "false" ).';
-                    var columns = '.json_encode($columns).';
+                    var is_array = '.(count($data) > 0 ? "Array.isArray(data[0])" : var_export($this->input_is_array, true) ).';
+                    var columns = '.json_encode($this->columns).';
                     grillas_datatable['.$this->id.'] = {};
-                    grillas_datatable['.$this->id.'].tiene_acciones = '.($tiene_acciones ? 'true': 'false').';
-                    grillas_datatable['.$this->id.'].editable = '.($editable ? 'true': 'false').';
+                    
+                    grillas_datatable['.$this->id.'].tiene_acciones = '.($this->tiene_acciones ? 'true': 'false').';
+                    
                     grillas_datatable['.$this->id.'].cantidad_columnas = columns.length;
-                    if('.($tiene_acciones ? 'true': 'false').'){
+                    grillas_datatable['.$this->id.'].export_as = "'.(isset($this->export_as) ? $this->export_as: 'array').'".toLowerCase();
+                    
+                    if('.($this->tiene_acciones ? 'true': 'false').'){
                         grillas_datatable['.$this->id.'].cantidad_columnas++;
                     }
                     
-                    init_tables('.$this->id.', "'.$modo.'",columns,'.$cell_max_length.',is_array, '.json_encode($editable).','.json_encode($eliminable).');
+                    init_tables('.$this->id.', "'.$modo.'",columns,'.$this->cell_text_max_length.',is_array, '.json_encode($this->editable).','.json_encode($this->eliminable).');
                     grillas_datatable['.$this->id.'].table.draw(true);
-                    
-                    if(data != null && data.length > 0){    
+                    if(data != null && data.length > 0){
                         if(is_array){
                             grilla_populate_arrays('.$this->id.', data);
                         }else{
@@ -161,31 +143,12 @@ class CampoGridDatosExternos extends Campo
 
     public function backendExtraFields()
     {
-
-        $columns = array();
-        if (isset($this->extra->columns))
-            $columns = $this->extra->columns;
-
-        $agregable = false;
-        if(isset($this->extra->agregable) && $this->extra->agregable == 'true'){
-            $agregable = true;
-        }
-
-        $eliminable = false;
-        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true'){
-            $eliminable = true;
-        }
-
-        $editable = false;
-        if(isset($this->extra->editable) && $this->extra->editable == 'true'){
-            $editable = true;
-        }
-
+        $this->load_extra_config();
         $precarga = isset($this->extra->precarga) ? $this->extra->precarga : null;
 
-        $hidden_arr[] = '<input type="hidden" name="extra[agregable]" value="'.($agregable ? 'true': 'false').'" />';
-        $hidden_arr[] = '<input type="hidden" name="extra[eliminable]" value="'.($eliminable ? 'true': 'false').'"/>';
-        $hidden_arr[] = '<input type="hidden" name="extra[editable]" value="'.($editable ? 'true': 'false').'"/>';
+        $hidden_arr[] = '<input type="hidden" name="extra[agregable]" value="'.($this->agregable ? 'true': 'false').'" />';
+        $hidden_arr[] = '<input type="hidden" name="extra[eliminable]" value="'.($this->eliminable ? 'true': 'false').'"/>';
+        $hidden_arr[] = '<input type="hidden" name="extra[editable]" value="'.($this->editable ? 'true': 'false').'"/>';
         $output = implode("\n", $hidden_arr);
 
         $column_template_html = "
@@ -214,37 +177,43 @@ class CampoGridDatosExternos extends Campo
 
         $column_template_html = str_replace("\n", "", $column_template_html);
 
-        if( isset($this->extra->cell_text_max_length) && ! is_null($this->extra->cell_text_max_length)){
-            $cell_text_max_length = $this->extra->cell_text_max_length;
-        }else{
-            $cell_text_max_length = 50;
-        }
-
-        $buttons_position = (isset($this->extra->buttons_position)? $this->extra->buttons_position : 'bottom');
-
         $output .= '
             <br />
             <div class="input-group controls">
                 <label class="controls-label-inputt" for="grilla_datos_externos_table_text_max_length">Largo m&aacute;ximo del texto en las celdas:&nbsp;</label>
-                <input class="form-control col-1" type="text" name="extra[cell_text_max_length]" id="grilla_datos_externos_table_text_max_length" value="'.$cell_text_max_length.'"/>
+                <input class="form-control col-1" type="text" name="extra[cell_text_max_length]" id="grilla_datos_externos_table_text_max_length" value="'.$this->cell_text_max_length.'"/>
+            </div>
+            <div class="input-group controls">
+                <label class="controls-label-inputt" for="grilla_formato_entrada">Formato de entrada</label>
+                <select class="form-control col-2" name="extra[grilla_import_as]">
+                    <option value="object" '.( ! $this->input_is_array ? "selected": "" ).'>Objetos</option>
+                    <option value="array" '.( $this->input_is_array ? "selected": "" ).'>Arreglos</option>
+                </select>
+            </div>
+            <div class="input-group controls">
+                <label class="controls-label-inputt" for="grilla_formato_salida">Formato de salida</label>
+                <select class="form-control col-2" name="extra[grilla_export_as]">
+                    <option value="object" '.($this->export_as == "object" ? "selected": "").'>Objetos</option>
+                    <option value="array" '.($this->export_as == "array" ? "selected": "").'>Arreglos</option>
+                </select>
             </div>
             <div class="input-group controls">
                 <label for="grilla_agregable">Se puede Agregar</label>
-                <input class="controls-inputchk" type="checkbox" id="grilla_agregable" onclick="toggle_checkbox(\'agregable\', this)" '.($agregable ? "checked": "").'/>
+                <input class="controls-inputchk" type="checkbox" id="grilla_agregable" onclick="toggle_checkbox(\'agregable\', this)" '.($this->agregable ? "checked": "").'/>
             </div>
             <div class="input-group controls">
                 <label for="grilla_eliminable">Se puede Eliminar</label>
-                <input class="controls-inputchk" type="checkbox" id="grilla_eliminable" onclick="toggle_checkbox(\'eliminable\', this)" '.($eliminable ? 'checked': "").'/>
+                <input class="controls-inputchk" type="checkbox" id="grilla_eliminable" onclick="toggle_checkbox(\'eliminable\', this)" '.($this->eliminable ? 'checked': "").'/>
             </div>
             <div class="input-group controls">
                 <label for="grilla_eliminable">Se puede Editar</label>
-                <input class="controls-inputchk" type="checkbox" id="grilla_editable" onclick="toggle_checkbox(\'editable\', this)" '.($editable ? 'checked': "").'/>
+                <input class="controls-inputchk" type="checkbox" id="grilla_editable" onclick="toggle_checkbox(\'editable\', this)" '.($this->editable ? 'checked': "").'/>
             </div>
             <div class="input-group controls">
                 <label class="controls-label-inputt" for="grilla_datos_externos_posicion_botones">Posicion botones</label>
                 <select class="form-control col-2" name="extra[buttons_position]">
-                    <option value="bottom" '.($buttons_position == "bottom" ? 'selected=selected': '').'>Abajo</option>
-                    <option value="right_side" '.($buttons_position == "right_side" ? 'selected=selected': '').'>Al lado</option>
+                    <option value="bottom" '.($this->botones_position == "bottom" ? 'selected=selected': '').'>Abajo</option>
+                    <option value="right_side" '.($this->botones_position == "right_side" ? 'selected=selected': '').'>Al lado</option>
                 </select>
             </div>
             
@@ -295,8 +264,8 @@ class CampoGridDatosExternos extends Campo
                     <tbody>
                     ';
 
-        if ($columns) {
-            foreach ($columns as $key => $c) {
+        if ($this->columns) {
+            foreach ($this->columns as $key => $c) {
                 $text = isset($c->modal_add_text) ? $c->modal_add_text: "";
 
                 $column = str_replace('{{column_pos}}', $key, $column_template_html);
@@ -347,5 +316,60 @@ class CampoGridDatosExternos extends Campo
     {
         if ([] === $arr) return false;
         return array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
+    private function load_extra_config(){
+        $this->columns = [];
+        $this->botones = [];
+        if (isset($this->extra->columns))
+            $this->columns = $this->extra->columns;
+
+        $this->agregable = false;
+        if(isset($this->extra->agregable) && $this->extra->agregable == 'true'){
+            $this->agregable = true;
+        }
+
+        $this->eliminable = false;
+        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true'){
+            $this->eliminable = true;
+        }
+
+        $this->editable = false;
+        if(isset($this->extra->editable) && $this->extra->editable == 'true'){
+            $this->editable = true;
+        }
+
+        $this->export_as = 'array';
+        if((isset($this->extra->grilla_export_as) && $this->extra->grilla_export_as == 'object')){
+            $this->export_as = 'object';
+        }
+
+        $this->input_is_array = false;
+        if((isset($this->extra->grilla_import_as) && $this->extra->grilla_import_as == 'array')){
+            $this->input_is_array = true;
+        }
+
+        $this->tiene_acciones = false;
+        if( $this->eliminable || $this->editable ){
+            $this->tiene_acciones = true;
+        }
+        
+        if(isset($this->extra->agregable) && $this->extra->agregable == 'true'){
+            $this->botones[] = '<button type="button" class="btn btn-outline-secondary" onclick="open_add_modal('.$this->id.')">Agregar</button>';
+        }
+        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true'){
+            $this->botones[] = '<button type="button" class="btn btn-outline-secondary" style="" onclick="grilla_datos_externos_eliminar('.$this->id.')">Eliminar</button>';
+        }
+
+        if( isset($this->extra->buttons_position) && $this->extra->buttons_position === 'bottom' ){
+            $this->botones_position = $this->extra->buttons_position;
+        }else{
+            $this->botones_position = 'right_side';
+        }
+
+        $this->cell_text_max_length = $this->cell_text_max_length_default;
+        if(isset($this->extra->cell_text_max_length) ){
+            $this->cell_text_max_length = $this->extra->cell_text_max_length;
+        }
     }
 }
