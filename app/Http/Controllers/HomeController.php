@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Cuenta;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -30,6 +31,11 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+        if(session()->has('redirect_url')){
+            return redirect()->away(session()->get('redirect_url'));
+        }
+
         $user_id = 1;
 
         if (Auth::check()) {
