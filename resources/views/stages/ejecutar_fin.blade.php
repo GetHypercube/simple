@@ -6,11 +6,11 @@
         {{csrf_field()}}
         <fieldset>
             <div class="validacion"></div>
-            <legend>Paso final</legend>
+            <legend><?= !is_null($etapa->Tarea->paso_confirmacion_titulo) ? $etapa->Tarea->paso_confirmacion_titulo : 'Paso final' ?> </legend>
             <?php if ($tareas_proximas->estado == 'pendiente'): ?>
             <?php foreach ($tareas_proximas->tareas as $t): ?>
-            <p>Para confirmar y enviar el formulario a la siguiente etapa (<?= $t->nombre ?>) haga click en
-                Finalizar.</p>
+            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : "Para confirmar y enviar el formulario a la siguiente etapa (<?= $t->nombre ?>) haga click en
+                Finalizar." ?> </p>
             <?php if ($t->asignacion == 'manual'): ?>
             <label>Asignar próxima etapa a</label>
             <select name="usuarios_a_asignar[<?= $t->id ?>]">
@@ -21,12 +21,12 @@
             <?php endif; ?>
             <?php endforeach; ?>
             <?php elseif($tareas_proximas->estado == 'standby'): ?>
-            <p>Luego de hacer click en Finalizar esta etapa quedara detenida momentaneamente hasta que se completen el
-                resto de etapas pendientes.</p>
+            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : 'Luego de hacer click en Finalizar esta etapa quedara detenida momentaneamente hasta que se completen el
+                resto de etapas pendientes.' ?></p>
             <?php elseif($tareas_proximas->estado == 'completado'):?>
-            <p>Luego de hacer click en Finalizar este trámite quedará completado.</p>
+            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : 'Luego de hacer click en Finalizar este trámite quedará completado.' ?></p>
             <?php elseif($tareas_proximas->estado == 'sincontinuacion'):?>
-            <p>Este trámite no tiene una etapa donde continuar.</p>
+            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : 'Este trámite no tiene una etapa donde continuar.' ?></p>
             <?php endif; ?>
 
             <div class="form-actions">
@@ -35,7 +35,7 @@
                     Volver
                 </a>
                 @if($tareas_proximas->estado != 'sincontinuacion')
-                    <button class="btn btn-success" type="submit">Finalizar</button>
+                    <button class="btn btn-success" type="submit"><?= !is_null($etapa->Tarea->paso_confirmacion_texto_boton_final) ? $etapa->Tarea->paso_confirmacion_texto_boton_final : 'Finalizar' ?></button>
                 @endif
             </div>
         </fieldset>
