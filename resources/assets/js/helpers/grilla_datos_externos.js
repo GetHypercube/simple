@@ -25,7 +25,6 @@ var grilla_datos_externos_eliminar = function(grilla_id){
 var modal_agregar_a_grilla = function(grilla_id){
     var modal_grande = $('#table_alter_modal_'+grilla_id);
     var tiene_acciones = grillas_datatable[grilla_id].tiene_acciones;
-    var is_eliminable = grillas_datatable[grilla_id].is_eliminable;
     var is_array = grillas_datatable[grilla_id].is_array;
     var to_add = is_array ? []: {};
     var headers = (is_array ? grillas_datatable[grilla_id].headers_array : grillas_datatable[grilla_id].headers_object);
@@ -46,6 +45,11 @@ var modal_agregar_a_grilla = function(grilla_id){
         }
     });
     
+    modal_grande.modal("hide");
+    
+    if( some_count <= 0  )
+        return;
+
     if(tiene_acciones){
         if(is_array){
             to_add.push( grillas_datatable[grilla_id].grid_acciones);
@@ -53,12 +57,6 @@ var modal_agregar_a_grilla = function(grilla_id){
             to_add[nombre_columna_acciones] = grillas_datatable[grilla_id].grid_acciones;
         }
     }
-    
-    modal_grande.modal("hide");
-    
-    if( ( is_eliminable && some_count <= 1 ) || ( ! is_eliminable && some_count <= 0 )  )
-        return;
-    
     
     grillas_datatable[grilla_id].table.row.add( to_add ).draw( true );
     store_data_in_hidden(grilla_id);
