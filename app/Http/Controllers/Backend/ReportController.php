@@ -11,6 +11,9 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
 use Doctrine_Query;
+use App\Jobs\ProcessReport;
+use App\Models\Job;
+use Cuenta;
 
 class ReportController extends Controller
 {
@@ -163,6 +166,17 @@ class ReportController extends Controller
      */
     public function view(Request $request, $reporte_id)
     {
+
+        $running_jobs = Job::where('user_id', Auth::user()->id)
+                               ->whereIn('status', [Job::$running, Job::$created])
+                               ->where('user_type', Auth::user()->user_type)
+                               ->count();
+        if($running_jobs >= env('DOWNLOADS_MAX_JOBS_PER_USER', 1)){
+            $request->session()->flash('error', 
+                "Ya tiene un reporte en ejecución pendiente, por favor espere a que este termine.");
+            return redirect()->back();
+        }
+
         $reporte = Doctrine::getTable('Reporte')->find($reporte_id);
 
         if (!is_null(Auth::user()->procesos) &&
@@ -178,10 +192,7 @@ class ReportController extends Controller
 
         // Reporte del proceso
         $proceso_reporte = $reporte->Proceso;
-        $proceso_activo = $proceso_reporte->findIdProcesoActivo($proceso_reporte->id, $reporte->Proceso->cuenta_id);
-        $procesos = $proceso_reporte->findProcesosById($proceso_reporte->id, $reporte->Proceso->cuenta_id);
-
-
+        $proceso = $proceso_reporte->findIdProcesoActivo($proceso_reporte->id, $reporte->Proceso->cuenta_id);
 
         $tramites_completos = 0;
         $tramites_vencidos = 0;
@@ -192,8 +203,8 @@ class ReportController extends Controller
 
         // Parametros
         $query = $request->input('query');
-        $created_at_desde = $request->input('created_at_desde');
-        $created_at_hasta = $request->input('created_at_hasta');
+        $created_at_desde = $request->has('created_at_desde') ? $request->input('created_at_desde') : null;
+        $created_at_hasta = $request->has('created_at_hasta') ? $request->input('created_at_hasta') : null;
         $pendiente = $request->has('pendiente') && is_numeric($request->input('pendiente')) ? $request->input('pendiente') : -1;
         $formato = $request->input('formato');
         $filtro = $request->input('filtro');
@@ -202,36 +213,36 @@ class ReportController extends Controller
         $offset = ($page * $per_page) - $per_page;
         $params = array();
 
-        foreach ($procesos as $proceso) {
+       Log::debug("Explorando proceso id: " . $proceso->id);
 
-            Log::debug("Explorando proceso id: " . $proceso->id);
+        if ($created_at_desde) {
+            array_push($params, 'created_at >= ' . "'" . date('Y-m-d', strtotime($created_at_desde)) . "'");
+        }
+        if ($created_at_hasta) {
+            array_push($params, 'created_at <= ' . "'" . date('Y-m-d', strtotime($created_at_hasta)) . "'");
+        }
+        if ($pendiente != -1) {
+            array_push($params, 'pendiente = ' . $pendiente);
+        }
 
-            if ($created_at_desde) {
-                array_push($params, 'created_at >= ' . "'" . date('Y-m-d', strtotime($created_at_desde)) . "'");
-            }
-            if ($created_at_hasta) {
-                array_push($params, 'created_at <= ' . "'" . date('Y-m-d', strtotime($created_at_hasta)) . "'");
-            }
-            if ($pendiente != -1) {
-                array_push($params, 'pendiente = ' . $pendiente);
-            }
+        Log::debug("Explorando query: " . $query);
 
-            Log::debug("Explorando query: " . $query);
-
-            if ($query) {
-                $result = Proceso::search($query)->get();
-                if (array_key_exists('total', $result) && $result['total'] > 0) {
-                    $matches = array_keys($result['matches']);
-                    Log::debug('$matches: ' . $matches);
-                    array_push($params, 't.id IN (' . implode(',', $matches) . ')');
-                } else {
-                    $params = array('0');
-                }
+        if ($query) {
+            $result = Proceso::search($query)->get();
+            if (array_key_exists('total', $result) && $result['total'] > 0) {
+                $matches = array_keys($result['matches']);
+                Log::debug('$matches: ' . $matches);
+                array_push($params, 't.id IN (' . implode(',', $matches) . ')');
+            } else {
+                $params = array('0');
             }
+        }
+
+        if ($formato == "pdf") {
+            $reporte_tabla = $reporte->getReporteAsMatrix($params);
 
             foreach ($proceso->Tramites as $tramite) {
-                $etapas_cantidad = Doctrine_query::create()->from('Etapa e')->
-                where('e.tramite_id = ?', $tramite->id)->count();
+                $etapas_cantidad = Doctrine_query::create()->from('Etapa e')->where('e.tramite_id = ?', $tramite->id)->count();
 
                 if ($tramite->pendiente == 0) {
                     $tramites_completos++;
@@ -249,12 +260,9 @@ class ReportController extends Controller
 
             $suma_promedio_tramite += $promedio_tramite;
             $num_tramites++;
-        }
 
-        $promedio_tramite = ($num_tramites <= 0) ? 0 : $suma_promedio_tramite / $num_tramites;
+            $promedio_tramite = ($num_tramites <= 0) ? 0 : $suma_promedio_tramite / $num_tramites;
 
-        if ($formato == "pdf") {
-            $reporte_tabla = $reporte->getReporteAsMatrix($params);
             $data['tramites_vencidos'] = $tramites_vencidos;
             $data['tramites_pendientes'] = $tramites_pendientes;
             $data['tramites_completos'] = $tramites_completos;
@@ -265,20 +273,17 @@ class ReportController extends Controller
             $pdf = PDF::loadView('backend.report.pdf', $data)->setPaper('a4', 'landscape');
             return $pdf->download('reporte.pdf');
         } else if ($formato == "xls") {
+            $http_host = request()->getSchemeAndHttpHost();
+            $email_to = Auth::user()->email;
+            $name_to = Auth::user()->nombres;
+            $email_subject = 'Enlace para descargar reporte.';
 
-            $reporte_tabla = $reporte->getReporteAsMatrix($params);
+            $reporte_tabla = $reporte->getArregloInicial();
+            $header_variables = $reporte->getHeaderVariables();
+            $this->dispatch(new ProcessReport(Auth::user()->id, Auth::user()->user_type, $proceso->id, $reporte->id, $params, $reporte_tabla, $header_variables,$http_host,$email_to,$name_to,$email_subject,$created_at_desde,$created_at_hasta,$pendiente));
 
-            Excel::create('reporte', function ($excel) use ($reporte_tabla) {
-
-                $excel->sheet('reporte', function ($sheet) use ($reporte_tabla) {
-
-                    $sheet->fromArray($reporte_tabla, null, 'A1', false, false);
-
-                });
-
-            })->download('xls');
-
-            return;
+            $request->session()->flash('success', "Se enviará un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: ".$email_to);
+            return redirect()->back();
         }
 
         Log::debug("cantidad reporte matriz");
@@ -336,6 +341,33 @@ class ReportController extends Controller
         $reporte->delete();
 
         return redirect()->route('backend.report.list', [$proceso->id]);
+    }
+
+    public function descargar_archivo(Request $request, $user_id, $job_id, $file_name){
+        if (!Cuenta::cuentaSegunDominio()->descarga_masiva) {
+            $request->session()->flash('error', 'Servicio no tiene permisos para descargar.');
+            return redirect()->back();
+        }
+
+        if (Auth::user()->id != $user_id) {
+            $request->session()->flash('error', 'Usuario no tiene permisos para descargar.');
+            return redirect()->back();
+        }
+
+        // validar que user_id y job_id sean enteros
+
+        $job_info = Job::where('user_id', Auth::user()->id)
+                        ->where('id', $job_id)
+                        ->where('filename', $file_name)->first();
+        
+        $full_path = $job_info->filepath.DIRECTORY_SEPARATOR.$job_info->filename;
+        if(file_exists($full_path)){
+            $job_info->downloads += 1;
+            $job_info->save();
+            return response()->download($full_path)->deleteFileAfterSend(true);
+        }else{
+            abort(404);
+        }
     }
 
 

@@ -15,7 +15,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::post('/uploader/datos/{campo_id}/{etapa_id}', 'UploadController@datos');
     Route::post('/uploader/datos_s3/{campo_id}/{etapa_id}/{multipart?}/{part_number?}/{total_segments?}', 'UploadController@datos_s3');
     Route::get('/uploader/datos_get/{id}/{token}', 'UploadController@datos_get');
-    Route::get('/uploader/datos_get_s3/{id}/{campo_id}/{token}', 'UploadController@datos_get_s3');
+    Route::get('/uploader/datos_get_s3/{id}/{campo_id}/{token}/{file_name?}', 'UploadController@datos_get_s3');
 
 
 
@@ -213,6 +213,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::get('reportes/editar/{reporte_id}', 'ReportController@edit')->name('report.edit');
             Route::post('reportes/editar/{reporte_id}', 'ReportController@store')->name('report.update');
             Route::get('reportes/eliminar/{reporte_id}', 'ReportController@delete')->name('report.delete');
+            Route::get('reportes/descargar_archivo/{user_id}/{job_id}/{file_name}', 'ReportController@descargar_archivo')->name('report.descargar_archivo');
         });
 
         //Auditoría

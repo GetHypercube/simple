@@ -37,6 +37,10 @@ class TramitesController extends Controller
         if (!$tramite) {
             $tramite = new \Tramite();
             $tramite->iniciar($proceso->id);
+
+            if(session()->has('redirect_url')){
+                return redirect()->away(session()->get('redirect_url'));
+            }
         }
 
         $qs = $request->getQueryString();

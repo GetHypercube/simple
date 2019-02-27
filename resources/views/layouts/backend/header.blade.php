@@ -46,12 +46,12 @@
                                 </a>
                             </li>
                             @can('agenda')
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="{{route('backend.appointment.index')}}"
                                        class="nav-link {{strstr(Request::path(), 'backend/agenda') ? 'active' : ''}}">
                                         <i class="material-icons">date_range</i> {{__('nav.diary')}}
                                     </a>
-                                </li>
+                                </li> -->
                             @endcan
 
                             @can('proceso')

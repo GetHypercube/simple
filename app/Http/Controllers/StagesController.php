@@ -18,6 +18,7 @@ use Cuenta;
 use ZipArchive;
 use App\Jobs\IndexStages;
 use App\Jobs\FilesDownload;
+use Carbon\Carbon;
 
 
 class StagesController extends Controller
@@ -69,9 +70,18 @@ class StagesController extends Controller
             $etapa->avanzar();
             //Job para indexar contenido cada vez que se avanza de etapa
             $this->dispatch(new IndexStages($etapa->Tramite->id));
+
+            if(session()->has('redirect_url')){
+                return redirect()->away(session()->get('redirect_url'));
+            }
+
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1));
         } else {
             $etapa->iniciarPaso($paso);
+
+            if(session()->has('redirect_url')){
+                return redirect()->away(session()->get('redirect_url'));
+            }
 
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
@@ -360,6 +370,11 @@ class StagesController extends Controller
 
     public function ejecutar_fin(Request $request, $etapa_id)
     {
+
+        if(session()->has('redirect_url')){
+            return redirect()->away(session()->get('redirect_url'));
+        }
+
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
         if ($etapa->usuario_id != Auth::user()->id) {
@@ -539,6 +554,7 @@ class StagesController extends Controller
         $non_existant_files = [];
         $docs_total_space = 0;
         $s3_missing_file_info_ids = [];
+        $cuenta = null;
         foreach ($tramites as $t) {
             if (empty($tipoDocumento)) {
                 $files = Doctrine::getTable('File')->findByTramiteId($t);
@@ -554,6 +570,9 @@ class StagesController extends Controller
                     if (!$participado) {
                         $request->session()->flash('error', 'Usuario no ha participado en el trámite.');
                         return redirect()->back();
+                    }
+                    if( (is_null($cuenta)|| $cuenta === FALSE) && $tr !== FALSE){
+                        $cuenta = $tr->Proceso->Cuenta;
                     }
                     $nombre_documento = $tr->id;
                     $tramite_nro = '';
@@ -614,9 +633,9 @@ class StagesController extends Controller
             }
         }
         
-        $max_space_before_email_link = env('DOWNLOADS_FILE_MAX_SIZE', 1 * 1024 * 1024);
-        if($docs_total_space > $max_space_before_email_link){
-
+        $max_space_before_email_link = env('DOWNLOADS_FILE_MAX_SIZE', 500 * 1024 * 1024);
+        if( ( array_key_exists('s3', $files_list) && count($files_list['s3']) > 0 ) 
+                || $docs_total_space > $max_space_before_email_link ) {
             $running_jobs = Job::where('user_id', Auth::user()->id)
                                ->whereIn('status', [Job::$running, Job::$created])
                                ->where('user_type', Auth::user()->user_type)
@@ -627,13 +646,28 @@ class StagesController extends Controller
                 return redirect()->back();
             }
             $http_host = request()->getSchemeAndHttpHost();
-            // email, aplicar un job
+            
+            if(strpos(url()->current(), 'https://') === 0){
+                $http_host = str_replace('http://', 'https://', $http_host);
+            }
+            
             $email_to = Auth::user()->email;
+            $validator = \Validator::make(
+                [ 'email' => $email_to ], [ 'email' => 'required|email' ]
+            );
+            if ($validator->fails()) {
+                if( empty( $email_to ) ){
+                    $msg = 'No posee una direcci&oacute;n de correo electr&oacute;nico configurada.';
+                }else{
+                    $msg = 'Su direcci&oacute;n de correo electr&oacute;nico: '.$email_to.' no es v&aacute;lida.';
+                }
+                $request->session()->flash('error', $msg);
+                return redirect()->back();
+            }
             $name_to = Auth::user()->nombres;
             $email_subject = 'Enlace para descargar archivos.';
-            // $user_id, $file_list, $email_to, $email_subject, $host
             $this->dispatch(new FilesDownload(Auth::user()->id, Auth::user()->user_type, $files_list, $email_to, 
-                                              $name_to, $email_subject, $http_host));
+                                              $name_to, $email_subject, $http_host, $cuenta));
             
             $request->session()->flash('success', "Se enviar&aacute; un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: {$email_to}");
             return redirect()->back();
@@ -700,12 +734,13 @@ class StagesController extends Controller
         
         $full_path = $job_info->filepath.DIRECTORY_SEPARATOR.$job_info->filename;
         if(file_exists($full_path)){
-            header('Content-Type: ' . get_mime_by_extension($full_path));
-            header('Content-Length: ' . filesize($full_path));
-            readfile($full_path);
             $job_info->downloads += 1;
             $job_info->save();
-            unlink($full_path);
+            
+            $time_stamp = Carbon::now()->format("Y-m-d_His");
+            return response()
+                ->download($full_path, 'tramites_'.$time_stamp.'.zip', ['Content-Type' => 'application/octet-stream'])
+                ->deleteFileAfterSend(true);
         }else{
             abort(404);
         }

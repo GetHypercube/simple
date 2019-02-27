@@ -73,10 +73,10 @@
                            href="{{route('tramites.participados')}}">
                             <i class="material-icons">history</i> Historial de Trámites ({{$nparticipados}})
                         </a>
-                        <a class="list-group-item list-group-item-action {{isset($sidebar) && strstr($sidebar, 'miagenda') ? 'active' : ''}}"
+                       <!--  <a class="list-group-item list-group-item-action {{isset($sidebar) && strstr($sidebar, 'miagenda') ? 'active' : ''}}"
                            href="{{route('agenda.miagenda')}}">
                             <i class="material-icons">date_range</i> Mi Agenda
-                        </a>
+                        </a> -->
                     @endif
                 </ul>
             </div>

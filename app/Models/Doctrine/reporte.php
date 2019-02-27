@@ -163,4 +163,64 @@ class Reporte extends Doctrine_Record
 
         return $excel;
     }
+
+    public function getHeaderVariables(){
+
+        $campos = $this->getCampos();
+        $etiquetas = $campos;
+        foreach ($etiquetas as &$etiqueta) {
+
+            $etiqueta = explode(' ', $etiqueta);
+            $var_etiqueta = explode("->", $etiqueta[0]);
+            if (count($var_etiqueta) > 1) {
+                unset($etiqueta[0]);
+                unset($etiqueta[1]);
+                $etiqueta = $var_etiqueta[1] . ' (' . implode(' ', $etiqueta) . ')';
+            } else {
+                unset($etiqueta[0]);
+                unset($etiqueta[1]);
+                $etiqueta = implode(' ', $etiqueta);
+            }
+        }
+
+        $nombres_variables = $campos;
+        foreach ($nombres_variables as &$variable) {
+            $variable = explode(' ', $variable)[0];
+        }
+
+        $header_variables = array_merge(array('id'), $nombres_variables);
+        return $header_variables;
+    }
+
+    public function getArregloInicial(){
+
+        $campos = $this->getCampos();
+        $etiquetas = $campos;
+        foreach ($etiquetas as &$etiqueta) {
+
+            $etiqueta = explode(' ', $etiqueta);
+
+            $var_etiqueta = explode("->", $etiqueta[0]);
+            if (count($var_etiqueta) > 1) {
+                unset($etiqueta[0]);
+                unset($etiqueta[1]);
+                $etiqueta = $var_etiqueta[1] . ' (' . implode(' ', $etiqueta) . ')';
+            } else {
+                unset($etiqueta[0]);
+                unset($etiqueta[1]);
+
+                $etiqueta = implode(' ', $etiqueta);
+            }
+        }
+
+        $nombres_variables = $campos;
+        foreach ($nombres_variables as &$variable) {
+            $variable = explode(' ', $variable)[0];
+        }
+
+        $header_variables = array_merge(array('id'), $nombres_variables);
+        $header = array_merge(array('Tramite Id'), $etiquetas);
+        $excel[] = $header;
+        return $excel;
+    }
 }

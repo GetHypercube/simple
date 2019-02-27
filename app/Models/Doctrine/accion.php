@@ -26,7 +26,8 @@ class Accion extends Doctrine_Record
                 'AccionNotificaciones' => array('tipo' => 'webhook'),
                 'AccionIniciarTramite' => array('tipo' => 'iniciar_tramite'),
                 'AccionContinuarTramite' => array('tipo' => 'continuar_tramite'),
-                'AccionDescargaDocumento' => array('tipo' => 'descarga_documento')
+                'AccionDescargaDocumento' => array('tipo' => 'descarga_documento'),
+                'AccionRedirect' => array('tipo' => 'redirect')
             )
         );
     }

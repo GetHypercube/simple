@@ -48,6 +48,7 @@ class CampoProvincias extends Campo
                     $("#regiones_'.$this->id.'").chosen({placeholder_text: "Seleccione Regi\u00F3n"});
                     $("#provincias_'.$this->id.'").chosen({placeholder_text: "Seleccione Provincia"});
                     $("#comunas_'.$this->id.'").chosen({placeholder_text: "Selecciona Comuna"});
+                    var opcion = "'. (isset($this->extra->codigo) && $this->extra->codigo ? "codigo" : "nombre") .'";
 
                     function updateRegiones(){
                         var regiones_obj = $("#regiones_'.$this->id.'");
@@ -95,8 +96,9 @@ class CampoProvincias extends Campo
                         }
                         $.getJSON("https://apis.digital.gob.cl/dpa/provincias/"+provinciaId+"/comunas?callback=?",function(data){
                             if(data){
-                                $.each(data, function(i,el){
-                                    comunas_obj.append("<option value=\""+el.nombre+"\">"+el.nombre+"</option>");
+                                $.each(data, function(idx, el){
+                                    var op = el[opcion];
+                                    comunas_obj.append("<option data-id=\""+el.codigo+"\" value=\""+op+"\" >"+el.nombre+"</option>"); 
                                 });
                             }
                             
@@ -142,6 +144,17 @@ class CampoProvincias extends Campo
         $CI->form_validation->set_rules($this->nombre . '[region]', $this->etiqueta . ' - Región', implode('|', $this->validacion));
         $CI->form_validation->set_rules($this->nombre . '[comuna]', $this->etiqueta . ' - Comuna', implode('|', $this->validacion));
         */
+    }
+
+    public function backendExtraFields(){
+        $codigo = isset($this->extra->codigo) ? $this->extra->codigo : null;
+        $html = '<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="extra[codigo]" id="checkbox_codigo"  ' . ($codigo ? 'checked' : '') . ' /> 
+                    <label for="checkbox_codigo" class="form-check-label">Utilizar código en select comunas.</label>
+                    </div>';
+        $html .= ' </label>';
+        
+        return $html;
     }
 
 }

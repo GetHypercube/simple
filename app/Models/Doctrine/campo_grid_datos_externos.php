@@ -72,7 +72,7 @@ class CampoGridDatosExternos extends Campo
                         <div data-id="' . $this->id . '" >
                             <div class="container">
                                 <div class="row">
-                                    <div class="">
+                                    <div class="table-responsive">
                                     <table class="table table-hover table-bordered" id="grilla-'.$this->id.'" data-grilla_id="'.$this->id.'">
 
                                     </table>

@@ -7,7 +7,10 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use \App\Helpers\FileS3Uploader;
+use \App\Models\Job;
 
 class FilesDownload implements ShouldQueue
 {
@@ -36,6 +39,7 @@ class FilesDownload implements ShouldQueue
     protected $max_running_jobs = 1;
     protected $job_info;
     protected $added_files_path;
+    protected $cuenta;
 
     public $tries = 1;
 
@@ -44,7 +48,7 @@ class FilesDownload implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user_id, $user_type, $file_list, $email_to, $email_name, $email_subject, $host)
+    public function __construct($user_id, $user_type, $file_list, $email_to, $email_name, $email_subject, $host, $cuenta)
     {
         $this->user_id = $user_id;
         $this->file_list = $file_list; // array ['folder' => 'foo_12', 'file' => '']
@@ -52,7 +56,9 @@ class FilesDownload implements ShouldQueue
         $this->email_name = $email_name; // string
         $this->email_subject = $email_subject; // string
         $this->link_host = $host;
-        $this->_base_dir = public_path('async_downloader');
+        $this->cuenta = $cuenta;
+
+        $this->_base_dir = public_path('uploads/tmp/async_downloader');
         if( ! file_exists($this->_base_dir) ) {
             mkdir($this->_base_dir, 0777, true);
         }
@@ -60,11 +66,11 @@ class FilesDownload implements ShouldQueue
         $this->zip_name_type = $this->as_hash;
         $this->user_type = $user_type;
         $this->arguments = serialize([$user_id, $user_type, $file_list, $email_to, $email_name, $email_subject, $host]);
-        $this->job_info = new \App\Models\Job();
+        $this->job_info = new Job();
         $this->job_info->user_id = $this->user_id;
         $this->job_info->user_type = $this->user_type;
         $this->job_info->arguments = $this->arguments;
-        $this->job_info->status = \App\Models\Job::$created;
+        $this->job_info->status = Job::$created;
         $this->job_info->save();
     }
 
@@ -75,7 +81,7 @@ class FilesDownload implements ShouldQueue
      */
     public function handle()
     {
-        $this->job_info->status = \App\Models\Job::$running;
+        $this->job_info->status = Job::$running;
         $this->job_info->save();
 
         $this->create_temp_directory();
@@ -91,7 +97,7 @@ class FilesDownload implements ShouldQueue
         // empaquetar los archivos
         $compress_status = self::zip_dir_recursive($this->temp_path, $this->zip_filename, FALSE, \ZipArchive::CM_STORE);
         if( $compress_status === FALSE){
-            echo "Error al crear el archivo zip: $this->$zip_filename\n";
+            echo "Error al crear el archivo zip: $this->zip_filename\n";
         }
         
         switch($this->zip_name_type){
@@ -109,15 +115,13 @@ class FilesDownload implements ShouldQueue
         }
         
         rename($this->zip_filename, $this->_base_dir.DIRECTORY_SEPARATOR.$this->zip_new_name);
-        
+        $this->send_notification();
         $this->remove_all_tmp($this->added_files_path);
         
-        // enviar notificacion        
-        $this->job_info->status = \App\Models\Job::$finished;
+        $this->job_info->status = Job::$finished;
         $this->job_info->filename = $this->zip_new_name;
         $this->job_info->filepath = $this->_base_dir;
         $this->job_info->save();
-        $this->send_notification();
     }
 
     public static function copy_local_files_to_zip_folder($out_dir, $file_list, &$copied_files){
@@ -134,10 +138,11 @@ class FilesDownload implements ShouldQueue
                 }
                 
                 $ori_full_path = public_path($file['ori_path']);
-                if( ! copy($ori_full_path, $dir.DIRECTORY_SEPARATOR.$file['nice_name']) ){
+                $f = $dir.DIRECTORY_SEPARATOR.$file['nice_name'];
+                if( ! copy($ori_full_path, $f) ){
                     $errors_copying[] = $file;
                 }else{
-                    $copied_files[] = $file['directory'].DIRECTORY_SEPARATOR.$file['nice_name'];
+                    $copied_files[] = $f;
                 } 
             }
         }
@@ -146,31 +151,48 @@ class FilesDownload implements ShouldQueue
     private function remove_all_tmp(&$file_list){
         foreach($file_list as $file){
             $for_unlink = $this->temp_path.DIRECTORY_SEPARATOR.$file;
-            if( ! empty($for_unlink) && strpos($for_unlink, '..') === FALSE && file_exists(($for_unlink)) ){
+            if( ! empty($for_unlink) && strpos($for_unlink, '..') === FALSE && trim($for_unlink) !== '.' && file_exists($for_unlink) ){
                 unlink($for_unlink);
             }
         }
 
         $master_directory = $this->_base_dir . DIRECTORY_SEPARATOR . $this->unique_dir_name;
 
-        $directory = new \RecursiveDirectoryIterator($master_directory);
-        $iterator = new \RecursiveIteratorIterator($directory);
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($master_directory, \RecursiveIteratorIterator::SELF_FIRST)
+        );
         $dirs_delete = [];
         foreach ($iterator as $info) {
             if( ! in_array($info->getPath(), $dirs_delete))
                 $dirs_delete[] = $info->getPath();
         }
         
-        for($i=count($dirs_delete) - 1 ; $i>=0 ; $i--){
-            if(file_exists($dirs_delete[$i]))
-                rmdir($dirs_delete[$i]);
+        rsort($dirs_delete);
+        foreach($dirs_delete as $dir){
+            if(file_exists($dir) && $this->is_dir_empty($dir) ){
+                @rmdir($dir);
+            }else{
+                $error = "Directorio temporal '{$dir}' no existe o no esta vacio. No se puede borrar.";
+                Log::error($error);
+            }
         }
+    }
+
+    private function is_dir_empty($dir){
+        $files = scandir($dir);
+        foreach($files as $file){
+            if($file !== '.' && $file !== '..'){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function create_temp_directory(){
         do {
             $this->unique_dir_name = $this->user_id.'_'.str_replace([' ', '-'], ['_', ''], microtime());
-            $this->unique_dir_name = \App\Helpers\FileS3Uploader::filenameToAscii($this->unique_dir_name);
+            $this->unique_dir_name = FileS3Uploader::filenameToAscii($this->unique_dir_name);
             $this->unique_dir_name = trim($this->unique_dir_name);
             $this->unique_dir_name = str_replace('.', '', $this->unique_dir_name);
             $this->temp_path = $this->_base_dir.DIRECTORY_SEPARATOR.$this->unique_dir_name;
@@ -183,10 +205,17 @@ class FilesDownload implements ShouldQueue
       // enviar por correo un link a la descarga
       $link = "{$this->link_host}/descargar_archivo/{$this->user_id}/{$this->job_info->id}/{$this->zip_new_name}";
       $data = ['content' => $this->email_content, 'link' => $link];
-      \Mail::send('emails.download_link', $data, function($message){
+      $cuenta = $this->cuenta;
+      Mail::send('emails.download_link', $data, function($message) use ($cuenta){
         
         $message->subject($this->email_subject);
-        $message->from(env('MAIL_FROM_ADDRESS'));
+        
+        $mail_from = env('MAIL_FROM_ADDRESS');
+        if(empty($mail_from)) {
+            $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+        } else {
+            $message->from($mail_from);
+        }
 
         $message->to($this->email_to);
         
@@ -282,7 +311,7 @@ class FilesDownload implements ShouldQueue
     }
 
     public function failed(){
-        $this->job_info->status = \App\Models\Job::$error;
+        $this->job_info->status = Job::$error;
         $this->job_info->save();
     }
 }

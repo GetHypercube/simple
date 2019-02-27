@@ -77,5 +77,40 @@
                 <i class="material-icons">help</i>
             </a>
         </label>
+
+        <script>
+            $(document).ready(function () {
+                $("input[name=paso_confirmacion]").change(function () {
+                    if ($("input[name=paso_confirmacion]:checked").length > 0) {
+                        $("#activacionTextos").show();
+                    }else{
+                        $("#activacionTextos").hide();
+                    }
+                }).change();
+
+                $('#paso_confirmacion_contenido').each(function(){
+                    $(this).val($(this).val().trim());
+                });
+            });
+        </script>
+
+    </div>
+    <div id="activacionTextos" class="hide" style="margin-left: 20px;">
+        <label>Título (opcional) </label>
+        <input class="form-control" rel="tooltip"
+               title="Deje el campo en blanco para no considerar un título"
+               type="text"
+               name="paso_confirmacion_titulo"
+               value="<?= $tarea->paso_confirmacion_titulo ?>"/>
+        <label>Contenido (opcional)</label>
+        <textarea class="form-control" id="paso_confirmacion_contenido" name="paso_confirmacion_contenido" rel="tooltip" title="Deje el campo en blanco para no considerar el texto del botón">
+        <?=$tarea->paso_confirmacion_contenido ?>
+        </textarea>
+        <label>Texto del botón de confirmación (opcional)</label>
+        <input class="form-control" rel="tooltip"
+               title="Deje el campo en blanco para no considerar el texto del botón"
+               type="text"
+               name="paso_confirmacion_texto_boton_final"
+               value="<?= $tarea->paso_confirmacion_texto_boton_final ?>"/>
     </div>
 </div>
