@@ -36,6 +36,9 @@ class Tarea extends Doctrine_Record
         $this->hasColumn('previsualizacion');               //Texto de previsualizacion de la tarea al aparecer en las bandejas de entrada.
         $this->hasColumn('externa');                        //Indica si la tarea es externa para que pueda ejecutar servicios
         $this->hasColumn('exponer_tramite');                //Indica si la tarea es expuesta como servicio rest de simple
+        $this->hasColumn('paso_confirmacion_titulo');       //Indica el titulo que se puede configurar para el paso de confirmación
+        $this->hasColumn('paso_confirmacion_contenido');    //Indica el contenido de texto que se puede configurar para el paso de confirmación
+        $this->hasColumn('paso_confirmacion_texto_boton_final'); //Indica el nombre del botón que se puede configurar para el paso de confirmación
     }
 
     function setUp()
