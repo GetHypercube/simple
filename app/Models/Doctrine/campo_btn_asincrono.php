@@ -35,30 +35,28 @@ class CampoBtnAsincrono extends Campo
                     var table;
                     $(document).ready(function(){
 
+                        //se deben ejecutar las acciones durante el paso de acuerdo al botón que está haciendo la llamada
+                        
                         $("#'.$this->id.'").click(function(){
-                            var table = $("#grilla-2897").DataTable();
-                            var sData = table.$("input").serialize();
-                            console.log(sData);
                             $("#'.$this->id.'").prop("disabled",true);
-                            $.event.trigger("ajaxStart");
+                            $("#ajax_loader").show();
                             var myData = $("form").serializeArray();
+                            var btn_asinc = {
+                                  name: "btn_async",
+                                  value: "'.$this->id.'"
+                            };
+                            myData.push(btn_asinc);
                             $.ajax({
                                 url: "'.url("etapas/save/". $etapa->id ."") .'",
                                 data: myData,
                                 type: "POST",
                                 success: function(data){
                                     $("#'.$this->id.'").prop("disabled",false);
-                                    $.event.trigger("ajaxStop");
+                                    $("#ajax_loader").hide();
+                                    procesar_data(data);
                                 }
                             });
                         })
-
-                        $(document).ajaxStop(function(){
-                            $("#ajax_loader").hide();
-                        });
-                        $(document).ajaxStart(function(){
-                             $("#ajax_loader").show();
-                        });
                         
                     });
                     
