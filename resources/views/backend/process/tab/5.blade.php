@@ -24,7 +24,7 @@
             </td>
             <td>
                 <input class="eventoCampoAsociado col-md-10" 
-                    type="text" placeholder="@@@campo">
+                    type="text" placeholder="@@@boton">
                 <p class="messageEventoAsociado" style="color: red; display: block;"></p>
             </td>
             <td>
