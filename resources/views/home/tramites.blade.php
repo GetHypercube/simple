@@ -27,6 +27,10 @@
                             <p class="card-text">
                                 {{$p->nombre}}
                             </p>
+                            <p>{{$p->descripcion}}</p>
+                            @if(!is_null($p->url_informativa))
+                                <p><a href="{{$p->url_informativa}}" target="_blank" style="text-decoration: underline;font-size: 14px;">Mas información</a></p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -120,6 +124,10 @@
                                         <p class="card-text">
                                             {{$p->nombre}}
                                         </p>
+                                        <p>{{$p->descripcion}}</p>
+                                        @if(!is_null($p->url_informativa))
+                                            <p><a href="{{$p->url_informativa}}" target="_blank" style="text-decoration: underline;font-size: 14px;">Mas información</a></p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

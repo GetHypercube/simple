@@ -24,6 +24,7 @@ class Proceso extends Doctrine_Record
         $this->hasColumn('root');
         $this->hasColumn('estado');
         $this->hasColumn('descripcion');
+        $this->hasColumn('url_informativa');
     }
 
     function setUp()
