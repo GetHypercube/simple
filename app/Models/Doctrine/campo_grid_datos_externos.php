@@ -133,6 +133,7 @@ class CampoGridDatosExternos extends Campo
                         }else{
                             grilla_populate_objects('.$this->id.', data);
                         }
+                        store_data_in_hidden('.$this->id.');
                     }
                     grillas_datatable['.$this->id.'].table.draw(true);
                     grillas_datatable['.$this->id.'].table.columns.adjust();

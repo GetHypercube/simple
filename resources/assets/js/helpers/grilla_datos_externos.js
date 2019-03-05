@@ -540,6 +540,7 @@ function add_data_to_table(grilla_id, data, replace){
     }else{
         grilla_populate_objects(grilla_id, data);
     }
+    store_data_in_hidden(grilla_id);
 }
 
 function modal_validate_multi(grilla_id){
