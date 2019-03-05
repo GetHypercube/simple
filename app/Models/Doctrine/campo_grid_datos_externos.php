@@ -38,6 +38,8 @@ class CampoGridDatosExternos extends Campo
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                    <div id="ajax-alert_'.$this->id.'" class="alert alert-danger" style="display:none;">
+                    </div>
                     <div class="modal-body" id="modal-body-'.$this->id.'">
                     </div>
                     <div class="modal-footer">
@@ -171,6 +173,9 @@ class CampoGridDatosExternos extends Campo
                             <input type='hidden' name='extra[columns][{{column_pos}}][is_exportable]' value='{{is_exportable}}' />
                         </td>
                         <td>
+                            <input type='text' name='extra[columns][{{column_pos}}][validacion]' class='validacion-columna form-control' value='{{validacion}}' />
+                        </td>
+                        <td>
                             <button type='button' class='btn btn-outline-secondary eliminar'><i class='material-icons'>close</i> Eliminar</button>
                         </td>
                     </tr>";
@@ -258,6 +263,7 @@ class CampoGridDatosExternos extends Campo
                             <th>Nombre del campo</th>
                             <th>Es entrada</th>
                             <th>Exportable</th>
+                            <th>Validaci&oacute;n</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -288,6 +294,13 @@ class CampoGridDatosExternos extends Campo
                     $column = str_replace('{{is_exportable}}', 'false', $column);
                     $column = str_replace('{{is_exportable_checked}}', '', $column);
                 }
+
+                if(isset($c->validacion)){
+                    $column = str_replace('{{validacion}}', $c->validacion, $column);
+                }else{
+                    $column = str_replace('{{validacion}}', '', $column);
+                }
+
                 $output .= $column;
             }
         }

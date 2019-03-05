@@ -35,6 +35,13 @@
             "alpha", "alpha_dash", "alpha_num", "numeric", "integer", 
             "email", "emails", "ip", "digits_between:min,max", "between:min,max", "nullable", "regex"]
         });
+        $('.validacion-columna').typeahead({
+            mode: "multiple",
+            delimiter: "|",
+            source: ["required", "rut", "min:num", "max:num", "digits:num", 
+            "alpha", "alpha_dash", "alpha_num", "numeric", "integer", 
+            "email", "emails", "ip", "digits_between:min,max", "between:min,max", "nullable", "regex"]
+        });
 
         // Funcionalidad del llenado de nombre usando el boton de asistencia
         $("#formEditarCampo .asistencia .dropdown-menu a").click(function () {
