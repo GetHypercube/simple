@@ -93,8 +93,8 @@ var selectToDelete = function(evt, obj){
 var grilla_populate_objects = function(grilla_id, data){
     // debe coincidir con la cantidad de columnas en la tabla, pero no viene ese campo ya que es un checkbox
     var tiene_acciones = grillas_datatable[grilla_id].tiene_acciones;
-    var headers_obj = grillas_datatable[grilla_id].headers
-
+    var headers_obj = grillas_datatable[grilla_id].headers_object;
+    
     var headers = headers_obj.map(function(c){return c.data;});
 
     if(tiene_acciones){
