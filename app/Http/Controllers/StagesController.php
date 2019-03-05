@@ -774,6 +774,9 @@ class StagesController extends Controller
         $nicenames = [];
         $data_columnas = [];
         foreach($campos as $campo){
+            if(! array_key_exists('campo_id', $campo) ){
+                continue;
+            }
             $campo_id = $campo['campo_id'];
             $campo_base = Campo::find($campo_id);
             

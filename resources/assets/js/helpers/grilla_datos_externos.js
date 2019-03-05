@@ -545,7 +545,7 @@ function add_data_to_table(grilla_id, data, replace){
 
 function modal_validate_multi(grilla_id){
     data = {};
-    $('#modal-body-' + grilla_id).find('input').each(function(idx, obj){
+    $('#modal-body-' + grilla_id).find('input').not(':hidden').each(function(idx, obj){
         data[ $(obj).data('column') ] = {
             campo_id: $(obj).data('campo_id'),
             columna: $(obj).data('column'),
