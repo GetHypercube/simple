@@ -17,8 +17,6 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/uploader/datos_get/{id}/{token}', 'UploadController@datos_get');
     Route::get('/uploader/datos_get_s3/{id}/{campo_id}/{token}/{file_name?}', 'UploadController@datos_get_s3');
 
-
-
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::get('login/claveunica', 'Auth\LoginController@redirectToProvider')->name('login.claveunica');
     Route::get('login/claveunica/callback', 'Auth\LoginController@handleProviderCallback')->name('login.claveunica.callback');
@@ -42,6 +40,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::post('/etapas/descargar_form', 'StagesController@descargar_form')->name('stage.descargar_form');
     Route::get('/documentos/get/{filename}', 'DocumentController@get')->name('document.get');
     Route::get('/etapas/estados/{tramite_id}', 'StagesController@estados')->name('stage.estados');
+    Route::post('/etapas/validar_campos_async', 'StagesController@validar_campos_async')->name('etapa.validar_campos_async');
 
     Route::get('/consultas', 'ConsultController@index')->name('consulta');
     Route::post('/consultas', 'ConsultController@index')->name('consulta');
