@@ -179,14 +179,12 @@ class StagesController extends Controller
 
         if ($resultotal == true) {
             $matches = $result->groupBy('id')->keys()->toArray();
-            $contador = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $buscar, 0, $perpage)->count();
             $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $buscar, 0, $perpage);
-            error_log("true" . " cantidad " . $contador);
+            $contador = count($rowetapas);
 
         } else {
-            $contador = Doctrine::getTable('Etapa')->findAllSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
             $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(), "0", $buscar, $offset, $perpage);
-            error_log("false" . " cantidad " . $contador);
+            $contador = count($rowetapas);
         }
 
         $config['base_url'] = url('etapas/sinasignar');
