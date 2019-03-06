@@ -136,7 +136,6 @@ class Regla
     public function getExpresionParaOutput($etapa_id, $evaluar = false)
     {
         $new_regla = $this->regla;
-        Log::debug("############# En getExpresionParaOutput");
         $new_regla = preg_replace_callback('/@@(\w+)((->\w+|\[\w+\])*)/', function ($match) use ($etapa_id, $evaluar) {
             $nombre_dato = $match[1];
             $accesor = isset($match[2]) ? $match[2] : '';

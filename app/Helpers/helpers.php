@@ -290,7 +290,7 @@ if (!function_exists('get_puntos_rut')) {
     }
     
     if (!function_exists('get_edad')) {
-        function get_edad($date_from_str, $format_str='d/m/Y', $time_zone='America/Santiago'){
+        function get_edad($date_from_str, $format_str='d-m-Y', $time_zone='America/Santiago'){
             try{
                 $tz  = new DateTimeZone($time_zone);
             }catch(\Exception $err){
