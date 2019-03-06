@@ -9,7 +9,7 @@
             <legend><?= !is_null($etapa->Tarea->paso_confirmacion_titulo) ? $etapa->Tarea->paso_confirmacion_titulo : 'Paso final' ?> </legend>
             <?php if ($tareas_proximas->estado == 'pendiente'): ?>
             <?php foreach ($tareas_proximas->tareas as $t): ?>
-            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : "Para confirmar y enviar el formulario a la siguiente etapa (<?= $t->nombre ?>) haga click en
+            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : "Para confirmar y enviar el formulario a la siguiente etapa ($t->nombre) haga click en
                 Finalizar." ?> </p>
             <?php if ($t->asignacion == 'manual'): ?>
             <label>Asignar próxima etapa a</label>

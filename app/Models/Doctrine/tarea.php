@@ -206,20 +206,24 @@ class Tarea extends Doctrine_Record
         //Agregamos los nuevos
         if (is_array($pasos_array)) {
             foreach ($pasos_array as $key => $p) {
+
                 //Guardamos el paso solamente si el formulario_id corresponde a un formulario existente.
                 $formulario_id = null;
-                foreach ($this->Proceso->Formularios as $f)
-                    if ($f->id == $p['formulario_id'])
-                        $formulario_id = $p['formulario_id'];
+                if(array_key_exists('formulario_id', $p)){
+                    foreach ($this->Proceso->Formularios as $f)
+                        if ($f->id == $p['formulario_id'])
+                            $formulario_id = $p['formulario_id'];
 
-                if ($formulario_id) {
-                    $paso = new Paso();
-                    $paso->id = $p['id'];
-                    $paso->orden = $key;
-                    $paso->regla = $p['regla'];
-                    $paso->modo = $p['modo'];
-                    $paso->formulario_id = $formulario_id;
-                    $this->Pasos[] = $paso;
+                    if ($formulario_id) {
+                        $paso = new Paso();
+                        if(isset($p['id']))
+                            $paso->id = $p['id'];
+                        $paso->orden = $key;
+                        $paso->regla = $p['regla'];
+                        $paso->modo = $p['modo'];
+                        $paso->formulario_id = $formulario_id;
+                        $this->Pasos[] = $paso;
+                    }
                 }
             }
         }

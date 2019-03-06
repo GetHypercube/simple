@@ -168,7 +168,7 @@ function send_chunk(chunk, c_s3) {
                 if(pos >= 0){
                     c_s3.XMLHttpRequest_arr.splice(pos, 1);
                 }
-                alert(xhr_response.error);
+                alert("Ocurrió un error al cargar el archivo.");
                 return;
             }
             c_s3.file_parts_status[part_number] = 1;

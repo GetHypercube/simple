@@ -6,7 +6,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Proceso;
 use App\Models\Tramite;
 use App\Models\Job;
-use App\Models\File;
+use App\Models\Campo;
 use App\Rules\Captcha;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -263,6 +263,7 @@ class StagesController extends Controller
         $validations = [];
 
         if ($modo == 'edicion') {
+            
             $campos_nombre_etiqueta = [];
             foreach ($formulario->Campos as $c) {
                 // Validamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
@@ -270,14 +271,17 @@ class StagesController extends Controller
                     $validate = $c->formValidate($request, $etapa->id);
                     if (!empty($validate[0]) && !empty($validate[1])) {
                         $validations[$validate[0]] = $validate[1];
-                        $campos_nombre_etiqueta[$validate[0]] = "\"$c->etiqueta\"";
+                        $etiqueta = $c->etiqueta;
+                        if($c->tipo == 'select' && strpos($etiqueta, '.') !== FALSE){
+                            $etiqueta = substr($etiqueta, strpos($etiqueta, '.'));
+                        }
+                        $campos_nombre_etiqueta[$validate[0]] = "<b>$etiqueta</b>";
                     }
                 }
                 if ($c->tipo == 'recaptcha') {
                     $validations['g-recaptcha-response'] = ['required', new Captcha];
                 }
             }
-
             $request->validate( $validations, [], $campos_nombre_etiqueta );
 
             // Almacenamos los campos
@@ -757,5 +761,54 @@ class StagesController extends Controller
         }
         $data['historial'] = $historial;
         return view('stages.estados',$data);
+    }
+
+    public function validar_campos_async(Request $request){
+        if( ! $request->has('campos')){
+            return response()->json( [ 'status' => FALSE, 'messages' => NULL, 'code'=> -1] );
+        }
+        $campos = $request->input('campos');
+
+        $data = [];
+        $rules = [];
+        $nicenames = [];
+        $data_columnas = [];
+        foreach($campos as $campo){
+            if(! array_key_exists('campo_id', $campo) ){
+                continue;
+            }
+            $campo_id = $campo['campo_id'];
+            $campo_base = Campo::find($campo_id);
+            
+            $c_extra = json_decode($campo_base['extra'], TRUE);
+            
+            $columna = $campo['columna'];
+            $columnas = $c_extra['columns'];
+            if( ! array_key_exists('validacion', $columnas[$columna])){
+                continue;
+            }
+            $validacion = $columnas[$columna]['validacion'];
+            $etiqueta = $campo['etiqueta'];
+
+            $data[] = $campo['valor'];
+            $rules[] = str_replace(' ', '', $validacion);
+            $nicenames[] = "<b>$etiqueta</b>" ;
+            $data_columnas[] = $columna;
+        }
+
+        $validator = \Validator::make(
+            $data, $rules, [], $nicenames
+        );
+        
+        if( $validator->fails() ){
+            return response()->json( [ 
+                'status' => FALSE, 
+                'messages' => $validator->messages(), 
+                'columnas' => $data_columnas, 
+                'code'=>1 
+            ] );
+        }
+        
+        return response()->json( [ 'status' => TRUE, 'code' => 0, 'columnas' => $data_columnas ] );
     }
 }

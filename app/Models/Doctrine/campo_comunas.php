@@ -101,6 +101,9 @@ class CampoComunas extends Campo
         $request->validate([
             $this->nombre . '.region' => implode('|', $this->validacion),
             $this->nombre . '.comuna' => implode('|', $this->validacion),
+        ], [], [
+            $this->nombre . '.region' => "<b>Region de $this->nombre</b>",
+            $this->nombre . '.comuna' => "<b>Comuna de $this->nombre</b>"
         ]);
         /*
         $CI =& get_instance();

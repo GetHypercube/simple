@@ -251,6 +251,7 @@ class ProcessController extends Controller
         $proceso->icon_ref = $request->input('logo');
         $proceso->destacado = $request->has('destacado') ? 1 : 0;
         $proceso->descripcion = $request->input('descripcion');
+        $proceso->url_informativa = $request->has('url_informativa') ? $request->get('url_informativa') : NULL;
         $proceso->save();
 
         return response()->json([

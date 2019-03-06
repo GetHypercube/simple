@@ -54,6 +54,10 @@
                     <label>Descripción</label>
                     <textarea class="form-control" id="descripcion" name="descripcion" rows="5" cols="10">{{$proceso->descripcion}}</textarea>
                 </div>
+                <div>
+                    <label>Url informativa</label>
+                    <input type="text" class="form-control" name="url_informativa" value="<?=$proceso->url_informativa?>"/>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
