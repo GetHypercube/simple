@@ -41,13 +41,20 @@
 
         <?php
         $file = false;
-        if (\App\Helpers\Doctrine::getTable('File')->findByTramiteId($e->Tramite->id)->count() > 0) {
+        if (\App\Helpers\Doctrine::getTable('File')->findByTramiteId($e->tramite_id)->count() > 0) {
             $file = true;
             $registros = true;
         }
         ?>
+        <?php
+            $previsualizacion = '';
+            if ( ! empty($e->previsualizacion)){
+                $r = new Regla($e->previsualizacion);
+                $previsualizacion = $r->getExpresionParaOutput($e->etapa_id);
+            }
 
-        <tr <?=$e->getPrevisualizacion() ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($e->getPrevisualizacion()) . '" data-trigger="hover" data-placement="bottom"' : ''?>>
+        ?>
+        <tr <?=$previsualizacion ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : ''?>>
             <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
             <?php if ($file): ?>
             <td>
@@ -60,17 +67,17 @@
             <?php else: ?>
             <td></td>
             <?php endif; ?>
-            <td><?=$e->Tramite->id?></td>
+            <td><?=$e->tramite_id?></td>
             <td class="name">
                 <?php
-                $t = \App\Helpers\Doctrine::getTable('Tramite')->find($e->Tramite->id);
+                $t = \App\Helpers\Doctrine::getTable('Tramite')->find($e->tramite_id);
                 $tramite_nro = '';
                 foreach ($t->getValorDatoSeguimiento() as $tra_nro) {
                     if ($tra_nro->nombre == 'tramite_ref') {
                         $tramite_nro = $tra_nro->valor;
                     }
                 }
-                echo $tramite_nro != '' ? $tramite_nro : $e->Tramite->Proceso->nombre;
+                echo $tramite_nro != '' ? $tramite_nro : $e->p_nombre;
                 ?>
             </td>
             <td class="name">
@@ -81,19 +88,19 @@
                         $tramite_descripcion = $tra->valor;
                     }
                 }
-                echo $tramite_descripcion != '' ? $tramite_descripcion : $e->Tramite->Proceso->nombre;
+                echo $tramite_descripcion != '' ? $tramite_descripcion : $e->p_nombre;
                 ?>
             </td>
-            <td><?=$e->Tarea->nombre ?></td>
+            <td><?=$e->t_nombre ?></td>
             <td class="time"><?= strftime('%d.%b.%Y', mysql_to_unix($e->updated_at))?>
                 <br/><?= strftime('%H:%M:%S', mysql_to_unix($e->updated_at))?></td>
             <td><?=$e->vencimiento_at ? strftime('%c', strtotime($e->vencimiento_at)) : 'N/A'?></td>
             <td class="actions">
-                <a href="<?=url('etapas/asignar/' . $e->id)?>" class="btn btn-link"><i
+                <a href="<?=url('etapas/asignar/' . $e->etapa_id)?>" class="btn btn-link"><i
                             class="icon-check icon-white"></i> Asignármelo</a>
                 <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                 <?php if ($file): ?>
-                <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);" class="btn btn-link"><i
+                <a href="#" onclick="return descargarDocumentos(<?=$e->tramite_id?>);" class="btn btn-link"><i
                             class="icon-download icon-white"></i> Descargar</a>
                 <?php endif; ?>
                 <?php endif; ?>
