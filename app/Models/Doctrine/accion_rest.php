@@ -262,7 +262,16 @@ class AccionRest extends Accion
             $result2['code'] = $e->getCode();
             $result2['desc'] = $e->getMessage();
         }
-
+        
+        try{
+            if( ! empty($result2) && is_array($result2) && array_key_exists('code', $result2) 
+                    && ! array_key_exists('status', $result2) ){
+                $result2['status'] = $result2['code'];
+            }
+        }catch (Exception $e){
+            Log::info("Catch accion REST. Al result2['status']=result2['code']");
+        }
+        
         $result2 = json_encode($result2);
         $result2 = str_replace(" - ", "_", $result2);
         $result2 = json_decode($result2);
