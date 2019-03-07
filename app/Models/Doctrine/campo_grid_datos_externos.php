@@ -21,7 +21,6 @@ class CampoGridDatosExternos extends Campo
     private $tiene_acciones;
     private $botones;
     private $botones_position;
-    private $hidden_arr;
     private $ayuda;
 
     protected function display($modo, $dato, $etapa_id = false)
@@ -82,17 +81,15 @@ class CampoGridDatosExternos extends Campo
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
 
         $data = [];
-        if($dato && count($dato->valor) > 0 ){
+        if($dato && ! empty($dato->valor) ){
             if(is_string($dato->valor))
                 $data = json_decode($dato->valor, true);
             else
                 $data = $dato->valor;
-            if( ! $this->is_array_associative($data) ){
+            if( ! is_null($data) && is_array($data) && ! $this->is_array_associative($data) ){
                 // hay que corregir llenando con vacios cuando la columna no sea exportable
-                $data_temp = [];
                 for($i=0; $i<count($data);$i++){
                     for( $j=0; $j < count($this->columns); $j++){
-                        
                         if( $this->columns[$j]->is_exportable == 'false'){
                             array_splice($data[$i], $j, 0, '');
                             
@@ -328,7 +325,7 @@ class CampoGridDatosExternos extends Campo
 
     private function is_array_associative($arr)
     {
-        if ([] === $arr) return false;
+        if ( empty( $arr) || ! is_array($arr) ) return false;
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
