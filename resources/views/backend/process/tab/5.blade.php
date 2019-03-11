@@ -56,21 +56,81 @@
             <td><a title="Editar" target="_blank"
                    href="<?= url('backend/acciones/editar/' . $p->Accion->id) ?>"><?= $p->Accion->nombre ?></a>
             </td>
-            <td><?= $p->regla ?></td>
-            <td><?= $p->instante ?></td>
-            <td><?=$p->paso_id ? '<abbr title="' . $p->Paso->Formulario->nombre . '">Ejecutar Paso ' . $p->Paso->orden . '</abbr>' : ($p->evento_externo_id ? '<abbr title="' . $p->EventoExterno->nombre . '">Evento Externo ' . $p->EventoExterno->nombre . '</abbr>' : 'Ejecutar Tarea')?></td>
+            <td><input type="text" class="form-control" name="eventos[<?= $key + 1 ?>][regla]" value="<?= $p->regla ?>"/></td>
+            <td><select class="eventoInstante form-control" name="eventos[<?= $key + 1 ?>][instante]">
+                    <option value="antes" <?= $p->instante=='antes' ? 'selected' : '' ?> >Antes</option>
+                    <option value="despues" <?= $p->instante=='despues' ? 'selected' : '' ?>>Después</option>
+                </select>
+            </td>
+            <td>
+                <select class="eventoPasoId form-control" name="eventos[<?= $key + 1 ?>][paso_id]">
+                    <?php if($p->paso_id): ?>
+                        <?php foreach ($tarea->Pasos as $paso): ?>
+                            <?php if($paso->id===$p->paso_id): ?>
+                                <option selected value="<?=$paso->id?>" title="<?=$paso->Formulario->nombre?>">Ejecutar Paso <?=$paso->orden?></option>
+                            <?php else: ?>
+                                <option value="<?=$paso->id?>" title="<?=$paso->Formulario->nombre?>">Ejecutar Paso <?=$paso->orden?></option>
+                            <?php endif; ?>
+                        <?php endforeach ?>
+
+                        <?php foreach ($tarea->EventosExternos as $ee): ?>
+                        <?php if($ee->id===$p->evento_externo_id): ?>
+                            <option selected value="<?=$ee->id?>" title="<?=$ee->nombre?>">Evento Externo <?=$ee->nombre?></option>
+                        <?php else: ?>
+                            <option value="<?=$ee->id?>" title="<?=$ee->nombre?>">Evento Externo <?=$ee->nombre?></option>
+                        <?php endif; ?>
+                        <?php endforeach ?>
+                        <option value="">Ejecutar Tarea</option>
+                    <?php endif; ?>
+
+                    <?php if($p->evento_externo_id): ?>
+                        <?php foreach ($tarea->Pasos as $paso): ?>
+                            <?php if($paso->id===$p->paso_id): ?>
+                                <option selected value="<?=$paso->id?>" title="<?=$paso->Formulario->nombre?>">Ejecutar Paso <?=$paso->orden?></option>
+                            <?php else: ?>
+                                <option value="<?=$paso->id?>" title="<?=$paso->Formulario->nombre?>">Ejecutar Paso <?=$paso->orden?></option>
+                            <?php endif; ?>
+                        <?php endforeach ?>
+
+                        <?php foreach ($tarea->EventosExternos as $ee): ?>
+                        <?php if($ee->id===$p->evento_externo_id): ?>
+                            <option selected value="<?=$ee->id?>" title="<?=$ee->nombre?>">Evento Externo <?=$ee->nombre?></option>
+                        <?php else: ?>
+                            <option value="<?=$ee->id?>" title="<?=$ee->nombre?>">Evento Externo <?=$ee->nombre?></option>
+                        <?php endif; ?>
+                        <?php endforeach ?>
+                        <option value="">Ejecutar Tarea</option>
+                    <?php endif; ?>
+
+                    <?php if(is_null($p->paso_id) && is_null($p->evento_externo_id)): ?>
+                        <?php foreach ($tarea->Pasos as $paso): ?>
+                            <?php if($paso->id===$p->paso_id): ?>
+                                <option selected value="<?=$paso->id?>" title="<?=$paso->Formulario->nombre?>">Ejecutar Paso <?=$paso->orden?></option>
+                            <?php else: ?>
+                                <option value="<?=$paso->id?>" title="<?=$paso->Formulario->nombre?>">Ejecutar Paso <?=$paso->orden?></option>
+                            <?php endif; ?>
+                        <?php endforeach ?>
+
+                        <?php foreach ($tarea->EventosExternos as $ee): ?>
+                        <?php if($ee->id===$p->evento_externo_id): ?>
+                            <option selected value="<?=$ee->id?>" title="<?=$ee->nombre?>">Evento Externo <?=$ee->nombre?></option>
+                        <?php else: ?>
+                            <option value="<?=$ee->id?>" title="<?=$ee->nombre?>">Evento Externo <?=$ee->nombre?></option>
+                        <?php endif; ?>
+                        <?php endforeach ?>
+                        <?php if(is_null($p->paso_id) && is_null($p->evento_externo_id)): ?>
+                            <option value="" selected>Ejecutar Tarea</option>
+                        <?php else: ?>
+                            <option value="">Ejecutar Tarea</option>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </select>
+            </td>
+
             <td>
                 <input type="hidden" name="eventos[<?= $key + 1 ?>][accion_id]"
                        value="<?= $p->accion_id ?>"/>
-                <input type="hidden" name="eventos[<?= $key + 1 ?>][regla]"
-                       value="<?= $p->regla ?>"/>
-                <input type="hidden" name="eventos[<?= $key + 1 ?>][instante]"
-                       value="<?= $p->instante ?>"/>
-                <?php
-                $paso_ee_id = !is_null($p->paso_id) ? $p->paso_id : $p->evento_externo_id;
-                ?>
-                <input type="hidden" name="eventos[<?= $key + 1 ?>][paso_id]"
-                       value="<?= $paso_ee_id ?>"/>
+                
                 <a class="delete" title="Eliminar" href="#"><i class="material-icons">close</i></a>
             </td>
         </tr>

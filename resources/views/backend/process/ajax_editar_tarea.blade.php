@@ -45,12 +45,11 @@
             var html = "<tr>";
             html += "<td>" + pos + "</td>";
             html += '<td><a title="Editar" target="_blank" href="/backend/formularios/editar/' + formularioId + '">' + formularioNombre + '</td>';
-            html += "<td>" + regla + "</td>";
+            html += '<td><input class="form-control" type="text" name="pasos[' + pos + '][regla]" value="'+ escapeHtml(regla) +'" /></td>';
             html += "<td>" + modo + "</td>";
             html += '<td>';
             html += '<input type="hidden" name="pasos[' + pos + '][id]" value="" />';
             html += '<input type="hidden" name="pasos[' + pos + '][formulario_id]" value="' + formularioId + '" />';
-            html += '<input type="hidden" name="pasos[' + pos + '][regla]" value="' + escapeHtml(regla) + '" />';
             html += '<input type="hidden" name="pasos[' + pos + '][modo]" value="' + modo + '" />';
             html += '<a class="delete" title="Eliminar" href="#"><i class="material-icons">close</i></a>';
             html += '</td>';
@@ -97,19 +96,24 @@
             var html = "<tr>";
             html += "<td>" + pos + "</td>";
             html += '<td><a title="Editar" target="_blank" href="/backend/acciones/editar/' + accionId + '">' + accionNombre + '</td>';
-            html += "<td>" + regla + "</td>";
-            html += "<td>" + instante + "</td>";
-            html += "<td><abbr title='" + pasoTitle + "'>" + pasoNombre + "</abbr></td>";
+            html += '<td><input class="form-control" type="text" name="eventos[' + pos + '][regla]" value="'+ escapeHtml(regla) +'" /></td>';
+            html += '<td><select class="form-control" name="eventos['+pos+'][instante]"></select></td>';
+            html += '<td><select class="form-control" name="eventos['+pos+'][paso_id]"></select></td>';
             html += '<td>';
             html += '<input type="hidden" name="eventos[' + pos + '][accion_id]" value="' + accionId + '" />';
-            html += '<input type="hidden" name="eventos[' + pos + '][regla]" value="' + escapeHtml(regla) + '" />';
-            html += '<input type="hidden" name="eventos[' + pos + '][instante]" value="' + instante + '" />';
-            html += '<input type="hidden" name="eventos[' + pos + '][paso_id]" value="' + pasoId + '" />';
             html += '<a class="delete" title="Eliminar" href="#"><i class="material-icons">close</i></a>';
             html += '</td>';
             html += "</tr>";
 
             $(".tab-eventos table tbody").append(html);
+
+            var opciones = $('.eventoInstante').html();
+            $('select[name="eventos['+pos+'][instante]"').append(opciones);
+            $('select[name="eventos['+pos+'][instante]"').val(instante);
+
+            var opciones = $('.eventoPasoId').html();
+            $('select[name="eventos['+pos+'][paso_id]"').append(opciones);
+            $('select[name="eventos['+pos+'][paso_id]"').val(pasoId);
 
             return false;
         });
