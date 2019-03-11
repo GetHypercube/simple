@@ -94,7 +94,10 @@
             var pasoNombre = $form.find(".eventoPasoId option:selected").text();
             var pasoTitle = $form.find(".eventoPasoId option:selected").attr("title");
             var campoAsociado = $form.find(".eventoCampoAsociado").val();
-            campoAsociado = '@@' + campoAsociado.replace(/@/g, '');
+            campoAsociado = campoAsociado.replace(/@/g, '').trim();
+            if(campoAsociado.length > 0)
+                campoAsociado = '@@' + campoAsociado;
+
             var html = "<tr>";
             html += "<td>" + pos + "</td>";
             html += '<td><a title="Editar" target="_blank" href="/backend/acciones/editar/' + accionId + '">' + accionNombre + '</td>';
