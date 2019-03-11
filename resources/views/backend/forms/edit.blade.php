@@ -140,25 +140,27 @@
                         </div>
                         <div class="edicionFormulario">
                             @foreach ($formulario->Campos as $c)
-                                <div class="row">
-                                    <div class="col-10">
-                                        <div class="control-group campo"
-                                             data-id="<?= $c->id ?>" <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : '' ?> >
-                                            <div class="float-left">{!!$c->displaySinDato()!!}</div>
-                                            <div class="buttons float-right">
-                                                <a href="#" class="btn btn-primary"
-                                                   onclick="return editarCampo(<?= $c->id ?>)">
-                                                    <i class="material-icons">edit</i>
-                                                </a>
-                                                <a href="<?= route('backend.forms.delete_field', [$c->id]) ?>"
-                                                   class="btn btn-danger"
-                                                   onclick="return confirm('¿Esta seguro que desea eliminar?')">
-                                                    <i class="material-icons">delete</i>
-                                                </a>&nbsp;
+                                @if($c->tipo != 'hidden')
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <div class="control-group campo"
+                                                 data-id="<?= $c->id ?>" <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : '' ?> >
+                                                <div class="float-left">{!!$c->displaySinDato()!!}</div>
+                                                <div class="buttons float-right">
+                                                    <a href="#" class="btn btn-primary"
+                                                       onclick="return editarCampo(<?= $c->id ?>)">
+                                                        <i class="material-icons">edit</i>
+                                                    </a>
+                                                    <a href="<?= route('backend.forms.delete_field', [$c->id]) ?>"
+                                                       class="btn btn-danger"
+                                                       onclick="return confirm('¿Esta seguro que desea eliminar?')">
+                                                        <i class="material-icons">delete</i>
+                                                    </a>&nbsp;
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             @endforeach
                         </div>
                     </form>

@@ -796,10 +796,40 @@ class StagesController extends Controller
         }
 
         //se obtienen todos los campos del formulario que está consultando
-        $campos = Campo::where('formulario_id',$campo->Formulario->id)->get();
+        $formulario_id = $campo->Formulario->id;
+        $campos = Campo::where('formulario_id',$formulario_id)->get();
+
+        //crear campos hidden
+        $posicion = Campo::select('posicion')
+                    ->where('formulario_id',$campo->Formulario->id)
+                    ->orderby('posicion','desc')
+                    ->first();
+        $array_campos = array();
+        foreach($campos as $campo){
+            $array_campos[$campo->nombre] = $campo->nombre;
+        }
+        foreach($datos as $dato){
+            if(!in_array($dato->nombre, $array_campos)){
+                $nuevo_campo = \Campo::factory('hidden');
+                $nuevo_campo->nombre = $dato->nombre;
+                $nuevo_campo->valor_default = str_replace('"', '', $dato->valor);
+                $nuevo_campo->posicion = $posicion++;
+                $nuevo_campo->tipo = 'hidden';
+                $nuevo_campo->formulario_id = $formulario_id;
+                $nuevo_campo->etiqueta = $dato->nombre;
+                $nuevo_campo->ayuda = '';
+                $nuevo_campo->validacion = '';
+                $nuevo_campo->save();
+            }
+        }
+        //fin crear campos hidden
+
+        //se obtienen todos los campos del formulario que está consultando y a la vez los nuevos hidden si es que aplica
+        $campos = Campo::where('formulario_id',$formulario_id)->get();
         
         //se recorren los campos del formulario para verificar que existan coincidencias con los datos obtenidos en la etapa
         foreach($campos as $campo){
+            
             //en caso que no exista valor por defecto, continua el recorrido sin agregar datos al arreglo
             if(empty($campo->valor_default)){
                 continue;
