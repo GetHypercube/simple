@@ -528,12 +528,20 @@ function store_data_in_hidden(grilla_id){
                     var dd = {};
                     if( is_array ){
                         var header_names = grillas_datatable[grilla_id].exportable_columns_names_flat;
-                        exportable_columns_indexes.forEach(function(idx, ele){
-                            dd[ header_names[idx] ] = change_type[field_types[idx]](row[idx]);
+                        exportable_columns_indexes.forEach(function(ele, idx){
+                            try{
+                                dd[ header_names[ele] ] = change_type[field_types[ele]](row[ele]);
+                            }catch(exc){
+                                dd[ header_names[ele] ] = row[ele];
+                            }
                         });
                     }else{
                         grillas_datatable[grilla_id].exportable_columns_names_flat.forEach(function(ele, idx){
-                            dd[ele] = change_type[field_types[idx]](row[ele]);
+                            try{
+                                dd[ele] = change_type[field_types[idx]](row[ele]);
+                            }catch(exc){
+                                dd[ele] = row[ele];
+                            }
                         });
                     }
                     
