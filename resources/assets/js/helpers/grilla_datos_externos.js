@@ -196,8 +196,9 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
                                     ' <input type="text" class="form-control modal_input" ' +
                                         ' data-campo_id="{{campo_id}}" ' +
                                         ' data-etiqueta="{{text}}" ' +
+                                        ' data-field_type={{field_type}} ' +
                                         ' data-column="{{column}}" onFocusOut="modal_input_validate(this)"></div>';
-    var modal_form_not_input = '<input type="hidden" class="modal_input" data-column="{{column}}">';
+    var modal_form_not_input = '<input type="hidden" class="modal_input" data-column="{{column}}" data-field_type={{field_type}}>';
     var modal_validate_errors = '<ul id="{{id}}" style="margin:0px;"></ul>';
     grillas_datatable[grilla_id].cell_text_max_length = cell_text_max_length;
     grillas_datatable[grilla_id].is_array = is_array;
@@ -213,6 +214,7 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
     grillas_datatable[grilla_id].exportable_columns_names_flat = [];
     grillas_datatable[grilla_id].headers_object = [];
     grillas_datatable[grilla_id].headers_array = [];
+    grillas_datatable[grilla_id].field_types = [];
     
     for(var i=0;i<columns.length;i++){
         // creamos el arreglo de cabeceras
@@ -220,7 +222,7 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
             // Alertar
             columns[i].object_field_name = columns[i].header;
         }
-        
+        grillas_datatable[grilla_id].field_types.push( columns[i].field_type )
         grillas_datatable[grilla_id].headers_array.push({title: columns[i].header});
         grillas_datatable[grilla_id].headers_object.push({
             data: columns[i].object_field_name,
@@ -248,6 +250,7 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
             new_element.replace(/{{text}}/g, columns[i].modal_add_text)
                                  .replace("{{column}}", i)
                                  .replace('{{campo_id}}', grilla_id)
+                                 .replace('{{field_type}}', columns[i].field_type)
         );
         
         $('#ajax-alert_'+grilla_id).append(modal_validate_errors.replace('{{id}}', 'ajax-alert_'+grilla_id+'_'+ i) )
@@ -472,6 +475,25 @@ function store_data_in_hidden(grilla_id){
     var data = [];
     var exportable_columns_indexes = grillas_datatable[grilla_id].exportable_columns_indexes;
     var is_array = grillas_datatable[grilla_id].is_array;
+    var field_types = grillas_datatable[grilla_id].field_types;
+    var change_type = {
+        "string": function(variable){
+            return variable;
+        },
+        "float": function(variable){
+            return parseFloat(variable);
+        },
+        'integer': function(variable){
+            return parseInt(variable);
+        },
+        'boolean': function(variable){
+            var v = null;
+            if (variable.toLocaleLowerCase() == 'true')
+                v = true;
+            else if(variable.toLocaleLowerCase() == 'false')
+                v = false;
+        }
+    }
     if(grillas_datatable[grilla_id].exportable_columns_indexes.length <= 0){
         $("#"+grilla_id).val( JSON.stringify([]) );
         return;
@@ -482,16 +504,19 @@ function store_data_in_hidden(grilla_id){
             grillas_datatable[grilla_id].table.rows(
                 function(row_index, row){
                     new_row = [];
-                    if( ! is_array ){
-                        grillas_datatable[grilla_id].exportable_columns_names_flat.forEach(function(ele, idx){
+                    if( ! is_array )
+                        var columnas = grillas_datatable[grilla_id].exportable_columns_names_flat;
+                    else
+                        var columnas = grillas_datatable[grilla_id].exportable_columns_indexes;
+
+                    columnas.forEach(function(ele, idx){
+                        try{
+                            new_row.push( change_type[field_types[idx]](row[ele]) );
+                        }catch(exc){
+                            console.warn('Se intento usar el tipo: ' + field_types[idx], exc);
                             new_row.push( row[ele] );
-                        });
-                    }else{
-                        new_row = [];
-                        grillas_datatable[grilla_id].exportable_columns_indexes.forEach(function(ele, idx){
-                            new_row.push(row[ele]);
-                        });
-                    }
+                        }
+                    });
                     
                     data.push(new_row);
                 }
@@ -504,11 +529,11 @@ function store_data_in_hidden(grilla_id){
                     if( is_array ){
                         var header_names = grillas_datatable[grilla_id].exportable_columns_names_flat;
                         exportable_columns_indexes.forEach(function(idx, ele){
-                            dd[ header_names[idx] ] = row[idx];
+                            dd[ header_names[idx] ] = change_type[field_types[idx]](row[idx]);
                         });
                     }else{
                         grillas_datatable[grilla_id].exportable_columns_names_flat.forEach(function(ele, idx){
-                            dd[ele] = row[ele];
+                            dd[ele] = change_type[field_types[idx]](row[ele]);
                         });
                     }
                     
