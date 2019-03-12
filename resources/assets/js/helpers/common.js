@@ -347,5 +347,4 @@ var procesar_data = function(data){
         }
     });
     prepareDynaForm(".dynaForm");
-    $('.eliminar').remove();
 }
