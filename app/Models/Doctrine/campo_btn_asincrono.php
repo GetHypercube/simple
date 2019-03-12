@@ -40,7 +40,7 @@ class CampoBtnAsincrono extends Campo
                         $("#'.$this->id.'").click(function(){
                             $("#'.$this->id.'").prop("disabled",true);
                             $("#ajax_loader").show();
-                            var myData = $("form").find("input[name]").serializeArray();
+                            var myData = $("form").find("input[name],select.form-control").serializeArray();
                             var btn_asinc = {
                                   name: "btn_async",
                                   value: "'.$this->id.'"
