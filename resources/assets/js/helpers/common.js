@@ -341,7 +341,6 @@ var procesar_data = function(data){
             $('<input>').attr({
                 type: 'hidden',
                 name: data[k].nombre,
-                class: 'eliminar',
                 value: valor
             }).appendTo('form');
         }
