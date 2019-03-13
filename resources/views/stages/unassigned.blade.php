@@ -59,7 +59,7 @@
             <?php if ($file): ?>
             <td>
                 <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]"
-                                                    value="<?=$e->Tramite->id?>"></label></div>
+                                                    value="<?=$e->tramite_id?>"></label></div>
             </td>
             <?php else: ?>
             <td></td>
