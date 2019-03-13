@@ -3,18 +3,18 @@ var validJsonR=0;
 function validateForm(){
     var casoR=0;
     var select =$("#tipoMetodo").val(); 
-    if (select=='POST' || select=="PUT"){
-        var resultR = isJsonR();
-        if (resultR!='0'){
-            $("#request").addClass('invalido');
-            $("#resultRequest").text("Formato requerido / json");
-            casoR=1;
-        }else{
-            $("#request").removeClass('invalido');
-            $("#resultRequest").text("");
-            casoR=0;   
-        }
-    }
+    // if (select=='POST' || select=="PUT"){
+    //     var resultR = isJsonR();
+    //     if (resultR!='0'){
+    //         $("#request").addClass('invalido');
+    //         $("#resultRequest").text("Formato requerido / json");
+    //         casoR=1;
+    //     }else{
+    //         $("#request").removeClass('invalido');
+    //         $("#resultRequest").text("");
+    //         casoR=0;   
+    //     }
+    // }
     if(casoR==0){
         var obj=$("#header").val();
         var caso=0;

@@ -21,8 +21,10 @@ class CampoGridDatosExternos extends Campo
     private $tiene_acciones;
     private $botones;
     private $botones_position;
-    private $hidden_arr;
     private $ayuda;
+    private $field_types = ['string'=>'String', 'integer'=>'Entero', 
+                           'float' => 'Flotante', 'boolean' => 'Booleano'];
+    private $field_types_html;
 
     protected function display($modo, $dato, $etapa_id = false)
     {
@@ -82,17 +84,15 @@ class CampoGridDatosExternos extends Campo
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
 
         $data = [];
-        if($dato && count($dato->valor) > 0 ){
+        if($dato && ! empty($dato->valor) ){
             if(is_string($dato->valor))
                 $data = json_decode($dato->valor, true);
             else
                 $data = $dato->valor;
-            if( ! $this->is_array_associative($data) ){
+            if( ! is_null($data) && is_array($data) && ! $this->is_array_associative($data) ){
                 // hay que corregir llenando con vacios cuando la columna no sea exportable
-                $data_temp = [];
                 for($i=0; $i<count($data);$i++){
                     for( $j=0; $j < count($this->columns); $j++){
-                        
                         if( $this->columns[$j]->is_exportable == 'false'){
                             array_splice($data[$i], $j, 0, '');
                             
@@ -166,6 +166,11 @@ class CampoGridDatosExternos extends Campo
                             <input class='form-control' type='input' name='extra[columns][{{column_pos}}][object_field_name]' value='{{object_field_name}}'/>
                         </td>
                         <td>
+                            <select class='form-control' type='input' name='extra[columns][{{column_pos}}][field_type]' value='{{object_field_name}}'>
+                                {{select_field_types}}
+                            </select>
+                        </td>
+                        <td>
                             <input class='form-control' type='checkbox' {{is_input_checked}} onclick='return cambiar_estado_entrada(this, {{column_pos}});'>
                             <input type='hidden' name='extra[columns][{{column_pos}}][is_input]' value='{{is_input}}' />
                         </td>
@@ -181,8 +186,13 @@ class CampoGridDatosExternos extends Campo
                         </td>
                     </tr>";
 
+        
+        $field_types_no_selected = str_replace("{{selected}}", "", join("", $this->field_types_html));
         $column_template_html = str_replace("\n", "", $column_template_html);
-
+        
+        $html_column_template = str_replace('{{select_field_types}}', $field_types_no_selected, $column_template_html);
+        $html_column_template = str_replace("\n", "", $html_column_template);
+        
         $output .= '
             <br />
             <div class="input-group controls">
@@ -225,9 +235,16 @@ class CampoGridDatosExternos extends Campo
             
             <div class="columnas">
                 <script type="text/javascript">
-                    var column_template = "'.$column_template_html.'";
-
+                    
+                    var column_template = "'.$html_column_template.'";
+                    
                     $(document).ready(function(){
+                        $(".modal-dialog.modal-lg").removeClass("modal-lg").addClass("modal-xl");
+                        
+                        $("#modal").on("hide.bs.modal", function () {
+                            $(".modal-dialog.modal-xl").removeClass("modal-xl").addClass("modal-lg");
+                        });
+
                         $("#formEditarCampo .columnas .nuevo").click(function(){
                             var pos=$("#formEditarCampo .columnas table tbody tr").length;
                             var new_col = column_template.replace(/{{column_pos}}/g, pos);
@@ -262,6 +279,7 @@ class CampoGridDatosExternos extends Campo
                             <th>Etiqueta</th>
                             <th>Texto al agregar</th>
                             <th>Nombre del campo</th>
+                            <th>Tipo de dato</th>
                             <th>Es entrada</th>
                             <th>Exportable</th>
                             <th>Validaci&oacute;n</th>
@@ -301,6 +319,16 @@ class CampoGridDatosExternos extends Campo
                 }else{
                     $column = str_replace('{{validacion}}', '', $column);
                 }
+                
+                if(isset($c->field_type) && array_key_exists($c->field_type, $this->field_types_html)){
+                    $types = $this->field_types_html;
+                    $types[$c->field_type] = str_replace('{{selected}}', 'selected' , $types[$c->field_type]);
+                    $s = str_replace('{{selected}}', '', join("\n", $types));
+                    $column = str_replace('{{select_field_types}}', $s, $column);
+                }else{
+                    $column = str_replace('{{select_field_types}}', 
+                                    str_replace('{{selected}}', '', join("\n", $this->field_types_html)), $column);
+                }
 
                 $output .= $column;
             }
@@ -328,7 +356,7 @@ class CampoGridDatosExternos extends Campo
 
     private function is_array_associative($arr)
     {
-        if ([] === $arr) return false;
+        if ( empty( $arr) || ! is_array($arr) ) return false;
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
@@ -385,5 +413,12 @@ class CampoGridDatosExternos extends Campo
         if(isset($this->extra->cell_text_max_length) ){
             $this->cell_text_max_length = $this->extra->cell_text_max_length;
         }
+
+        $this->field_types_html = [];
+        
+        foreach($this->field_types as $gd_type => $human_type){
+            $this->field_types_html[$gd_type] = "<option {{selected}} value='".$gd_type."'>".$human_type."</option>";
+        }
+        
     }
 }

@@ -50,15 +50,13 @@
                 <td><a title="Editar" target="_blank"
                        href="<?= url('backend/formularios/editar/' . $p->Formulario->id) ?>"><?= $p->Formulario->nombre ?></a>
                 </td>
-                <td><?= $p->regla ?></td>
+                <td><input type="text" class="form-control" name="pasos[<?= $key + 1 ?>][regla]" value="<?= $p->regla ?>"/></td>
                 <td><?= $p->modo ?></td>
                 <td>
                     <input type="hidden" name="pasos[<?= $key + 1 ?>][id]"
                            value="<?= $p->id ?>"/>
                     <input type="hidden" name="pasos[<?= $key + 1 ?>][formulario_id]"
                            value="<?= $p->formulario_id ?>"/>
-                    <input type="hidden" name="pasos[<?= $key + 1 ?>][regla]"
-                           value="<?= $p->regla ?>"/>
                     <input type="hidden" name="pasos[<?= $key + 1 ?>][modo]"
                            value="<?= $p->modo ?>"/>
                     <a class="delete" title="Eliminar" href="#"><i class="material-icons">close</i></a>
