@@ -18,11 +18,10 @@ class TramitesController extends Controller
         Log::info('Iniciando proceso ' . $proceso_id);
 
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
-        //echo Auth::user()->id;
-        //exit;
+        
         if (!$proceso->canUsuarioIniciarlo(Auth::user()->id)) {
-            echo 'Usuario no puede iniciar este proceso';
-            exit;
+            $url = $proceso->getTareaInicial()->acceso_modo == 'claveunica' ? route('login.claveunica').'?redirect='.route('tramites.iniciar', [$proceso->id]) : route('login').'?redirect='.route('tramites.iniciar', $proceso->id);
+            return redirect()->away($url);
         }
 
         //Vemos si es que usuario ya tiene un tramite de proceso_id ya iniciado, y que se encuentre en su primera etapa.

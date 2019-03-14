@@ -618,4 +618,58 @@ class TracingController extends Controller
         ob_end_clean();
         return $ret_val;
     }
+
+    public function ajax_editar_vencimiento($etapa_id){
+        $etapa = Doctrine::getTable("Etapa")->find($etapa_id);
+        $data['etapa'] = $etapa;
+        return view('backend.tracing.ajax_editar_vencimiento', $data);
+    }
+
+    public function editar_vencimiento_form(Request $request, $etapa_id) {
+        $request->validate(['descripcion' => 'required', 'vencimiento' => 'required']);
+        
+        $fecha = new \DateTime ();
+        $etapa = Doctrine::getTable("Etapa")->find($etapa_id);
+        $tramite = Doctrine::getTable("Tramite")->find($etapa->tramite_id);
+        // Auditoría
+        $registro_auditoria = new \AuditoriaOperaciones ();
+        $registro_auditoria->fecha = $fecha->format("Y-m-d H:i:s");
+        $registro_auditoria->motivo = $request->input('descripcion');
+        $registro_auditoria->operacion = 'Cambio de Fecha de Vencimiento';
+        $registro_auditoria->proceso = $etapa->Tramite->Proceso->nombre;
+        $registro_auditoria->cuenta_id = Auth::user()->cuenta_id;
+
+        $usuario = Auth::user();
+        $registro_auditoria->usuario = $usuario->nombre . ' ' . $usuario->apellidos . ' <' . $usuario->email . '>';
+
+        /* Formatear detalles */
+
+        $etapa_array ['proceso'] = $etapa->Tramite->Proceso->toArray(false);
+        $etapa_array ['tramite'] = $etapa->Tramite->toArray(false);
+
+        $etapa_array['etapa'] = $etapa->toArray(false);
+        unset ($etapa_array ['etapa']['tarea_id']);
+        unset ($etapa_array ['etapa']['tramite_id']);
+        unset ($etapa_array ['etapa']['usuario_id']);
+        unset ($etapa_array ['etapa']['etapa_ancestro_split_id']);
+
+
+        $etapa_array ['tarea'] = $etapa->Tarea->toArray(false);
+
+        $etapa_array ['usuario'] = $etapa->Usuario->toArray(false);
+        unset ($etapa_array ['usuario'] ['password']);
+
+        $etapa_array ['datos_seguimiento'] = Doctrine_Query::create()->from("DatoSeguimiento d")->where("d.etapa_id = ?", $etapa->id)->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
+
+        $registro_auditoria->detalles = json_encode($etapa_array);
+        $registro_auditoria->save();
+
+        $etapa->vencimiento_at = date ( 'Y-m-d', strtotime ( $request->input('vencimiento') ) );
+        $etapa->save ();
+
+        return response()->json([
+            'validacion' => true,
+            'redirect' => url('backend/seguimiento/index_proceso/' . $tramite->Proceso->id)
+        ]);
+    }
 }

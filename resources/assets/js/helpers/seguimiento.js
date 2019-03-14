@@ -31,7 +31,8 @@ function drawSeguimiento(actuales, completadas, vencidas, hoy){
                 $(el).unbind('hover').popover({
                     html: true,
                     title: "Etapas ejecutadas",
-                    content: d
+                    content: d,
+                    sanitize: false
                 });
             });
         });
