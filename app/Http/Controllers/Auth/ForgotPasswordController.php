@@ -29,4 +29,10 @@ class ForgotPasswordController extends Controller
     {
         //$this->middleware('guest');
     }
+    
+    public function showLinkRequestForm(){
+        $data = \Cuenta::configSegunDominio();
+        return view('auth.passwords.email', $data);
+    }
+    
 }
