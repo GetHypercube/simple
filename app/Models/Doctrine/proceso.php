@@ -225,8 +225,11 @@ class Proceso extends Doctrine_Record
                         foreach ($f_attr as $c) {
                             $campo = new Campo();
                             foreach ($c as $keyc => $c_attr) {
-                                if ($keyc != 'id' && $keyc != 'formulario_id' && $keyc != 'Formulario' && $keyc != 'documento_id') {
+                                if ($keyc != 'id' && $keyc != 'formulario_id' && $keyc != 'Formulario' && $keyc != 'documento_id' && $keyc!= 'condiciones_extra_visible') {
                                     $campo->{$keyc} = $c_attr;
+                                }
+                                if($keyc === 'condiciones_extra_visible' && !is_null($c_attr)){
+                                    $campo->condiciones_extra_visible = json_encode($c_attr);
                                 }
                             }
                             if ($c->documento_id) $campo->Documento = $proceso->Documentos[$c->documento_id];

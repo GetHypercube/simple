@@ -385,7 +385,7 @@ class Campo extends Doctrine_Record
         $dato_dependiente = substr($this->dependiente_campo, abs(strlen($this->dependiente_campo) - 2), 2) != '[]' && !is_null($dato_dependiente) ?
             $dato_dependiente : Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa(substr($this->dependiente_campo, 0, strlen($this->dependiente_campo) - 2)
                 , $etapa_id);
-
+            
         if ($dato_dependiente) {
 
             $valores = is_array($dato_dependiente->valor) ? $dato_dependiente->valor : array($dato_dependiente->valor);
@@ -397,14 +397,65 @@ class Campo extends Doctrine_Record
 
                 } else {
                     $visible = $this->dependiente_valor == $valor
-                        || $this->dependiente_valor == '"' . $valor . '"';
+                        || $this->dependiente_valor == '"' . $valor . '"';                    
                 }
                 if ($this->dependiente_relacion == "!=")
                     $visible = !$visible;
 
-                if ($visible)
-                    break;
+                $resultados = array();
+                array_push($resultados,$visible);
+
             }
+
+            //condiciones extras de visibilidad
+            if (count($this->condiciones_extra_visible)>0){
+                $condiciones = $this->condiciones_extra_visible;
+                
+                foreach($condiciones as $condicion){
+                    //Log::info("condicion_campo: " . $condicion->campo);
+                    $dato_dependiente = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($condicion->campo, $etapa_id);
+
+                    // Si no se encuentra, volvemos a buscar eliminando los corchetes(agregados para el checkbox) si existen
+                    $dato_dependiente = substr($condicion->campo, abs(strlen($condicion->campo) - 2), 2) != '[]' && !is_null($dato_dependiente) ?
+                        $dato_dependiente : Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa(substr($condicion->campo, 0, strlen($condicion->campo) - 2)
+                            , $etapa_id);
+
+                    if($dato_dependiente){
+                        $valores = is_array($dato_dependiente->valor) ? $dato_dependiente->valor : array($dato_dependiente->valor);
+                        foreach($valores as $valor){
+                            if ($condicion->tipo == "regex") {
+                                if (preg_match('/' . $condicion->valor . '/', $valor) == 1) {
+                                    $visible_extra = true;
+                                }
+            
+                            } else {
+                                $visible_extra = $condicion->valor == $valor
+                                    || $condicion->valor == '"' . $valor . '"';
+                                
+                                
+                            }
+                            if ($condicion->igualdad == "!=")
+                                $visible_extra = !$visible_extra;
+            
+                            array_push($resultados,$visible_extra);
+                        }
+                    }
+
+                }
+
+                if(in_array(false,$resultados))
+                    $visible = false;
+                else
+                    $visible = true;
+            }else{
+                
+                if(in_array(false,$resultados))
+                    $visible = false;
+                else
+                    $visible = true;
+
+                Log::info($visible);
+            }                
         }
         return $visible;
     }
