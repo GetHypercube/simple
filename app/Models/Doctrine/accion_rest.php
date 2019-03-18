@@ -226,11 +226,11 @@ class AccionRest extends Accion
                 } catch (Exception $e) {
                     if (strpos($e->getMessage(), 'timed out') !== false) {
                         Log::debug("Reintentando " . $reintentos . " veces . ");
-                        $result2['code'] = '504';
+                        $result2['code'] = $e->getCode();
                         $result2['desc'] = $e->getMessage();
                         $intentos++;
                         $timeout = true;
-                        $ultimo_codigo_http = 504;
+                        $ultimo_codigo_http = $e->getCode();
                     } else {
                         $ultimo_codigo_http = $e->getCode();
                         throw new ApiException($e->getMessage(), $e->getCode());

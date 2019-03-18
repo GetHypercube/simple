@@ -288,21 +288,19 @@ if (!function_exists('get_puntos_rut')) {
         
         return number_format($cleanedRut, 0, "", ".");
     }
-    
-    if (!function_exists('get_edad')) {
-        function get_edad($date_from_str, $format_str='d-m-Y', $time_zone='America/Santiago'){
-            try{
-                $tz  = new DateTimeZone($time_zone);
-            }catch(\Exception $err){
-                return 'Zona horaria invalida: '.$time_zone;
-            }
-            $date = DateTime::createFromFormat($format_str, $date_from_str, $tz);
-            if($date === FALSE){
-                return 'Formato de fecha invalida: '.$format_str;
-            }
-            $age = $date->diff(new DateTime('now', $tz))->y;
-            return $age;
+}
+if (!function_exists('get_edad')) {
+    function get_edad($date_from_str, $format_str='d-m-Y', $time_zone='America/Santiago'){
+        try{
+            $tz  = new DateTimeZone($time_zone);
+        }catch(\Exception $err){
+            return 'Zona horaria invalida: '.$time_zone;
         }
+        $date = DateTime::createFromFormat($format_str, $date_from_str, $tz);
+        if($date === FALSE){
+            return 'Formato de fecha invalida: '.$format_str;
+        }
+        $age = $date->diff(new DateTime('now', $tz))->y;
+        return $age;
     }
-    
 }
