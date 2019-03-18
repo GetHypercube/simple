@@ -20,25 +20,28 @@
         <hr>
 
         @foreach($paso->Formulario->Campos as $c)
-            <?php $condicion_final = ""; ?>
-            @if($c->condiciones_extra_visible)
-                @foreach($c->condiciones_extra_visible as $condicion)
-                    <?php
-                        $condicion_final .= $condicion->campo.";".$condicion->igualdad.";".$condicion->valor.";".$condicion->tipo."&&";
-                    ?>
-                @endforeach
+            <?php $existe_btn_siguiente = $c->tipo==='btn_siguiente' ? true : false; ?>
+            @if($c->tipo != 'btn_siguiente')
+                <?php $condicion_final = ""; ?>
+                @if($c->condiciones_extra_visible)
+                    @foreach($c->condiciones_extra_visible as $condicion)
+                        <?php
+                            $condicion_final .= $condicion->campo.";".$condicion->igualdad.";".$condicion->valor.";".$condicion->tipo."&&";
+                        ?>
+                    @endforeach
+                @endif
+                <?php
+                    if(!is_null($c->dependiente_campo) && !is_null($c->dependiente_valor)){
+                        $condicion_final = $c->dependiente_campo.";".$c->dependiente_relacion.";".$c->dependiente_valor.";".$c->dependiente_tipo."&&".$condicion_final;
+                    }
+                    $condicion_final = substr($condicion_final,0,-2);
+                ?>
+                <div class="campo control-group" data-id="<?=$c->id?>"
+                    <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : 'data-dependiente-campo="dependiente"' ?> style="display: <?= $c->isCurrentlyVisible($etapa->id) ? 'block' : 'none'?>;"
+                    data-readonly="{{$paso->modo == 'visualizacion' || $c->readonly}}" <?=$c->condiciones_extra_visible ? 'data-condicion="' . $condicion_final . '"' : 'data-condicion="no-condition"'  ?> >
+                    <?=$c->displayConDatoSeguimiento($etapa->id, $paso->modo)?>
+                </div>
             @endif
-            <?php
-                if(!is_null($c->dependiente_campo) && !is_null($c->dependiente_valor)){
-                    $condicion_final = $c->dependiente_campo.";".$c->dependiente_relacion.";".$c->dependiente_valor.";".$c->dependiente_tipo."&&".$condicion_final;
-                }
-                $condicion_final = substr($condicion_final,0,-2);
-            ?>
-            <div class="campo control-group" data-id="<?=$c->id?>"
-                 <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : 'data-dependiente-campo="dependiente"' ?> style="display: <?= $c->isCurrentlyVisible($etapa->id) ? 'block' : 'none'?>;"
-                 data-readonly="{{$paso->modo == 'visualizacion' || $c->readonly}}" <?=$c->condiciones_extra_visible ? 'data-condicion="' . $condicion_final . '"' : 'data-condicion="no-condition"'  ?> >
-                <?=$c->displayConDatoSeguimiento($etapa->id, $paso->modo)?>
-            </div>
         @endforeach
 
         <div class="form-actions mt-3">
@@ -48,7 +51,29 @@
                     Volver
                 </a>
             @endif
-            <button class="btn btn-simple btn-danger" type="submit">Siguiente</button>
+            @if($existe_btn_siguiente)
+                <?php $condicion_final = ""; ?>
+                @if($c->condiciones_extra_visible)
+                    @foreach($c->condiciones_extra_visible as $condicion)
+                        <?php
+                            $condicion_final .= $condicion->campo.";".$condicion->igualdad.";".$condicion->valor.";".$condicion->tipo."&&";
+                        ?>
+                    @endforeach
+                @endif
+                <?php
+                    if(!is_null($c->dependiente_campo) && !is_null($c->dependiente_valor)){
+                        $condicion_final = $c->dependiente_campo.";".$c->dependiente_relacion.";".$c->dependiente_valor.";".$c->dependiente_tipo."&&".$condicion_final;
+                    }
+                    $condicion_final = substr($condicion_final,0,-2);
+                ?>
+                <div class="campo control-group" data-id="<?=$c->id?>"
+                    <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : 'data-dependiente-campo="dependiente"' ?> style="display: <?= $c->isCurrentlyVisible($etapa->id) ? 'block' : 'none'?>;"
+                    data-readonly="{{$paso->modo == 'visualizacion' || $c->readonly}}" <?=$c->condiciones_extra_visible ? 'data-condicion="' . $condicion_final . '"' : 'data-condicion="no-condition"'  ?> >
+                    <?=$c->displayConDatoSeguimiento($etapa->id, $paso->modo)?>
+                </div>
+            @else
+                <button class="btn btn-simple btn-danger" type="submit">Siguiente</button>
+            @endif        
         </div>
         <input type="hidden" name="paso" value="{{$secuencia}}">
     </form>

@@ -116,6 +116,10 @@
                             onclick="return agregarCampo(<?= $formulario->id ?>,'btn_asincrono')">
                         Botón asíncrono
                     </button>
+                    <button class="btn btn-secondary"
+                            onclick="return agregarCampo(<?= $formulario->id ?>,'btn_siguiente')">
+                        Botón siguiente
+                    </button>
                 </div>
             </div>
 
@@ -212,6 +216,13 @@
                 if ($('#form_captcha').length) {
                     alert('Ya existe un componente Captcha dentro del formulario actual.');
                 } else {
+                    $("#modal").load("/backend/formularios/ajax_agregar_campo/" + formularioId + "/" + tipo);
+                    $("#modal").modal();
+                }
+            }else if(tipo=='btn_siguiente'){
+                if($('#div_btn_siguiente').length){
+                    alert('Ya existe un componente botón siguiente dentro del formulario actual.');
+                }else{
                     $("#modal").load("/backend/formularios/ajax_agregar_campo/" + formularioId + "/" + tipo);
                     $("#modal").modal();
                 }
