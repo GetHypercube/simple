@@ -103,6 +103,10 @@
         });
 
         function auditarRetrocesoEtapa(etapaId) {
+            $(".popover").each(function () {
+                $(this).popover("hide");
+            });
+
             $("#auditar").load("/backend/seguimiento/ajax_auditar_retroceder_etapa/" + etapaId);
             $("#auditar").modal();
             return false;

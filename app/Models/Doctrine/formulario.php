@@ -75,9 +75,12 @@ class Formulario extends Doctrine_Record {
             
             foreach ($json->Campos as $c) {
                 $campo = new Campo();
-                foreach ($c as $keyc => $c_attr) {                
-                    if ($keyc != 'id' && $keyc != 'formulario_id' && $keyc != 'Formulario') {
+                foreach ($c as $keyc => $c_attr) {
+                    if ($keyc != 'id' && $keyc != 'formulario_id' && $keyc != 'Formulario' && $keyc!= 'condiciones_extra_visible') {
                         $campo->{$keyc} = $c_attr;
+                    }
+                    if($keyc === 'condiciones_extra_visible' && !is_null($c_attr)){
+                        $campo->condiciones_extra_visible = json_encode($c_attr);
                     }
                 }
                 $formulario->Campos[] = $campo;

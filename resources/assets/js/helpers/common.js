@@ -275,7 +275,7 @@ $(document).ready(function () {
         $(form).find(":input[readonly]").prop("disabled", true);
     }
 
-    prepareDynaForm(".dynaForm");
+    //prepareDynaForm(".dynaForm");
 
     $(".dynaForm").on("change", ":input", function (event) {
         prepareDynaForm($(event.target).closest(".dynaForm"))

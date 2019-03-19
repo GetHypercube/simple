@@ -197,6 +197,7 @@ class AccionRest extends Accion
 
             Log::debug("Numero de reintentos: " . $reintentos);
 
+            $ultimo_codigo_http = -1;
             do {
 
                 try {
@@ -219,17 +220,19 @@ class AccionRest extends Accion
                         ]);
                     }
 
-
                     Log::debug("Result REST: " . $this->varDump($result));
+                    $ultimo_codigo_http = $result->getStatusCode();
 
                 } catch (Exception $e) {
                     if (strpos($e->getMessage(), 'timed out') !== false) {
                         Log::debug("Reintentando " . $reintentos . " veces . ");
-                        $result2['code'] = '504';
+                        $result2['code'] = $e->getCode();
                         $result2['desc'] = $e->getMessage();
                         $intentos++;
                         $timeout = true;
+                        $ultimo_codigo_http = $e->getCode();
                     } else {
+                        $ultimo_codigo_http = $e->getCode();
                         throw new ApiException($e->getMessage(), $e->getCode());
                     }
                 }
@@ -245,11 +248,14 @@ class AccionRest extends Accion
                 if ($statusCode == '0') {
                     $result2['code'] = '500';
                     $result2['desc'] = $response->getMessage();
+                    $ultimo_codigo_http = 500;
                 } else {
                     if (!is_array($result) && !is_object($result)) {
                         $result2['code'] = '206';
                         $result2['desc'] = $response->getMessage();
+                        $ultimo_codigo_http = 206;
                     } else {
+                        $ultimo_codigo_http = $statusCode;
                         $result2 = $response;
                     }
                 }
@@ -260,6 +266,7 @@ class AccionRest extends Accion
         } catch (Exception $e) {
             Log::info("En catch de accion REST Error: " . $e->getMessage());
             $result2['code'] = $e->getCode();
+            $ultimo_codigo_http = $e->getCode();
             $result2['desc'] = $e->getMessage();
         }
         
@@ -287,6 +294,18 @@ class AccionRest extends Accion
                 $dato = new DatoSeguimiento();
             $dato->nombre = $key;
             $dato->valor = $value;
+            $dato->etapa_id = $etapa->id;
+            $dato->save();
+            
+            $key_code = trim($key).'_http_code';
+            $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key_code, $etapa->id);
+            if (!$dato)
+                $dato = new DatoSeguimiento();
+            if(is_string(trim($ultimo_codigo_http) && is_numeric($ultimo_codigo_http) ) ) {
+                $ultimo_codigo_http = intval($ultimo_codigo_http);
+            }
+            $dato->nombre = $key_code;
+            $dato->valor = $ultimo_codigo_http;
             $dato->etapa_id = $etapa->id;
             $dato->save();
         }

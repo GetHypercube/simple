@@ -115,11 +115,15 @@ class FilesDownload implements ShouldQueue
         }
         
         rename($this->zip_filename, $this->_base_dir.DIRECTORY_SEPARATOR.$this->zip_new_name);
-        $this->send_notification();
-        $this->remove_all_tmp($this->added_files_path);
-        
-        $this->job_info->status = Job::$finished;
         $this->job_info->filename = $this->zip_new_name;
+        try{
+            $this->send_notification();
+            $this->job_info->status = Job::$finished;
+        }catch(\Exception $e){
+            Log::error("FilesDownload::handle() Error al enviar notificacion: " . $e->getMessage());
+            $this->job_info->status = Job::$error;
+        }
+        $this->remove_all_tmp($this->added_files_path);
         $this->job_info->filepath = $this->_base_dir;
         $this->job_info->save();
     }

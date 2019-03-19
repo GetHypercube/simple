@@ -200,6 +200,8 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::get('seguimiento/ajax_auditar_retroceder_etapa/{etapa_id}/{secuencia?}', 'TracingController@ajax_auditar_retroceder_etapa')->name('tracing.ajax_auditar_retroceder_etapa');
             Route::post('seguimiento/retroceder_etapa/{etapa_id}', 'TracingController@retroceder_etapa')->name('tracing.retroceder_etapa');
             Route::post('seguimiento/reasignar_form/{etapa_id}', 'TracingController@reasignar_form')->name('tracing.reasignar_form');
+            Route::get('seguimiento/ajax_editar_vencimiento/{etapa_id}', 'TracingController@ajax_editar_vencimiento')->name('tracing.ajax_editar_vencimiento');
+            Route::post('seguimiento/editar_vencimiento_form/{etapa_id}', 'TracingController@editar_vencimiento_form')->name('tracing.editar_vencimiento_form');
         });
 
         //Gestión
