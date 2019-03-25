@@ -25,6 +25,18 @@ class Proceso extends Doctrine_Record
         $this->hasColumn('estado');
         $this->hasColumn('descripcion');
         $this->hasColumn('url_informativa');
+        if(\Schema::hasColumn('proceso', 'usuario_id')){
+            $this->hasColumn('usuario_id');
+        }
+        if(\Schema::hasColumn('proceso', 'created_at')){
+            $this->hasColumn('created_at');
+        }
+        if(\Schema::hasColumn('proceso', 'updated_at')){
+            $this->hasColumn('updated_at');
+        }
+        if(\Schema::hasColumn('proceso', 'concurrente')){
+            $this->hasColumn('concurrente');
+        }
     }
 
     function setUp()

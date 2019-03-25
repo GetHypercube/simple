@@ -24,24 +24,32 @@ class TramitesController extends Controller
             return redirect()->away($url);
         }
 
-        //Vemos si es que usuario ya tiene un tramite de proceso_id ya iniciado, y que se encuentre en su primera etapa.
-        //Si es asi, hacemos que lo continue. Si no, creamos uno nuevo
-        $tramite = Doctrine_Query::create()
-            ->from('Tramite t, t.Proceso p, t.Etapas e, e.Tramite.Etapas hermanas')
-            ->where('t.pendiente=1 AND p.activo=1 AND p.id = ? AND e.usuario_id = ?', array($proceso_id, Auth::user()->id))
-            ->groupBy('t.id')
-            ->having('COUNT(hermanas.id) = 1')
-            ->fetchOne();
-
-        if (!$tramite) {
+        if($proceso->concurrente==1){
             $tramite = new \Tramite();
             $tramite->iniciar($proceso->id);
 
             if(session()->has('redirect_url')){
                 return redirect()->away(session()->get('redirect_url'));
             }
-        }
+        }else{
+            //Vemos si es que usuario ya tiene un tramite de proceso_id ya iniciado, y que se encuentre en su primera etapa.
+            //Si es asi, hacemos que lo continue. Si no, creamos uno nuevo
+            $tramite = Doctrine_Query::create()
+                ->from('Tramite t, t.Proceso p, t.Etapas e, e.Tramite.Etapas hermanas')
+                ->where('t.pendiente=1 AND p.activo=1 AND p.id = ? AND e.usuario_id = ?', array($proceso_id, Auth::user()->id))
+                ->groupBy('t.id')
+                ->having('COUNT(hermanas.id) = 1')
+                ->fetchOne();
 
+            if (!$tramite) {
+                $tramite = new \Tramite();
+                $tramite->iniciar($proceso->id);
+
+                if(session()->has('redirect_url')){
+                    return redirect()->away(session()->get('redirect_url'));
+                }
+            }
+        }
         $qs = $request->getQueryString();
 
         return redirect('etapas/ejecutar/' . $tramite->getEtapasActuales()->get(0)->id . ($qs ? '?' . $qs : ''));
