@@ -102,6 +102,10 @@ $(document).ready(function () {
         return false;
     });
 
+    $(".form-actions").children().click(function () {
+        $(this).parents("form").find(".camposvisibilidad").remove();
+    });
+
     $(document).on("submit", ".ajaxForm", function () {
         var form = this;
         if (!form.submitting) {

@@ -18,13 +18,25 @@
 
         <h1 class="title">{{$paso->Formulario->nombre}}</h1>
         <hr>
-
+        <?php
+            $campos_dependientes = [];
+            $campos_ocultos_extra = [];
+        ?>
         @foreach($paso->Formulario->Campos as $c)
-            <?php $condicion_final = ""; ?>
+            <?php
+                $campos_dependientes[] = $c->nombre;
+                $condicion_final = "";
+                if( !is_null($c->dependiente_campo) && ! array_key_exists($c->dependiente_campo, $campos_ocultos_extra)){
+                    $campos_ocultos_extra[$c->dependiente_campo] = $c->getVariableUltimoValor($c->dependiente_campo, $etapa);
+                }
+            ?>
             @if($c->condiciones_extra_visible)
                 @foreach($c->condiciones_extra_visible as $condicion)
                     <?php
                         $condicion_final .= $condicion->campo.";".$condicion->igualdad.";".$condicion->valor.";".$condicion->tipo."&&";
+                        if( ! array_key_exists($condicion->campo, $campos_ocultos_extra) ){
+                            $campos_ocultos_extra[$condicion->campo] = $c->getVariableUltimoValor($condicion->campo, $etapa);
+                        }
                     ?>
                 @endforeach
             @endif
@@ -50,6 +62,12 @@
             @endif
             <button class="btn btn-simple btn-danger" type="submit">Siguiente</button>
         </div>
+
+        <?php $campos_faltantes = array_diff(array_keys($campos_ocultos_extra), $campos_dependientes); ?>
+        @foreach($campos_faltantes as $c_nombre)
+            <input  class="camposvisibilidad" type="hidden" name="{{$c_nombre}}" value="{{$campos_ocultos_extra[$c_nombre]}}">
+        @endforeach
+
     </form>
     <div id="modalcalendar" class="modal hide modalconfg modcalejec"></div>
     <input type="hidden" id="urlbase" value="<?= URL::to('/') ?>"/>
