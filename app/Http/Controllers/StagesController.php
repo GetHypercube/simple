@@ -52,10 +52,10 @@ class StagesController extends Controller
             exit;
         }
 
-        if ($etapa->vencida()) {
-            echo 'Esta etapa se encuentra vencida';
-            exit;
-        }
+        // if ($etapa->vencida()) {
+        //     echo 'Esta etapa se encuentra vencida';
+        //     exit;
+        // }
 
         $qs = $request->getQueryString();
 
@@ -262,11 +262,12 @@ class StagesController extends Controller
         $modo = $paso->modo;
         $respuesta = new \stdClass();
         $validations = [];
-
         if ($modo == 'edicion') {
             
             $campos_nombre_etiqueta = [];
             foreach ($formulario->Campos as $c) {
+                if(!$request->has($c->nombre))
+                    continue;
                 // Validamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
                 if ($c->isEditableWithCurrentPOST($request, $etapa_id)) {
                     $validate = $c->formValidate($request, $etapa->id);
