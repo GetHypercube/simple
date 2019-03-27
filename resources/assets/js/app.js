@@ -26,7 +26,6 @@ require('chosen-js/chosen.css');
 //Sends forms
 $(".ajaxForm :submit").attr("disabled", false);
 $(document).on("submit", ".ajaxForm", function () {
-
     var form = this;
     if (!form.submitting) {
         form.submitting = true;
@@ -39,7 +38,7 @@ $(document).on("submit", ".ajaxForm", function () {
         });
         $.ajax({
             url: form.action,
-            data: $(form).serialize(),
+            data: $('*:not(.camposvisibilidad)', form).serialize(),
             type: form.method,
             dataType: "json",
             success: function (response) {
