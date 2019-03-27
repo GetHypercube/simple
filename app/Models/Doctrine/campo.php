@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
+use \App\Models\Etapa;
+use \App\Models\DatoSeguimiento;
 
 class Campo extends Doctrine_Record
 {
@@ -660,7 +662,9 @@ class Campo extends Doctrine_Record
 
     public function getVariableValor($nombre, $etapa)
     {
-        log_message('debug', 'Buscando valores de variable: ' . $nombre . " " . $etapa->id);
+        if(is_null($nombre)||is_null($etapa))
+            return null;
+        // Log::debug('Buscando valores de variable: ' . $nombre . " " . $etapa->id);
         $var = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($nombre, $etapa->id);
         if ($var != NULL) {
 
@@ -668,6 +672,38 @@ class Campo extends Doctrine_Record
         } else {
             return "";
         }
+    }
+
+    public function getVariableUltimoValor($nombre, $etapa)
+    {
+        // Busca a traves de las distintas etapas, desde las mas nueva  a la mas vieja
+        if(is_null($nombre)||is_null($etapa))
+            return null;
+        // Log::debug('Buscando valores de variable: ' . $nombre . " " . $etapa->id);
+
+        $var = DatoSeguimiento::where(['nombre'=> $nombre, 'etapa_id' => $etapa->id])->first();
+        // $var = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($nombre, $etapa->id*10);
+        if ($var) {
+            $j = json_decode($var->valor);
+            if(json_last_error() == JSON_ERROR_NONE){
+                return $j;
+            }
+            return $var->valor;
+        }else{
+            $etapas = Etapa::select('id')->where('tramite_id',  $etapa->tramite_id)->orderBy('id', 'DESC')->get()->flatten();
+            foreach($etapas as $etapa){
+                $var = DatoSeguimiento::where(['etapa_id'=> $etapa->id, 'nombre' => $nombre])->first();
+                if($var){
+                    // Si no podemos decodificar la variable, la retornamos como estaba guardada
+                    $j = json_decode($var->valor);
+                    if(json_last_error() == JSON_ERROR_NONE){
+                        return $j;
+                    }
+                    return $var->valor;
+                }
+            }
+        }
+        return '';
     }
 
     function varDump($data)
