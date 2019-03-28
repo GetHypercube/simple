@@ -257,7 +257,7 @@ $(document).ready(function () {
                         else
                             $(el).hide();
 
-                        $(el).find(":input").addClass("disabled-temp");
+                        // $(el).find(":input").addClass("disabled-temp");
                     }
                 }
             }
