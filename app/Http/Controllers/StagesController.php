@@ -52,10 +52,10 @@ class StagesController extends Controller
             exit;
         }
 
-        // if ($etapa->vencida()) {
-        //     echo 'Esta etapa se encuentra vencida';
-        //     exit;
-        // }
+        if ($etapa->vencida()) {
+            echo 'Esta etapa se encuentra vencida';
+            exit;
+        }
 
         $qs = $request->getQueryString();
 
