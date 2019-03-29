@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         Commands\AdminElasticsearch::class,
         Commands\CreateFrontendAccount::class,
         Commands\SendEmails::class,
+        Commands\LimpiezaTramitesUsuarios::class,
     ];
 
     /**
@@ -31,6 +32,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('simple:sendmails')
                  ->timezone('America/Santiago')
                  ->dailyAt('07:00');
+        $schedule->command('simple:limpieza')
+                 ->timezone('America/Santiago')
+                 ->dailyAt('04:00');
     }
 
     /**
