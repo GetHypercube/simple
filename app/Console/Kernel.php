@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
         Commands\CreateBackendAccount::class,
         Commands\CreateManagerAccount::class,
         Commands\AdminElasticsearch::class,
+        Commands\CreateFrontendAccount::class,
+        Commands\SendEmails::class,
     ];
 
     /**
@@ -26,8 +28,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('simple:sendmails')
+                 ->timezone('America/Santiago')
+                 ->dailyAt('07:00');
     }
 
     /**
