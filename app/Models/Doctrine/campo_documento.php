@@ -29,6 +29,20 @@ class CampoDocumento extends Campo
         $this->_set('readonly', 1);
     }
 
+    private function isClientMobile(){
+        $ua = \Illuminate\Support\Facades\Request::header('User-Agent');
+        $ua = strtolower($ua);
+
+        if(strpos($ua, 'android') !== FALSE){
+            return true;
+        }else if(strpos($ua, 'ipad') !== FALSE){
+            return true;
+        }else if(strpos($ua, 'iphone') !== FALSE){
+            return true;
+        }
+        return false;
+    }
+
     protected function display($modo, $dato, $etapa_id = false)
     {
         if (isset($this->extra->firmar) && $this->extra->firmar) {
@@ -68,8 +82,15 @@ class CampoDocumento extends Campo
             }
         }
 
-        $display = '<p><a class="btn btn-success" target="_blank" href="' . url('documentos/get/' . $file->filename) . '?id=' . $file->id . '&amp;token=' . $file->llave . '"><i class="icon-download-alt icon-white"></i> ' . $this->etiqueta . '</a></p>';
-
+        $display = '<p><a class="btn btn-success" target="_blank" href="' . url('documentos/get/0/' . $file->filename) . '?id=' . $file->id . '&amp;token=' . $file->llave . '"><i class="icon-download-alt icon-white"></i> ' . $this->etiqueta . '</a></p>';
+        if( ! $this->isClientMobile() && isset($this->extra->previsualizacion)){
+            $pdf_file = "/documentos/get/1/$file->filename?id=$file->id&token=$file->llave";
+            /*
+             * Si el ancho y alto son demasiado pequenios, chrome/chromium no muestra el toolbar o el control de zoom
+             * Minimo debe ser width 500px x height 275px
+             */
+            $display .= '<embed src="' . $pdf_file . '" class="document_preview" />';
+        }
         return $display;
     }
 
@@ -101,7 +122,7 @@ class CampoDocumento extends Campo
 
         $display = '<p>' . $this->etiqueta . '</p>';
         $display .= '<div id="exito" class="alert alert-success" style="display: none;">Documento fue firmado con éxito.</div>';
-        $display .= '<p><a class="btn btn-info" href="' . site_url('documentos/get/' . $dato->valor) . '?id=' . $file->id . '&amp;token=' . $file->llave . '"><i class="icon-search icon-white"></i> Previsualizar el documento</a></p>';
+        $display .= '<p><a class="btn btn-info" href="' . site_url('documentos/get/0/' . $dato->valor) . '?id=' . $file->id . '&amp;token=' . $file->llave . '"><i class="icon-search icon-white"></i> Previsualizar el documento</a></p>';
 
 
         $isMac = stripos($_SERVER['HTTP_USER_AGENT'], 'macintosh') !== false;
@@ -169,6 +190,7 @@ class CampoDocumento extends Campo
     {
         $regenerar = isset($this->extra->regenerar) ? $this->extra->regenerar : null;
         $firmar = isset($this->extra->firmar) ? $this->extra->firmar : null;
+        $previsualizacion = isset($this->extra->previsualizacion) ? true : false;
 
         $html = '<label>Documento</label>';
         $html .= '<select name="documento_id" class="form-control col-4">';
@@ -188,8 +210,11 @@ class CampoDocumento extends Campo
         $html .= '<div class="form-check">
                     <input class="form-check-input" type="checkbox" name="extra[firmar]" id="checkbox_firmar"  ' . ($firmar ? 'checked' : '') . ' /> 
                     <label for="checkbox_firmar" class="form-check-label">Deseo firmar con token en este paso.</label>
-                    </div>';
-        $html .= ' </label>';
+                  </div>';
+        $html .= '<div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="extra[previsualizacion]" id="checkbox_previsualizacion"  ' . ($previsualizacion ? 'checked' : '') . ' /> 
+                    <label for="checkbox_previsualizacion" class="form-check-label">Deseo previsualizar el documento. Solo en navegadores Firefox y Chrome</label>
+                  </div>';
 
         return $html;
     }
