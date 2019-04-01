@@ -6,13 +6,14 @@ class dateHelper{
     // $date is (YYYY-mm-dd)
     function add_working_days($date, $days)
     {
+        $days = intval($days);
+        $date = \Carbon\Carbon::parse($date)->format('Y-m-d');
         $timestamp = strtotime($date);
         $skipdays = array("Saturday", "Sunday");
         $skipdates = array();
-        $fecha_actual = \Carbon\Carbon::now('America/Santiago')->format('Y-m-d');
-        $dia = \Carbon\Carbon::parse($fecha_actual)->day;
-        $mes = \Carbon\Carbon::parse($fecha_actual)->month;
-        $anio = \Carbon\Carbon::parse($fecha_actual)->year;
+        $dia = \Carbon\Carbon::parse($date)->day;
+        $mes = \Carbon\Carbon::parse($date)->month;
+        $anio = \Carbon\Carbon::parse($date)->year;
         $feriados = $this->getFeriados($anio,$mes);
         if(empty($feriados))
             $feriados = array();

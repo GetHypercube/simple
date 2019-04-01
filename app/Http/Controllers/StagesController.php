@@ -252,10 +252,10 @@ class StagesController extends Controller
             exit;
         }
 
-        if ($etapa->vencida()) {
-            echo 'Esta etapa se encuentra vencida';
-            exit;
-        }
+        // if ($etapa->vencida()) {
+        //     echo 'Esta etapa se encuentra vencida';
+        //     exit;
+        // }
 
         $paso = $etapa->getPasoEjecutable($secuencia);
         $formulario = $paso->Formulario;

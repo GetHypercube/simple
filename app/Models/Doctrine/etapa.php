@@ -426,13 +426,16 @@ class Etapa extends Doctrine_Record
 
         $fecha = NULL;
 
-        if ($this->Tarea->vencimiento_unidad == 'D' && $this->Tarea->vencimiento_habiles) {
-            $working_days = (new \App\Helpers\dateHelper())->add_working_days($this->created_at, $this->Tarea->vencimiento_valor);
+        if($this->Tarea->vencimiento_unidad == 'D' && $this->Tarea->vencimiento_habiles){
+            $r = new Regla($this->Tarea->vencimiento_valor);
+            $dias_vencimiento = $r->getExpresionParaOutput($this->id);
+            $working_days = (new \App\Helpers\dateHelper())->add_working_days($this->ended_at, $dias_vencimiento);
             return $working_days;
-        } else {
+        }else{
             $tmp = new DateTime($this->created_at);
-            return $tmp->add(new DateInterval('P' . $this->Tarea->vencimiento_valor . $this->Tarea->vencimiento_unidad))->format('Y-m-d');
-
+            $r = new Regla($this->Tarea->vencimiento_valor);
+            $dias_vencimiento = $r->getExpresionParaOutput($this->id);
+            return $tmp->add(new DateInterval('P' . $dias_vencimiento . $this->Tarea->vencimiento_unidad))->format('Y-m-d');
         }
     }
 

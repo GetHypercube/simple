@@ -30,8 +30,8 @@
 
     <div id="vencimientoConfig" class="hide" style="margin-left: 20px;">
         <div class="form-inline form-group">
-            La etapa se vencera
-            <input type="text" name="vencimiento_valor" class="ml-1 form-control col-1"
+            La etapa se vencerá
+            <input type="text" name="vencimiento_valor" class="ml-1 form-control col-3"
                    value="<?= $tarea->vencimiento_valor ? $tarea->vencimiento_valor : 5 ?>"/>
             <select name="vencimiento_unidad" class="ml-1 mr-1  form-control col-2">
                 <option value="D" <?= $tarea->vencimiento_unidad == 'D' ? 'selected' : '' ?>>día/s
@@ -45,7 +45,7 @@
                 <option value="Y" <?= $tarea->vencimiento_unidad == 'Y' ? 'selected' : '' ?>>año/s
                 </option>
             </select>
-            despues de completada la etapa anterior.
+            después de completada la etapa anterior.
         </div>
         <div class="form-check" id="habilesConfig">
             <input class="form-check-input" id="vencimiento_habiles" type='checkbox'
