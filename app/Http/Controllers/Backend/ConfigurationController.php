@@ -242,7 +242,7 @@ class ConfigurationController extends Controller
      */
     public function electronicSignature()
     {
-        $firmas_electronicas = FirmaElectronica::all();
+        $firmas_electronicas = FirmaElectronica::where('cuenta_id',Auth::user()->cuenta_id)->get();
         //$data['firmas_electronicas'] = Doctrine::getTable('HsmConfiguracion')->findAll();  //Categoria
         //$data['title'] = 'Firmas Electrónicas';
         //$data['content'] = view('backend.configuration.electronic_signature.index', $data);
