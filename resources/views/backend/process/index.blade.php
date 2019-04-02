@@ -33,6 +33,8 @@
                         <span class="glyphicon glyphicon-info-sign"></span>
                     </a>
                 </th>
+                <th>Usuario creador</th>
+                <th>Fecha creación</th>
             </tr>
             </thead>
             <tbody>
@@ -49,6 +51,15 @@
                         </a>
                         
                     </td>
+                    @if(!is_null($p->usuario_id))
+                    <?php
+                        $usuario_backend = App\Models\UsuarioBackend::find($p->usuario_id);
+                    ?>
+                    <td>{{$usuario_backend->nombre." ".$usuario_backend->apellidos}}</td>
+                    <td>{{Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$p->created_at)->format('d-m-Y H:i:s')}}</td>
+                    @else
+                    <td colspan="2"></td>
+                    @endif
                 </tr>
             @endforeach
             </tbody>
@@ -61,6 +72,8 @@
                     <tr>
                         <th>Procesos Eliminados</th>
                         <th>Acciones</th>
+                        <th>Usuario creador</th>
+                        <th>Fecha creación</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -72,6 +85,15 @@
                                     <i class="material-icons">share</i> Activar
                                 </a>
                             </td>
+                            @if(!is_null($pe->usuario_id))
+                            <?php
+                                $usuario_backend = App\Models\UsuarioBackend::find($pe->usuario_id);
+                            ?>
+                            <td>{{$usuario_backend->nombre." ".$usuario_backend->apellidos}}</td>
+                            <td>{{Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$pe->created_at)->format('d-m-Y H:i:s')}}</td>
+                            @else
+                            <td colspan="2"></td>
+                            @endif
                         </tr>
                     @endforeach
                     </tbody>

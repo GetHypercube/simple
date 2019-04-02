@@ -58,6 +58,11 @@
                     <label>Url informativa</label>
                     <input type="text" class="form-control" name="url_informativa" value="<?=$proceso->url_informativa?>"/>
                 </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="concurrente"
+                            name="concurrente" {{$proceso->concurrente == 1 ? 'checked' : ''}}>
+                    <label class="form-check-label" for="concurrente">Permitir la ejecución de varios trámites a la vez por usuario.</label>
+                </div>
             </form>
         </div>
         <div class="modal-footer">

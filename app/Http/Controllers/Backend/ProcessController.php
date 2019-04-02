@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
 use Doctrine_Query;
 use Session;
+use Carbon\Carbon;
 
 class ProcessController extends Controller
 {
@@ -59,6 +60,8 @@ class ProcessController extends Controller
         $proceso = new \Proceso();
         $proceso->nombre = 'Proceso';
         $proceso->cuenta_id = Auth::user()->cuenta_id;
+        $proceso->usuario_id = Auth::user()->id;
+        $proceso->created_at = Carbon::now('America/Santiago')->format('Y-m-d H:i:s');
         $proceso->activo = 1;
         $proceso->save();
 
@@ -252,6 +255,7 @@ class ProcessController extends Controller
         $proceso->destacado = $request->has('destacado') ? 1 : 0;
         $proceso->descripcion = $request->input('descripcion');
         $proceso->url_informativa = $request->has('url_informativa') ? $request->get('url_informativa') : NULL;
+        $proceso->concurrente = $request->has('concurrente') ? 1 : 0;
         $proceso->save();
 
         return response()->json([

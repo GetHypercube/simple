@@ -58,8 +58,11 @@ class StagesController extends Controller
         }
 
         $qs = $request->getQueryString();
-        $paso = $etapa->getPasoEjecutable($secuencia);
+
         $pasosEjecutables = $etapa->getPasosEjecutables();
+
+        $paso = (isset($pasosEjecutables[$secuencia])) ? $pasosEjecutables[$secuencia] : null;
+
         Log::info("Ejecutando paso: " . $paso);
         if (!$paso) {
             Log::info("Entra en no paso: ");
@@ -75,7 +78,7 @@ class StagesController extends Controller
                 return redirect()->away(session()->get('redirect_url'));
             }
 
-            return redirect('etapas/ver/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1));
+            return redirect('etapas/ver/' . $etapa->id . '/' . (count($pasosEjecutables) - 1));
         } else {
             $etapa->iniciarPaso($paso);
 
@@ -90,7 +93,7 @@ class StagesController extends Controller
 
             $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
             $data['title'] = $etapa->Tarea->nombre;
-            $template = $request->has('iframe') ? 'template_iframe' : 'template';
+            //$template = $request->has('iframe') ? 'template_iframe' : 'template';
 
             return view('stages.run', $data);
         }
@@ -259,11 +262,12 @@ class StagesController extends Controller
         $modo = $paso->modo;
         $respuesta = new \stdClass();
         $validations = [];
-
         if ($modo == 'edicion') {
             
             $campos_nombre_etiqueta = [];
             foreach ($formulario->Campos as $c) {
+                if(!$request->has($c->nombre))
+                    continue;
                 // Validamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
                 if ($c->isEditableWithCurrentPOST($request, $etapa_id)) {
                     $validate = $c->formValidate($request, $etapa->id);
