@@ -38,7 +38,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/etapas/ejecutar_exito', 'StagesController@ejecutar_exito')->name('stage.ejecutar_exito');
     Route::get('/etapas/descargar/{tramites}', 'StagesController@descargar')->name('stage.download');
     Route::post('/etapas/descargar_form', 'StagesController@descargar_form')->name('stage.descargar_form');
-    Route::get('/documentos/get/{filename}', 'DocumentController@get')->name('document.get');
+    Route::get('/documentos/get/{inline}/{filename}', 'DocumentController@get')->name('document.get');
     Route::get('/etapas/estados/{tramite_id}', 'StagesController@estados')->name('stage.estados');
     Route::post('/etapas/validar_campos_async', 'StagesController@validar_campos_async')->name('etapa.validar_campos_async');
 

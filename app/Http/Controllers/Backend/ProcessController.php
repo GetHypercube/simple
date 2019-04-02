@@ -341,7 +341,7 @@ class ProcessController extends Controller
         $request->validate(['nombre' => 'required']);
 
         if ($request->has('vencimiento')) {
-            $request->validate(['vencimiento_valor' => 'required|is_natural_no_zero']);
+            $request->validate(['vencimiento_valor' => 'required']);
             //$this->form_validation->set_rules('vencimiento_valor', 'Valor de Vencimiento', 'required|is_natural_no_zero');
             if ($request->has('vencimiento_notificar')) {
                 $request->validate([

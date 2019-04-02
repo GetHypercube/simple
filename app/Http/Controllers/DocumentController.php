@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
 {
-    public function get(Request $request, $filename)
+    public function get(Request $request, $inline, $filename='')
     {
         $id = $request->input('id');
         $token = $request->input('token');
@@ -45,8 +45,14 @@ class DocumentController extends Controller
             exit;
         }
 
-        $friendlyName = str_replace(' ', '-', str_slug(mb_convert_case($file->Tramite->Proceso->Cuenta->nombre . ' ' . $file->Tramite->Proceso->nombre, MB_CASE_LOWER) . '-' . $file->id)) . '.' . pathinfo($path, PATHINFO_EXTENSION);
-
-        return response()->download($path, $friendlyName);
+        if($inline == '0') {
+            $friendlyName = str_replace(' ', '-', str_slug(mb_convert_case($file->Tramite->Proceso->Cuenta->nombre . ' ' . $file->Tramite->Proceso->nombre, MB_CASE_LOWER) . '-' . $file->id)) . '.' . pathinfo($path, PATHINFO_EXTENSION);
+            return response()->download($path, $friendlyName);
+        }else{
+            header('Content-Disposition: inline; filename="'.$filename.'"');
+            header("Cache-Control: no-cache, must-revalidate");
+            header("Content-type:application/pdf");
+            readfile($path);
+        }
     }
 }
