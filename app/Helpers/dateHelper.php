@@ -63,14 +63,14 @@ class dateHelper{
         return $working_days + $feriados_count;
     }
 
-    function diasHabiles($fecha_ingreso = null){
-        $fecha_ingreso = \Carbon\Carbon::parse($fecha_ingreso)->format('Y-m-d');
+    function diasHabiles($fecha_vencimiento = null){
         $fecha_actual = \Carbon\Carbon::now('America/Santiago')->format('Y-m-d');
         $dia = \Carbon\Carbon::parse($fecha_actual)->day;
         $mes = \Carbon\Carbon::parse($fecha_actual)->month;
         $anio = \Carbon\Carbon::parse($fecha_actual)->year;
         $feriados = $this->getFeriados($anio,$mes);
-        $dias_habiles = $this->getWorkingDays($fecha_ingreso,$fecha_actual,$feriados);
+        $dias_habiles = $this->getWorkingDays($fecha_actual,$fecha_vencimiento,$feriados);
+        return $dias_habiles;
     }
 
     function getFeriados($anio=null, $mes=null){
@@ -161,4 +161,10 @@ class dateHelper{
         return ($weekDay == 0 || $weekDay == 6);
     }
 
+    function diasTotales($fecha_vencimiento = null){
+        $now = new \DateTime();
+        $now->setTime(0, 0, 0);
+        $interval = $now->diff(new \DateTime($fecha_vencimiento));
+        return $interval->days;
+    }
 }
