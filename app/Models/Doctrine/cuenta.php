@@ -119,11 +119,10 @@ function setTableDefinition()
                 if (isset ($matches[1])) {
                     Log::debug('$matches: ' . $matches[1]);
                     $cuentaSegunDominio = Doctrine::getTable('Cuenta')->findOneByNombre($matches[1]);
-                } else {
-                    $cuentaSegunDominio = Doctrine_Query::create()->from('Cuenta c')->limit(1)->fetchOne();
                 }
+            }
 
-            } else {
+            if(!$cuentaSegunDominio){
                 $cuentaSegunDominio = Doctrine_Query::create()->from('Cuenta c')->limit(1)->fetchOne();
             }
         }
