@@ -29,12 +29,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('simple:sendmails')
-                 ->timezone('America/Santiago')
-                 ->dailyAt('07:00');
-        $schedule->command('simple:limpieza')
-                 ->timezone('America/Santiago')
-                 ->dailyAt('04:00');
+        // $schedule->command('simple:sendmails')
+        //          ->timezone('America/Santiago')
+        //          ->dailyAt('07:00');
+        // $schedule->command('simple:limpieza')
+        //          ->timezone('America/Santiago')
+        //          ->dailyAt('04:00');
     }
 
     /**

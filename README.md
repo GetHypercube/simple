@@ -207,12 +207,9 @@ php artisan queue:work --timeout=0
 ```
 
 ## Tareas programadas
-Existen dos tareas programadas encargadas de notificar los trámites que vayan a vencer y hacer limpieza de trámites que fueron iniciados pero que no contienen información.
-Para esto es necesario configurar un cron job que se ejecute cada minuto y llame al comando artisan que se muestra a continuación.
-
+Configurar por cada instancia el siguiente path para ser programado y que ejecute las tareas de limpieza de trámites sin avanzar, usuarios no registrados sin actividad y notificación de etapas por vencer
 
 ```
-* * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+/schedule
+ejemplo: http://simple.cl/schedule
 ```
-
-Cada tarea programada está definida respecto a cada cuanto tiempo se va ejecutar y es independiente del cron configurado anteriormente.
