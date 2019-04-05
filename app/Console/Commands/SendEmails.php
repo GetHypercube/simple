@@ -63,10 +63,11 @@ class SendEmails extends Command
                     $this->info('Enviando correo de notificacion para etapa ' . $e->id);
                     $subject = 'Etapa se encuentra ' . ($dias_por_vencer>0 ?'por vencer':'vencida');
                     $cuenta=$e->Tramite->Proceso->Cuenta;
+                    $url_final = empty(env('APP_MAIN_DOMAIN')) ? url("/etapas/ejecutar/{$e->id}") : "https://".$cuenta->nombre.".".env('APP_MAIN_DOMAIN')."/etapas/ejecutar/{$e->id}";
                     $message = '<p>La etapa "' . $e->Tarea->nombre . '" del proceso "'.$e->Tramite->Proceso->nombre.'" se encuentra '
                             .($dias_por_vencer>0?'a '.$dias_por_vencer. (abs($dias_por_vencer)==1?' día ':' días ') .($e->Tarea->vencimiento_habiles == 1 ? 'habiles ' : '') .
                                     'por vencer':('vencida '.($dias_por_vencer<0 ? 'hace '.abs($dias_por_vencer).(abs($dias_por_vencer)==1?' día ':' días ') : 'hoy'))).' ('.date('d/m/Y',strtotime($e->vencimiento_at)).').' . "</p><br>" . 
-                            '<p>Usuario asignado: ' . $e->Usuario->usuario .'</p>'.($dias_por_vencer > 0 ? '<p>Para realizar la etapa, hacer click en el siguiente link: '. url("/etapas/ejecutar/{$e->id}") .'</p>':'');
+                            '<p>Usuario asignado: ' . $e->Usuario->usuario .'</p>'.($dias_por_vencer > 0 ? '<p>Para realizar la etapa, hacer click en el siguiente link: '. $url_final .'</p>':'');
 
                     \Mail::send('emails.send', ['content' => $message], function ($message) use ($e, $subject, $cuenta, $email) {
                         $message->subject($subject);
