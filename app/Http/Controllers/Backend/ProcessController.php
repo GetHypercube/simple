@@ -283,6 +283,7 @@ class ProcessController extends Controller
         $tarea->nombre = $request->input('nombre');
         $tarea->posx = $request->input('posx');
         $tarea->posy = $request->input('posy');
+        $tarea->vencimiento_valor = 5;
         $tarea->save();
 
     }
