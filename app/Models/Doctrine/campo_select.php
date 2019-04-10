@@ -28,6 +28,24 @@ class CampoSelect extends Campo
                 $display .= '<option value="' . $d->valor . '" ' . ($d->valor == $valor_default ? 'selected' : '') . '>' . $d->etiqueta . '</option>';
             }
         }
+
+        //Para la carga masiva  en select mediante web service
+        if ($this->extra && $this->extra->ws) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $this->extra->ws);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($ch, CURLOPT_HEADER, FALSE);
+            $response = curl_exec($ch);
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $err = curl_error($ch);
+            curl_close($ch);
+            $response = json_decode($response);
+            foreach ($response as $d) {
+                $display .= '<option value="' . $d->valor . '" ' . ($d->valor == $valor_default ? 'selected' : '') . '>' . $d->etiqueta . '</option>';
+            }
+        }
+
+
         $display .= '</select>';
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
@@ -47,33 +65,20 @@ class CampoSelect extends Campo
                     </script>
     
                 ';
-
-        //Para la carga masiva  en select mediante web service
-        if ($this->extra && $this->extra->ws) {
+        if ($this->extra && $this->extra->ws){
             $display .= '
             <script>
                 $(document).ready(function(){
                     var defaultValue = "' . ($dato && $dato->valor ? $dato->valor : $this->valor_default) . '";
-                    $.ajax({
-                        url: "' . $this->extra->ws . '",
-                        dataType: "jsonp",
-                        jsonpCallback: "callback",
-                        success: function(data){
-                            var html = "";
-                            $("#' . $this->id . '").html("");
-                            $.each(data, function (idx, obj) {
-                                html = "<option value=\""+obj.valor+"\">"+obj.etiqueta+"</option>";
-                                console.log(html);
-                                $("#' . $this->id . '").append(html);
-                            });
-                            $("#' . $this->id . '").trigger("chosen:updated");
-                            $("#' . $this->id . '").chosen();
-                        }
-                    });
+                    if(defaultValue)
+                        $("#' . $this->id . '").val(defaultValue);
+                    $("#' . $this->id . '").trigger("chosen:updated");
+                    $("#' . $this->id . '").chosen();
                 });
-
             </script>';
         }
+
+        
 
         return $display;
     }

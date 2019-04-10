@@ -205,3 +205,11 @@ Para indexar el contenido de los trámites cada vez que se avanza dentro del flu
 ```
 php artisan queue:work --timeout=0
 ```
+
+## Tareas programadas
+Configurar por cada instancia el siguiente path para ser programado y que ejecute las tareas de limpieza de trámites sin avanzar, usuarios no registrados sin actividad y notificación de etapas por vencer
+
+```
+/schedule
+ejemplo: http://simple.cl/schedule
+```

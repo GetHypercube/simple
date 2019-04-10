@@ -106,7 +106,7 @@
 <li><b>Variables de Sesión:</b> las variables de sesión son variables especiales de Simple, que completan la información de acuerdo al usuario que se encuentra registrado (logeado) realizando la etapa del trámite, siendo:
 <ul>
 <li>Formato general: @!variable_de_sesion</li>
-<li>Palabras claves admitidas en Simple: @!rut, @!nombres, @!apellido_paterno, @!apellido_materno, @!email, @!tramite_id(otorga el ID de trámite que se está cursando), @!tramite_proc_cont(otorga el número consecutivo de trámite dentro del proceso que se está cursando).</li>
+<li>Palabras claves admitidas en Simple: @!rut, @!nombres, @!apellido_paterno, @!apellido_materno, @!email, @!tramite_id(otorga el ID de trámite que se está cursando), @!tramite_proc_cont(otorga el número consecutivo de trámite dentro del proceso que se está cursando), @!fecha_vencimiento(retorna la fecha de vencimiento de una trámite, el cual la tarea fue configurada que tenía vencimiento), @!dias_para_vencer(retorna en un arreglo los días hábiles y días totales que faltan para que la tarea esté vencida. Ejemplo: [5,9])</li>
 </ul	>
 <li><b>Variables Globales del trámite:</b> estas variables obtienen el conjunto de toda la información que una variable tenga en TODOS los procesos/trámites generados, la forma de identificarlo es con un @#variable, un ejemplo ùtil del uso de esta variable es permitir identificar si una solicitud de trámite ya ha sido solicitada, o si un ciudadano ya solicitó un trámite en particular, esto se realizaría leyendo la variable  @#ciudadano y luego buscando dentro del arreglo que entrega in_array(@#ciudadano) con esto último se validará si el ciudadano está en el arreglo.</li>
 </li>
