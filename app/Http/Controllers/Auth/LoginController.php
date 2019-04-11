@@ -78,7 +78,9 @@ class LoginController extends Controller
         $authUser->rut = $user->run . '-' . $user->dv;
         //$authUser->dv = $user->dv;
         $authUser->nombres = $user->first_name;
-        $authUser->apellido_paterno = $user->last_name;
+        // $authUser->apellido_paterno = $user->last_name;
+        $authUser->apellido_paterno = isset($user->primer_apellido) ? $user->primer_apellido : '';
+        $authUser->apellido_materno = isset($user->segundo_apellido) ? $user->segundo_apellido : '';
         $authUser->usuario = $user->run;
         $authUser->email = is_null($user->email) ? '' : $user->email;
         $authUser->registrado = 1;
