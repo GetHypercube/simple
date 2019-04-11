@@ -22,12 +22,11 @@ class dateHelper{
             $timestamp = strtotime("+1 day", $timestamp);
             if (in_array(date("l", $timestamp), $skipdays)) {
                 $days++;
-            } else if (in_array(date("Y-m-d", $timestamp), $skipdates)) {
+            } else if (in_array(date("Y-m-d", $timestamp), $feriados)) {
                 $days++;
             }
             $i++;
         }
-
         return date("Y-m-d", $timestamp);
     }
 
@@ -162,9 +161,32 @@ class dateHelper{
     }
 
     function diasTotales($fecha_vencimiento = null){
-        $now = new \DateTime();
-        $now->setTime(0, 0, 0);
-        $interval = $now->diff(new \DateTime($fecha_vencimiento));
-        return $interval->days;
+        $fecha_actual = \Carbon\Carbon::today();
+        $fecha_vencimiento = \Carbon\Carbon::parse($fecha_vencimiento)->format('Y-m-d H:i:s');
+        $dia_actual = \Carbon\Carbon::parse($fecha_actual)->day;
+        $dia_vencimiento = \Carbon\Carbon::parse($fecha_vencimiento)->day;
+        $valido = true;
+        $dias_totales = 0;
+        
+        if($fecha_actual->greaterThan($fecha_vencimiento)){
+            while($valido){
+                if($fecha_actual->lessThan($fecha_vencimiento)){
+                    $valido = false;
+                }else{
+                    $fecha_actual = $fecha_actual->subDays(1);
+                    $dias_totales--;
+                }
+            }
+        }else{
+            while($valido){
+                if($fecha_actual->greaterThan($fecha_vencimiento)){
+                    $valido = false;
+                }else{
+                    $fecha_actual = $fecha_actual->addDays(1);
+                    $dias_totales++;
+                }
+            }
+        }
+        return $dias_totales;
     }
 }
