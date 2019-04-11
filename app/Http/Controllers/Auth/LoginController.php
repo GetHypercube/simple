@@ -68,7 +68,7 @@ class LoginController extends Controller
         }
 
         $user = Socialite::driver('claveunica')->user();
-        $authUser = User::where('usuario', $user->run)->first();
+        $authUser = User::where('usuario', $user->run)->where('open_id',1)->first();
 
         //Si no existe el usuario, se intenta crear,
         if (!$authUser) {
