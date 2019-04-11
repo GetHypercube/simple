@@ -26,6 +26,10 @@ class CampoComunas extends Campo
         $display .= '<select class="form-control" id="comunas_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione Comuna</option>';
         $display .= '</select>';
+        $display .= '<input type="hidden" id="cstateCode" name="cstateCode">';
+        $display .= '<input type="hidden" id="cstateName" name="cstateName">';
+        $display .= '<input type="hidden" id="ccityCode" name="ccityCode">';
+        $display .= '<input type="hidden" id="ccityName" name="ccityName">';
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
         $display .= '</div>';
@@ -56,6 +60,10 @@ class CampoComunas extends Campo
                             regiones_obj.change(function(event){
                                 var selectedId=$(this).find("option:selected").attr("data-id");
                                 updateComunas(selectedId);
+                                regiones_obj.attr("cstateCode",$(this).find("option:selected").attr("data-id"));
+                                regiones_obj.attr("cstateName",regiones_obj.val());
+                                $("#cstateCode").val($(this).find("option:selected").attr("data-id"));
+                                $("#cstateName").val(regiones_obj.val());
                             });
                             
                             if(justLoadedRegion){
@@ -86,10 +94,18 @@ class CampoComunas extends Campo
                                 justLoadedComuna=false;
                             }
                             comunas_obj.trigger("chosen:updated");
+
+                            $("#ccityCode").val($(comunas_obj).find("option:selected").val());
+                            $("#ccityName").val($(comunas_obj).find("option:selected").text());
+
+                            comunas_obj.change(function(event){
+                                $("#ccityCode").val($(this).find("option:selected").attr("data-id"));
+                                $("#ccityName").val($(this).find("option:selected").text());
+                            });
                         });
                     }
                 });
-                
+
             </script>';
 
         return $display;

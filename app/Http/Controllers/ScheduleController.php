@@ -26,6 +26,7 @@ class ScheduleController extends Controller
      */
     public function index()
     {
+        \Artisan::call('simple:avanzar');
         \Artisan::call('simple:sendmails');
         \Artisan::call('simple:limpieza');
     }

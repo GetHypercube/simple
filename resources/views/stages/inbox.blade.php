@@ -102,9 +102,8 @@
                                 ?>
                             </a></td><!--Tramites-->
                         <td><?=$e->Tarea->nombre?></td>
-                        <td class="time"><?= strftime('%d.%b.%Y', mysql_to_unix($e->updated_at))?>
-                            <br/><?= strftime('%H:%M:%S', mysql_to_unix($e->updated_at))?></td>
-                        <td><?=$e->vencimiento_at ? strftime('%c', strtotime($e->vencimiento_at)) : 'N/A'?></td>
+                        <td class="time">{{\Carbon\Carbon::parse($e->updated_at)->format('d-m-Y')}}</td>
+                        <td><?=$e->vencimiento_at ? \Carbon\Carbon::parse($e->vencimiento_at)->format('d-m-Y') : 'N/A'?></td>
                         <td class="actions">
                             <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
                                class="btn btn-link preventDoubleRequest"><i class="icon-edit icon-white"></i>

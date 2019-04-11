@@ -348,6 +348,8 @@ class Proceso extends Doctrine_Record
                     $proceso->{$keyp} = null;
                 } elseif ($keyp == 'version') {
                     $proceso->{$keyp} = 1;
+                } elseif ($keyp == 'usuario_id') {
+                    $proceso->{$keyp} = Auth::user()->id;
                 } else {
                     $proceso->{$keyp} = $p_attr;
                 }

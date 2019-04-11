@@ -303,6 +303,24 @@ class StagesController extends Controller
                         }
                     }
 
+                    if($c->tipo=='comunas'){                        
+                        $region_comuna = $request->input($c->nombre);
+                        $region_comuna['cstateCode'] = $request->input('cstateCode');
+                        $region_comuna['cstateName'] = $request->input('cstateName');
+                        $region_comuna['ccityCode'] = $request->input('ccityCode');
+                        $region_comuna['ccityName'] = $request->input('ccityName');
+                        $dato->valor = $region_comuna;
+                    }elseif($c->tipo=='provincias'){                        
+                        $region_provincia_comuna = $request->input($c->nombre);
+                        $region_provincia_comuna['pstateCode'] = $request->input('pstateCode');
+                        $region_provincia_comuna['pstateName'] = $request->input('pstateName');
+                        $region_provincia_comuna['provinciaCode'] = $request->input('provinciaCode');
+                        $region_provincia_comuna['provinciaName'] = $request->input('provinciaName');
+                        $region_provincia_comuna['pcityCode'] = $request->input('pcityCode');
+                        $region_provincia_comuna['pcityName'] = $request->input('pcityName');
+                        $dato->valor = $region_provincia_comuna;
+                    }
+
                     $dato->etapa_id = $etapa->id;
                     $dato->save();
                 }
