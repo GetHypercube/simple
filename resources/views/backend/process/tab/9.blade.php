@@ -14,11 +14,13 @@
                 <label class="control-label">Suscriptores:</label>
                 <div class="controls">
                     @foreach ($cuentas as $cuenta)
-                        <label class="checkbox">
-                            <input type="checkbox" name="cuentas_con_permiso[]"
-                                   id="cuenta_{{$cuenta->id}}" value="{{$cuenta->id}}">
-                            {{$cuenta->nombre}}
-                        </label>
+                        <div class="form-check">
+                            <label class="checkbox">
+                                <input type="checkbox" name="cuentas_con_permiso[]"
+                                    id="cuenta_{{$cuenta->id}}" value="{{$cuenta->id}}">
+                                {{$cuenta->nombre}}
+                            </label>
+                        </div>
 
                         @foreach ($cuentas_con_permiso as $cuenta_permiso)
                             @if($cuenta_permiso["id"] == $cuenta->id)

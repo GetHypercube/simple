@@ -179,7 +179,7 @@
         //$("#modalEditarTarea .botonEliminar").attr("href",function(i,href){return href+"?socket_id_emisor="+socketId;})
     });
 </script>
-<div class="modal-dialog modal-lg" role="document">
+<div class="modal-dialog modal-xl" role="document">
     <form id="formEditarTarea" class="ajaxForm" method="POST"
           action="<?= route('backend.procesos.editar_tarea_form', [$tarea->id]) ?>">
         {{csrf_field()}}
