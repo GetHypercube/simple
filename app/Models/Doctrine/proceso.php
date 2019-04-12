@@ -350,6 +350,8 @@ class Proceso extends Doctrine_Record
                     $proceso->{$keyp} = 1;
                 } elseif ($keyp == 'usuario_id') {
                     $proceso->{$keyp} = Auth::user()->id;
+                } elseif ($keyp == 'created_at') {
+                    $proceso->{$keyp} = \Carbon\Carbon::now('America/Santiago')->format('Y-m-d H:i:s');
                 } else {
                     $proceso->{$keyp} = $p_attr;
                 }
