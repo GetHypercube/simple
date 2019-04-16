@@ -149,27 +149,29 @@ var grilla_populate_arrays = function(grilla_id, data){
     }
 
     grillas_datatable[grilla_id].data = data;
-    
+
     grillas_datatable[grilla_id].table.rows.add( data ).draw( true );
 
 }
 
 var add_tooltips = function(grilla_id){
     var max_cell_length = grillas_datatable[grilla_id].cell_text_max_length;
-    var last_column_index = grillas_datatable[grilla_id].cantidad_columnas
-    if(grillas_datatable[grilla_id].tiene_acciones)
-        --last_column_index;
+
     $("#grilla-"+grilla_id).find('tr').each(function(index, tr_element){
         if(index < 1) return; // es header
         var self = $(this);
         // this es tr
+
+        var last_column_index = $(tr_element).find('td').length;
+        if(grillas_datatable[grilla_id].tiene_acciones)
+            --last_column_index;
 
         $(tr_element).find('td').each(function(index, td_element){
             if(index >= last_column_index)
                 return;
             var td_jquery = $(td_element);
             var text = td_jquery.text();
-            
+
             td_jquery.attr('title', text);
             if(text.length > max_cell_length){
                 td_jquery.attr('data-toggle', 'tooltip');
@@ -361,6 +363,8 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
             modal_validate_multi(grilla_id).then(
                 function(grilla_id, dt_row, modal){
                     return function(){
+                        if(!grillas_datatable[grilla_id].is_modal_valid)
+                          return;
                         modal_modificar_linea( grilla_id, dt_row, modal)
                         modal.modal("hide");
                         store_data_in_hidden(grilla_id);
