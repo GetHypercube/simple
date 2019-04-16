@@ -10,7 +10,7 @@ class CampoGridDatosExternos extends Campo
 
     public $requiere_datos = false;
     private $cell_text_max_length_default = 50;
-    
+
     private $cell_text_max_length;
     private $columns;
     private $agregable;
@@ -22,7 +22,7 @@ class CampoGridDatosExternos extends Campo
     private $botones;
     private $botones_position;
     private $ayuda;
-    private $field_types = ['string'=>'String', 'integer'=>'Entero', 
+    private $field_types = ['string'=>'String', 'integer'=>'Entero',
                            'float' => 'Flotante', 'boolean' => 'Booleano'];
     private $field_types_html;
 
@@ -79,7 +79,7 @@ class CampoGridDatosExternos extends Campo
                             </div>
                         </div>
                     </div>';
-        
+
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
 
@@ -95,7 +95,7 @@ class CampoGridDatosExternos extends Campo
                     for( $j=0; $j < count($this->columns); $j++){
                         if( $this->columns[$j]->is_exportable == 'false'){
                             array_splice($data[$i], $j, 0, '');
-                            
+
                         }
                     }
                 }
@@ -115,16 +115,16 @@ class CampoGridDatosExternos extends Campo
                     var is_array = '.(count($data) > 0 ? "Array.isArray(data[0])" : var_export($this->input_is_array, true) ).';
                     var columns = '.json_encode($this->columns).';
                     grillas_datatable['.$this->id.'] = {};
-                    
+
                     grillas_datatable['.$this->id.'].tiene_acciones = '.($this->tiene_acciones ? 'true': 'false').';
-                    
+
                     grillas_datatable['.$this->id.'].cantidad_columnas = columns.length;
                     grillas_datatable['.$this->id.'].export_as = "'.(isset($this->export_as) ? $this->export_as: 'array').'".toLowerCase();
-                    
+
                     if('.($this->tiene_acciones ? 'true': 'false').'){
                         grillas_datatable['.$this->id.'].cantidad_columnas++;
                     }
-                    
+
                     init_tables('.$this->id.', "'.$modo.'",columns,'.$this->cell_text_max_length.',is_array, '.json_encode($this->editable).','.json_encode($this->eliminable).');
                     grillas_datatable['.$this->id.'].table.draw(true);
                     if(data != null && data.length > 0){
@@ -186,13 +186,13 @@ class CampoGridDatosExternos extends Campo
                         </td>
                     </tr>";
 
-        
+
         $field_types_no_selected = str_replace("{{selected}}", "", join("", $this->field_types_html));
         $column_template_html = str_replace("\n", "", $column_template_html);
-        
+
         $html_column_template = str_replace('{{select_field_types}}', $field_types_no_selected, $column_template_html);
         $html_column_template = str_replace("\n", "", $html_column_template);
-        
+
         $output .= '
             <br />
             <div class="input-group controls">
@@ -232,15 +232,15 @@ class CampoGridDatosExternos extends Campo
                     <option value="right_side" '.($this->botones_position == "right_side" ? 'selected=selected': '').'>Al lado</option>
                 </select>
             </div>
-            
+
             <div class="columnas">
                 <script type="text/javascript">
-                    
+
                     var column_template = "'.$html_column_template.'";
-                    
+
                     $(document).ready(function(){
                         $(".modal-dialog.modal-lg").removeClass("modal-lg").addClass("modal-xl");
-                        
+
                         $("#modal").on("hide.bs.modal", function () {
                             $(".modal-dialog.modal-xl").removeClass("modal-xl").addClass("modal-lg");
                         });
@@ -305,7 +305,7 @@ class CampoGridDatosExternos extends Campo
                     $column = str_replace('{{is_input}}', 'false', $column);
                     $column = str_replace('{{is_input_checked}}', '', $column);
                 }
-                
+
                 if(isset($c->is_exportable) && $c->is_exportable=="true"){
                     $column = str_replace('{{is_exportable}}', 'true', $column);
                     $column = str_replace('{{is_exportable_checked}}', 'checked', $column);
@@ -319,14 +319,14 @@ class CampoGridDatosExternos extends Campo
                 }else{
                     $column = str_replace('{{validacion}}', '', $column);
                 }
-                
+
                 if(isset($c->field_type) && array_key_exists($c->field_type, $this->field_types_html)){
                     $types = $this->field_types_html;
                     $types[$c->field_type] = str_replace('{{selected}}', 'selected' , $types[$c->field_type]);
                     $s = str_replace('{{selected}}', '', join("\n", $types));
                     $column = str_replace('{{select_field_types}}', $s, $column);
                 }else{
-                    $column = str_replace('{{select_field_types}}', 
+                    $column = str_replace('{{select_field_types}}',
                                     str_replace('{{selected}}', '', join("\n", $this->field_types_html)), $column);
                 }
 
@@ -395,7 +395,7 @@ class CampoGridDatosExternos extends Campo
         if( $this->eliminable || $this->editable ){
             $this->tiene_acciones = true;
         }
-        
+
         if(isset($this->extra->agregable) && $this->extra->agregable == 'true'){
             $this->botones[] = '<button type="button" class="btn btn-outline-secondary" onclick="open_add_modal('.$this->id.')">Agregar</button>';
         }
@@ -415,10 +415,20 @@ class CampoGridDatosExternos extends Campo
         }
 
         $this->field_types_html = [];
-        
+
         foreach($this->field_types as $gd_type => $human_type){
             $this->field_types_html[$gd_type] = "<option {{selected}} value='".$gd_type."'>".$human_type."</option>";
         }
-        
+
+    }
+
+    public function formValidate(Request $request, $etapa_id = null)
+    {
+        $etiqueta = strip_tags($this->etiqueta);
+        $validations = [];
+        foreach ($this->extra->columns as $key => $column) {
+          $validations[] = str_replace("|", "&", $column->validacion );
+        }
+        return [ $this->nombre, 'valid_grilla:'. implode( ",", $validations ) ];
     }
 }

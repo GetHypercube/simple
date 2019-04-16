@@ -263,7 +263,7 @@ class StagesController extends Controller
         $respuesta = new \stdClass();
         $validations = [];
         if ($modo == 'edicion') {
-            
+
             $campos_nombre_etiqueta = [];
             foreach ($formulario->Campos as $c) {
                 if(!$request->has($c->nombre))
@@ -273,17 +273,20 @@ class StagesController extends Controller
                     $validate = $c->formValidate($request, $etapa->id);
                     if (!empty($validate[0]) && !empty($validate[1])) {
                         $validations[$validate[0]] = $validate[1];
-                        $etiqueta = $c->etiqueta;
+                        $etiqueta = strip_tags($c->etiqueta);
                         if($c->tipo == 'select' && strpos($etiqueta, '.') !== FALSE){
                             $etiqueta = substr($etiqueta, strpos($etiqueta, '.'));
                         }
+
                         $campos_nombre_etiqueta[$validate[0]] = "<b>$etiqueta</b>";
                     }
                 }
                 if ($c->tipo == 'recaptcha') {
                     $validations['g-recaptcha-response'] = ['required', new Captcha];
                 }
+
             }
+
             $request->validate( $validations, [], $campos_nombre_etiqueta );
 
             // Almacenamos los campos
@@ -585,7 +588,7 @@ class StagesController extends Controller
             } else {
                 $files = \Doctrine_Query::create()->from('File f')->where('f.tramite_id=?', $t)->andWhereIn('tipo', $tipoDocumento)->execute();
             }
-            
+
             if (count($files) > 0) {
                 // Recorriendo los archivos
                 foreach ($files as $f) {
@@ -622,7 +625,7 @@ class StagesController extends Controller
                     }else if($f->tipo == 's3'){
                         $ruta_base = 's3';
                     }
-                    
+
                     $path = $ruta_base . $f->filename;
                     $proceso_nombre = str_replace(' ', '_', $tr->Proceso->nombre);
                     $proceso_nombre = \App\Helpers\FileS3Uploader::filenameToAscii($proceso_nombre);
@@ -645,8 +648,8 @@ class StagesController extends Controller
                         $docs_total_space += filesize($path);
                         $files_list[$f->tipo][] = [
                             'ori_path' => $path,
-                            'nice_name' => $f->filename, 
-                            'directory' => $directory, 
+                            'nice_name' => $f->filename,
+                            'directory' => $directory,
                             'tramite_id' => $tr->id,
                             'tramite' => $tr->Proceso->nombre
                         ];
@@ -656,25 +659,25 @@ class StagesController extends Controller
                 }
             }
         }
-        
+
         $max_space_before_email_link = env('DOWNLOADS_FILE_MAX_SIZE', 500 * 1024 * 1024);
-        if( ( array_key_exists('s3', $files_list) && count($files_list['s3']) > 0 ) 
+        if( ( array_key_exists('s3', $files_list) && count($files_list['s3']) > 0 )
                 || $docs_total_space > $max_space_before_email_link ) {
             $running_jobs = Job::where('user_id', Auth::user()->id)
                                ->whereIn('status', [Job::$running, Job::$created])
                                ->where('user_type', Auth::user()->user_type)
                                ->count();
             if($running_jobs >= env('DOWNLOADS_MAX_JOBS_PER_USER', 1)){
-                $request->session()->flash('error', 
+                $request->session()->flash('error',
                     "Ya tiene trabajos en ejecuci&oacute;n pendientes, por favor espere a que este termine.");
                 return redirect()->back();
             }
             $http_host = request()->getSchemeAndHttpHost();
-            
+
             if(strpos(url()->current(), 'https://') === 0){
                 $http_host = str_replace('http://', 'https://', $http_host);
             }
-            
+
             $email_to = Auth::user()->email;
             $validator = \Validator::make(
                 [ 'email' => $email_to ], [ 'email' => 'required|email' ]
@@ -690,13 +693,13 @@ class StagesController extends Controller
             }
             $name_to = Auth::user()->nombres;
             $email_subject = 'Enlace para descargar archivos.';
-            $this->dispatch(new FilesDownload(Auth::user()->id, Auth::user()->user_type, $files_list, $email_to, 
+            $this->dispatch(new FilesDownload(Auth::user()->id, Auth::user()->user_type, $files_list, $email_to,
                                               $name_to, $email_subject, $http_host, $cuenta));
-            
+
             $request->session()->flash('success', "Se enviar&aacute; un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: {$email_to}");
             return redirect()->back();
         }
-        
+
         $files_to_compress_not_empty = false;
         foreach($files_list as $tipo => $f_array ){
             if( count($files_list[$tipo]) > 0 ){
@@ -744,7 +747,7 @@ class StagesController extends Controller
             $request->session()->flash('error', 'Usuario no tiene permisos para descargar.');
             return redirect()->back();
         }
-        
+
         if (Auth::user()->id != $user_id) {
             $request->session()->flash('error', 'Usuario no tiene permisos para descargar.');
             return redirect()->back();
@@ -755,12 +758,12 @@ class StagesController extends Controller
         $job_info = Job::where('user_id', Auth::user()->id)
                         ->where('id', $job_id)
                         ->where('filename', $file_name)->first();
-        
+
         $full_path = $job_info->filepath.DIRECTORY_SEPARATOR.$job_info->filename;
         if(file_exists($full_path)){
             $job_info->downloads += 1;
             $job_info->save();
-            
+
             $time_stamp = Carbon::now()->format("Y-m-d_His");
             return response()
                 ->download($full_path, 'tramites_'.$time_stamp.'.zip', ['Content-Type' => 'application/octet-stream'])
@@ -799,9 +802,9 @@ class StagesController extends Controller
             }
             $campo_id = $campo['campo_id'];
             $campo_base = Campo::find($campo_id);
-            
+
             $c_extra = json_decode($campo_base['extra'], TRUE);
-            
+
             $columna = $campo['columna'];
             $columnas = $c_extra['columns'];
             if( ! array_key_exists('validacion', $columnas[$columna])){
@@ -819,16 +822,16 @@ class StagesController extends Controller
         $validator = \Validator::make(
             $data, $rules, [], $nicenames
         );
-        
+
         if( $validator->fails() ){
-            return response()->json( [ 
-                'status' => FALSE, 
-                'messages' => $validator->messages(), 
-                'columnas' => $data_columnas, 
-                'code'=>1 
+            return response()->json( [
+                'status' => FALSE,
+                'messages' => $validator->messages(),
+                'columnas' => $data_columnas,
+                'code'=>1
             ] );
         }
-        
+
         return response()->json( [ 'status' => TRUE, 'code' => 0, 'columnas' => $data_columnas ] );
     }
 }

@@ -13,6 +13,7 @@ return [
     |
     */
 
+    'valid_grilla' => 'El campo :attribute contiene errores.',
     'is_natural_no_zero' => 'El campo :attribute no es un número natural excluyendo el cero.',
     'rut' => 'El campo :attribute no es un RUN válido',
     'valid_email' => 'El campo :attribute no es un email válido',
