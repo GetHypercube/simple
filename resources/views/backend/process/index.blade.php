@@ -94,7 +94,11 @@
                                 $usuario_backend = App\Models\UsuarioBackend::find($pe->usuario_id);
                             ?>
                             <td>{{$usuario_backend->nombre." ".$usuario_backend->apellidos}}</td>
-                            <td>{{Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$pe->created_at)->format('d-m-Y H:i:s')}}</td>
+                            @if(is_null($pe->created_at))
+                                <td></td>
+                            @else
+                                <td>{{Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$pe->created_at)->format('d-m-Y H:i:s')}}</td>
+                            @endif
                             @else
                             <td colspan="2"></td>
                             @endif
