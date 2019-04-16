@@ -214,6 +214,24 @@ class AppServiceProvider extends ServiceProvider
 
             return false;
         });
+
+        Validator::extend('valid_grilla', function ($attribute, $values, $parameters, $validator) {
+
+            $grilla = json_decode($values, true);
+
+            foreach ($grilla as $row) {
+              foreach ($row as $key => $value) {
+                  $rules = str_replace("&", "|", $parameters[$key]);
+                  $validator = Validator::make( [$attribute => $value] , [$attribute => $rules] );
+                  if ($validator->fails()) {
+                      return false;
+                  }
+              }
+            }
+
+            return true;
+        });
+
     }
 
     /**
