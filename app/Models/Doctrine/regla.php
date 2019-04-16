@@ -127,6 +127,8 @@ class Regla
                 $dias_habiles = (new \App\Helpers\dateHelper())->diasHabiles($etapa->vencimiento_at);
                 $dias_totales = (new \App\Helpers\dateHelper())->diasTotales($etapa->vencimiento_at);
                 return json_encode(array($dias_habiles,$dias_totales));
+            }else if($nombre_dato == 'base_url'){
+                return "'" . \URL::to('/') ."'";
             }
 
         }, $new_regla);
@@ -258,11 +260,13 @@ class Regla
             else if ($nombre_dato == 'tramite_proc_cont')
                 return Doctrine::getTable('Tramite')->find(Doctrine::getTable('Etapa')->find($etapa_id)->tramite_id)->tramite_proc_cont;
             else if ($nombre_dato == 'fecha_vencimiento'){
-                return "'" . \Carbon\Carbon::parse($etapa->vencimiento_at)->format('d-m-Y') . "'";
+                return \Carbon\Carbon::parse($etapa->vencimiento_at)->format('d-m-Y');
             }else if ($nombre_dato == 'dias_para_vencer'){
                 $dias_habiles = (new \App\Helpers\dateHelper())->diasHabiles($etapa->vencimiento_at);
                 $dias_totales = (new \App\Helpers\dateHelper())->diasTotales($etapa->vencimiento_at);
                 return json_encode(array($dias_habiles,$dias_totales));
+            }else if($nombre_dato == 'base_url'){
+                return \URL::to('/');
             }
 
         }, $new_regla);
