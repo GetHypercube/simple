@@ -30,7 +30,7 @@ class DatoSeguimiento extends Doctrine_Record
             if (!is_array($val) && !is_object($val))
                 $valor = json_encode($valor);
         } else {
-            $valor = json_encode($valor);
+            $valor = json_encode($valor,JSON_UNESCAPED_UNICODE);
         }
 
         $this->_set('valor', $valor);
