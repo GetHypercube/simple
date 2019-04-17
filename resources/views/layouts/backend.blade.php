@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ app()->getLocale() }}" class="h-100">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -40,8 +40,8 @@
     <script src="{{ asset('js/backend.js') }}"></script>
 
 </head>
-<body>
-<div id="app">
+<body class="h-100">
+<div id="app" class="h-100 d-flex flex-column">
     @include('layouts.backend.header')
 
     <div class="container-fluid">
