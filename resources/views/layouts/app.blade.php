@@ -14,7 +14,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/'.$estilo.'') }} " rel="stylesheet">
-    
+
     <meta name="google" content="notranslate"/>
 
     <!-- fav and touch icons -->
@@ -28,7 +28,7 @@
 <body class="h-100">
 	<div id="app" class="h-100 d-flex flex-column">
     	@include($dominio_header)
-    	<div class="main-container container">
+    	<div class="main-container container pb-5">
         	@yield('content')
         	{!! isset($content) ? $content : '' !!}
     	</div>

@@ -219,6 +219,10 @@ class AppServiceProvider extends ServiceProvider
 
             $grilla = json_decode($values, true);
 
+            if( empty($grilla) ){
+              return true;
+            }
+
             foreach ($grilla as $row) {
               foreach ($row as $key => $value) {
                   $rules = str_replace("&", "|", $parameters[$key]);

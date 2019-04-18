@@ -424,7 +424,18 @@ class CampoGridDatosExternos extends Campo
 
     public function formValidate(Request $request, $etapa_id = null)
     {
-        $etiqueta = strip_tags($this->etiqueta);
+
+        $values = $request->input($this->nombre);
+        $values = json_decode($values, true);
+
+        $validator = Validator::make($request->all(), [
+           $this->nombre => $this->validacion
+        ]);
+
+        if ($validator->fails()) {
+           return [$this->nombre, $this->validacion];
+        }
+
         $validations = [];
         foreach ($this->extra->columns as $key => $column) {
           $validations[] = str_replace("|", "&", $column->validacion );
