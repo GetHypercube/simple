@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ app()->getLocale() }}" class="h-100">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +14,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }} " rel="stylesheet">
-    
+
     <meta name="google" content="notranslate"/>
 
     <!-- fav and touch icons -->
@@ -22,17 +22,17 @@
 
     @yield('css')
 
-    
+
 
 </head>
-<body>
-	<div id="app">
+<body class="h-100">
+	<div id="app" class="h-100 d-flex flex-column">
     	@include('layouts.header')
     	<div class="main-container container">
         	@yield('content')
         	{!! isset($content) ? $content : '' !!}
     	</div>
-    	@include('layouts.footer')    
+    	@include('layouts.footer')
 	</div>
 
 <!-- Scripts -->
