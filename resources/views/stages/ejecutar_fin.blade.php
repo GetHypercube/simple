@@ -6,11 +6,26 @@
         {{csrf_field()}}
         <fieldset>
             <div class="validacion"></div>
-            <legend><?= !is_null($etapa->Tarea->paso_confirmacion_titulo) ? $etapa->Tarea->paso_confirmacion_titulo : 'Paso final' ?> </legend>
+            @if(!is_null($etapa->Tarea->paso_confirmacion_titulo))
+                <?php
+                    $r = new \Regla($etapa->Tarea->paso_confirmacion_titulo);
+                    $paso_confirmacion_titulo = $r->getExpresionParaOutput($etapa->id);
+                ?>
+                <legend>{{$paso_confirmacion_titulo}}</legend>
+            @else
+                <legend>Paso final</legend>
+            @endif
             <?php if ($tareas_proximas->estado == 'pendiente'): ?>
             <?php foreach ($tareas_proximas->tareas as $t): ?>
-            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : "Para confirmar y enviar el formulario a la siguiente etapa ($t->nombre) haga click en
-                Finalizar." ?> </p>
+                @if(!is_null($etapa->Tarea->paso_confirmacion_contenido))
+                    <?php
+                        $r = new \Regla($etapa->Tarea->paso_confirmacion_contenido);
+                        $paso_confirmacion_contenido = $r->getExpresionParaOutput($etapa->id);
+                    ?>
+                    <p>{{$paso_confirmacion_contenido}}</p>
+                @else
+                    <p><?= "Para confirmar y enviar el formulario a la siguiente etapa ($t->nombre) haga click en Finalizar." ?> </p>
+                @endif
             <?php if ($t->asignacion == 'manual'): ?>
             <label>Asignar próxima etapa a</label>
             <select name="usuarios_a_asignar[<?= $t->id ?>]">
@@ -21,21 +36,53 @@
             <?php endif; ?>
             <?php endforeach; ?>
             <?php elseif($tareas_proximas->estado == 'standby'): ?>
-            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : 'Luego de hacer click en Finalizar esta etapa quedara detenida momentaneamente hasta que se completen el
-                resto de etapas pendientes.' ?></p>
+                @if(!is_null($etapa->Tarea->paso_confirmacion_contenido))
+                    <?php
+                        $r = new \Regla($etapa->Tarea->paso_confirmacion_contenido);
+                        $paso_confirmacion_contenido = $r->getExpresionParaOutput($etapa->id);
+                    ?>
+                    <p>{{$paso_confirmacion_contenido}}</p>
+                @else
+                    <p>Luego de hacer click en Finalizar esta etapa quedara detenida momentaneamente hasta que se completen el resto de etapas pendientes.</p>
+                @endif                
             <?php elseif($tareas_proximas->estado == 'completado'):?>
-            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : 'Luego de hacer click en Finalizar este trámite quedará completado.' ?></p>
+                @if(!is_null($etapa->Tarea->paso_confirmacion_contenido))
+                    <?php
+                        $r = new \Regla($etapa->Tarea->paso_confirmacion_contenido);
+                        $paso_confirmacion_contenido = $r->getExpresionParaOutput($etapa->id);
+                    ?>
+                    <p>{{$paso_confirmacion_contenido}}</p>
+                @else
+                    <p>Luego de hacer click en Finalizar este trámite quedará completado.</p>
+                @endif
             <?php elseif($tareas_proximas->estado == 'sincontinuacion'):?>
-            <p><?= !is_null($etapa->Tarea->paso_confirmacion_contenido) ? $etapa->Tarea->paso_confirmacion_contenido : 'Este trámite no tiene una etapa donde continuar.' ?></p>
+                @if(!is_null($etapa->Tarea->paso_confirmacion_contenido))
+                    <?php
+                        $r = new \Regla($etapa->Tarea->paso_confirmacion_contenido);
+                        $paso_confirmacion_contenido = $r->getExpresionParaOutput($etapa->id);
+                    ?>
+                    <p>{{$paso_confirmacion_contenido}}</p>
+                @else
+                    <p>Este trámite no tiene una etapa donde continuar.</p>
+                @endif
             <?php endif; ?>
-
             <div class="form-actions">
                 <a class="btn btn-light"
                    href="<?= url('etapas/ejecutar/' . $etapa->id . '/' . (count($etapa->getPasosEjecutables()) - 1) . ($qs ? '?' . $qs : '')) ?>">
                     Volver
                 </a>
                 @if($tareas_proximas->estado != 'sincontinuacion')
-                    <button class="btn btn-success" type="submit"><?= !is_null($etapa->Tarea->paso_confirmacion_texto_boton_final) ? $etapa->Tarea->paso_confirmacion_texto_boton_final : 'Finalizar' ?></button>
+                    <button class="btn btn-success" type="submit">
+                        @if(!is_null($etapa->Tarea->paso_confirmacion_texto_boton_final))
+                            <?php
+                                $r = new \Regla($etapa->Tarea->paso_confirmacion_texto_boton_final);
+                                $paso_confirmacion_texto_boton_final = $r->getExpresionParaOutput($etapa->id);
+                            ?>
+                            {{$paso_confirmacion_texto_boton_final}}
+                        @else
+                            Finalizar
+                        @endif
+                    </button>
                 @endif
             </div>
         </fieldset>
