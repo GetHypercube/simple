@@ -42,7 +42,7 @@
 <div id="app" class="h-100 d-flex flex-column" >
     @include($dominio_header)
 
-    <div class="main-container container">
+    <div class="main-container container pb-5">
         <div class="row">
             <div class="col-xs-12 col-md-3">
 
