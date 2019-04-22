@@ -34,7 +34,9 @@ class IndexStages implements ShouldQueue
     public function handle()
     {
         $tramite = Tramite::find($this->tramite_id);
-        $tramite->save();
-        $tramite->searchable();
+        if(!is_null($tramite)){
+            $tramite->save();
+            $tramite->searchable();
+        }
     }
 }
