@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ app()->getLocale() }}" class="h-100">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +14,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/'.$estilo.'') }} " rel="stylesheet">
-    
+
     <meta name="google" content="notranslate"/>
 
     <!-- fav and touch icons -->
@@ -25,14 +25,14 @@
     <style type="text/css">{{ $personalizacion }}</style>
 
 </head>
-<body>
-	<div id="app">
+<body class="h-100">
+	<div id="app" class="h-100 d-flex flex-column">
     	@include($dominio_header)
-    	<div class="main-container container">
+    	<div class="main-container container pb-5">
         	@yield('content')
         	{!! isset($content) ? $content : '' !!}
     	</div>
-    	@include($dominio_footer)    
+    	@include($dominio_footer)
 	</div>
 
 <!-- Scripts -->

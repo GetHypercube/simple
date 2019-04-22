@@ -40,11 +40,11 @@
     <script src="{{ asset('js/backend.js') }}"></script>
 
 </head>
-<body>
-<div id="app">
+<body >
+<div id="app" >
     @include('layouts.backend.header')
 
-    <div class="container-fluid">
+    <div class="container-fluid pb-5">
         @include('components.messages')
     </div>
 

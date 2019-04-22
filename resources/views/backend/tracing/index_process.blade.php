@@ -194,12 +194,12 @@
                     <?php
                     $etapas_array = array();
                     foreach ($t->getEtapasActuales() as $e)
-                        $etapas_array[] = $e->Tarea->nombre . ($e->vencimiento_at ? ' <a href="#" onclick="return editarVencimiento(' . $e->id . ')" title="Cambiar fecha de vencimiento">(' . $e->getFechaVencimientoAsString() . ')</a>' : '');
+                        $etapas_array[] = $e->Tarea->nombre . ($e->vencimiento_at ? ' <a href="#" onclick="return editarVencimiento(' . $e->id . ')" title="Cambiar fecha de vencimiento">(' . $e->getFechaVencimientoSinDiasAsString() . ')</a>' : '');
                     echo implode(', ', $etapas_array);
                     ?>
                 </td>
-                <td><?= $t->created_at ?></td>
-                <td><?= $t->updated_at ?></td>
+                <td><?= \Carbon\Carbon::parse($t->created_at)->format('d-m-Y H:i:s') ?></td>
+                <td><?= \Carbon\Carbon::parse($t->updated_at)->format('d-m-Y H:i:s') ?></td>
                 <td style="text-align: right;">
                     <a class="btn btn-primary" href="<?= url('backend/seguimiento/ver/' . $t->id) ?>">
                         <i class="material-icons">remove_red_eye</i> Seguimiento</a>

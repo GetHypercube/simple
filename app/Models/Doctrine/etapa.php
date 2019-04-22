@@ -429,7 +429,7 @@ class Etapa extends Doctrine_Record
         if($this->Tarea->vencimiento_unidad == 'D' && $this->Tarea->vencimiento_habiles){
             $r = new Regla($this->Tarea->vencimiento_valor);
             $dias_vencimiento = $r->getExpresionParaOutput($this->id);
-            $working_days = (new \App\Helpers\dateHelper())->add_working_days($this->ended_at, $dias_vencimiento);
+            $working_days = (new \App\Helpers\dateHelper())->add_working_days(date('Y-m-d H:i:s'), $dias_vencimiento);
             return $working_days;
         }else{
             $tmp = new DateTime($this->created_at);
@@ -731,5 +731,19 @@ class Etapa extends Doctrine_Record
         $ret_val = ob_get_contents();
         ob_end_clean();
         return $ret_val;
+    }
+
+    public function getFechaVencimientoSindiasAsString()
+    {
+        $now = new DateTime();
+        $now->setTime(0, 0, 0);
+
+        $interval = $now->diff(new DateTime($this->vencimiento_at));
+        $fecha_vencimiento = \Carbon\Carbon::parse($this->vencimiento_at)->format('d-m-Y');
+
+        if ($interval->invert)
+            return 'venció el ' . $fecha_vencimiento;
+        else
+            return $interval->days == 0 ? 'vence hoy '.$fecha_vencimiento : 'vencerá el ' . $fecha_vencimiento;
     }
 }

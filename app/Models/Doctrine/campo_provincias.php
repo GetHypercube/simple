@@ -31,6 +31,12 @@ class CampoProvincias extends Campo
         $display .= '<select class="form-control" id="comunas_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione Comuna</option>';
         $display .= '</select>';
+        $display .= '<input type="hidden" id="pstateCode" name="pstateCode">';
+        $display .= '<input type="hidden" id="pstateName" name="pstateName">';
+        $display .= '<input type="hidden" id="pcityCode" name="pcityCode">';
+        $display .= '<input type="hidden" id="pcityName" name="pcityName">';
+        $display .= '<input type="hidden" id="provinciaCode" name="provinciaCode">';
+        $display .= '<input type="hidden" id="provinciaName" name="provinciaName">';
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
         $display .= '</div>';
@@ -82,6 +88,9 @@ class CampoProvincias extends Campo
                                 justLoadedProvincia=false;
                             }
                             provincias_obj.trigger("chosen:updated");
+
+                            $("#provinciaCode").val($(provincias_obj).find("option:selected").attr("data-id"));
+                            $("#provinciaName").val($(provincias_obj).find("option:selected").text());
                         });
                         
                     }
@@ -107,20 +116,32 @@ class CampoProvincias extends Campo
                                 justLoadedComuna=false;
                             }
                             comunas_obj.trigger("chosen:updated");
+
+                            $("#pcityCode").val($(comunas_obj).find("option:selected").val());
+                            $("#pcityName").val($(comunas_obj).find("option:selected").text());
+
+                            comunas_obj.change(function(event){
+                                $("#pcityCode").val($(this).find("option:selected").attr("data-id"));
+                                $("#pcityName").val($(this).find("option:selected").text());
+                            });
                         });
                     }
 
                     
                     $("#regiones_'.$this->id.'").change(function(event){
+                        var regiones_obj = $("#regiones_'.$this->id.'");
                         var selectedId = $("#regiones_'.$this->id.'").find("option:selected").attr("data-id");
+                        $("#pstateCode").val($(this).find("option:selected").attr("data-id"));
+                        $("#pstateName").val(regiones_obj.val());
                         updateProvincias(selectedId);
                         updateComunas(0);
                     });
                     
                     $("#provincias_'.$this->id.'").change(function(event){
                         var selectedId = $("#provincias_'.$this->id.'").find("option:selected").attr("data-id");
+                        $("#provinciaCode").val($(this).find("option:selected").attr("data-id"));    
+                        $("#provinciaName").val($(this).find("option:selected").text());
                         updateComunas(selectedId);
-                        
                     });
                     
                     updateRegiones();

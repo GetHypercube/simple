@@ -8,7 +8,7 @@
 @section('content')
     <div style="clear: both;"></div>
     @if ($etapa->Tarea->vencimiento)
-        <div class="alert alert-warning">Atención. Esta etapa {{$etapa->getFechaVencimientoAsString()}}.</div>
+        <div class="alert alert-warning">Atención. Esta etapa {{$etapa->getFechaVencimientoSinDiasAsString()}}.</div>
     @endif
     <form method="POST" class="ajaxForm dynaForm form-horizontal"
           action="/etapas/ejecutar_form/{{$etapa->id}}/{{$secuencia . ($qs ? '?' . $qs : '')}}">
