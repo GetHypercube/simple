@@ -94,6 +94,8 @@
                         echo $accion->displaySecurityForm($proceso->id);
                     } else if ($tipo == "webhook" || $accion->tipo == "webhook") {
                         echo $accion->displaySuscriptorForm($proceso->id);
+                    } else if($tipo == "generar_documento" || $accion->tipo == "generar_documento") {
+                        echo $accion->displayDocumentoForm($proceso->id);
                     } else {
                         echo $accion->displayForm();
                     }
