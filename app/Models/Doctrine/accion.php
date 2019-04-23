@@ -27,7 +27,8 @@ class Accion extends Doctrine_Record
                 'AccionIniciarTramite' => array('tipo' => 'iniciar_tramite'),
                 'AccionContinuarTramite' => array('tipo' => 'continuar_tramite'),
                 'AccionDescargaDocumento' => array('tipo' => 'descarga_documento'),
-                'AccionRedirect' => array('tipo' => 'redirect')
+                'AccionRedirect' => array('tipo' => 'redirect'),
+                'AccionGenerarDocumento' => array('tipo' => 'generar_documento')
             )
         );
     }

@@ -28,6 +28,7 @@
                     <option value="webhook">Notificaciones</option>
                     <option value="descarga_documento">Descargar Documento</option>
                     <option value="redirect">Redirección</option>
+                    <option value="generar_documento">Generar Documento</option>
                 </select>
             </form>
         </div>
