@@ -92,15 +92,21 @@
             var pasoId = $form.find(".eventoPasoId option:selected").val();
             var pasoNombre = $form.find(".eventoPasoId option:selected").text();
             var pasoTitle = $form.find(".eventoPasoId option:selected").attr("title");
+            var campoAsociado = $form.find(".eventoCampoAsociado").val();
+            campoAsociado = campoAsociado.replace(/@/g, '').trim();
+            if(campoAsociado.length > 0)
+                campoAsociado = '@@' + campoAsociado;
 
             var html = "<tr>";
             html += "<td>" + pos + "</td>";
             html += '<td><a title="Editar" target="_blank" href="/backend/acciones/editar/' + accionId + '">' + accionNombre + '</td>';
             html += '<td><input class="form-control" type="text" name="eventos[' + pos + '][regla]" value="'+ escapeHtml(regla) +'" /></td>';
             html += '<td><select class="form-control" name="eventos['+pos+'][instante]"></select></td>';
+            html += '<td>' + campoAsociado + '</td>';
             html += '<td><select class="form-control" name="eventos['+pos+'][paso_id]"></select></td>';
             html += '<td>';
             html += '<input type="hidden" name="eventos[' + pos + '][accion_id]" value="' + accionId + '" />';
+            html += '<input type="hidden" name="eventos[' + pos + '][campo_asociado]" value="' + campoAsociado + '" />';
             html += '<a class="delete" title="Eliminar" href="#"><i class="material-icons">close</i></a>';
             html += '</td>';
             html += "</tr>";

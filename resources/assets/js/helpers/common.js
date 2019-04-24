@@ -160,88 +160,90 @@ $(document).ready(function () {
     });
     */
 
-    // Para manejar los input dependientes en dynaforms
-    function prepareDynaForm(form) {
-        $(form).find(":input[readonly]").prop("disabled", false);
-        $(form).find(".file-uploader ~ input[type=hidden]").prop("type", "text");
-        $(form).find(".campo[data-dependiente-campo]").each(function (i, el) {
-            var tipo = $(el).data("dependiente-tipo");
-            var relacion = $(el).data("dependiente-relacion");
-            var campo = $(el).data("dependiente-campo");
-            var valor = $(el).data("dependiente-valor");
-            var existe = false;
-            var visible = false;
-            var condicion_final = $(el).data("condicion");
-            if(condicion_final!='no-condition'){
-                var myarr = condicion_final.split("&&");
-                var resultados = [];
-                for(x=0;x<myarr.length;x++){
-                    var evaluacion = myarr[x].split(";");
-                    var resultado = false;
-                    if(evaluacion[1]=="=="){
+    prepareDynaForm(".dynaForm");
 
-                        $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
-                            var input = $(el).serializeArray();
-                            for(var j in input){
-                                if(evaluacion[3]=='string'){
-                                    if(input[j].value==evaluacion[2]){
-                                        resultado = true;
-                                    }
-                                }else if(evaluacion[3]=='regex'){
-                                    var regex = new RegExp(evaluacion[2]);
-                                    if (regex.test(input[j].value)) {
-                                        resultado = true;
-                                    }
-                                }
-                            }
-                        });
+    $(".dynaForm").on("change", ":input", function (event) {
+        prepareDynaForm($(event.target).closest(".dynaForm"))
+    });
+});
 
-                    }else if(evaluacion[1]=="!="){
-                        $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
-                            var input = $(el).serializeArray();
-                            for(var j in input){
-                                if(input[j].value!=evaluacion[2]){
+function prepareDynaForm(form) {
+    $(form).find(":input[readonly]").prop("disabled", false);
+    $(form).find(".file-uploader ~ input[type=hidden]").prop("type", "text");
+    $(form).find(".campo[data-dependiente-campo]").each(function (i, el) {
+        var tipo = $(el).data("dependiente-tipo");
+        var relacion = $(el).data("dependiente-relacion");
+        var campo = $(el).data("dependiente-campo");
+        var valor = $(el).data("dependiente-valor");
+        var existe = false;
+        var visible = false;
+        var condicion_final = $(el).data("condicion");
+
+        if(condicion_final!='no-condition'){
+            var myarr = condicion_final.split("&&");
+            var resultados = [];
+            for(x=0;x<myarr.length;x++){
+                var evaluacion = myarr[x].split(";");
+                var resultado = false;
+                if(evaluacion[1]=="=="){
+
+                    $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
+                        var input = $(el).serializeArray();
+                        for(var j in input){
+                            if(evaluacion[3]=='string'){
+                                if(input[j].value==evaluacion[2]){
                                     resultado = true;
-                                }else if(evaluacion[3]=='regex'){
-                                    var regex = new RegExp(evaluacion[2]);
-                                    if (regex.test(input[j].value)) {
-                                        resultado = true;
-                                    }
+                                }
+                            }else if(evaluacion[3]=='regex'){
+                                var regex = new RegExp(evaluacion[2]);
+                                if (regex.test(input[j].value)) {
+                                    resultado = true;
                                 }
                             }
-                        });
-                    }
-                    resultados.push(resultado);
+                        }
+                    });
+
+                }else if(evaluacion[1]=="!="){
+                    $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
+                        var input = $(el).serializeArray();
+                        for(var j in input){
+                            if(input[j].value!=evaluacion[2]){
+                                resultado = true;
+                            }else if(evaluacion[3]=='regex'){
+                                var regex = new RegExp(evaluacion[2]);
+                                if (regex.test(input[j].value)) {
+                                    resultado = true;
+                                }
+                            }
+                        }
+                    });
                 }
-                if(resultados.indexOf(false)>-1){
-                    $(el).hide();
-                }else{
-                    $(el).show();
-                }
+                resultados.push(resultado);
+            }
+            if(resultados.indexOf(false)>-1){
+                $(el).hide();
             }else{
-                $(form).find(":input[name='" + campo + "']").each(function (i, el) {
-                    existe = true;
-                    var input = $(el).serializeArray();
-                    for (var j in input) {
-                        if (tipo == "regex") {
-                            var regex = new RegExp(valor);
-                            if (regex.test(input[j].value)) {
-                                visible = true;
-                            }
-                        } else {
-                            if (input[j].value == valor) {
-                                visible = true;
-                            }
+                $(el).show();
+            }
+        }else{
+            $(form).find(":input[name='" + campo + "']").each(function (i, el) {
+                
+                existe = true;
+                var input = $(el).serializeArray();
+                for (var j in input) {
+                    if (tipo == "regex") {
+                        var regex = new RegExp(valor);
+                        if (regex.test(input[j].value)) {
+                            visible = true;
                         }
-                        if (relacion == "!=") {
-                            visible = !visible;
-                        }
-                        if (visible) {
-                            break;
+                    } else {
+                        if (input[j].value == valor) {
+                            visible = true;
                         }
                     }
-                });
-                if (existe) {
+                    if (relacion == "!=") {
+                        visible = !visible;
+                    }
                     if (visible) {
                         if ($(form).hasClass("debugForm"))
                             $(el).css("opacity", "1.0");
@@ -258,31 +260,46 @@ $(document).ready(function () {
                             $(el).hide();
 
                         // $(el).find(":input").addClass("disabled-temp");
+                        //break;
                     }
                 }
+            });
+            if (existe) {
+                if (visible) {
+                    if ($(form).hasClass("debugForm"))
+                        $(el).css("opacity", "1.0");
+                    else
+                        $(el).show();
+
+                    if (!$(el).data("readonly"))
+                        $(el).find(":input").addClass("enabled-temp");
+
+                } else {
+                    if ($(form).hasClass("debugForm"))
+                        $(el).css("opacity", "0.5");
+                    else
+                        $(el).hide();
+
+                    $(el).find(":input").addClass("disabled-temp");
+                }
             }
-        });
-
-        $(form).find(":input.disabled-temp").each(function (i, el) {
-            $(el).prop("disabled", true);
-            $(el).removeClass("disabled-temp");
-        });
-
-        $(form).find(":input.enabled-temp").each(function (i, el) {
-            $(el).prop("disabled", false);
-            $(el).removeClass("disabled-temp");
-        });
-
-        $(form).find(".file-uploader ~ input[type=text]").prop("type", "hidden");
-        $(form).find(":input[readonly]").prop("disabled", true);
-    }
+        }
+    });
 
     //prepareDynaForm(".dynaForm");
-
-    $(".dynaForm").on("change", ":input", function (event) {
-        prepareDynaForm($(event.target).closest(".dynaForm"))
+    $(form).find(":input.disabled-temp").each(function (i, el) {
+        $(el).prop("disabled", true);
+        $(el).removeClass("disabled-temp");
     });
-});
+
+    $(form).find(":input.enabled-temp").each(function (i, el) {
+        $(el).prop("disabled", false);
+        $(el).removeClass("disabled-temp");
+    });
+
+    $(form).find(".file-uploader ~ input[type=text]").prop("type", "hidden");
+    $(form).find(":input[readonly]").prop("disabled", true);
+}
 
 function buscarAgenda() {
     if (jQuery.trim($('.js-pertenece').val()) != "") {
@@ -323,4 +340,28 @@ function calendarioFront(idagenda, idobject, idcita, tramite, etapa) {
     $('#codcita' + idobject).attr('data-id-etapa');
     $("#modalcalendar").load(site_url + "/agenda/ajax_modal_calendar?idagenda=" + idagenda + "&object=" + idobject + "&idcita=" + idcita + "&idtramite=" + idtramite + "&etapa=" + etapa);
     $("#modalcalendar").modal();
+}
+
+var procesar_data = function(data){
+    //en caso de existir los campos se setea el valor, de lo contrario se crean campos hidden para que 
+    //puedan realizar lo mismo y poder cumplir con las condiciones de visibilidad
+    $.each(data, function(k,v) {
+        if($('[name="'+data[k].nombre+'"]').length){
+            var valor = JSON.parse(data[k].valor);
+            if(typeof valor !== 'string'){
+                valor = JSON.stringify(valor);
+            }
+            $('[name="'+data[k].nombre+'"]').val(valor);
+            $('[name="'+data[k].nombre+'"]').trigger('change');
+        }
+        else{
+            var valor = data[k].valor.replace(/['"]+/g, '');
+            $('<input>').attr({
+                type: 'hidden',
+                name: data[k].nombre,
+                value: valor
+            }).appendTo('form');
+        }
+    });
+    prepareDynaForm(".dynaForm");
 }

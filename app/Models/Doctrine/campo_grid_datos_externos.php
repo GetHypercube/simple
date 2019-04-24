@@ -79,7 +79,6 @@ class CampoGridDatosExternos extends Campo
                             </div>
                         </div>
                     </div>';
-
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
 
@@ -395,7 +394,6 @@ class CampoGridDatosExternos extends Campo
         if( $this->eliminable || $this->editable ){
             $this->tiene_acciones = true;
         }
-
         if(isset($this->extra->agregable) && $this->extra->agregable == 'true'){
             $this->botones[] = '<button type="button" class="btn btn-outline-secondary" onclick="open_add_modal('.$this->id.')">Agregar</button>';
         }

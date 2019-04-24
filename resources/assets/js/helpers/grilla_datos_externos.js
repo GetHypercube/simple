@@ -433,6 +433,15 @@ var toggle_checkbox = function(name, obj){
 var open_add_modal = function(grilla_id) {
     var modal = $("#table_alter_modal_" + grilla_id );
     $('#add_to_table_modal_label_'+grilla_id).text('Nuevo Registro');
+    $('#modal-body-'+grilla_id, 'form').find(':input:not([type=hidden])').each(function(idx, elemento) {
+        $(elemento).val("");
+    });
+    
+    $('#modal_accept_button_' + grilla_id).prop("onclick", null).off("click");
+    $('#modal_accept_button_' + grilla_id).on("click", grilla_id, function(event){
+        grilla_id = event.data;
+        modal_agregar_a_grilla( grilla_id);
+    });
     
     $('#modal_accept_button_' + grilla_id).on("click", grilla_id, function(event){
         // Agregar fila
