@@ -135,6 +135,21 @@ class ProcessReport implements ShouldQueue
         $tramites = json_decode(json_encode($query), true);
 
         foreach ($tramites as $t) {
+
+            $etapas_actuales = DB::table('tramite')
+                ->join('etapa', 'tramite.id', '=', 'etapa.tramite_id')
+                ->join('tarea', 'tarea.id', '=', 'etapa.tarea_id')
+                ->select(DB::raw('tarea.nombre as tarea_nombre'))
+                ->where('tramite.id',$t['id'])
+                ->where('etapa.pendiente',1)
+                ->get();
+            $etapas_actuales_arr = array();
+            foreach ($etapas_actuales as $etapa) {
+                $etapas_actuales_arr[] = $etapa->tarea_nombre;
+            }
+            $etapas_actuales_str = implode(',', $etapas_actuales_arr);
+            $t['etapa_actual'] = $etapas_actuales_str;
+
             $row = array();
 
             $datos_actuales = DB::table('tramite')
