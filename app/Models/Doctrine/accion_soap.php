@@ -164,6 +164,7 @@ class AccionSoap extends Accion
                     $result_soap['desc'] = $error;
                 }
             } else {
+                $result = empty($result) ? [] : $result;
                 $result_soap = $this->utf8ize($result);
                 $result_soap['code'] = '200';
             }
