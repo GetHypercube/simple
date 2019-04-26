@@ -39,12 +39,12 @@ class AccionSoap extends Accion
             $display .= '<option value="' . ($this->extra->operacion) . '" selected>' . ($this->extra->operacion) . '</option>';
         }
         $display .= '</select>
-                </div>                
+                </div>
                 <div id="divMetodosE" style="display:none;" class="col-md-12">
                     <span id="warningSpan" class="spanError"></span>
                     <br /><br />
                 </div>';
-        $display .= '            
+        $display .= '
                 <label>Request</label>
                 <textarea id="request" class="form-control col-5" name="extra[request]" rows="7" cols="70" placeholder="<xml></xml>" class="form-control">' . ($this->extra ? $this->extra->request : '') . '</textarea>
                 <!-- <span id="resultRequest" class="spanError"></span> -->
@@ -165,6 +165,7 @@ class AccionSoap extends Accion
                 }
             } else {
                 $result_soap = $this->utf8ize($result);
+                $result_soap['code'] = '200';
             }
 
         } catch (Exception $e) {
