@@ -31,11 +31,8 @@ $(document).on("submit", ".ajaxForm", function () {
         form.submitting = true;
         $(form).find(":submit").attr("disabled", true);
         //$(form).append("<div class='ajaxLoader'>Cargando</div>");
-        var ajaxLoader = $(form).find(".ajaxLoader");
-        $(ajaxLoader).css({
-            left: ($(form).width() / 2 - $(ajaxLoader).width() / 2) + "px",
-            top: ($(form).height() / 2 - $(ajaxLoader).height() / 2) + "px"
-        });
+        var ajaxLoader = $('.ajaxForm').find(".ajaxLoader");
+        $(ajaxLoader).show();
         $.ajax({
             url: form.action,
             data: $('*:not(.camposvisibilidad)', form).serialize(),

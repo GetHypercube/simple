@@ -65,12 +65,7 @@
         @endforeach
 
         <div class="form-actions mt-3">
-            @if ($secuencia > 0)
-                <a class="btn btn-light"
-                   href="{{url('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}">
-                    Volver
-                </a>
-            @endif
+            
             @if($existe_btn_siguiente)
                 <?php $condicion_final = ""; ?>
                 @if($c->condiciones_extra_visible)
@@ -89,9 +84,21 @@
                 <div class="campo control-group" data-id="<?=$c->id?>"
                     <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : 'data-dependiente-campo="dependiente"' ?> style="display: <?= $c->isCurrentlyVisible($etapa->id) ? 'block' : 'none'?>;"
                     data-readonly="{{$paso->modo == 'visualizacion' || $c->readonly}}" <?=$c->condiciones_extra_visible ? 'data-condicion="' . $condicion_final . '"' : 'data-condicion="no-condition"'  ?> >
+                    @if($secuencia > 0)
+                        <a class="btn btn-light"
+                        href="{{url('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}">
+                            Volver
+                        </a>
+                    @endif
                     <?=$c->displayConDatoSeguimiento($etapa->id, $paso->modo)?>
                 </div>
             @else
+                @if ($secuencia > 0)
+                    <a class="btn btn-light"
+                    href="{{url('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}">
+                        Volver
+                    </a>
+                @endif
                 <button class="btn btn-simple btn-danger" type="submit">Siguiente</button>
             @endif        
         </div>
@@ -102,6 +109,10 @@
         @endforeach
 
         <input type="hidden" name="paso" value="{{$secuencia}}">
+
+        <div class="ajaxLoader" style="position: fixed; left: 50%; top: 30%; display: none;">
+            <img src="{{asset('img/loading.gif')}}">
+        </div>
     </form>
     <div id="modalcalendar" class="modal hide modalconfg modcalejec"></div>
     <input type="hidden" id="urlbase" value="<?= URL::to('/') ?>"/>

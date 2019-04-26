@@ -25,10 +25,6 @@ class CampoBtnAsincrono extends Campo
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
         $display .= '</div><br>';
 
-        $display .= '<div id="ajax_loader" style="position: fixed; left: 50%; top: 50%; display: none;">
-                        <img src="'.asset('img/loading.gif').'"></img>
-                     </div>';
-
         if($etapa_id){
             $display .= '
                 <script>
@@ -39,7 +35,7 @@ class CampoBtnAsincrono extends Campo
                         
                         $("#'.$this->id.'").click(function(){
                             $("#'.$this->id.'").prop("disabled",true);
-                            $("#ajax_loader").show();
+                            $(".ajaxLoader").show();
                             var myData = $("form").find("input[name],select.form-control").serializeArray();
                             var btn_asinc = {
                                   name: "btn_async",
@@ -52,7 +48,7 @@ class CampoBtnAsincrono extends Campo
                                 type: "POST",
                                 success: function(data){
                                     $("#'.$this->id.'").prop("disabled",false);
-                                    $("#ajax_loader").hide();
+                                    $(".ajaxLoader").hide();
                                     procesar_data(data);
                                 }
                             });
