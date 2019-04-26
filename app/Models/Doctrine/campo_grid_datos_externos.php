@@ -3,6 +3,7 @@ require_once('campo.php');
 
 use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
+use App\Rules\GrillaDatosExternos;
 
 class CampoGridDatosExternos extends Campo
 {
@@ -423,9 +424,6 @@ class CampoGridDatosExternos extends Campo
     public function formValidate(Request $request, $etapa_id = null)
     {
 
-        $values = $request->input($this->nombre);
-        $values = json_decode($values, true);
-
         $validator = Validator::make($request->all(), [
            $this->nombre => $this->validacion
         ]);
@@ -435,9 +433,24 @@ class CampoGridDatosExternos extends Campo
         }
 
         $validations = [];
-        foreach ($this->extra->columns as $key => $column) {
-          $validations[] = str_replace("|", "&", $column->validacion );
+
+        if( $this->extra->grilla_export_as == "array" ) {
+
+          foreach ($this->extra->columns as $key => $column) {
+            $validations[] = !empty($column->validacion) ? $column->validacion : '';
+          }
+
         }
-        return [ $this->nombre, 'valid_grilla:'. implode( ",", $validations ) ];
+
+        if( $this->extra->grilla_export_as == "object" ) {
+
+          foreach ($this->extra->columns as $key => $column) {
+            $column_name = !empty( $column->object_field_name ) ? $column->object_field_name : $column->header;
+            $validations[$column_name] = !empty($column->validacion) ? $column->validacion : '';
+          }
+
+        }
+
+        return [ $this->nombre, new GrillaDatosExternos($validations) ];
     }
 }
