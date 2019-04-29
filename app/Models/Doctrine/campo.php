@@ -293,6 +293,77 @@ class Campo extends Doctrine_Record
                     $resultado = !$resultado;
             }
 
+            $resultados = array();
+            array_push($resultados,$resultado);
+
+            //condiciones extras de visibilidad
+            if (count($this->condiciones_extra_visible)>0){
+                $condiciones = $this->condiciones_extra_visible;
+
+                foreach($condiciones as $condicion){
+
+                    $nombre_campo = preg_replace('/\[\w*\]$/', '', $condicion->campo);
+                    $variable = ($body == NULL) ? $this->extractVariable($request, $nombre_campo, TRUE) : $this->extractVariable($body, $nombre_campo, FALSE);
+                    //Parche para el caso de campos dependientes con accesores. Ej: ubicacion[comuna]!='Las Condes|Santiago'
+                    if (preg_match('/\[(\w+)\]$/', $condicion->campo, $matches))
+                        $variable = $variable[$matches[1]];
+                    
+                    if (is_null($variable)) {
+                        //buscar en este tramite la ultima aparición de la variable buscada
+                        $dato_dependiente = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($condicion->campo, $etapa_id);
+        
+                        // Si no se encuentra, volvemos a buscar eliminando los corchetes(agregados para el checkbox) si existen
+                        $dato_dependiente = substr($condicion->campo, abs(strlen($condicion->campo) - 2), 2) != '[]' && !is_null($dato_dependiente) ?
+                            $dato_dependiente : Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa(substr($condicion->campo, 0, strlen($condicion->campo) - 2)
+                                , $etapa_id);
+                        if ($dato_dependiente)
+                            $variable = is_array($dato_dependiente->valor) ? $dato_dependiente->valor : array($dato_dependiente->valor);
+                    }
+
+                    if ($variable === false) {    //Si la variable dependiente no existe
+                        $resultado = false;
+                        array_push($resultados,$resultado);
+                    } else {
+                        if (is_array($variable)) { //Es un arreglo
+                            if ($condicion->tipo == 'regex') {
+                                foreach ($variable as $x) {
+                                    if (!preg_match('/' . $condicion->valor . '/', $x))
+                                        $resultado = false;
+                                }
+                            } else {
+                                if (!in_array($condicion->valor, $variable))
+                                    $resultado = false;
+                            }
+                        } else {
+                            if ($condicion->tipo == 'regex') {
+                                if (!preg_match('/' . $condicion->valor . '/', $variable))
+                                    $resultado = false;
+                            } else {
+                                if ($variable != $condicion->valor)
+                                    $resultado = false;
+                            }
+        
+                        }
+        
+                        if ($condicion->igualdad == '!=')
+                            $resultado = !$resultado;
+
+                        array_push($resultados,$resultado);
+                    }
+                }
+
+                if(in_array(false,$resultados))
+                        $resultado = false;
+                    else
+                        $resultado = true;
+            }else{
+                
+                if(in_array(false,$resultados))
+                    $resultado = false;
+                else
+                    $resultado = true;
+                
+            }
         }
 
         return $resultado;

@@ -265,12 +265,15 @@ class StagesController extends Controller
         $modo = $paso->modo;
         $respuesta = new \stdClass();
         $validations = [];
+        $tipos_no_serializados = array("checkbox","radio");
         if ($modo == 'edicion') {
 
             $campos_nombre_etiqueta = [];
             foreach ($formulario->Campos as $c) {
-                if(!$request->has($c->nombre))
-                    continue;
+
+                if(!in_array($c->tipo,$tipos_no_serializados))
+                    if(!$request->has($c->nombre))
+                        continue;
                 // Validamos los campos que no sean readonly y que esten disponibles (que su campo dependiente se cumpla)
                 if ($c->isEditableWithCurrentPOST($request, $etapa_id)) {
                     $validate = $c->formValidate($request, $etapa->id);
@@ -287,7 +290,6 @@ class StagesController extends Controller
                 if ($c->tipo == 'recaptcha') {
                     $validations['g-recaptcha-response'] = ['required', new Captcha];
                 }
-
             }
 
             $request->validate( $validations, [], $campos_nombre_etiqueta );
