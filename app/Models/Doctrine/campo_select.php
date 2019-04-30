@@ -88,11 +88,11 @@ class CampoSelect extends Campo
         $ws = isset($this->extra->ws) ? $this->extra->ws : null;
 
         $html = '<label>URL para cargar opciones desde webservice (Opcional)</label>';
-        $html .= '<input class="input-xxlarge" name="extra[ws]" value="' . $ws . '" />';
+        $html .= '<input class="form-control" name="extra[ws]" value="' . $ws . '" />';
         $html .= '<div class="help-block">
-                El WS debe ser REST JSONP con el siguiente formato: <a href="#" onclick="$(this).siblings(\'pre\').show()">Ver formato</a><br />
+                El WS debe ser REST JSON con el siguiente formato: <a href="#" onclick="$(this).siblings(\'pre\').show()">Ver formato</a><br />
                 <pre style="display:none">
-callback([
+[
     {
         "etiqueta": "Etiqueta 1",
         "valor": "Valor 1"
@@ -101,7 +101,7 @@ callback([
         "etiqueta": "Etiqueta 2",
         "valor": "Valor 2"
     },
-])
+]
                 </pre>
                 </div>';
 
