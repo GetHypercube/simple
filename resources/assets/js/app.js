@@ -30,9 +30,11 @@ $(document).on("submit", ".ajaxForm", function () {
     if (!form.submitting) {
         form.submitting = true;
         $(form).find(":submit").attr("disabled", true);
+        //$(form).find(":submit").button('loading');
+        $(form).find(":submit").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Cargando...');
         //$(form).append("<div class='ajaxLoader'>Cargando</div>");
-        var ajaxLoader = $('.ajaxForm').find(".ajaxLoader");
-        $(ajaxLoader).show();
+        // var ajaxLoader = $('.ajaxForm').find(".ajaxLoader");
+        // $(ajaxLoader).show();
         $.ajax({
             url: form.action,
             data: $('*:not(.camposvisibilidad)', form).serialize(),
@@ -77,7 +79,8 @@ $(document).on("submit", ".ajaxForm", function () {
                 });
 
                 form.submitting = false;
-                $(ajaxLoader).remove();
+                //$(ajaxLoader).remove();
+                $(form).find(":submit").button('reset');
                 $(form).find(":submit").attr("disabled", false);
             }
         });

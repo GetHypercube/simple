@@ -102,64 +102,6 @@ $(document).ready(function () {
         return false;
     });
 
-    /*
-    $(document).on("submit", ".ajaxForm", function () {
-        var form = this;
-        if (!form.submitting) {
-            form.submitting = true;
-            $(form).find(":submit").attr("disabled", true);
-            $(form).append("<div class='ajaxLoader'>Cargando</div>");
-            var ajaxLoader = $(form).find(".ajaxLoader");
-            $(ajaxLoader).css({
-                left: ($(form).width() / 2 - $(ajaxLoader).width() / 2) + "px",
-                top: ($(form).height() / 2 - $(ajaxLoader).height() / 2) + "px"
-            });
-            $('.ajaxLoader').show();
-            $.ajax({
-                url: form.action,
-                data: $(form).serialize(),
-                type: form.method,
-                dataType: "json",
-                success: function (response) {
-                    if (response.validacion) {
-                        if (response.redirect) {
-                            window.location = response.redirect;
-                        } else {
-                            var f = window[$(form).data("onsuccess")];
-                            f(form);
-                        }
-                    } else {
-                        if ($('#login_captcha').length > 0) {
-                            if ($('#login_captcha').is(':empty')) {
-                                grecaptcha.render('login_captcha', {
-                                    'sitekey': site_key
-                                });
-                            } else {
-                                grecaptcha.reset();
-                            }
-                        }
-
-                        form.submitting = false;
-                        $(ajaxLoader).remove();
-                        $(form).find(":submit").attr("disabled", false);
-
-                        $(form).find(".validacion").html(response.errores);
-                        $('html, body').animate({
-                            scrollTop: $(form).find(".validacion").offset().top - 10
-                        });
-                    }
-                },
-                error: function () {
-                    form.submitting = false;
-                    $(ajaxLoader).remove();
-                    $(form).find(":submit").attr("disabled", false);
-                }
-            });
-        }
-        return false;
-    });
-    */
-
     prepareDynaForm(".dynaForm");
 
     $(".dynaForm").on("change", ":input", function (event) {
@@ -178,7 +120,6 @@ function prepareDynaForm(form) {
         var existe = false;
         var visible = false;
         var condicion_final = $(el).data("condicion");
-
         if(condicion_final!='no-condition'){
             var myarr = condicion_final.split("&&");
             var resultados = [];
@@ -227,7 +168,6 @@ function prepareDynaForm(form) {
             }
         }else{
             $(form).find(":input[name='" + campo + "']").each(function (i, el) {
-                
                 existe = true;
                 var input = $(el).serializeArray();
                 for (var j in input) {
@@ -245,22 +185,7 @@ function prepareDynaForm(form) {
                         visible = !visible;
                     }
                     if (visible) {
-                        if ($(form).hasClass("debugForm"))
-                            $(el).css("opacity", "1.0");
-                        else
-                            $(el).show();
-
-                        if (!$(el).data("readonly"))
-                            $(el).find(":input").addClass("enabled-temp");
-
-                    } else {
-                        if ($(form).hasClass("debugForm"))
-                            $(el).css("opacity", "0.5");
-                        else
-                            $(el).hide();
-
-                        // $(el).find(":input").addClass("disabled-temp");
-                        //break;
+                        break;
                     }
                 }
             });
@@ -280,13 +205,12 @@ function prepareDynaForm(form) {
                     else
                         $(el).hide();
 
-                    $(el).find(":input").addClass("disabled-temp");
+                    // $(el).find(":input").addClass("disabled-temp");
                 }
             }
         }
     });
 
-    //prepareDynaForm(".dynaForm");
     $(form).find(":input.disabled-temp").each(function (i, el) {
         $(el).prop("disabled", true);
         $(el).removeClass("disabled-temp");
