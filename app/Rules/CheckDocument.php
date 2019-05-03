@@ -53,13 +53,15 @@ class CheckDocument implements Rule
 
         if ($file->validez !== null) {
             if ($file->validez_habiles) {
-                $fecha_expiracion = strtotime(add_working_days($file->created_at, $file->validez));
+                $fecha_creacion = \Carbon\Carbon::parse($file->created_at);
+                $fecha_expiracion = (new \App\Helpers\dateHelper())->add_working_days($fecha_creacion,$file->validez);
             } else {
-                $fecha_expiracion = strtotime($file->created_at . ' + ' . $file->validez . ' days');
+                $fecha_creacion = \Carbon\Carbon::parse($file->created_at);
+                $fecha_expiracion = $fecha_creacion->addDays($file->validez);
             }
 
-
-            if (now() > $fecha_expiracion && $file->validez > 0) {
+            $fecha_actual = \Carbon\Carbon::today();
+            if ($fecha_actual->greaterThan($fecha_expiracion) && $file->validez > 0) {
                 $this->message = 'Documento expiró su periodo de validez.';
                 return false;
             }
