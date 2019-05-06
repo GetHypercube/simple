@@ -86,5 +86,8 @@
                 @endif
             </div>
         </fieldset>
+        <div class="ajaxLoader" style="position: fixed; left: 50%; top: 30%; display: none;">
+            <img src="{{asset('img/loading.gif')}}">
+        </div>
     </form>
 @endsection

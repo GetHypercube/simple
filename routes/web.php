@@ -41,6 +41,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/documentos/get/{inline}/{filename}', 'DocumentController@get')->name('document.get');
     Route::get('/etapas/estados/{tramite_id}', 'StagesController@estados')->name('stage.estados');
     Route::post('/etapas/validar_campos_async', 'StagesController@validar_campos_async')->name('etapa.validar_campos_async');
+    Route::post('/etapas/save/{etapa_id}', 'StagesController@saveForm')->name('stage.save_form');
 
     Route::get('/consultas', 'ConsultController@index')->name('consulta');
     Route::post('/consultas', 'ConsultController@index')->name('consulta');
@@ -82,6 +83,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::view('/cuentas', 'backend.cuentas')->name('cuentas');
         Route::post('/cuentas', 'ConfigurationController@saveMyAccount')->name('cuentas.save');
         Route::post('/uploader/masiva', 'ConfigurationController@masiva')->name('uploader.masiva');
+        Route::get('/form/existe_campo_en_form', 'FormsController@existeCampoEnForm')->name('form.existe_campo_en_form');
 
         //Home
         Route::get('gestion/widget_load/{widget_id}', 'ManagementController@widget_load')->name('management.widget_load');

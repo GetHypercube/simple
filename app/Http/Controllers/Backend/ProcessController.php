@@ -699,12 +699,11 @@ class ProcessController extends Controller
      */
     private function migrarEventosExternos($proceso)
     {
-        Log::info("Revisando seguridad para proceso id " . $proceso->id);
+        Log::info("Revisando eventos externos para proceso id " . $proceso->id);
         $tareas = $proceso->Tareas;
         foreach ($tareas as $tarea) {
             foreach ($tarea->Eventos as $evento) {
                 if (isset($evento->evento_externo_id) && strlen($evento->evento_externo_id) > 0) {
-                    $evento->evento_externo_id = $tarea->EventosExternos[$evento->evento_externo_id]->id;
                     $evento->save();
                 }
             }

@@ -174,8 +174,8 @@ class Proceso extends Doctrine_Record
         $proceso->Tareas;
         foreach ($proceso->Tareas as $t) {
             $t->Pasos;
-            $t->Eventos;
             $t->EventosExternos;
+            $t->Eventos;
         }
 
         $proceso->Formularios;
@@ -285,42 +285,40 @@ class Proceso extends Doctrine_Record
                                 $paso->Formulario = $proceso->Formularios[$pa->formulario_id];
                                 $tarea->Pasos[$pa->id] = $paso;
                             }
-                        } elseif ($keyt == 'Eventos') {
-                            foreach ($t_attr as $ev) {
-                                $evento = new Evento();
-                                foreach ($ev as $keyev => $ev_attr) {
-                                    if ($keyev != 'id' && $keyev != 'tarea_id' && $keyev != 'Tarea' && $keyev != 'accion_id' && $keyev != 'paso_id')
-                                        $evento->{$keyev} = $ev_attr;
-                                }
-                                $evento->Accion = $proceso->Acciones[$ev->accion_id];
-                                if ($ev->paso_id) $evento->Paso = $tarea->Pasos[$ev->paso_id];
-                                $tarea->Eventos[] = $evento;
-                            }
-                        } elseif ($keyt == 'EventosExternos') {
+                        } elseif ($keyt == 'EventosExternos' || $keyt=='Eventos') {
                             Log::info("Agregando eventos externos");
                             foreach ($tarea->EventosExternos as $key => $val)
                                 unset($tarea->EventosExternos[$key]);
-                            foreach ($t_attr as $ev) {
+                            foreach ($t->EventosExternos as $ev) {
                                 $evento_externo = new EventoExterno();
                                 foreach ($ev as $keyev => $ev_attr) {
                                     if ($keyev != 'id' && $keyev != 'tarea_id' && $keyev != 'Tarea') {
                                         $evento_externo->{$keyev} = $ev_attr;
                                     }
-                                    Log::info("evento a agregar: ");
-                                    Log::info("Id: " . $evento_externo->id);
-                                    Log::info("nombre: " . $evento_externo->nombre);
-                                    Log::info("metodo: " . $evento_externo->metodo);
-                                    Log::info("url: " . $evento_externo->url);
-                                    Log::info("mensaje: " . $evento_externo->mensaje);
-                                    Log::info("regla: " . $evento_externo->regla);
-                                    Log::info("tarea_id: " . $evento_externo->tarea_id);
-                                    Log::info("opciones: " . $evento_externo->opciones);
                                     $tarea->EventosExternos[$ev->id] = $evento_externo;
                                 }
                             }
-
                             Log::info("Eventos externos agregados: " . count($tarea->EventosExternos));
 
+                            Log::info("Agregando eventos");
+                            foreach ($tarea->Eventos as $key => $val)
+                                unset($tarea->Eventos[$key]);
+                            foreach ($t->Eventos as $ev) {
+                                $evento = new Evento();
+                                foreach ($ev as $keyev => $ev_attr) {
+                                    if ($keyev != 'id' && $keyev != 'tarea_id' && $keyev != 'Tarea' && $keyev != 'accion_id' && $keyev != 'paso_id' && $keyev != 'evento_externo_id')
+                                        $evento->{$keyev} = $ev_attr;
+                                }
+                                $evento->Accion = $proceso->Acciones[$ev->accion_id];
+                                if ($ev->paso_id)
+                                    $evento->Paso = $tarea->Pasos[$ev->paso_id];
+
+                                if($ev->evento_externo_id) 
+                                    $evento->EventoExterno = $tarea->EventosExternos[$ev->evento_externo_id];
+
+                                $tarea->Eventos[] = $evento;
+                            }
+                            Log::info("Eventos agregados: " . count($tarea->Eventos));
                         } elseif ($keyt != 'id' && $keyt != 'proceso_id' && $keyt != 'Proceso') { // && $keyt != 'grupos_usuarios'){
                             $tarea->{$keyt} = $t_attr;
                         }
