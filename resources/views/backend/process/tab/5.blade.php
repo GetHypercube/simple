@@ -136,7 +136,7 @@
                 </select>
             </td>
             <td>
-                <input type="hidden" name="eventos[<?= $key + 1 ?>][accion_id]"
+                <input type="hidden" class="eventoAccionId" name="eventos[<?= $key + 1 ?>][accion_id]"
                        value="<?= $p->accion_id ?>"/>
                 <input type="hidden" name="eventos[<?= $key + 1 ?>][campo_asociado]"
                        value="<?=(isset($p->campo_asociado) ? $p->campo_asociado : '' ) ?>"/>

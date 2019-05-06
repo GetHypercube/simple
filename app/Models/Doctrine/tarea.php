@@ -245,6 +245,7 @@ class Tarea extends Doctrine_Record
 
         //Agregamos los nuevos
         if (is_array($eventos_array)) {
+            ksort($eventos_array);
             foreach ($eventos_array as $key => $p) {
                 //Seteamos el paso_id solamente si el paso es parte de esta tarea.
                 $paso_id = null;
