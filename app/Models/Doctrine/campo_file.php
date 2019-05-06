@@ -78,6 +78,7 @@ class CampoFile extends Campo
         $output .= '<option name="odp" ' . (in_array('odp', $filetypes) ? 'selected' : '') . '>odp</option>';
         $output .= '<option name="ods" ' . (in_array('ods', $filetypes) ? 'selected' : '') . '>ods</option>';
         $output .= '<option name="odg" ' . (in_array('odg', $filetypes) ? 'selected' : '') . '>odg</option>';
+        $output .= '<option name="kmz" ' . (in_array('kmz', $filetypes) ? 'selected' : '') . '>kmz</option>';
         $output .= '</select>';
 
         return $output;
