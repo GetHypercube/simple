@@ -457,43 +457,43 @@ class StagesController extends Controller
         }
 
         // $etapa->avanzar($request->input('usuarios_a_asignar'));
-        try {
-            $agenda = new AppointmentController();
-            $appointments = $agenda->obtener_citas_de_tramite($etapa_id);
-            if (isset($appointments) && is_array($appointments) && (count($appointments) >= 1)) {
-                $json = '{"ids":[';
-                $i = 0;
-                foreach ($appointments as $item) {
-                    if ($i == 0) {
-                        $json = $json . '"' . $item . '"';
-                    } else {
-                        $json = $json . ',"' . $item . '"';
-                    }
-                    $i++;
-                }
-                $json = $json . ']}';
-                $agenda->confirmar_citas_grupo($json);
-                $etapa->avanzar($request->input('usuarios_a_asignar'));
-            } else {
-                $etapa->avanzar($request->input('usuarios_a_asignar'));
-            }
+        // try {
+        //     $agenda = new AppointmentController();
+        //     $appointments = $agenda->obtener_citas_de_tramite($etapa_id);
+        //     if (isset($appointments) && is_array($appointments) && (count($appointments) >= 1)) {
+        //         $json = '{"ids":[';
+        //         $i = 0;
+        //         foreach ($appointments as $item) {
+        //             if ($i == 0) {
+        //                 $json = $json . '"' . $item . '"';
+        //             } else {
+        //                 $json = $json . ',"' . $item . '"';
+        //             }
+        //             $i++;
+        //         }
+        //         $json = $json . ']}';
+        //         $agenda->confirmar_citas_grupo($json);
+        //         $etapa->avanzar($request->input('usuarios_a_asignar'));
+        //     } else {
+        //         $etapa->avanzar($request->input('usuarios_a_asignar'));
+        //     }
 
-            $proximas = $etapa->getTareasProximas();
+        //     $proximas = $etapa->getTareasProximas();
 
-            Log::info("###Id etapa despues de avanzar: " . $etapa->id);
-            Log::info("###Id tarea despues de avanzar: " . $etapa->tarea_id);
-            $cola = new \ColaContinuarTramite();
-            $tareas_encoladas = $cola->findTareasEncoladas($etapa->tramite_id);
-            if ($proximas->estado === 'pendiente') {
-                Log::debug("pendiente");
-                foreach ($proximas->tareas as $tarea) {
-                    Log::debug('Ejecutando continuar de etapa ' . $tarea->id . " en trámite " . $etapa->tramite_id);
-                    $etapa->ejecutarColaContinuarTarea($tarea->id, $tareas_encoladas);
-                }
-            }
-        } catch (Exception $err) {
-            Log::error($err->getMessage());
-        }
+        //     Log::info("###Id etapa despues de avanzar: " . $etapa->id);
+        //     Log::info("###Id tarea despues de avanzar: " . $etapa->tarea_id);
+        //     $cola = new \ColaContinuarTramite();
+        //     $tareas_encoladas = $cola->findTareasEncoladas($etapa->tramite_id);
+        //     if ($proximas->estado === 'pendiente') {
+        //         Log::debug("pendiente");
+        //         foreach ($proximas->tareas as $tarea) {
+        //             Log::debug('Ejecutando continuar de etapa ' . $tarea->id . " en trámite " . $etapa->tramite_id);
+        //             $etapa->ejecutarColaContinuarTarea($tarea->id, $tareas_encoladas);
+        //         }
+        //     }
+        // } catch (Exception $err) {
+        //     Log::error($err->getMessage());
+        // }
 
         //Job para indexar contenido cada vez que se avanza de etapa
         $this->dispatch(new IndexStages($etapa->Tramite->id));
