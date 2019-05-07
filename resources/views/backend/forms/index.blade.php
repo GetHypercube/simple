@@ -40,7 +40,11 @@
             <tbody>
             @foreach($formularios as $p)
                 <tr>
+                    @if(!is_null($p->descripcion))
+                    <td><?=$p->nombre ." | ".$p->descripcion?></td>
+                    @else
                     <td><?=$p->nombre?></td>
+                    @endif
                     <td>
                         <a href="<?=route('backend.forms.edit', [$p->id])?>" class="btn btn-primary">
                             <i class="material-icons">edit</i> Editar

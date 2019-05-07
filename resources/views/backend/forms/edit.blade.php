@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="float-right">
                                     <a href="#" class="btn btn-primary"
-                                       onclick="return editarFormulario(<?= $formulario->id ?>)">Cambiar Nombre</a>&nbsp;
+                                       onclick="return editarFormulario(<?= $formulario->id ?>)">Cambiar Nombre y descripción</a>&nbsp;
                                 </div>
                             </div>
                         </div>
