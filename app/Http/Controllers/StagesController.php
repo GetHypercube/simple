@@ -458,25 +458,26 @@ class StagesController extends Controller
 
         // $etapa->avanzar($request->input('usuarios_a_asignar'));
         try {
-            $agenda = new AppointmentController();
-            $appointments = $agenda->obtener_citas_de_tramite($etapa_id);
-            if (isset($appointments) && is_array($appointments) && (count($appointments) >= 1)) {
-                $json = '{"ids":[';
-                $i = 0;
-                foreach ($appointments as $item) {
-                    if ($i == 0) {
-                        $json = $json . '"' . $item . '"';
-                    } else {
-                        $json = $json . ',"' . $item . '"';
-                    }
-                    $i++;
-                }
-                $json = $json . ']}';
-                $agenda->confirmar_citas_grupo($json);
-                $etapa->avanzar($request->input('usuarios_a_asignar'));
-            } else {
-                $etapa->avanzar($request->input('usuarios_a_asignar'));
-            }
+            // $agenda = new AppointmentController();
+            // $appointments = $agenda->obtener_citas_de_tramite($etapa_id);
+            // if (isset($appointments) && is_array($appointments) && (count($appointments) >= 1)) {
+            //     $json = '{"ids":[';
+            //     $i = 0;
+            //     foreach ($appointments as $item) {
+            //         if ($i == 0) {
+            //             $json = $json . '"' . $item . '"';
+            //         } else {
+            //             $json = $json . ',"' . $item . '"';
+            //         }
+            //         $i++;
+            //     }
+            //     $json = $json . ']}';
+            //     $agenda->confirmar_citas_grupo($json);
+            //     $etapa->avanzar($request->input('usuarios_a_asignar'));
+            // } else {
+            //     $etapa->avanzar($request->input('usuarios_a_asignar'));
+            // }
+            $etapa->avanzar($request->input('usuarios_a_asignar'));
 
             $proximas = $etapa->getTareasProximas();
 
