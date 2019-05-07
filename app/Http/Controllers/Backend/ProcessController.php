@@ -618,7 +618,8 @@ class ProcessController extends Controller
             if (!$proceso) {
                 return redirect()->route('backend.procesos.index');
             }
-
+            $proceso->usuario_id = Auth::user()->id;
+            $proceso->created_at = Carbon::now('America/Santiago')->format('Y-m-d H:i:s');
             $proceso->save();
 
             Log::info("Migrando configuraciones de seguridad");
