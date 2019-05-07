@@ -173,10 +173,10 @@
                 //Reordenamos las posiciones
                 $(this).find("tr").each(function (i, e) {
                     $(e).find("td:nth-child(1)").text(i + 1);
-                    $(e).find("input[name*=accion_id]").attr("name", "eventos[" + (i + 1) + "][accion_id]");
+                    $(e).find(".eventoAccionId").attr("name", "eventos[" + (i + 1) + "][accion_id]");
                     $(e).find("input[name*=regla]").attr("name", "eventos[" + (i + 1) + "][regla]");
-                    $(e).find("input[name*=instante]").attr("name", "eventos[" + (i + 1) + "][instante]");
-                    $(e).find("input[name*=paso_id]").attr("name", "eventos[" + (i + 1) + "][paso_id]");
+                    $(e).find(".eventoInstante").attr("name", "eventos[" + (i + 1) + "][instante]");
+                    $(e).find(".eventoPasoId").attr("name", "eventos[" + (i + 1) + "][paso_id]");
                 });
             }
         });
