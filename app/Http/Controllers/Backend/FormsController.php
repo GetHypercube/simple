@@ -136,6 +136,7 @@ class FormsController extends Controller
         $request->validate(['nombre' => 'required']);
 
         $formulario->nombre = $request->input('nombre');
+        $formulario->descripcion = $request->input('descripcion');
         $formulario->save();
 
         return response()->json(['validacion' => true, 'redirect' => route('backend.forms.edit', [$formulario->id])]);

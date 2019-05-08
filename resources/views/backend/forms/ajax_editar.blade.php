@@ -13,6 +13,8 @@
                 <div class="validacion"></div>
                 <label>Nombre</label>
                 <input type="text" class="form-control" name="nombre" value="{{$formulario->nombre}}"/>
+                <label>Descripción(Opcional)</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="5" cols="10">{{$formulario->descripcion}}</textarea>
             </form>
         </div>
         <div class="modal-footer">

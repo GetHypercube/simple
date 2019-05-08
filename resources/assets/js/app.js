@@ -31,7 +31,7 @@ $(document).on("submit", ".ajaxForm", function () {
         form.submitting = true;
         $(form).find(":submit").attr("disabled", true);
         //$(form).find(":submit").button('loading');
-        $(form).find(":submit").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Cargando...');
+        $(form).find(":submit").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Enviando...');
         //$(form).append("<div class='ajaxLoader'>Cargando</div>");
         // var ajaxLoader = $('.ajaxForm').find(".ajaxLoader");
         // $(ajaxLoader).show();
@@ -60,7 +60,7 @@ $(document).on("submit", ".ajaxForm", function () {
                         grecaptcha.reset();
                     }
                 }
-
+                $(form).find(":submit").html('Siguiente');
                 var html = '';
                 $.each(error.responseJSON.errors, function (index, value) {
                     html += '' +

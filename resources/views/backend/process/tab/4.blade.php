@@ -6,7 +6,11 @@
             <td>
                 <select class="pasoFormulario form-control">
                     @foreach ($formularios as $f)
+                        @if(!is_null($f->descripcion))
+                            <option value="<?= $f->id ?>"><?= $f->nombre ." | ".$f->descripcion ?></option>
+                        @else
                         <option value="<?= $f->id ?>"><?= $f->nombre ?></option>
+                        @endif
                     @endforeach
                 </select>
             </td>
@@ -47,9 +51,15 @@
         @foreach ($tarea->Pasos as $key => $p)
             <tr>
                 <td><?= $key + 1 ?></td>
+                @if(!is_null($p->Formulario->descripcion))
+                <td><a title="Editar" target="_blank"
+                       href="<?= url('backend/formularios/editar/' . $p->Formulario->id) ?>"><?= $p->Formulario->nombre ." | ".$p->Formulario->descripcion ?></a>
+                </td>
+                @else
                 <td><a title="Editar" target="_blank"
                        href="<?= url('backend/formularios/editar/' . $p->Formulario->id) ?>"><?= $p->Formulario->nombre ?></a>
                 </td>
+                @endif
                 <td><input type="text" class="form-control" name="pasos[<?= $key + 1 ?>][regla]" value="<?= $p->regla ?>"/></td>
                 <td><?= $p->modo ?></td>
                 <td>
