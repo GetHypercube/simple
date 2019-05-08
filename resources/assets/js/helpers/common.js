@@ -267,10 +267,10 @@ function calendarioFront(idagenda, idobject, idcita, tramite, etapa) {
 }
 
 var procesar_data = function(data){
-    //en caso de existir los campos se setea el valor, de lo contrario se crean campos hidden para que 
+    //en caso de existir los campos se setea el valor, de lo contrario se crean campos hidden para que
     //puedan realizar lo mismo y poder cumplir con las condiciones de visibilidad
     $.each(data, function(k,v) {
-        if($('[name="'+data[k].nombre+'"]').length){
+        if( data[k].valor && $('[name="'+data[k].nombre+'"]').length){
             var valor = JSON.parse(data[k].valor);
             if(typeof valor !== 'string'){
                 valor = JSON.stringify(valor);
@@ -278,14 +278,23 @@ var procesar_data = function(data){
             $('[name="'+data[k].nombre+'"]').val(valor);
             $('[name="'+data[k].nombre+'"]').trigger('change');
         }
-        else{
-            var valor = data[k].valor.replace(/['"]+/g, '');
+        else {
+
+            if( data[k].valor &&  (Array.isArray( JSON.parse( data[k].valor ) ) || isObject( JSON.parse( data[k].valor ) ) ) )
+                var valor = data[k].valor.replace(/[\r\n|\n|\r]+/g, '');
+            else
+                var valor = data[k].valor.replace(/['"]+/g, '');
+
             $('<input>').attr({
                 type: 'hidden',
                 name: data[k].nombre,
-                value: valor
+                value: valor,
             }).appendTo('form');
         }
     });
     prepareDynaForm(".dynaForm");
+}
+
+function isObject (value) {
+  return value && typeof value === 'object' && value.constructor === Object;
 }
