@@ -81,17 +81,20 @@
                     }
                     $condicion_final = substr($condicion_final,0,-2);
                 ?>
-                <div class="campo control-group" data-id="<?=$c->id?>"
-                    <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : 'data-dependiente-campo="dependiente"' ?> style="display: <?= $c->isCurrentlyVisible($etapa->id) ? 'block' : 'none'?>;"
-                    data-readonly="{{$paso->modo == 'visualizacion' || $c->readonly}}" <?=$c->condiciones_extra_visible ? 'data-condicion="' . $condicion_final . '"' : 'data-condicion="no-condition"'  ?> >
-                    @if($secuencia > 0)
+                @if($secuencia > 0)
+                    <span class="campo control-group">
                         <a class="btn btn-light"
                         href="{{url('etapas/ejecutar/' . $etapa->id . '/' . ($secuencia - 1) . ($qs ? '?' . $qs : ''))}}">
                             Volver
                         </a>
-                    @endif
+                    </span>
+                @endif
+                <span class="campo control-group" data-id="<?=$c->id?>"
+                    <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : 'data-dependiente-campo="dependiente"' ?> style="display: <?= $c->isCurrentlyVisible($etapa->id) ? 'block' : 'none'?>;"
+                    data-readonly="{{$paso->modo == 'visualizacion' || $c->readonly}}" <?=$c->condiciones_extra_visible ? 'data-condicion="' . $condicion_final . '"' : 'data-condicion="no-condition"'  ?> >
+                    
                     <?=$c->displayConDatoSeguimiento($etapa->id, $paso->modo)?>
-                </div>
+                </span>
             @else
                 @if ($secuencia > 0)
                     <a class="btn btn-light"
