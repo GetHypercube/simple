@@ -362,7 +362,7 @@ class CampoGridDatosExternos extends Campo
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
-    private function load_extra_config( $modo ){
+    private function load_extra_config( $modo = 'edicion' ){
         $this->columns = [];
         $this->botones = [];
         if (isset($this->extra->columns))
