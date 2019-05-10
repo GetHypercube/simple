@@ -469,11 +469,13 @@ class ApiController extends Controller
 
     public function estados(Request $request, $tramite_id = null)
     {
-        if (!is_numeric($tramite_id)) {
-            return response()->json('ID inválido.');
-        }
+        if (!is_numeric($tramite_id))
+            return response()->json(['status' => 'ERROR', 'message' => 'ID inválido'], 400);
 
         $t = Doctrine::getTable('Tramite')->find($tramite_id);
+        if(!$t)
+            return response()->json(['status' => 'ERROR', 'message' => 'Trámite inválido'], 404);
+
         $etapa_id = $t->getUltimaEtapa()->id;
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
         $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id, 1)->count();
@@ -681,8 +683,97 @@ class ApiController extends Controller
         if($historial_estados)
             return response()->json(['status' => 'OK',], 200);
         else
-            return response()->json(['status' => 'OK',], 200);
+            return response()->json(['status' => 'ERROR', 'message' => 'Error al generar historial de estados'], 500);
 
     }
 
+    public function progress(Request $request, $tramite_id = null)
+    {
+        if (!is_numeric($tramite_id))
+            return response()->json(['status' => 'ERROR', 'message' => 'ID inválido'], 400);
+
+        $t = Doctrine::getTable('Tramite')->find($tramite_id);
+        if(!$t)
+            return response()->json(['status' => 'ERROR', 'message' => 'Trámite inválido'], 404);
+
+        $etapa_id = $t->getUltimaEtapa()->id;
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        
+        $json = json_decode($request->getContent(), true);
+        $historial_estados = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("historial_estados",$etapa_id);
+        if(!$historial_estados)
+            $array_estados = array();
+        else
+            $array_estados = $historial_estados->valor;
+
+        //Token
+        if(count($json)>0){
+            $existe_token = false;
+            foreach($json as $key => $value){
+                if($key=='token'){
+                    $api_token = $value;
+                    $cuenta = Cuenta::cuentaSegunDominio();
+
+                    if (!$cuenta->api_token)
+                        return response()->json(['status' => 'ERROR', 'message' => 'Usuario no tiene permisos para ejecutar esta etapa.'], 403);
+
+                    if ($cuenta->api_token != $api_token) {
+                        return response()->json(['status' => 'ERROR', 'message' => 'Usuario no tiene permisos para ejecutar esta etapa.'], 403);
+                    }
+                    $existe_token = true;
+                }
+            }
+            if(!$existe_token)
+                return response()->json(['status' => 'ERROR', 'message' => 'Usuario no tiene permisos para ejecutar esta etapa.'], 403);
+        }
+        //Fin token
+
+        if (count($json) > 0) {
+            $associativeArray = array();
+            foreach ($json as $key => $value) {
+                $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa_id);
+                if (!$dato)
+                    $dato = new DatoSeguimiento();
+                $key = str_replace("-", "_", $key);
+                $key = str_replace(" ", "_", $key);
+                $dato->nombre = $key;
+                $dato->valor = $value;
+                $dato->etapa_id = $etapa_id;
+                $dato->save();
+
+                switch ($key) {
+                    case 'status':
+                        $associativeArray['status'] = $dato->valor;
+                        break;
+                    case 'description':
+                        $associativeArray['description'] = $dato->valor;
+                        break;
+                    case 'message':
+                        $associativeArray['message'] = $dato->valor;
+                        break;
+                    case 'service_application_id':
+                        $associativeArray['service_application_id'] = $dato->valor;
+                        break;
+                    case 'stage':
+                        $associativeArray['stage'] = $dato->valor;
+                        break;
+                }
+            }
+            $associativeArray['created_at'] = Carbon::now('America/Santiago')->format('d-m-Y H:i:s');
+            array_push($array_estados, $associativeArray);
+            $historial_estados = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId("historial_estados",$etapa_id);
+            if(!$historial_estados)
+                $historial_estados = new DatoSeguimiento();
+
+            $historial_estados->nombre = 'historial_estados';
+            $historial_estados->valor = $array_estados;
+            $historial_estados->etapa_id = $etapa_id;
+            $historial_estados->save();
+        }
+
+        if($historial_estados)
+            return response()->json(['status' => 'OK',], 200);
+        else
+            return response()->json(['status' => 'ERROR', 'message' => 'Error al generar historial de estados'], 500);
+    }
 }
