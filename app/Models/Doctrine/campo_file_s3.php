@@ -41,7 +41,8 @@ class CampoFileS3 extends Campo
         }
 
         if (!$etapa_id) {
-            $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
+            $display = '<div class="campos3">';
+            $display .= '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
             $display .= '<div class="controls">';
             $display .= '<input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="" />';
             $display .= '<button type="button" class="btn btn-light">Subir archivo</button>';
@@ -51,13 +52,14 @@ class CampoFileS3 extends Campo
             }
 
             $display .= '</div>';
+            $display .= '</div>';
 
             return $display;
         }
 
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-
-        $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
+        $display = '<div class="campos3">';
+        $display .= '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '
         <div class="controls">
             <input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value=""  />
@@ -105,6 +107,7 @@ class CampoFileS3 extends Campo
 
         if ($this->ayuda)
             $display .= '<span class="form-text text-muted">' . $this->ayuda . '</span>';
+            $display .= '</div>';
             $display .= '</div>';
         return $display;
     }

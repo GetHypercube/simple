@@ -530,3 +530,13 @@ progress::-webkit-progress-value {
   width: 650px;
   height: 400px;
 }
+
+.campo > .campos3{ 
+    border-bottom: 1px dotted #ccc;
+    padding-top: 15px;
+    margin-bottom: 10px;
+
+    .control-label {
+      font-weight: bold;
+    }
+}
