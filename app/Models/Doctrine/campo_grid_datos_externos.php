@@ -29,7 +29,7 @@ class CampoGridDatosExternos extends Campo
 
     protected function display($modo, $dato, $etapa_id = false)
     {
-        $this->load_extra_config();
+        $this->load_extra_config( $modo );
 
         $display_modal = '
         <div class="modal fade modalgrid" id="table_alter_modal_'.$this->id.'" tabindex="-1" role="dialog" aria-labelledby="add_to_table_modal_label_'.$this->id.'" aria-hidden="true">
@@ -140,7 +140,9 @@ class CampoGridDatosExternos extends Campo
                 });
             </script>
         ';
-        $display .= $display_modal;
+        if( $modo != 'visualizacion' )
+          $display .= $display_modal;
+
         return $display;
     }
 
@@ -149,7 +151,7 @@ class CampoGridDatosExternos extends Campo
         $this->load_extra_config();
         $precarga = isset($this->extra->precarga) ? $this->extra->precarga : null;
 
-        $hidden_arr[] = '<input type="hidden" name="extra[agregable]" value="'.($this->agregable ? 'true': 'false').'" />';
+        $hidden_arr[] = '<input type="hidden" name="extra[agregable]" value="'.($this->agregable  ? 'true': 'false').'" />';
         $hidden_arr[] = '<input type="hidden" name="extra[eliminable]" value="'.($this->eliminable ? 'true': 'false').'"/>';
         $hidden_arr[] = '<input type="hidden" name="extra[editable]" value="'.($this->editable ? 'true': 'false').'"/>';
         $output = implode("\n", $hidden_arr);
@@ -360,7 +362,7 @@ class CampoGridDatosExternos extends Campo
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
-    private function load_extra_config(){
+    private function load_extra_config( $modo = 'edicion' ){
         $this->columns = [];
         $this->botones = [];
         if (isset($this->extra->columns))
@@ -372,12 +374,12 @@ class CampoGridDatosExternos extends Campo
         }
 
         $this->eliminable = false;
-        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true'){
+        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true' && $modo != 'visualizacion' ){
             $this->eliminable = true;
         }
 
         $this->editable = false;
-        if(isset($this->extra->editable) && $this->extra->editable == 'true'){
+        if(isset($this->extra->editable) && $this->extra->editable == 'true' && $modo != 'visualizacion'){
             $this->editable = true;
         }
 
@@ -395,16 +397,16 @@ class CampoGridDatosExternos extends Campo
         if( $this->eliminable || $this->editable ){
             $this->tiene_acciones = true;
         }
-        if(isset($this->extra->agregable) && $this->extra->agregable == 'true'){
+        if(isset($this->extra->agregable) && $this->extra->agregable == 'true' && $modo != 'visualizacion' ){
             $this->botones[] = '<button type="button" class="btn btn-outline-secondary" onclick="open_add_modal('.$this->id.')">Agregar</button>';
         }
-        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true'){
+        if(isset($this->extra->eliminable) && $this->extra->eliminable == 'true' && $modo != 'visualizacion' ){
             $this->botones[] = '<button type="button" class="btn btn-outline-secondary" style="" onclick="grilla_datos_externos_eliminar('.$this->id.')">Eliminar</button>';
         }
 
-        if( isset($this->extra->buttons_position) && $this->extra->buttons_position === 'bottom' ){
+        if( isset($this->extra->buttons_position) && $this->extra->buttons_position === 'bottom' && $modo != 'visualizacion' ){
             $this->botones_position = $this->extra->buttons_position;
-        }else{
+        }else {
             $this->botones_position = 'right_side';
         }
 
