@@ -102,7 +102,7 @@
                         Volver
                     </a>
                 @endif
-                <button class="btn btn-simple btn-danger" type="submit">Siguiente</button>
+                <button class="btn btn-danger" type="submit">Siguiente</button>
             @endif        
         </div>
 
