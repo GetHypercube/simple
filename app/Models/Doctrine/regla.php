@@ -22,7 +22,6 @@ class Regla
 
         $new_regla = $this->getExpresionParaEvaluar($etapa_id, $ev);
         $new_regla = 'return ' . $new_regla . ';';
-
         $resultado = FALSE;
         $errores = (new \App\Helpers\SaferEval())->checkScript($new_regla, FALSE);
         if (is_null($errores)) {
@@ -32,7 +31,7 @@ class Regla
                 $resultado = false;
             }
         }
-
+       
         return $resultado;
     }
 
@@ -40,7 +39,6 @@ class Regla
     // Esta expresion es la que se evalua finalmente en la regla
     public function getExpresionParaEvaluar($etapa_id, $ev = FALSE)
     {
-
         Log::debug('getExpresionParaEvaluar');
 
         $new_regla = $this->regla;
@@ -50,10 +48,15 @@ class Regla
         $new_regla = preg_replace_callback('/@@(\w+)((->\w+|\[\w+\])*)/', function ($match) use ($etapa_id, $ev) {
             $nombre_dato = $match[1];
             $accesor = isset($match[2]) ? $match[2] : '';
-
+            
+            
             $dato = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($nombre_dato, $etapa_id);
+            
 
-            if ($dato) {
+             //if empty jp
+            if(empty($dato)){
+                echo 'La variable que esta evaluando no está siendo completada';
+            if ($dato){
                 $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
                 $valor_dato = 'json_decode(\'' . json_encode($dato_almacenado) . '\')';
                 if ($ev) {
@@ -74,6 +77,8 @@ class Regla
                         }
                     }
                 }
+             } //fin empty
+
             } else {
                 // No reemplazamos el dato
                 $valor_dato = 'json_decode(\'' . json_encode(null) . '\')';
