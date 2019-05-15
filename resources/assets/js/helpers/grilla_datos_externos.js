@@ -34,7 +34,7 @@ var modal_agregar_a_grilla = function(grilla_id){
         var el = $(elemento);
         if(el.val().toString().length > 0)
             some_count++;
-        
+
         if(is_array){
             to_add.push(el.val());
         }else{
@@ -44,9 +44,9 @@ var modal_agregar_a_grilla = function(grilla_id){
             to_add[header_key] = el.val();
         }
     });
-    
+
     modal_grande.modal("hide");
-    
+
     if( some_count <= 0  )
         return;
 
@@ -57,7 +57,7 @@ var modal_agregar_a_grilla = function(grilla_id){
             to_add[nombre_columna_acciones] = grillas_datatable[grilla_id].grid_acciones;
         }
     }
-    
+
     grillas_datatable[grilla_id].table.row.add( to_add ).draw( true );
     store_data_in_hidden(grilla_id);
 }
@@ -94,7 +94,7 @@ var grilla_populate_objects = function(grilla_id, data){
     // debe coincidir con la cantidad de columnas en la tabla, pero no viene ese campo ya que es un checkbox
     var tiene_acciones = grillas_datatable[grilla_id].tiene_acciones;
     var headers_obj = grillas_datatable[grilla_id].headers_object;
-    
+
     var headers = headers_obj.map(function(c){return c.data;});
 
     if(tiene_acciones){
@@ -120,7 +120,7 @@ var grilla_populate_objects = function(grilla_id, data){
         if(tiene_acciones)
             data[i][nombre_columna_acciones] = grillas_datatable[grilla_id].grid_acciones;
     }
-    
+
     grillas_datatable[grilla_id].data = data;
     grillas_datatable[grilla_id].table.rows.add( data ).draw( true );
 }
@@ -134,7 +134,7 @@ var grilla_populate_arrays = function(grilla_id, data){
         if(data[i].length > cols_num){
             data[i] = data[i].slice(0, grillas_datatable[grilla_id].cantidad_columnas );
         }
-        
+
         for(var j=0;j <data[i].length;j++){
             if(data[i][j] == null)
                 data[i][j] = '';
@@ -217,7 +217,7 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
     grillas_datatable[grilla_id].headers_object = [];
     grillas_datatable[grilla_id].headers_array = [];
     grillas_datatable[grilla_id].field_types = [];
-    
+
     for(var i=0;i<columns.length;i++){
         // creamos el arreglo de cabeceras
         if(typeof columns[i].object_field_name == 'undefined' || columns[i].object_field_name == null){
@@ -230,18 +230,18 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
             data: columns[i].object_field_name,
             title: columns[i].header
         });
-        
+
         tr_header_obj.append(thead_html.replace("{{text}}", columns[i].header));
         if( columns[i].is_exportable=="true"){
             grillas_datatable[grilla_id].exportable_columns_indexes.push(i)
             grillas_datatable[grilla_id].exportable_columns_names.push({title:columns[i].header, data: columns[i].object_field_name});
             grillas_datatable[grilla_id].exportable_columns_names_flat.push(columns[i].object_field_name);
         }
-        
+
         // creamos el modal para agregar y editar registros
         if( typeof columns[i].modal_add_text == 'undefined' || columns[i].modal_add_text == null)
                 columns[i].modal_add_text = columns[i].header;
-        
+
         var new_element;
         if(columns[i].is_input=="true"){
             new_element = modal_form_input_html;
@@ -254,11 +254,11 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
                                  .replace('{{campo_id}}', grilla_id)
                                  .replace('{{field_type}}', columns[i].field_type)
         );
-        
+
         $('#ajax-alert_'+grilla_id).append(modal_validate_errors.replace('{{id}}', 'ajax-alert_'+grilla_id+'_'+ i) )
 
     }
-    
+
     if(grillas_datatable[grilla_id].tiene_acciones)
         tr_header_obj.append(thead_html.replace("{{text}}", "Acciones"));
 
@@ -278,13 +278,13 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
             return false;
         }
     });
-    
+
     if( grillas_datatable[grilla_id].is_array ){
         var headers = grillas_datatable[grilla_id].headers_array;
     }else{
         var headers = grillas_datatable[grilla_id].headers_object;
     }
-    
+
     grillas_datatable[grilla_id].table = $("#grilla-"+grilla_id).DataTable({language:
             {"sProcessing": "Procesando...",
                 "sLengthMenu": "Mostrar _MENU_ registros",
@@ -307,28 +307,28 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
             }],
             columns: headers
     }).draw(true);
-    
+
     grillas_datatable[grilla_id].table.on( 'draw', grilla_id, function (event, settings) {
         grilla_id = event.data;
         add_tooltips(grilla_id);
     });
-    
+
     grillas_datatable[grilla_id].table.on("click", "tbody tr", grilla_id, function (event) {
         grilla_id = event.data;
         if( ! grillas_datatable[grilla_id].is_editable) {
             return;
         }
-            
+
         if( (event.target.tagName.toLocaleLowerCase() == 'td' || event.target.tagName.toLocaleLowerCase() == 'div' ) && $(event.target).children('button').length > 0 ){
             return;
         }
-        
+
         var j_row = $(this);
         var dt_row = grillas_datatable[grilla_id].table.row( this );
         var modal = $("#table_alter_modal_" + grilla_id );
         var current_values = [];
         var table_selector = 'td';
-        
+
         if(j_row.has('.dataTables_empty').length > 0){
             // Se hizo click en la fila que muestra "no hay registros que mostrar"
             return;
@@ -337,22 +337,22 @@ var init_tables = function(grilla_id, mode, columns, cell_text_max_length, is_ar
         if(grillas_datatable[grilla_id].tiene_acciones){
             table_selector += ':not(:last-child)';
         }
-        
+
         j_row.children(table_selector).each(function(idx, ele){
             current_values.push($(ele).attr('data-original-title'));
         });
-        
+
         modal.find('input').each(function(idx, ele){
             $(ele).val( current_values[idx] );
-        }); 
-        
+        });
+
         $('#add_to_table_modal_label_'+grilla_id).text('Editar Registro')
         var click_data = {
-            grilla_id: grilla_id, 
-            dt_row: dt_row, 
+            grilla_id: grilla_id,
+            dt_row: dt_row,
             modal: modal
         }
-        
+
         $('#modal_accept_button_' + grilla_id).on("click", click_data, function(event){
             // se gatilla al hacer click en editar
             var d = event.data;
@@ -407,10 +407,10 @@ var edit_row = function(evt, obj) {
 
 var modal_modificar_linea = function( grilla_id, dt_row, modal){
     var table = grillas_datatable[grilla_id].table;
-    modal.find('input').each(function(idx, ele){ 
+    modal.find('input').each(function(idx, ele){
         table.cell(dt_row, idx).data( $(ele).val() );
     });
-    
+
     table.draw(true);
     add_tooltips(grilla_id);
 }
@@ -436,19 +436,19 @@ var open_add_modal = function(grilla_id) {
     $('#modal-body-'+grilla_id, 'form').find(':input:not([type=hidden])').each(function(idx, elemento) {
         $(elemento).val("");
     });
-    
+
     $('#modal_accept_button_' + grilla_id).prop("onclick", null).off("click");
     $('#modal_accept_button_' + grilla_id).on("click", grilla_id, function(event){
         grilla_id = event.data;
         modal_agregar_a_grilla( grilla_id);
     });
-    
+
     $('#modal_accept_button_' + grilla_id).on("click", grilla_id, function(event){
         // Agregar fila
         grilla_id = event.data;
         modal_validate_multi(grilla_id).then(
             function(grilla_id){
-                return  function(){ 
+                return  function(){
                     if(grillas_datatable[grilla_id].is_modal_valid)
                         modal_agregar_a_grilla( grilla_id);
                 }
@@ -530,10 +530,10 @@ function store_data_in_hidden(grilla_id){
                             new_row.push( row[ele] );
                         }
                     });
-                    
+
                     data.push(new_row);
                 }
-            );  
+            );
         }else{
             // exportar como objetos
             grillas_datatable[grilla_id].table.rows(
@@ -557,7 +557,7 @@ function store_data_in_hidden(grilla_id){
                             }
                         });
                     }
-                    
+
                     data.push(dd);
                 }
             );
@@ -572,13 +572,14 @@ function store_data_in_hidden(grilla_id){
 }
 
 function add_data_to_table(grilla_id, data, replace){
-    if(data.length == 0){
-        console.warn('data vacia.');
-        return;
-    }
 
     if( typeof replace !== 'undefined' && replace === true){
         grillas_datatable[grilla_id].table.clear().draw(true);
+    }
+
+    if(data.length == 0){
+        console.warn('data vacia.');
+        return;
     }
 
     if( Array.isArray( data[0] ) ){
@@ -599,13 +600,13 @@ function modal_validate_multi(grilla_id){
             etiqueta: $(obj).data('etiqueta')
         }
     });
-    
+
     grillas_datatable[grilla_id].is_modal_valid = false;
     context = {
         campo_id: grilla_id,
         data: data
     }
-    
+
     return modal_validate(context, data);
 }
 
@@ -617,7 +618,7 @@ function modal_input_validate(obj){
         valor: $(obj).val(),
         etiqueta: $(obj).data('etiqueta')
     }
-    
+
     grillas_datatable[$(obj).data('campo_id')].is_modal_valid = false;
     context = {
         campo_id: $(obj).data('campo_id'),
@@ -638,7 +639,7 @@ function modal_validate(context, data){
             console.warn(data);
             return;
         }
-        
+
         var grilla_id = this.campo_id; // son iguales
         var ajax_alert = $('#ajax-alert_' + grilla_id);
         if( data.hasOwnProperty('messages') ){
@@ -651,11 +652,11 @@ function modal_validate(context, data){
                 var column = data['columnas'][index];
                 var ul = ajax_alert.find('#ajax-alert_' + grilla_id + '_' + column);
                 ul.find('li').remove();
-                
+
                 messages[index].forEach(function(msg){
                     ul.append('<li>' + msg + '</li>');
                 });
-                
+
                 grillas_datatable[grilla_id].is_modal_valid = false;
                 ajax_alert.show();
             }

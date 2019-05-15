@@ -311,14 +311,14 @@ class StagesController extends Controller
                         }
                     }
 
-                    if($c->tipo=='comunas'){                        
+                    if($c->tipo=='comunas'){
                         $region_comuna = $request->input($c->nombre);
                         $region_comuna['cstateCode'] = $request->input('cstateCode');
                         $region_comuna['cstateName'] = $request->input('cstateName');
                         $region_comuna['ccityCode'] = $request->input('ccityCode');
                         $region_comuna['ccityName'] = $request->input('ccityName');
                         $dato->valor = $region_comuna;
-                    }elseif($c->tipo=='provincias'){                        
+                    }elseif($c->tipo=='provincias'){
                         $region_provincia_comuna = $request->input($c->nombre);
                         $region_provincia_comuna['pstateCode'] = $request->input('pstateCode');
                         $region_provincia_comuna['pstateName'] = $request->input('pstateName');
@@ -840,7 +840,7 @@ class StagesController extends Controller
 
         return response()->json( [ 'status' => TRUE, 'code' => 0, 'columnas' => $data_columnas ] );
     }
-    
+
     public function saveForm(Request $request,$etapa_id){
 
         //Se guardan los datos del formulario en la etapa correspondiente
@@ -849,13 +849,13 @@ class StagesController extends Controller
         $protected_vars = array('_token','_method','paso','btn_async');
         foreach($input as $key => $value){
             if($key=='paso')
-                $paso = $etapa->getPasoEjecutable($value);       
+                $paso = $etapa->getPasoEjecutable($value);
             if($key=='btn_async'){
                 $campo = Doctrine_Query::create()
                     ->from("Campo")
                     ->where("id = ?", $value)
                     ->fetchOne();
-            } 
+            }
             if(!in_array($key,$protected_vars) && !is_null($value)){
                 $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa_id);
                 if (!$dato)
@@ -881,7 +881,7 @@ class StagesController extends Controller
                 ->select('nombre','valor')
                 ->get();
         $response = $datos->toArray();
-        
+
         //se genera arreglo con los datos procesados en la etapa
         $array_datos = [];
         foreach ($datos as $dato) {
@@ -894,20 +894,25 @@ class StagesController extends Controller
 
         //se obtienen todos los campos del formulario que está consultando y a la vez los nuevos hidden si es que aplica
         $campos = Campo::where('formulario_id',$formulario_id)->get();
-        
+
         //se recorren los campos del formulario para verificar que existan coincidencias con los datos obtenidos en la etapa
         foreach($campos as $campo){
-            
+
             //en caso que no exista valor por defecto, continua el recorrido sin agregar datos al arreglo
-            if(empty($campo->valor_default)){
+            if( empty($campo->valor_default) ){
                 continue;
             }
-            $var = str_replace('@@', '', $campo->valor_default);
+
+            $regla = new \Regla($campo->valor_default);
+            $var = $regla->getExpresionParaOutput($etapa->id);
+            $response[] = ['nombre'=>$campo->nombre, 'valor' => $var ];
+
             //si existe el campo valor por defecto dentro de los datos de la etapa los agrega a la respuesta para setear los datos
             //se setea como valor por defecto(para los que tienen) el valor del dato para el campo del formulario
-            if(array_key_exists($var, $array_datos)){
+            /*if(array_key_exists($var, $array_datos)){
                $response[] = ['nombre'=>$campo->nombre, 'valor' =>$array_datos[$var] ];
-            }
+            }*/
+
         }
 
         return response()->json($response);
