@@ -22,6 +22,7 @@
             $campos_dependientes = [];
             $campos_ocultos_extra = [];
         ?>
+        <?php $existe_btn_siguiente = false; ?>
         @foreach($paso->Formulario->Campos as $c)
             <?php
                 $campos_dependientes[] = $c->nombre;

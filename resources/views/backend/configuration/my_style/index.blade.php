@@ -55,7 +55,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -64,7 +64,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -73,7 +73,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -82,7 +82,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -109,7 +109,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>  
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -118,7 +118,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -127,7 +127,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>  
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -136,7 +136,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -162,7 +162,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td colspan="2">
@@ -171,7 +171,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -191,7 +191,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -200,7 +200,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -209,7 +209,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -218,7 +218,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -238,7 +238,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -247,7 +247,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -256,7 +256,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                         <td>
@@ -265,7 +265,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Rojo</option>
                                                 <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Verde</option>
+                                                <option value="#007328" style="color:#007328">Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -279,7 +279,7 @@
                                                 <option value="#000000" style="color:#000000">Negro</option>
                                                 <option value="#EB1414" style="color:#EB1414">Color</option>
                                                 <option value="#0054AB" style="color:#0054AB">Color</option>
-                                                <option value="#1D7D4C" style="color:#1D7D4C">Color</option>
+                                                <option value="#007328" style="color:#007328">Color</option>
                                             </select>
                                         </td>
                                     </tr>
