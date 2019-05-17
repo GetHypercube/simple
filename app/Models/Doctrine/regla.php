@@ -53,9 +53,6 @@ class Regla
             $dato = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($nombre_dato, $etapa_id);
             
 
-             //if empty jp
-            if(empty($dato)){
-                echo 'La variable que esta evaluando no está siendo completada';
             if ($dato){
                 $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
                 $valor_dato = 'json_decode(\'' . json_encode($dato_almacenado) . '\')';
@@ -77,7 +74,6 @@ class Regla
                         }
                     }
                 }
-             } //fin empty
 
             } else {
                 // No reemplazamos el dato
