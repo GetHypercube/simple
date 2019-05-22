@@ -220,7 +220,7 @@
                     $("#modal").modal();
                 }
             }else if(tipo=='btn_siguiente'){
-                if($('#div_btn_siguiente').length){
+                if($('.btn_siguiente').length){
                     alert('Ya existe un componente botón siguiente dentro del formulario actual.');
                 }else{
                     $("#modal").load("/backend/formularios/ajax_agregar_campo/" + formularioId + "/" + tipo);
