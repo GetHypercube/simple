@@ -211,5 +211,6 @@
         });
 
         $('.eventoInstante').trigger('change');
+        $('.eventoCampoAsociado').prop('disabled', true);
     })
 </script>
