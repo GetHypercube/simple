@@ -70,7 +70,7 @@
                     <option value="despues" <?= $p->instante=='despues' ? 'selected' : '' ?>>Después</option>
                 </select>
             </td>
-            <td><?= (isset($p->campo_asociado) ? $p->campo_asociado : '' ) ?></td>
+            <td><input type="text" class="form-control" name="eventos[<?= $key + 1 ?>][campo_asociado]" value="<?= $p->campo_asociado ?>"/></td>
             <td>
                 <select class="eventoPasoId form-control" name="eventos[<?= $key + 1 ?>][paso_id]">
                     <?php if($p->paso_id): ?>
@@ -138,8 +138,6 @@
             <td>
                 <input type="hidden" class="eventoAccionId" name="eventos[<?= $key + 1 ?>][accion_id]"
                        value="<?= $p->accion_id ?>"/>
-                <input type="hidden" name="eventos[<?= $key + 1 ?>][campo_asociado]"
-                       value="<?=(isset($p->campo_asociado) ? $p->campo_asociado : '' ) ?>"/>
                 <a class="delete" title="Eliminar" href="#"><i class="material-icons">close</i></a>
             </td>
         </tr>
