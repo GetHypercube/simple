@@ -442,6 +442,140 @@
 </ul>
 <p></p>
 
+<p></p>
+
+<ul>
+	<li><h4 id="btn_maps">Botón Asíncrono:</h4>
+</ul>
+<blockquote>
+<ul>
+	<li>Este nuevo campo disponible en los formularios de SIMPLE, permitirá ejecutar acciones el un mismo paso, es decir, no será necesario completar un paso para ejecutar los eventos.</li>
+</ul>
+</blockquote>
+<p>Para configurarlo, se deben realizar lo siguiente:</p>
+<p>Agregar el “Botón asíncrono” al formulario en el que se requieren ejecutar las acciones:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_1.jpg" alt="" width="737" height="72" />
+</p>
+<p></p>
+<p>Se debe definir un nombre al botón y una variable para reconocerlo dentro del proceso:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_2.jpg" alt="" width="737" height="72" />
+</p>
+<p></p>
+<p>Si se requiere, se pueden aplicar las reglas de visibilidad ya existentes en SIMPLE.
+	Como ejemplo, en un formulario, tenemos 2 campos de tipo textbox en los cuales se almacenarán 2 números (@@numero_1 y @@numero_2). Estos números se ocuparán en 2 acciones que se ejecutarán al presionar el botón “Ejecutar eventos” (botón asíncrono). Las acciones son “sumar números” que generará la variable @@suma_de_numeros y “multiplicar números” que generará la variable @@multiplicacion_de_numeros.</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_3.jpg" alt="" width="737" height="72" />
+</p>
+<p></p>
+<p>Cuando las acciones sean ejecutadas, se reflejará el valor en el formulario, actualizando los campos respectivos.</p>
+<p>La configuración de cada campo del formulario se muestra a continuación:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_4.jpg" alt="" width="737" height="72" />
+</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_5.jpg" alt="" width="737" height="72" />
+</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_6.jpg" alt="" width="737" height="72" />
+</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_7.jpg" alt="" width="737" height="72" />
+</p>
+<p></p>
+<p>Acciones que permitirán sumar y multiplicar:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_8.jpg" alt="" width="737" height="72" />
+</p>
+<p></p>
+<p>La configuración de cada campo del formulario se muestra a continuación:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_9.jpg" alt="" width="737" height="72" />
+</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_10.jpg" alt="" width="737" height="72" />
+</p>
+<p></p>
+<p>Por último, se debe generar una acción para el uso del botón.</p>
+<p>En este caso, para agregar los eventos a la tarea respondiendo a la ejecución del botón asíncrono agregado al formulario, se debe hacer de la siguiente forma:</p>
+<p>En la pestaña “Eventos” de la tarea, Seleccionar la acción que se requiere ejecutar.</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_11.jpg" alt="" width="737" height="72" />
+</p>
+<p>Escribir una regla condición, si corresponde.</p>
+<p>El instante corresponde a la ejecución, la que debe ser “Durante”.</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_12.jpg" alt="" width="737" height="72" />
+</p>
+<p>Debe ingresar la variable del botón agregado al formulario.</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_13.jpg" alt="" width="737" height="72" />
+</p>
+<p>El momento corresponde a cuándo se ejecuta la acción, la que debe ser el mismo paso correspondiente al formulario en el que está agregado el botón asíncrono.</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_14.jpg" alt="" width="737" height="72" />
+</p>
+<p>Luego agregarlo como evento con el botón “+”.</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_15.jpg" alt="" width="737" height="72" />
+</p>
+<p>Repetir lo mismo para la acción de sumar números. Debiendo quedar de la siguiente forma.</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_16.jpg" alt="" width="737" height="72" />
+</p>
+<p>El resultado de la ejecución del “Botón asíncrono” con el ejemplo ejecutado debe ser el siguiente:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_17.jpg" alt="" width="737" height="72" />
+</p>
+<p>Luego de seleccionar el botón “Ejecutar eventos”, se actualizará el formulario automáticamente, mostrando el resultado de la ejecución de las acciones:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_asincrono_img_18.jpg" alt="" width="737" height="72" />
+</p>
+<p><strong>Importante:</strong>El botón asíncrono fue pensado, en primera instancia, para el consumo de web services dentro de un mismo formulario. Sin embargo, su uso no está restingido a esta acción, pudiendo ejecutarse todas las acciones disponibles en SIMPLE, mientras lo permita el proceso.</p>
+<p></p>
+
+<p></p>
+
+<ul>
+	<li><h4 id="btn_maps">Botón Siguiente:</h4>
+</ul>
+<blockquote>
+<ul>
+	<li>Este nuevo campo en los formularios SIMPLE, permitirá dar lógica de visibilidad al botón “Siguiente” de cada formulario creado en el proceso.</li>
+	<li>Normalmente el botón “Siguiente” aparece por defecto en todos los formularios, siempre y cuando exista un paso o tarea posterior.</li>
+	<li>Con este nuevo campo, se reemplazará el botón “Siguiente” y se podrá definir otro que, puede  aparecer o no, dependiendo de algún valor de un campo del formulario o variable obtenida de alguna acción.</li>
+</ul>
+</blockquote>
+<p>Un ejemplo para revisar su funcionamiento es el siguiente:</p>
+<p>Creamos un formulario que contenga un campo select que almacenará la variable @@aparecer_boton con dos opciones (si – no):</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_siguiente_img_1.jpg" alt="" width="737" height="72" />
+</p>
+<p>Luego se agrega el nuevo campo llamado “Botón siguiente”:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_siguiente_img_2.jpg" alt="" width="737" height="72" />
+</p>
+<p>En la configuración se informa que, al agregar este campo, el botón “Siguiente” que viene por defecto en todos los formularios, se reemplazará con el nuevo. Este nuevo botón se llamará “Avanzar”.</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_siguiente_img_3.jpg" alt="" width="737" height="72" />
+</p>
+<p>Este botón solo será visible si el campo select que contiene la variable @@aparecer_boton es igual a ‘si’
+	Al guardarlo, queda de la siguiente manera:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_siguiente_img_4.jpg" alt="" width="737" height="72" />
+</p>
+<p>Al seleccionar Si, el botón “Avanzar” aparece:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_siguiente_img_6.jpg" alt="" width="737" height="72" />
+</p>
+<p>Al seleccionar No, el botón “Avanzar” desaparece:</p>
+<p>
+	<img src="../../../assets/img/BackEnd/Generacion-Formularios/Diseno-Formularios/btn_siguiente_img_7.jpg" alt="" width="737" height="72" />
+</p>
+<p><strong>Importante:</strong>Se debe destacar que la lógica de visibilidad debe estar asociada a un formulario con más características, dado que no debiera ocurrir que un formulario no tenga un botón relacionado y un trámite quede sin poder ser finalizado.</p>
+<p></p>
+
 			</div>
 		</div>
 	</div>
