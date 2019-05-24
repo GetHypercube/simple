@@ -43,7 +43,7 @@
                                         <th colspan="4">Iniciar Sesión</th>
                                     </tr>
                                     <tr>
-                                        <td><label>Botón </label></td>
+                                        <td><label for="boton_iniciar_sesion">Botón </label></td>
                                         <td><label for="boton_iniciar_sesion_on_mouse">Botón (OnMouse)</label></td>
                                         <td><label for="texto_iniciar_sesion">Texto </label></td>
                                         <td><label for="texto_iniciar_sesion_on_mouse">Texto (OnMouse)</label></td>
