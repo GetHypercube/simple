@@ -36,59 +36,59 @@
                                 </select>
 
                                 
-                            <!--</div>-->
+                            </div>-->
                             <div class="form-group">
                                 <table>
                                     <tr>
                                         <th colspan="4">Iniciar Sesión</th>
                                     </tr>
                                     <tr>
-                                        <td><label for="boton_iniciar_sesion">Botón </label></td>
+                                        <td><label>Botón </label></td>
                                         <td><label for="boton_iniciar_sesion_on_mouse">Botón (OnMouse)</label></td>
                                         <td><label for="texto_iniciar_sesion">Texto </label></td>
                                         <td><label for="texto_iniciar_sesion_on_mouse">Texto (OnMouse)</label></td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select name="boton_iniciar_sesion" class="boton_iniciar_sesion form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="boton_iniciar_sesion" id="boton_iniciar_sesion" class="boton_iniciar_sesion form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="boton_iniciar_sesion_on_mouse" class="boton_iniciar_sesion_on_mouse form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="boton_iniciar_sesion_on_mouse" id="boton_iniciar_sesion_on_mouse" class="boton_iniciar_sesion_on_mouse form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="texto_iniciar_sesion" class="texto_iniciar_sesion form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_iniciar_sesion" id="texto_iniciar_sesion" class="texto_iniciar_sesion form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="texto_iniciar_sesion_on_mouse" class="texto_iniciar_sesion_on_mouse form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_iniciar_sesion_on_mouse" id="texto_iniciar_sesion_on_mouse" class="texto_iniciar_sesion_on_mouse form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                     </tr>
                                 </table>
                                 <!--<input name="tramite_linea" id="tramite_linea" type="color" class="form-control"
-                                       value="#EB1414"><!-- 8px solid #EB1414 -->    
+                                       value="#EB1414"> 8px solid #EB1414 -->    
                             </div>
                             
                             <div class="form-group">
@@ -104,39 +104,39 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select name="tarjeta_header" class="tarjeta_header form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>  
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="tarjeta_header" id="tarjeta_header" class="tarjeta_header form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>  
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="tarjeta_footer" class="tarjeta_footer form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="tarjeta_footer" id="tarjeta_footer" class="tarjeta_footer form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="texto_tarjeta_header" class="texto_tarjeta_header form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>  
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_tarjeta_header" id="texto_tarjeta_header" class="texto_tarjeta_header form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>  
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="texto_tarjeta_footer" class="texto_tarjeta_footer form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_tarjeta_footer" id="texto_tarjeta_footer" class="texto_tarjeta_footer form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -157,21 +157,21 @@
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                            <select name="tramite_boton1" class="tramite_boton1 form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="tramite_boton1" id="tramite_boton1" class="tramite_boton1 form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td colspan="2">
-                                            <select name="texto_tramite_boton1" class="texto_tramite_boton1 form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_tramite_boton1" id="texto_tramite_boton1" class="texto_tramite_boton1 form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -186,39 +186,39 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select name="tramite_boton2" class="tramite_boton2 form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="tramite_boton2" id="tramite_boton2" class="tramite_boton2 form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="tramite_boton2_on_mouse" class="tramite_boton2_on_mouse form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="tramite_boton2_on_mouse" id="tramite_boton2_on_mouse" class="tramite_boton2_on_mouse form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="texto_tramite_boton2" class="texto_tramite_boton2 form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_tramite_boton2" id="texto_tramite_boton2" class="texto_tramite_boton2 form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="texto_tramite_boton2_on_mouse" class="texto_tramite_boton2_on_mouse form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_tramite_boton2_on_mouse" id="texto_tramite_boton2_on_mouse" class="texto_tramite_boton2_on_mouse form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -233,39 +233,39 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select name="tramite_boton3" class="tramite_boton3 form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="tramite_boton3" id="tramite_boton3" class="tramite_boton3 form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="tramite_boton3_on_mouse" class="tramite_boton3_on_mouse form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="tramite_boton3_on_mouse" id="tramite_boton3_on_mouse" class="tramite_boton3_on_mouse form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="texto_tramite_boton3" class="texto_tramite_boton3 form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_tramite_boton3" id="texto_tramite_boton3" class="texto_tramite_boton3 form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="texto_tramite_boton3_on_mouse" class="texto_tramite_boton3_on_mouse form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Rojo</option>
-                                                <option value="#0054AB" style="color:#0054AB">Azul</option>
-                                                <option value="#007328" style="color:#007328">Verde</option>
+                                            <select name="texto_tramite_boton3_on_mouse" id="texto_tramite_boton3_on_mouse" class="texto_tramite_boton3_on_mouse form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                                <option value="#EB1414" style="color:#EB1414" selected>Rojo</option>
+                                                <option value="#0054AB" style="color:#0054AB" selected>Azul</option>
+                                                <option value="#007328" style="color:#007328" selected>Verde</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -274,12 +274,12 @@
                                     </tr>
                                     <tr>
                                         <td colspan="4">
-                                            <select name="tramite_linea" class="tramite_linea form-control">
-                                                <option value="#FFFFFF" style="color:#000000">Blanco</option>
-                                                <option value="#000000" style="color:#000000">Negro</option>
-                                                <option value="#EB1414" style="color:#EB1414">Color</option>
-                                                <option value="#0054AB" style="color:#0054AB">Color</option>
-                                                <option value="#007328" style="color:#007328">Color</option>
+                                            <select name="tramite_linea" id="tramite_linea" class="tramite_linea form-control">
+                                                <option value="#FFFFFF" style="color:#000000" selected>Blanco</option>
+                                                <option value="#000000" style="color:#000000" selected>Negro</option>
+                                               <!-- <option value="#EB1414" style="color:#EB1414" selected>Color</option> No había color por tanto es innecesario-->
+                                               <!-- <option value="#0054AB" style="color:#0054AB" selected>Color</option> No había color por tanto es innecesario-->
+                                                <!--<option value="#007328" style="color:#007328" selected>Color</option> No había color por tanto es innecesario-->
                                             </select>
                                         </td>
                                     </tr>
@@ -288,14 +288,14 @@
 
                             <div class="form-group">
                                 <label for="activo">Estado</label>
-                                <select name="activo" class="activo form-control">
+                                <select name="activo" id="activo" class="activo form-control">
                                     <option value="1" seleted >Activo</option>
-                                    <option value="0">No Activo</option>
+                                    <option value="0" selected>No Activo</option>
                                 </select>
                             </div>
                             Estilos: <br/>{{ $data->estilos}}
                             <div class="form-actions">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="submit" id="submit" class="btn btn-primary">Guardar</button>
                                 <a href="" class="btn btn-light">Cancelar</a>
                             </div>
                         </div>
