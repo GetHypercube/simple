@@ -49,7 +49,7 @@ function CambioRadio() {
     	ObjectSoap=this.value;
         jQuery.each(result.functions, function(i,val){
         var bool = val.indexOf(ObjectSoap);
-            if (bool>=0){       
+            if (bool>=0){
                 var res = val.split(" ");
                 var subtit = res[1].replace("(", " ");
                 var subtit = subtit.split(" ");
@@ -66,7 +66,7 @@ function CambioRadio() {
             			var res= res.split(" ");
             			var myArrClean = res.filter(Boolean);
             			myArrClean= myArrClean.reverse();
-            			var json = CovertJson(myArrClean,operaciones); 
+            			var json = CovertJson(myArrClean,operaciones);
             			if(json==0){
         			    	$("#warningSpan").text("La consulta al servicio SOAP no trajo resultados, verifique.");
             			}else{
@@ -82,7 +82,7 @@ function CambioRadio() {
             			var res= res.split(" ");
             			var myArrClean = res.filter(Boolean);
             			myArrClean= myArrClean.reverse();
-        				var json = CovertJson(myArrClean,operaciones); 
+        				var json = CovertJson(myArrClean,operaciones);
             			if(json==0){
         			    	$("#warningSpan").text("La consulta al servicio SOAP no trajo resultados, verifique.");
             			}else{
@@ -118,11 +118,8 @@ function manejorespuesta(data) {
         });
         tiposMetodos = result.types;
         $("#operacion").append("<option value=''>Seleccione...</option>");
-        jQuery.each(result.functions, function (i, val) {
-            var res = val.split(" ");
-            var subtit = res[1].replace("(", " ");
-            var subtit = subtit.split(" ");
-            $("#operacion").append("<option value='" + subtit[0] + "'>" + subtit[0] + "</option>");
+        jQuery.each(result.functions, function (key, val) {
+            $("#operacion").append("<option value='" + key + "'>" + key + "</option>");
         });
         CambioRadio();
     } else {
