@@ -745,4 +745,18 @@ class Etapa extends Doctrine_Record
             }
         }
     }
+
+    public function getFechaVencimientoSindiasAsString()
+    {
+        $now = new DateTime();
+        $now->setTime(0, 0, 0);
+
+        $interval = $now->diff(new DateTime($this->vencimiento_at));
+        $fecha_vencimiento = \Carbon\Carbon::parse($this->vencimiento_at)->format('d-m-Y');
+
+        if ($interval->invert)
+            return 'venció el ' . $fecha_vencimiento;
+        else
+            return $interval->days == 0 ? 'vence hoy '.$fecha_vencimiento : 'vencerá el ' . $fecha_vencimiento;
+    }
 }
