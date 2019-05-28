@@ -618,7 +618,8 @@ class ProcessController extends Controller
             if (!$proceso) {
                 return redirect()->route('backend.procesos.index');
             }
-
+            $proceso->usuario_id = Auth::user()->id;
+            $proceso->created_at = Carbon::now('America/Santiago')->format('Y-m-d H:i:s');
             $proceso->save();
 
             Log::info("Migrando configuraciones de seguridad");
@@ -699,12 +700,11 @@ class ProcessController extends Controller
      */
     private function migrarEventosExternos($proceso)
     {
-        Log::info("Revisando seguridad para proceso id " . $proceso->id);
+        Log::info("Revisando eventos externos para proceso id " . $proceso->id);
         $tareas = $proceso->Tareas;
         foreach ($tareas as $tarea) {
             foreach ($tarea->Eventos as $evento) {
                 if (isset($evento->evento_externo_id) && strlen($evento->evento_externo_id) > 0) {
-                    $evento->evento_externo_id = $tarea->EventosExternos[$evento->evento_externo_id]->id;
                     $evento->save();
                 }
             }

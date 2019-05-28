@@ -245,6 +245,7 @@ class Tarea extends Doctrine_Record
 
         //Agregamos los nuevos
         if (is_array($eventos_array)) {
+            ksort($eventos_array);
             foreach ($eventos_array as $key => $p) {
                 //Seteamos el paso_id solamente si el paso es parte de esta tarea.
                 $paso_id = null;
@@ -263,6 +264,12 @@ class Tarea extends Doctrine_Record
                 $evento->accion_id = $p['accion_id'];
                 $evento->paso_id = $paso_id;
                 $evento->evento_externo_id = $evento_externo_id;
+                $c_asociado = str_replace('@', '', $p['campo_asociado']);
+                if(trim($c_asociado) != '')
+                    $campo_asociado = '@@'.$c_asociado;
+                else
+                    $campo_asociado = '';
+                $evento->campo_asociado = $campo_asociado;
                 $this->Eventos[] = $evento;
 
             }

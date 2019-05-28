@@ -531,6 +531,15 @@ progress::-webkit-progress-value {
   height: 400px;
 }
 
+.campo > .campos3{ 
+    border-bottom: 1px dotted #ccc;
+    padding-top: 15px;
+    margin-bottom: 10px;
+
+    .control-label {
+      font-weight: bold;
+    }
+}
 .blog-header_carab {line-height: 1;padding-top: 0!important;}
 .rowheader_carab{height: 57px;background-color: #007328; margin-right: 0!important; margin-left: 0!important;}
 .rowheader_carab ul {list-style: none;}

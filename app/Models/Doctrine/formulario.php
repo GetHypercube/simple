@@ -6,6 +6,9 @@ class Formulario extends Doctrine_Record {
         $this->hasColumn('id');
         $this->hasColumn('nombre');
         $this->hasColumn('proceso_id');
+        if(\Schema::hasColumn('formulario', 'descripcion')){
+            $this->hasColumn('descripcion');
+        }
     }
 
     function setUp() {

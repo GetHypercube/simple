@@ -164,6 +164,14 @@
                     <input type="hidden" name="formulario_id" value="<?= $formulario->id ?>"/>
                     <input type="hidden" name="tipo" value="<?= $campo->tipo ?>"/>
                 @endif
+                @if($campo->tipo==='btn_siguiente')
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>Advertencia!</strong> Al agregar este campo, reemplazará el botón siguiente por defecto y ocupará su posición.
+                    </div>
+                @endif
                 <label>Etiqueta
                 </label>
                 @if ($campo->etiqueta_tamano == 'xxlarge')

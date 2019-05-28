@@ -6,6 +6,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Proceso;
 use App\Models\Tramite;
 use App\Models\Job;
+use App\Models\File;
 use App\Models\Campo;
 use App\Rules\Captcha;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,8 @@ use ZipArchive;
 use App\Jobs\IndexStages;
 use App\Jobs\FilesDownload;
 use Carbon\Carbon;
+use Doctrine_Query;
+use App\Models\DatoSeguimiento;
 
 
 class StagesController extends Controller
@@ -308,14 +311,14 @@ class StagesController extends Controller
                         }
                     }
 
-                    if($c->tipo=='comunas'){                        
+                    if($c->tipo=='comunas'){
                         $region_comuna = $request->input($c->nombre);
                         $region_comuna['cstateCode'] = $request->input('cstateCode');
                         $region_comuna['cstateName'] = $request->input('cstateName');
                         $region_comuna['ccityCode'] = $request->input('ccityCode');
                         $region_comuna['ccityName'] = $request->input('ccityName');
                         $dato->valor = $region_comuna;
-                    }elseif($c->tipo=='provincias'){                        
+                    }elseif($c->tipo=='provincias'){
                         $region_provincia_comuna = $request->input($c->nombre);
                         $region_provincia_comuna['pstateCode'] = $request->input('pstateCode');
                         $region_provincia_comuna['pstateName'] = $request->input('pstateName');
@@ -836,5 +839,82 @@ class StagesController extends Controller
         }
 
         return response()->json( [ 'status' => TRUE, 'code' => 0, 'columnas' => $data_columnas ] );
+    }
+
+    public function saveForm(Request $request,$etapa_id){
+
+        //Se guardan los datos del formulario en la etapa correspondiente
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        $input = $request->all();
+        $protected_vars = array('_token','_method','paso','btn_async');
+        foreach($input as $key => $value){
+            if($key=='paso')
+                $paso = $etapa->getPasoEjecutable($value);
+            if($key=='btn_async'){
+                $campo = Doctrine_Query::create()
+                    ->from("Campo")
+                    ->where("id = ?", $value)
+                    ->fetchOne();
+            }
+            if(!in_array($key,$protected_vars) && !is_null($value)){
+                $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa_id);
+                if (!$dato)
+                    $dato = new \DatoSeguimiento();
+                $dato->nombre = $key;
+                $dato->valor = $value;
+
+                if (!is_object($dato->valor) && !is_array($dato->valor)) {
+                    if (preg_match('/^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/', $dato->valor)) {
+                        $dato->valor = preg_replace("/^(\d{4})[\/\-](\d{2})[\/\-](\d{2})/i", "$3-$2-$1", $dato->valor);
+                    }
+                }
+                $dato->etapa_id = $etapa_id;
+                $dato->save();
+            }
+        }
+
+        //se ejecutan acciones durante el paso
+        $etapa->ejecutarPaso($paso,$campo);
+
+        //se genera respuesta con los datos que la etapa tiene hasta el momento
+        $datos = DatoSeguimiento::where('etapa_id',$etapa->id)
+                ->select('nombre','valor')
+                ->get();
+        $response = $datos->toArray();
+
+        //se genera arreglo con los datos procesados en la etapa
+        $array_datos = [];
+        foreach ($datos as $dato) {
+            $array_datos[$dato->nombre] = $dato->valor;
+        }
+
+        //se obtienen todos los campos del formulario que está consultando
+        $formulario_id = $campo->Formulario->id;
+        $campos = Campo::where('formulario_id',$formulario_id)->get();
+
+        //se obtienen todos los campos del formulario que está consultando y a la vez los nuevos hidden si es que aplica
+        $campos = Campo::where('formulario_id',$formulario_id)->get();
+
+        //se recorren los campos del formulario para verificar que existan coincidencias con los datos obtenidos en la etapa
+        foreach($campos as $campo){
+
+            //en caso que no exista valor por defecto, continua el recorrido sin agregar datos al arreglo
+            if( empty($campo->valor_default) ){
+                continue;
+            }
+
+            $regla = new \Regla($campo->valor_default);
+            $var = $regla->getExpresionParaOutput($etapa->id);
+            $response[] = ['nombre'=>$campo->nombre, 'valor' => $var ];
+
+            //si existe el campo valor por defecto dentro de los datos de la etapa los agrega a la respuesta para setear los datos
+            //se setea como valor por defecto(para los que tienen) el valor del dato para el campo del formulario
+            /*if(array_key_exists($var, $array_datos)){
+               $response[] = ['nombre'=>$campo->nombre, 'valor' =>$array_datos[$var] ];
+            }*/
+
+        }
+
+        return response()->json($response);
     }
 }

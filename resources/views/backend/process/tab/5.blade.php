@@ -18,8 +18,14 @@
             <td>
                 <select class="eventoInstante form-control">
                     <option value="antes">Antes</option>
+                    <option value="durante">Durante</option>
                     <option value="despues">Después</option>
-                </select>
+                    </select>
+            </td>
+            <td>
+                <input class="eventoCampoAsociado form-control col-md-10" 
+                    type="text" placeholder="@@@boton">
+                <p class="messageEventoAsociado" style="color: red; display: block;"></p>
             </td>
             <td>
                 <select class="eventoPasoId form-control">
@@ -42,9 +48,10 @@
         </tr>
         <tr>
             <th>#</th>
-            <th>Accion</th>
+            <th>Acción</th>
             <th>Condición</th>
             <th>Instante</th>
+            <th>Botón asíncrono(opcional)</th>
             <th>Momento</th>
             <th></th>
         </tr>
@@ -59,9 +66,11 @@
             <td><input type="text" class="form-control" name="eventos[<?= $key + 1 ?>][regla]" value="<?= $p->regla ?>"/></td>
             <td><select class="eventoInstante form-control" name="eventos[<?= $key + 1 ?>][instante]">
                     <option value="antes" <?= $p->instante=='antes' ? 'selected' : '' ?> >Antes</option>
+                    <option value="durante" <?= $p->instante=='durante' ? 'selected' : '' ?> >Durante</option>
                     <option value="despues" <?= $p->instante=='despues' ? 'selected' : '' ?>>Después</option>
                 </select>
             </td>
+            <td><input type="text" class="form-control" name="eventos[<?= $key + 1 ?>][campo_asociado]" value="<?= $p->campo_asociado ?>"/></td>
             <td>
                 <select class="eventoPasoId form-control" name="eventos[<?= $key + 1 ?>][paso_id]">
                     <?php if($p->paso_id): ?>
@@ -126,11 +135,9 @@
                     <?php endif; ?>
                 </select>
             </td>
-
             <td>
-                <input type="hidden" name="eventos[<?= $key + 1 ?>][accion_id]"
+                <input type="hidden" class="eventoAccionId" name="eventos[<?= $key + 1 ?>][accion_id]"
                        value="<?= $p->accion_id ?>"/>
-                
                 <a class="delete" title="Eliminar" href="#"><i class="material-icons">close</i></a>
             </td>
         </tr>
@@ -144,3 +151,64 @@
         </a>
     </label>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('.eventoInstante').change(function(evt){
+            if(evt.target.value === 'durante'){
+                // habilitar campo
+                $('.eventoCampoAsociado').prop('disabled', false);
+            }else{
+                // deshabilitar campo
+                $('.eventoCampoAsociado').prop('disabled', true);
+            }
+        });
+
+        $('.eventoPasoId.form-control').change(function(evt){
+            var paso_id = $('.eventoPasoId.form-control')[0].value;
+            $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").html('');
+            $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").hide();
+            if( paso_id == ''){
+                $('.eventoCampoAsociado').prop('disabled', true);
+                return;
+            }
+            $('.eventoCampoAsociado').prop('disabled', false);
+            $('.eventoCampoAsociado').trigger('blur');
+        });
+
+        $('.eventoCampoAsociado').blur(function(evt){
+            var paso_id = $('.eventoPasoId.form-control')[0].value;
+            if(paso_id == '') return;  // es ejecutar tarea
+            var campo = evt.target.value;
+            if(campo == '' || typeof campo === 'undefined') return;
+            $.ajax({
+                url: '<?=url('backend/form/existe_campo_en_form')?>',
+                data: {
+                    campo_nombre: campo,
+                    paso_id: paso_id
+                },
+                method: 'GET',
+                dataType: "json",
+                cache: false,
+                success: function (data) {
+                    if( ! data.resultado ) {
+                        $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").html(data.mensaje);
+                        $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").show();
+                    }else{
+                        $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").html('');
+                        $('.eventoCampoAsociado').parent().find(".messageEventoAsociado").hide();
+                    }
+                }
+            });
+            evt.stopPropagation();
+        });
+
+        $('.eventoCampoAsociado').focus(function (evt) {
+            $(this).parent().find(".messageEventoAsociado").hide();
+            evt.stopPropagation();
+        });
+
+        $('.eventoInstante').trigger('change');
+        $('.eventoCampoAsociado').prop('disabled', true);
+    })
+</script>

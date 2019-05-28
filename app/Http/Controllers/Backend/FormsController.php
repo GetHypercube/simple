@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Models\Paso;
 use App\Http\Controllers\Controller;
 use App\Rules\CheckPermissionForm;
 use Illuminate\Support\Facades\Auth;
@@ -135,6 +136,7 @@ class FormsController extends Controller
         $request->validate(['nombre' => 'required']);
 
         $formulario->nombre = $request->input('nombre');
+        $formulario->descripcion = $request->input('descripcion');
         $formulario->save();
 
         return response()->json(['validacion' => true, 'redirect' => route('backend.forms.edit', [$formulario->id])]);
@@ -371,4 +373,31 @@ class FormsController extends Controller
         return $array_final;
     }
 
+    public function existeCampoEnForm(Request $request){
+        $campo_nombre = $request->has('campo_nombre') ? $request->input('campo_nombre') : FALSE;
+        $paso_id = $request->has('paso_id') ? $request->input('paso_id') : FALSE;
+        $paso = Paso::find( $paso_id );
+        
+        if ($campo_nombre === FALSE || $paso_id === FALSE || $paso === FALSE){
+            $response = ['mensaje' => 'Error', 'resultado' => FALSE, 'mensaje' => "El campo @@{$campo_nombre}<br>no existe"];
+            return response()->json($response);
+        }
+        
+        $form_id = $paso->formulario_id;
+        $campo_nombre = str_replace('@', '', $campo_nombre);
+        $q = Doctrine_Query::create()
+            ->select("id")
+            ->from("Campo")
+            ->where("nombre = ?", $campo_nombre)->andWhere('formulario_id = ?', $form_id);
+        
+        $campos = $q->execute()->toArray();
+        
+        if(empty($campos)){
+            $response = ['resultado' => FALSE, 'mensaje' => "El campo @@{$campo_nombre}<br>no existe"];
+        }else{
+            $response = ['resultado' => TRUE, 'mensaje' => 'Si existe'];
+        }
+        
+        return response()->json($response);
+    }
 }
