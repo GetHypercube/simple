@@ -40,7 +40,7 @@
         <div class="col-md-6">
           <ul class="navlogin">
             @if (Auth::guest() || !Auth::user()->registrado)
-                  <li class="nav-item login-default ml-3">
+                  <li class="nav-item login btn-white mr-3">
                       <a href="{{route('login')}}" class="nav-link">
                           <i class="material-icons">person</i> Ingreso funcionarios
                       </a>
