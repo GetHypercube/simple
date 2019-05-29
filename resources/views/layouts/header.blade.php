@@ -19,14 +19,14 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav">
                 @if (Auth::guest() || !Auth::user()->registrado)
+                    <li class="nav-item login-default mr-3">
+                        <a href="{{route('login')}}" class="nav-link">
+                            <i class="material-icons">person</i> Ingreso funcionarios
+                        </a>
+                    </li>
                     <li class="nav-item login">
                         <a href="{{route('login.claveunica')}}" class="nav-link">
                             <span class="icon-claveunica"></span> {{__('auth.login_claveunica')}}
-                        </a>
-                    </li>
-                    <li class="nav-item login btn-white ml-3">
-                        <a href="{{route('login')}}" class="nav-link">
-                            <i class="material-icons">person</i> Iniciar Sesión
                         </a>
                     </li>
                 @else
