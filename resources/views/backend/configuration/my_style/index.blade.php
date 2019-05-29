@@ -50,7 +50,7 @@
                                     //Fin boton_iniciar_sesion
 
                                     //Imprimiendo color de texto_iniciar_sesion
-                                    $boton_iniciar_sesion_on_mouse = substr($data['personalizacion'], 120, -756);
+                                    $boton_iniciar_sesion_on_mouse = substr($data['personalizacion'], 121, -756);
                                     //echo " boton_iniciar_sesion_on_mouse" ."<pre>" . print_r($boton_iniciar_sesion_on_mouse) . "</pre>";
                                     //Fin boton_iniciar_sesion_on_mouse
 
@@ -146,7 +146,7 @@
 
                                            
                                         <td>
-                                        <input name="boton_iniciar_sesion" type="color" id="boton_iniciar_sesion" value=" <?php echo htmlspecialchars($boton_iniciar_sesion);?> " list="b1" onchange="cambiarcolor()"/>
+                                        <input name="boton_iniciar_sesion" type="color" id="favcolor" value=" <?php echo htmlspecialchars($boton_iniciar_sesion);?> " list="b1" onchange="cambiarcolor()"/>
                                         <datalist id="b1">
                                         <option value="#FFFFFF">
                                         <option value="#000000">
@@ -157,7 +157,7 @@
                                         </td>
           
                                         <td>
-                                        <input name="boton_iniciar_sesion_on_mouse" type="color" id="boton_iniciar_sesion_on_mouse" value=" <?php echo htmlspecialchars($boton_iniciar_sesion_on_mouse);?> " list="b2" onchange="cambiarcolor()" />
+                                        <input name="boton_iniciar_sesion_on_mouse" type="color" id="favcolor" value=" <?php echo htmlspecialchars($boton_iniciar_sesion_on_mouse);?> " list="b2" onchange="cambiarcolor()" />
                                         <datalist id="b2">
                                          <option value="#FFFFFF">
                                         <option value="#000000">
@@ -167,7 +167,7 @@
                                         </datalist>
                                         </td>
                                         <td>
-                                        <input name="texto_iniciar_sesion" type="color" id="texto_iniciar_sesion" value="<?php echo htmlspecialchars($texto_iniciar_sesion); ?>" list="b3" onchange="cambiarcolor()" />
+                                        <input name="texto_iniciar_sesion" type="color" id="favcolor" value="<?php echo htmlspecialchars($texto_iniciar_sesion); ?>" list="b3" onchange="cambiarcolor()" />
                                         <datalist id="b3">
                                         <option value="#FFFFFF">
                                         <option value="#000000">
@@ -178,7 +178,7 @@
                                          
                                         </td>
                                         <td>
-                                        <input name="texto_iniciar_sesion_on_mouse" type="color" id="texto_iniciar_sesion_on_mouse" value="<?php echo htmlspecialchars($texto_iniciar_sesion_on_mouse);?>" list="b4" onchange="cambiarcolor()" />
+                                        <input name="texto_iniciar_sesion_on_mouse" type="color" id="favcolor" value="<?php echo htmlspecialchars($texto_iniciar_sesion_on_mouse);?>" list="b4" onchange="cambiarcolor()" />
                                         <datalist id="b4">
                                          <option value="#FFFFFF">
                                         <option value="#000000">
