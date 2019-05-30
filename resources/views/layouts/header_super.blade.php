@@ -38,7 +38,7 @@
           </ul>
         </div>
         <div class="col-md-6">
-          <ul class="navlogin">
+          <ul class="navlogin mt-2">
             @if (Auth::guest() || !Auth::user()->registrado)
                   <li class="nav-item login-default mr-3">
                       <a href="{{route('login')}}" class="nav-link">
@@ -72,7 +72,7 @@
             @endif
         </ul>
 
-            <ul class="simple-list-menu list-group d-block d-sm-none">
+            <ul class="simple-list-menu mt-1 list-group d-block d-sm-none">
                 <a class="list-group-item list-group-item-action  {{isset($sidebar) && $sidebar == 'disponibles' ? 'active' : ''}}"
                    href="{{route('home')}}">
                     <i class="material-icons">insert_drive_file</i> Iniciar trámite
