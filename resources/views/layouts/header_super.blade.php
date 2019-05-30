@@ -40,7 +40,7 @@
         <div class="col-md-6">
           <ul class="navlogin">
             @if (Auth::guest() || !Auth::user()->registrado)
-                  <li class="nav-item login btn-white mr-3">
+                  <li class="nav-item login-default mr-3">
                       <a href="{{route('login')}}" class="nav-link">
                           <i class="material-icons">person</i> Ingreso funcionarios
                       </a>
@@ -71,6 +71,40 @@
                 </li>
             @endif
         </ul>
+
+            <ul class="simple-list-menu list-group d-block d-sm-none">
+                <a class="list-group-item list-group-item-action  {{isset($sidebar) && $sidebar == 'disponibles' ? 'active' : ''}}"
+                   href="{{route('home')}}">
+                    <i class="material-icons">insert_drive_file</i> Iniciar trámite
+                </a>
+
+                @if(Auth::user()->registrado)
+                    @php
+                        $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
+                            ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+                        $nsinasignar = count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
+                        $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+                    @endphp
+                    <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'inbox' ? 'active' : ''}}"
+                       href="{{route('stage.inbox')}}">
+                        <i class="material-icons">inbox</i> Bandeja de Entrada ({{$npendientes}})
+                    </a>
+                    @if ($nsinasignar)
+                        <a class="list-group-item list-group-item-action {{ isset($sidebar) && $sidebar == 'sinasignar' ? 'active' : '' }}"
+                           href="{{route('stage.unassigned')}}">
+                            <i class="material-icons">assignment</i> Sin asignar ({{$nsinasignar}})
+                        </a>
+                    @endif
+                    <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'participados' ? 'active' : ''}}"
+                       href="{{route('tramites.participados')}}">
+                        <i class="material-icons">history</i> Historial de Trámites ({{$nparticipados}})
+                    </a>
+                <!--  <a class="list-group-item list-group-item-action {{isset($sidebar) && strstr($sidebar, 'miagenda') ? 'active' : ''}}"
+                           href="{{route('agenda.miagenda')}}">
+                            <i class="material-icons">date_range</i> Mi Agenda
+                        </a> -->
+                @endif
+            </ul>
         </div>
       </div>
     </div>
