@@ -21,7 +21,7 @@
                 @if (Auth::guest() || !Auth::user()->registrado)
                     <li class="nav-item login-default mr-3">
                         <a href="{{route('login')}}" class="nav-link">
-                            <i class="material-icons">person</i> Ingreso funcionarios
+                            Ingreso funcionarios
                         </a>
                     </li>
                     <li class="nav-item login">
