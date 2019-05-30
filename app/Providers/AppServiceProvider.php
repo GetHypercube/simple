@@ -64,8 +64,6 @@ class AppServiceProvider extends ServiceProvider
         $socialite->extend(
             'claveunica',
             function ($app) use ($socialite) {
-                //$config = $app['config']['services.claveunica'];
-
                 $redirect = env('APP_MAIN_DOMAIN') == 'localhost' ?
                     env('APP_URL') . '/login/claveunica/callback' :
                     secure_url('login/claveunica/callback');

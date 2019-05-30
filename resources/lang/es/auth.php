@@ -30,5 +30,5 @@ return [
     'forgot_password' => '¿Olvidaste tu contraseña?',
     'failed' => 'Estas credenciales no coinciden con nuestros registros.',
     'throttle' => 'Demasiados intentos de inicio de sesión. Vuelva a intentarlo en :seconds segundos.',
-    'back' => 'Volver atrás',
+    'back' => 'Volver',
 ];

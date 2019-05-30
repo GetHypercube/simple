@@ -54,7 +54,7 @@
         <div class="row">
             <div class="col-xs-12 col-md-3">
 
-                <ul class="simple-list-menu list-group">
+                <ul class="simple-list-menu list-group d-none d-sm-block">
                     <a class="list-group-item list-group-item-action  {{isset($sidebar) && $sidebar == 'disponibles' ? 'active' : ''}}"
                        href="{{route('home')}}">
                         <i class="material-icons">insert_drive_file</i> Iniciar trámite
@@ -88,7 +88,6 @@
                     @endif
                 </ul>
             </div>
-
 
             <div class="col-xs-12 col-md-9">
                 @include('components.messages')

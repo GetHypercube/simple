@@ -17,20 +17,20 @@
         </button>
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav mt-2">
                 @if (Auth::guest() || !Auth::user()->registrado)
+                    <li class="nav-item login-default mr-3">
+                        <a href="{{route('login')}}" class="nav-link">
+                            Ingreso funcionarios
+                        </a>
+                    </li>
                     <li class="nav-item login">
                         <a href="{{route('login.claveunica')}}" class="nav-link">
                             <span class="icon-claveunica"></span> {{__('auth.login_claveunica')}}
                         </a>
                     </li>
-                    <li class="nav-item login btn-white ml-3">
-                        <a href="{{route('login')}}" class="nav-link">
-                            <i class="material-icons">person</i> Iniciar Sesión
-                        </a>
-                    </li>
                 @else
-                    <li class="nav-item dropdown login">
+                    <li class="nav-item dropdown login ">
                         <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink"
                            data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
@@ -48,6 +48,40 @@
                             </form>
                         </div>
                     </li>
+                @endif
+            </ul>
+
+            <ul class="simple-list-menu mt-1 list-group d-block d-sm-none">
+                <a class="list-group-item list-group-item-action  {{isset($sidebar) && $sidebar == 'disponibles' ? 'active' : ''}}"
+                   href="{{route('home')}}">
+                    <i class="material-icons">insert_drive_file</i> Iniciar trámite
+                </a>
+
+                @if(Auth::user()->registrado)
+                    @php
+                        $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
+                            ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+                        $nsinasignar = count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
+                        $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+                    @endphp
+                    <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'inbox' ? 'active' : ''}}"
+                       href="{{route('stage.inbox')}}">
+                        <i class="material-icons">inbox</i> Bandeja de Entrada ({{$npendientes}})
+                    </a>
+                    @if ($nsinasignar)
+                        <a class="list-group-item list-group-item-action {{ isset($sidebar) && $sidebar == 'sinasignar' ? 'active' : '' }}"
+                           href="{{route('stage.unassigned')}}">
+                            <i class="material-icons">assignment</i> Sin asignar ({{$nsinasignar}})
+                        </a>
+                    @endif
+                    <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'participados' ? 'active' : ''}}"
+                       href="{{route('tramites.participados')}}">
+                        <i class="material-icons">history</i> Historial de Trámites ({{$nparticipados}})
+                    </a>
+                <!--  <a class="list-group-item list-group-item-action {{isset($sidebar) && strstr($sidebar, 'miagenda') ? 'active' : ''}}"
+                           href="{{route('agenda.miagenda')}}">
+                            <i class="material-icons">date_range</i> Mi Agenda
+                        </a> -->
                 @endif
             </ul>
         </div>
