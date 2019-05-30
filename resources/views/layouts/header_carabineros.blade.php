@@ -19,8 +19,8 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav">
                 @if (Auth::guest() || !Auth::user()->registrado)
-                    <li class="nav-item login btn-white mr-3">
-                        <a href="{{route('login')}}" class="nav-link nav-link-comisaria">
+                    <li class="nav-item login-default mr-3">
+                        <a href="{{route('login')}}" class="nav-link">
                             <i class="material-icons">person</i> Ingreso funcionarios
                         </a>
                     </li>
