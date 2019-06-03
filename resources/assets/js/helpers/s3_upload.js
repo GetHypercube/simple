@@ -1,12 +1,13 @@
 
 var s3_fields = {};
 
-function set_up(unique_id, url, token, block_size, single_file_max_size){
+function set_up(unique_id, url, token, block_size, max_size, single_file_max_size){
     if(! (unique_id in s3_fields) ){
         s3_fields[unique_id] = {};
     }
 
     var c_s3 = s3_fields[unique_id];
+    c_s3.max_size = max_size;
     c_s3.single_file_max_size = single_file_max_size; // l: 16 -1 || b: 5 - 1
     c_s3.chunk_size = block_size;
     c_s3.running_chunk_size = -1;
@@ -57,6 +58,13 @@ function set_up(unique_id, url, token, block_size, single_file_max_size){
                 c_s3.running_chunk_size = c_s3.chunk_size;
             }else{
                 // debe ser single file
+                if(c_s3.fileSize > c_s3.max_size){
+                    c_s3.but_send_file.prop('disabled', true);
+                    c_s3.but_stop.prop('disabled', true);
+                    alert('El archivo supera el tamaño máximo permitido.');
+                    c_s3.file = null;
+                    return;
+                }
                 c_s3.running_chunk_size = c_s3.fileSize;
                 c_s3.url = c_s3.base_url + '/single';
                 c_s3.segments_count = 1;
