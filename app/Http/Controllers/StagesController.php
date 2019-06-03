@@ -265,7 +265,7 @@ class StagesController extends Controller
         $modo = $paso->modo;
         $respuesta = new \stdClass();
         $validations = [];
-        $tipos_no_serializados = array("checkbox","radio");
+        $tipos_no_serializados = array("checkbox","radio","comunas");
         if ($modo == 'edicion') {
 
             $campos_nombre_etiqueta = [];
@@ -313,19 +313,19 @@ class StagesController extends Controller
 
                     if($c->tipo=='comunas'){
                         $region_comuna = $request->input($c->nombre);
-                        $region_comuna['cstateCode'] = $request->input('cstateCode');
-                        $region_comuna['cstateName'] = $request->input('cstateName');
-                        $region_comuna['ccityCode'] = $request->input('ccityCode');
-                        $region_comuna['ccityName'] = $request->input('ccityName');
+                        $region_comuna['cstateCode'] = $request->input('cstateCode_'.$c->id);
+                        $region_comuna['cstateName'] = $request->input('cstateName_'.$c->id);
+                        $region_comuna['ccityCode'] = $request->input('ccityCode_'.$c->id);
+                        $region_comuna['ccityName'] = $request->input('ccityName_'.$c->id);
                         $dato->valor = $region_comuna;
                     }elseif($c->tipo=='provincias'){
                         $region_provincia_comuna = $request->input($c->nombre);
-                        $region_provincia_comuna['pstateCode'] = $request->input('pstateCode');
-                        $region_provincia_comuna['pstateName'] = $request->input('pstateName');
-                        $region_provincia_comuna['provinciaCode'] = $request->input('provinciaCode');
-                        $region_provincia_comuna['provinciaName'] = $request->input('provinciaName');
-                        $region_provincia_comuna['pcityCode'] = $request->input('pcityCode');
-                        $region_provincia_comuna['pcityName'] = $request->input('pcityName');
+                        $region_provincia_comuna['pstateCode'] = $request->input('pstateCode_'.$c->id);
+                        $region_provincia_comuna['pstateName'] = $request->input('pstateName_'.$c->id);
+                        $region_provincia_comuna['provinciaCode'] = $request->input('provinciaCode_'.$c->id);
+                        $region_provincia_comuna['provinciaName'] = $request->input('provinciaName_'.$c->id);
+                        $region_provincia_comuna['pcityCode'] = $request->input('pcityCode_'.$c->id);
+                        $region_provincia_comuna['pcityName'] = $request->input('pcityName_'.$c->id);
                         $dato->valor = $region_provincia_comuna;
                     }
 
@@ -846,9 +846,9 @@ class StagesController extends Controller
         //Se guardan los datos del formulario en la etapa correspondiente
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
         $input = $request->all();
-        $protected_vars = array('_token','_method','paso','btn_async');
+        $protected_vars = array('_token','_method','secuencia','btn_async');
         foreach($input as $key => $value){
-            if($key=='paso')
+            if($key=='secuencia')
                 $paso = $etapa->getPasoEjecutable($value);
             if($key=='btn_async'){
                 $campo = Doctrine_Query::create()

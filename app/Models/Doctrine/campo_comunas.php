@@ -26,10 +26,10 @@ class CampoComunas extends Campo
         $display .= '<select class="form-control" id="comunas_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione Comuna</option>';
         $display .= '</select>';
-        $display .= '<input type="hidden" id="cstateCode" name="cstateCode">';
-        $display .= '<input type="hidden" id="cstateName" name="cstateName">';
-        $display .= '<input type="hidden" id="ccityCode" name="ccityCode">';
-        $display .= '<input type="hidden" id="ccityName" name="ccityName">';
+        $display .= '<input type="hidden" id="cstateCode_'.$this->id.'" name="cstateCode_'.$this->id.'">';
+        $display .= '<input type="hidden" id="cstateName_'.$this->id.'" name="cstateName_'.$this->id.'">';
+        $display .= '<input type="hidden" id="ccityCode_'.$this->id.'" name="ccityCode_'.$this->id.'">';
+        $display .= '<input type="hidden" id="ccityName_'.$this->id.'" name="ccityName_'.$this->id.'">';
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
         $display .= '</div>';
@@ -39,8 +39,8 @@ class CampoComunas extends Campo
                 $(document).ready(function(){
                     var justLoadedRegion=true;
                     var justLoadedComuna=true;
-                    var defaultRegion="' . ($dato && $dato->valor ? $dato->valor->region : $valor_default->region) . '";
-                    var defaultComuna="' . ($dato && $dato->valor ? $dato->valor->comuna : $valor_default->comuna) . '";
+                    var defaultRegion="' . ($dato && $dato->valor && property_exists($dato->valor,'region') ? $dato->valor->region : $valor_default->region) . '";
+                    var defaultComuna="' . ($dato && $dato->valor && property_exists($dato->valor,'comuna') ? $dato->valor->comuna : $valor_default->comuna) . '";
                     var opcion = "'. (isset($this->extra->codigo) && $this->extra->codigo ? "codigo" : "nombre") .'";
 
                     $("#regiones_'.$this->id.'").chosen({placeholder_text: "Seleccione Regi\u00F3n"});
@@ -60,10 +60,10 @@ class CampoComunas extends Campo
                             regiones_obj.change(function(event){
                                 var selectedId=$(this).find("option:selected").attr("data-id");
                                 updateComunas(selectedId);
-                                regiones_obj.attr("cstateCode",$(this).find("option:selected").attr("data-id"));
-                                regiones_obj.attr("cstateName",regiones_obj.val());
-                                $("#cstateCode").val($(this).find("option:selected").attr("data-id"));
-                                $("#cstateName").val(regiones_obj.val());
+                                regiones_obj.attr("cstateCode_'.$this->id.'",$(this).find("option:selected").attr("data-id"));
+                                regiones_obj.attr("cstateName_'.$this->id.'",regiones_obj.val());
+                                $("#cstateCode_'.$this->id.'").val($(this).find("option:selected").attr("data-id"));
+                                $("#cstateName_'.$this->id.'").val(regiones_obj.val());
                             });
                             
                             if(justLoadedRegion){
@@ -95,12 +95,12 @@ class CampoComunas extends Campo
                             }
                             comunas_obj.trigger("chosen:updated");
 
-                            $("#ccityCode").val($(comunas_obj).find("option:selected").val());
-                            $("#ccityName").val($(comunas_obj).find("option:selected").text());
+                            $("#ccityCode_'.$this->id.'").val($(comunas_obj).find("option:selected").val());
+                            $("#ccityName_'.$this->id.'").val($(comunas_obj).find("option:selected").text());
 
                             comunas_obj.change(function(event){
-                                $("#ccityCode").val($(this).find("option:selected").attr("data-id"));
-                                $("#ccityName").val($(this).find("option:selected").text());
+                                $("#ccityCode_'.$this->id.'").val($(this).find("option:selected").attr("data-id"));
+                                $("#ccityName_'.$this->id.'").val($(this).find("option:selected").text());
                             });
                         });
                     }
@@ -113,19 +113,13 @@ class CampoComunas extends Campo
 
     public function formValidate(Request $request, $etapa_id = null)
     {
-
         $request->validate([
             $this->nombre . '.region' => implode('|', $this->validacion),
             $this->nombre . '.comuna' => implode('|', $this->validacion),
         ], [], [
-            $this->nombre . '.region' => "<b>Region de $this->nombre</b>",
-            $this->nombre . '.comuna' => "<b>Comuna de $this->nombre</b>"
+            $this->nombre . '.region' => "<b>Región de $this->etiqueta</b>",
+            $this->nombre . '.comuna' => "<b>Comuna de $this->etiqueta</b>"
         ]);
-        /*
-        $CI =& get_instance();
-        $CI->form_validation->set_rules($this->nombre . '[region]', $this->etiqueta . ' - Región', implode('|', $this->validacion));
-        $CI->form_validation->set_rules($this->nombre . '[comuna]', $this->etiqueta . ' - Comuna', implode('|', $this->validacion));
-        */
     }
 
     public function backendExtraFields(){

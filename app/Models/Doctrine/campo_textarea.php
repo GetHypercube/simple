@@ -24,6 +24,20 @@ class CampoTextArea extends Campo
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
         $display .= '</div>';
 
+        $searchword = 'max';
+        $matches = array_filter($this->validacion, function($var) use ($searchword) { return preg_match("/\b$searchword\b/i", $var); });
+        if(isset($matches[1])){
+            $limite = str_replace("max:","",$matches[1]);
+            $display .= '
+            <script>
+                $(document).ready(function(){
+                    $("#' . $this->id . '").EnsureMaxLength({
+                        limit: '.$limite.'
+                    });
+                });
+            </script>';
+        }
+
         return $display;
     }
 

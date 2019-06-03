@@ -58,39 +58,106 @@
         // Funcionalidad en campo dependientes para seleccionar entre tipo regex y string
         $buttonRegex = $("#formEditarCampo .campoDependientes .buttonRegex");
         $buttonString = $("#formEditarCampo .campoDependientes .buttonString");
+        $buttonNumeric = $("#formEditarCampo .campoDependientes .buttonNumeric");
         $inputDependienteTipo = $("#formEditarCampo input[name=dependiente_tipo]");
         $buttonString.attr("disabled", $inputDependienteTipo.val() == "string");
         $buttonRegex.attr("disabled", $inputDependienteTipo.val() == "regex");
+        $buttonNumeric.attr("disabled", $inputDependienteTipo.val() == "numeric");
 
         $buttonRegex.click(function () {
             $buttonString.prop("disabled", false);
             $buttonRegex.prop("disabled", true);
+            $buttonNumeric.prop("disabled", false);
             $inputDependienteTipo.val("regex");
         });
 
         $buttonString.click(function () {
             $buttonString.prop("disabled", true);
             $buttonRegex.prop("disabled", false);
+            $buttonNumeric.prop("disabled", false);
             $inputDependienteTipo.val("string");
+        });
+
+        $buttonNumeric.click(function () {
+            $buttonString.prop("disabled", false);
+            $buttonRegex.prop("disabled", false);
+            $buttonNumeric.prop("disabled", true);
+            $inputDependienteTipo.val("numeric");
         });
 
         // Funcionalidad en campo dependientes para seleccionar entre tipo igualdad y desigualdad
         $buttonDesigualdad = $("#formEditarCampo .campoDependientes .buttonDesigualdad");
         $buttonIgualdad = $("#formEditarCampo .campoDependientes .buttonIgualdad");
+        $buttonMayorque = $("#formEditarCampo .campoDependientes .buttonMayorque");
+        $buttonMenorque = $("#formEditarCampo .campoDependientes .buttonMenorque");
+        $buttonMayoroigualque = $("#formEditarCampo .campoDependientes .buttonMayoroigualque");
+        $buttonMenoroigualque = $("#formEditarCampo .campoDependientes .buttonMenoroigualque");
         $inputDependienteRelacion = $("#formEditarCampo input[name=dependiente_relacion]");
         $buttonIgualdad.attr("disabled", $inputDependienteRelacion.val() == "==");
         $buttonDesigualdad.attr("disabled", $inputDependienteRelacion.val() == "!=");
+        $buttonMayorque.attr("disabled", $inputDependienteRelacion.val() == ">");
+        $buttonMenorque.attr("disabled", $inputDependienteRelacion.val() == "<");
+        $buttonMayoroigualque.attr("disabled", $inputDependienteRelacion.val() == ">=");
+        $buttonMenoroigualque.attr("disabled", $inputDependienteRelacion.val() == "<=");
 
         $buttonDesigualdad.click(function () {
             $buttonIgualdad.prop("disabled", false);
             $buttonDesigualdad.prop("disabled", true);
+            $buttonMayorque.prop("disabled",false);
+            $buttonMenorque.prop("disabled", false);
+            $buttonMayoroigualque.prop("disabled", false);
+            $buttonMenoroigualque.prop("disabled", false);
             $inputDependienteRelacion.val("!=");
         });
 
         $buttonIgualdad.click(function () {
             $buttonIgualdad.prop("disabled", true);
             $buttonDesigualdad.prop("disabled", false);
+            $buttonMayorque.prop("disabled",false);
+            $buttonMenorque.prop("disabled", false);
+            $buttonMayoroigualque.prop("disabled", false);
+            $buttonMenoroigualque.prop("disabled", false);
             $inputDependienteRelacion.val("==");
+        });
+
+        $buttonMayorque.click(function(){
+            $buttonIgualdad.prop("disabled", false);
+            $buttonDesigualdad.prop("disabled", false);
+            $buttonMayorque.prop("disabled",true);
+            $buttonMenorque.prop("disabled", false);
+            $buttonMayoroigualque.prop("disabled", false);
+            $buttonMenoroigualque.prop("disabled", false);
+            $inputDependienteRelacion.val(">");
+        });
+
+        $buttonMenorque.click(function(){
+            $buttonIgualdad.prop("disabled", false);
+            $buttonDesigualdad.prop("disabled", false);
+            $buttonMayorque.prop("disabled",false);
+            $buttonMenorque.prop("disabled", true);
+            $buttonMayoroigualque.prop("disabled", false);
+            $buttonMenoroigualque.prop("disabled", false);
+            $inputDependienteRelacion.val("<");
+        });
+
+        $buttonMayoroigualque.click(function(){
+            $buttonIgualdad.prop("disabled", false);
+            $buttonDesigualdad.prop("disabled", false);
+            $buttonMayorque.prop("disabled",false);
+            $buttonMenorque.prop("disabled", false);
+            $buttonMayoroigualque.prop("disabled", true);
+            $buttonMenoroigualque.prop("disabled", false);
+            $inputDependienteRelacion.val(">=");
+        });
+
+        $buttonMenoroigualque.click(function(){
+            $buttonIgualdad.prop("disabled", false);
+            $buttonDesigualdad.prop("disabled", false);
+            $buttonMayorque.prop("disabled",false);
+            $buttonMenorque.prop("disabled", false);
+            $buttonMayoroigualque.prop("disabled", false);
+            $buttonMenoroigualque.prop("disabled", true);
+            $inputDependienteRelacion.val("<=");
         });
 
         // Llenado automatico del campo nombre
@@ -264,7 +331,7 @@
                 <label>Visible solo si</label>
                     <div class="campoDependientes">
                         <div class="form-inline">
-                            <input type="text" class="form-control col-4" name="dependiente_campo"
+                            <input type="text" class="form-control col-2" name="dependiente_campo"
                                    value="<?=$campo->dependiente_campo?>"/>
                             <div class="btn-group dependiente ml-1" style="display: inline-block; vertical-align: top;">
                                 <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
@@ -285,20 +352,42 @@
 
                             <!-- <select class="input-medium" name="dependiente_campo"> -->
                             <!-- </select> -->
+                            <div class="form-group">
+                              <label for="ControlBotones"></label>
+                               <select class="form-control" id="ControlBotones">
+                                 <option><button type="button" class="buttonIgualdad btn btn-secondary">es igual a</button></option>
+                                 <option><button type="button" class="buttonDesigualdad btn btn-secondary">distinto a</button></option>
+                                 <option><button type="button" class="buttonMayorque btn btn-secondary">mayor que</button></option>
+                                 <option><button type="button" class="buttonMenorque btn btn-secondary">menor que</button></option>
+                                 <option><button type="button" class="buttonMayoroigualque btn btn-secondary">mayor = que </button></option>
+                                 <option><button type="button" class="buttonMenoroigualque btn btn-secondary">menor = que </button></option>
+                                 
+                               </select>
+                            </div>
 
-                            <div class="btn-group ml-3 mr-3">
+                         <!-- OLD  <div class="btn-group ml-3 mr-3">
                                 <button type="button" class="buttonIgualdad btn btn-secondary">=</button>
                                 <button type="button" class="buttonDesigualdad btn btn-secondary">!=</button>
-                            </div>
+                                <button type="button" class="buttonMayorque btn btn-secondary">></button>
+                                <button type="button" class="buttonMenorque btn btn-secondary"><</button>
+                            </div>-->
 
                             <input type="hidden" name="dependiente_relacion"
                                    value="<?=isset($campo) && $campo->dependiente_relacion ? $campo->dependiente_relacion : '==' ?>"/>
 
                             <span class="input-append">
+                           
                             <input type="text" class="form-control" name="dependiente_valor"
                                    value="<?= isset($campo) ? $campo->dependiente_valor : '' ?>"/>
-                            <button type="button" class="buttonString btn btn-secondary">String</button>
+                                   <select class="form-control">
+                                     <option><button type="button" class="buttonString btn btn-secondary">String</button></option>
+                                     <option><button type="button" class="buttonRegex btn btn-secondary">Regex</button></option>
+                                     <option><button type="button" class="buttonNumeric btn btn-secondary">Numeric</button></option>
+                                 </select>                    
+
+                          <!--  OLD <button type="button" class="buttonString btn btn-secondary">String</button>
                             <button type="button" class="buttonRegex btn btn-secondary">Regex</button>
+                            <button type="button" class="buttonNumeric btn btn-secondary">Numeric</button>-->
                         </span>
                             <input type="hidden" name="dependiente_tipo"
                                    value="<?=isset($campo) && $campo->dependiente_tipo ? $campo->dependiente_tipo : 'string' ?>"/>
@@ -448,12 +537,17 @@
                                     <select name="condiciones[<?= $i ?>][igualdad]" class="form-control col-3">
                                         <option value="==" <?=$d->igualdad=='=' ? 'selected="selected"' : '' ?>>es igual a</button>
                                         <option value="!=" <?=$d->igualdad=='!=' ? 'selected="selected"' : '' ?>>distinto a</button>
+                                        <option value=">" <?=$d->igualdad=='>' ? 'selected="selected"' : '' ?>>mayor que</button>
+                                        <option value="<" <?=$d->igualdad=='<' ? 'selected="selected"' : '' ?>>menor que</button>
+                                        <option value=">=" <?=$d->igualdad=='>=' ? 'selected="selected"' : '' ?>>mayor = que</button>
+                                        <option value="<=" <?=$d->igualdad=='<=' ? 'selected="selected"' : '' ?>>menor = que</button>
                                     </select>
                                     <span class="input-append"></span>
                                     <input type="text" class="form-control" name="condiciones[<?= $i ?>][valor]" value="<?=$d->valor?>" />
                                     <select name="condiciones[<?= $i ?>][tipo]" class="form-control">
                                         <option value="string" <?=$d->tipo=='string' ? 'selected="selected"' : '' ?>>String</button>
                                         <option value="regex" <?=$d->tipo=='regex' ? 'selected="selected"' : '' ?>>Regex</button>
+                                        <option value="numeric" <?=$d->tipo=='numeric' ? 'selected="selected"' : '' ?>>Numeric</button>
                                     </select>
                                     <button type="button" class="btn btn-light delete-condition"><i class="material-icons">close</i>Eliminar</button>
                                 </div>
@@ -469,18 +563,23 @@
                                 var registro = $('#formEditarCampo .campoDependientes .camposDependientesAdicionales .item').length;
                                 var html = '<div class="item form-inline">';
                                 
-                                html += '<input type="text" class="form-control col-4" name="condiciones['+registro+'][campo]"/>';
+                                html += '<input type="text" class="form-control col-2" name="condiciones['+registro+'][campo]"/>';
                                 
                                 html += '<div class="btn-group col-8">';
                                 html += '<select name="condiciones['+registro+'][igualdad]" class="form-control col-3">';
                                 html += '<option value="==">es igual a</button>';
                                 html += '<option value="!=">distinto a</button>';
+                                html += '<option value=">">mayor que</button>';
+                                html += '<option value="<">menor que</button>';
+                                html += '<option value=">=">mayor = que</button>';
+                                html += '<option value="<=">menor = que</button>';
                                 html += '</select>';
                                 html += '<span class="input-append"></span>';
                                 html += '<input type="text" class="form-control" name="condiciones['+registro+'][valor]" />';                                
                                 html += '<select name="condiciones['+registro+'][tipo]" class="form-control">';
                                 html += '<option value="string">String</button>';
                                 html += '<option value="regex">Regex</button>';
+                                html += '<option value="numeric">Numeric</button>';
                                 html += '</select>';
                                 html += '<button type="button" class="btn btn-light delete-condition"><i class="material-icons">close</i>Eliminar</button>';
                                 html += '</div>';
