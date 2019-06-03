@@ -127,5 +127,7 @@
             $("#auditar").modal();
             return false;
         }
+        $(".dynaForm :input").prop("disabled", true);
+        $(".dataTables_wrapper .btn_grid_action").prop("disabled", true);
     </script>
 @endsection
