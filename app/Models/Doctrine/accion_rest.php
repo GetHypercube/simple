@@ -57,11 +57,30 @@ class AccionRest extends Accion
         if (!is_null($this->extra) && $this->extra->tipoMetodo && ($this->extra->tipoMetodo == "PUT" || $this->extra->tipoMetodo == "POST")) {
             $display .= '
             <div id="divObject">
-                <label>Request</label>
-                <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
-                <br />
-                <span id="resultRequest" class="spanError"></span>
-                <br /><br />
+
+                <div class="form-group">
+                  <label>Request</label>
+                </div>
+
+                <div class="form-check form-group">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="extra[paramType]" id="jsonParam" value="'. GuzzleHttp\RequestOptions::JSON .'"
+                          '.  ( $this->extra && $this->extra->paramType === GuzzleHttp\RequestOptions::JSON ? "checked" : "" ) .'>
+                    <label class="form-check-label" for="jsonParam">json</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="extra[paramType]" id="formParam" value="'. GuzzleHttp\RequestOptions::FORM_PARAMS .'"
+                          '.  ( $this->extra && $this->extra->paramType === GuzzleHttp\RequestOptions::FORM_PARAMS ? "checked" : "" ) .'>
+                    <label class="form-check-label" for="formParam">form-data</label>
+                  </div>
+                </div>
+
+                <div class="form-group" i>
+                  <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
+                  <br />
+                  <span id="resultRequest" class="spanError"></span>
+                </div>
+
             </div>';
         } else {
             $display .= '
@@ -93,6 +112,7 @@ class AccionRest extends Accion
             }
         }
         $display .= '</select>';
+
         return $display;
     }
 
@@ -208,11 +228,11 @@ class AccionRest extends Accion
                         ]);
                     } else if ($this->extra->tipoMetodo == "POST") {
                         $result = $client->request('POST', $uri, [
-                            GuzzleHttp\RequestOptions::JSON => json_decode($request)
+                            $this->extra->paramType => json_decode($request)
                         ]);
                     } else if ($this->extra->tipoMetodo == "PUT") {
                         $result = $client->put($uri, [
-                            GuzzleHttp\RequestOptions::JSON => json_decode($request)
+                            $this->extra->paramType => json_decode($request)
                         ]);
                     } else if ($this->extra->tipoMetodo == "DELETE") {
                         $result = $client->delete($uri, [
@@ -269,16 +289,16 @@ class AccionRest extends Accion
             $ultimo_codigo_http = $e->getCode();
             $result2['desc'] = $e->getMessage();
         }
-        
+
         try{
-            if( ! empty($result2) && is_array($result2) && array_key_exists('code', $result2) 
+            if( ! empty($result2) && is_array($result2) && array_key_exists('code', $result2)
                     && ! array_key_exists('status', $result2) ){
                 $result2['status'] = $result2['code'];
             }
         }catch (Exception $e){
             Log::info("Catch accion REST. Al result2['status']=result2['code']");
         }
-        
+
         $result2 = json_encode($result2);
         $result2 = str_replace(" - ", "_", $result2);
         $result2 = json_decode($result2);
@@ -296,7 +316,7 @@ class AccionRest extends Accion
             $dato->valor = $value;
             $dato->etapa_id = $etapa->id;
             $dato->save();
-            
+
             $key_code = trim($key).'_http_code';
             $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key_code, $etapa->id);
             if (!$dato)
