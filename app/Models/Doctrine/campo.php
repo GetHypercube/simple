@@ -269,7 +269,7 @@ class Campo extends Doctrine_Record
                 $resultado = false;
             } else {
                 if (is_array($variable)) { //Es un arreglo
-                    if ($this->dependiente_tipo == 'regex') {
+                    if ($this->dependiente_tipo == 'regex' || $this->dependiente_tipo == 'numeric') {
                         foreach ($variable as $x) {
                             if (!preg_match('/' . $this->dependiente_valor . '/', $x))
                                 $resultado = false;
@@ -279,7 +279,7 @@ class Campo extends Doctrine_Record
                             $resultado = false;
                     }
                 } else {
-                    if ($this->dependiente_tipo == 'regex') {
+                    if ($this->dependiente_tipo == 'regex' || $this->dependiente_tipo == 'numeric') {
                         if (!preg_match('/' . $this->dependiente_valor . '/', $variable))
                             $resultado = false;
                     } else {
@@ -325,7 +325,7 @@ class Campo extends Doctrine_Record
                         array_push($resultados,$resultado);
                     } else {
                         if (is_array($variable)) { //Es un arreglo
-                            if ($condicion->tipo == 'regex') {
+                            if ($condicion->tipo == 'regex' || $this->dependiente_tipo == 'numeric') {
                                 foreach ($variable as $x) {
                                     if (!preg_match('/' . $condicion->valor . '/', $x))
                                         $resultado = false;
@@ -335,7 +335,7 @@ class Campo extends Doctrine_Record
                                     $resultado = false;
                             }
                         } else {
-                            if ($condicion->tipo == 'regex') {
+                            if ($condicion->tipo == 'regex' || $this->dependiente_tipo == 'numeric') {
                                 if (!preg_match('/' . $condicion->valor . '/', $variable))
                                     $resultado = false;
                             } else {
@@ -472,7 +472,7 @@ class Campo extends Doctrine_Record
 
             $valores = is_array($dato_dependiente->valor) ? $dato_dependiente->valor : array($dato_dependiente->valor);
             foreach ($valores as $valor) {
-                if ($this->dependiente_tipo == "regex") {
+                if ($this->dependiente_tipo == "regex" || $this->dependiente_tipo == 'numeric' ) {
                     if (preg_match('/' . $this->dependiente_valor . '/', $valor) == 1) {
                         $visible = true;
                     }
@@ -505,7 +505,7 @@ class Campo extends Doctrine_Record
                     if($dato_dependiente){
                         $valores = is_array($dato_dependiente->valor) ? $dato_dependiente->valor : array($dato_dependiente->valor);
                         foreach($valores as $valor){
-                            if ($condicion->tipo == "regex") {
+                            if ($condicion->tipo == "regex" || $this->dependiente_tipo == 'numeric') {
                                 if (preg_match('/' . $condicion->valor . '/', $valor) == 1) {
                                     $visible_extra = true;
                                 }
