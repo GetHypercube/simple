@@ -22,13 +22,14 @@ class Regla
 
         $new_regla = $this->getExpresionParaEvaluar($etapa_id, $ev);
         $new_regla = 'return ' . $new_regla . ';';
-        $resultado = FALSE;
-        $errores = (new \App\Helpers\SaferEval())->checkScript($new_regla, FALSE);
+        $resultado = TRUE;
+        $mensaje_error= "Validando algo que no existe";
+        $errores = $mensaje_error;                                       //(new \App\Helpers\SaferEval())->checkScript($new_regla, FALSE);
         if (is_null($errores)) {
             try {
                 $resultado = eval($new_regla);
             } catch (Throwable $throwable) {
-                $resultado = false;
+                $resultado = true;//era false
             }
         }
        
