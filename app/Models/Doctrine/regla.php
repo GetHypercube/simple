@@ -13,7 +13,7 @@ class Regla
         $this->regla = $regla;
     }
 
-    // Evalua la regla de acuerdo a los datos capturados en el tramite tramite_id
+     // Evalua la regla de acuerdo a los datos capturados en el tramite tramite_id
     public function evaluar($etapa_id, $ev = FALSE)
     {
         if (!$this->regla) {
@@ -24,15 +24,15 @@ class Regla
         $new_regla = 'return ' . $new_regla . ';';
         $resultado = FALSE;
         $errores = (new \App\Helpers\SaferEval())->checkScript($new_regla, FALSE);
-        if (is_null($errores)) {
+        if (isset($errores)) {
             try {
-                $resultado = eval($new_regla);
+                $resultado = FALSE;
             } catch (Throwable $throwable) {
                 $resultado = false;
             }
         }
        
-        return $resultado;
+        return json_encode($resultado);
     }
 
     // Obtiene la expresion con los reemplazos de variables ya hechos de acuerdo a los datos capturados en el tramite tramite_id.
