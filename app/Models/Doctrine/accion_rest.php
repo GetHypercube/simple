@@ -85,10 +85,26 @@ class AccionRest extends Accion
         } else {
             $display .= '
             <div id="divObject" style="display:none;">
-                <label>Request</label>
-                <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
-                <br />
-                <span id="resultRequest" class="spanError"></span>
+                <div class="form-group">
+                  <label>Request</label>
+                </div>
+
+                <div class="form-check form-group">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="extra[paramType]" id="jsonParam" value="'. GuzzleHttp\RequestOptions::JSON .'" checked >
+                    <label class="form-check-label" for="jsonParam">json</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="extra[paramType]" id="formParam" value="'. GuzzleHttp\RequestOptions::FORM_PARAMS .'" >
+                    <label class="form-check-label" for="formParam">form-data</label>
+                  </div>
+                </div>
+
+                <div class="form-group" i>
+                  <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
+                  <br />
+                  <span id="resultRequest" class="spanError"></span>
+                </div>
                 <br /><br />
             </div>';
         }
