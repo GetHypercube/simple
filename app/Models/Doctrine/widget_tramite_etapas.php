@@ -16,6 +16,10 @@ class WidgetTramiteEtapas extends Widget
         }
 
         $proceso = Doctrine::getTable('Proceso')->find($this->config->proceso_id);
+        if (!$proceso) {
+            $display = '<p>Widget requiere configuración</p>';
+            return $display;
+        }
 
         $tmp = Doctrine_Query::create()
             ->select('tar.id, tar.nombre, COUNT(tar.id) as cantidad')
