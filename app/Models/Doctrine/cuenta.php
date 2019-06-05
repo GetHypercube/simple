@@ -11,6 +11,9 @@ function setTableDefinition()
         $this->hasColumn('id');
         $this->hasColumn('nombre');
         $this->hasColumn('nombre_largo');
+        if(\Schema::hasColumn('cuenta', 'analytics')){
+        $this->hasColumn('analytics'); //analytics
+        }
         $this->hasColumn('mensaje');
         $this->hasColumn('logo');
         if(\Schema::hasColumn('cuenta', 'logof')){
@@ -190,6 +193,7 @@ function setTableDefinition()
             $configSegunDominio = self::cuentaSegunDominio();
             $configDominio['estilo'] = $configSegunDominio->estilo;
             $configDominio['dominio_header'] = $configSegunDominio->header;
+            $configDominio['analytics'] = $configSegunDominio->analytics; //añado analytics
             $configDominio['dominio_footer'] = $configSegunDominio->footer;
             $configDominio['personalizacion'] = "1" == $configSegunDominio->personalizacion_estado ? $configSegunDominio->personalizacion : '';
             $configDominio['personalizacion_estado'] = $configSegunDominio->personalizacion_estado;
@@ -204,17 +208,18 @@ function setTableDefinition()
                 $seo = isset(self::cuentaSegunDominio()->seo_tags) ? self::cuentaSegunDominio()->seo_tags: null;
             }else{
                 $cuenta = Doctrine::getTable('Cuenta')->findOneById($cuenta_id);
+                
                 $seo = $cuenta ? $cuenta->seo_tags : null;
             }
             
             $seo_tags = json_decode($seo);
             // corregimos cualquier posible caso invalido
             $seo_tags = ( ! is_null($seo_tags ) && is_object($seo_tags)) ? $seo_tags : new StdClass();
-            
             $default_tags = [
                 'title' => config('app.name', 'Laravel'),
                 'description' => 'Simple',
-                'keywords' => 'Simple'
+                'keywords' => 'Simple',
+                'analytics' => Doctrine::getTable('Cuenta')->findOneById(1)->analytics
              ];
             foreach ($default_tags as $key => $value) {
                 if(! isset($seo_tags->$key)){

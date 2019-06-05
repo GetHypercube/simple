@@ -1,3 +1,11 @@
+<script>
+var analytica=<?php echo json_encode($cuenta->analytics); ?>;
+function analytics(){
+ analytica=<?php echo json_encode($cuenta->analytics); ?>;
+}
+analytics(); //ejecutamos la función para que sea global
+console.log(analytica);
+</script>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="<?=url('manager/cuentas')?>">Cuentas</a></li>
@@ -13,9 +21,13 @@
         <div class="validacion"></div>
         <label>Nombre</label>
         <input type="text" name="nombre" value="<?= $cuenta->nombre ?>" class="form-control col-3"/>
-        <div class="form-text text-muted">En minusculas y sin espacios.</div>
+        <div class="form-text text-muted">En minusculas y sin espacios.</div><br>
         <label>Nombre largo</label>
-        <input class="form-control col-6" type="text" name="nombre_largo" value="<?= $cuenta->nombre_largo ?>"/>
+        <input class="form-control col-6" type="text" name="nombre_largo" value="<?= $cuenta->nombre_largo ?>"/><br>
+        <label><b>¿Editar TÚ ID Seguimiento de Google Analytics?</b></label>
+        <input type="text" name="analytics" value="<?= $cuenta->analytics ?>" class="form-control col-3"/><br><!--Gogole Analytics--->
+        <label>ID Seguimiento Analytics Primario</label>
+        <input type="text" class="form-control col-3" readonly="true" disabled="true" value="<?= env('ANALYTICS') ?>"/><br><!--Gogole Analytics--->
         <label>Mensaje de bienvenida (Puede contener HTML)</label>
         <textarea name="mensaje" class="form-control col-6"><?= $cuenta->mensaje ?></textarea>
         <label>Logo Header</label>
@@ -64,7 +76,7 @@
         <legend><?= $title ?> configuraci&oacute;n de agenda</legend>
         <hr>
         <label>Clave App</label>
-        <input type="text" name="appkey" class="form-control col-3" readonly="true" disabled="true"
+        <input type="text" name="appkey" class="form-control col-3" readonly="true" disabled="false"
                value="<?= $calendar->getAppkey() ?>"/>
         <label>Dominio</label>
         <input type="text" name="domain" class="form-control col-3" value="<?= $calendar->getDomain() ?>"/>
@@ -100,6 +112,7 @@
         </select>
     </fieldset>
     <hr>
+    
      
     <fieldset>
         <legend><?= $title ?> configuraci&oacute;n avanzada</legend>
