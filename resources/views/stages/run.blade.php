@@ -112,7 +112,7 @@
             <input  class="camposvisibilidad" type="hidden" name="{{$c_nombre}}" value="{{$campos_ocultos_extra[$c_nombre]}}">
         @endforeach
 
-        <input type="hidden" name="paso" value="{{$secuencia}}">
+        <input type="hidden" name="secuencia" value="{{$secuencia}}">
 
         <div class="ajaxLoader" style="position: fixed; left: 50%; top: 30%; display: none;">
             <img src="{{asset('img/loading.gif')}}">

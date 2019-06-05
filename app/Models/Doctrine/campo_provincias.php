@@ -31,12 +31,12 @@ class CampoProvincias extends Campo
         $display .= '<select class="form-control" id="comunas_'.$this->id.'" data-id="' . $this->id . '" name="' . $this->nombre . '[comuna]" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' style="width:100%">';
         $display .= '<option value="">Seleccione Comuna</option>';
         $display .= '</select>';
-        $display .= '<input type="hidden" id="pstateCode" name="pstateCode">';
-        $display .= '<input type="hidden" id="pstateName" name="pstateName">';
-        $display .= '<input type="hidden" id="pcityCode" name="pcityCode">';
-        $display .= '<input type="hidden" id="pcityName" name="pcityName">';
-        $display .= '<input type="hidden" id="provinciaCode" name="provinciaCode">';
-        $display .= '<input type="hidden" id="provinciaName" name="provinciaName">';
+        $display .= '<input type="hidden" id="pstateCode_'.$this->id.'" name="pstateCode_'.$this->id.'">';
+        $display .= '<input type="hidden" id="pstateName_'.$this->id.'" name="pstateName_'.$this->id.'">';
+        $display .= '<input type="hidden" id="pcityCode_'.$this->id.'" name="pcityCode_'.$this->id.'">';
+        $display .= '<input type="hidden" id="pcityName_'.$this->id.'" name="pcityName_'.$this->id.'">';
+        $display .= '<input type="hidden" id="provinciaCode_'.$this->id.'" name="provinciaCode_'.$this->id.'">';
+        $display .= '<input type="hidden" id="provinciaName_'.$this->id.'" name="provinciaName_'.$this->id.'">';
         if ($this->ayuda)
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';
         $display .= '</div>';
@@ -90,8 +90,8 @@ class CampoProvincias extends Campo
                             }
                             provincias_obj.trigger("chosen:updated");
 
-                            $("#provinciaCode").val($(provincias_obj).find("option:selected").attr("data-id"));
-                            $("#provinciaName").val($(provincias_obj).find("option:selected").text());
+                            $("#provinciaCode_'.$this->id.'").val($(provincias_obj).find("option:selected").attr("data-id"));
+                            $("#provinciaName_'.$this->id.'").val($(provincias_obj).find("option:selected").text());
                         });
                         
                     }
@@ -118,12 +118,12 @@ class CampoProvincias extends Campo
                             }
                             comunas_obj.trigger("chosen:updated");
 
-                            $("#pcityCode").val($(comunas_obj).find("option:selected").val());
-                            $("#pcityName").val($(comunas_obj).find("option:selected").text());
+                            $("#pcityCode_'.$this->id.'").val($(comunas_obj).find("option:selected").val());
+                            $("#pcityName_'.$this->id.'").val($(comunas_obj).find("option:selected").text());
 
                             comunas_obj.change(function(event){
-                                $("#pcityCode").val($(this).find("option:selected").attr("data-id"));
-                                $("#pcityName").val($(this).find("option:selected").text());
+                                $("#pcityCode_'.$this->id.'").val($(this).find("option:selected").attr("data-id"));
+                                $("#pcityName_'.$this->id.'").val($(this).find("option:selected").text());
                             });
                         });
                     }
@@ -132,16 +132,16 @@ class CampoProvincias extends Campo
                     $("#regiones_'.$this->id.'").change(function(event){
                         var regiones_obj = $("#regiones_'.$this->id.'");
                         var selectedId = $("#regiones_'.$this->id.'").find("option:selected").attr("data-id");
-                        $("#pstateCode").val($(this).find("option:selected").attr("data-id"));
-                        $("#pstateName").val(regiones_obj.val());
+                        $("#pstateCode_'.$this->id.'").val($(this).find("option:selected").attr("data-id"));
+                        $("#pstateName_'.$this->id.'").val(regiones_obj.val());
                         updateProvincias(selectedId);
                         updateComunas(0);
                     });
                     
                     $("#provincias_'.$this->id.'").change(function(event){
                         var selectedId = $("#provincias_'.$this->id.'").find("option:selected").attr("data-id");
-                        $("#provinciaCode").val($(this).find("option:selected").attr("data-id"));    
-                        $("#provinciaName").val($(this).find("option:selected").text());
+                        $("#provinciaCode_'.$this->id.'").val($(this).find("option:selected").attr("data-id"));    
+                        $("#provinciaName_'.$this->id.'").val($(this).find("option:selected").text());
                         updateComunas(selectedId);
                     });
                     
@@ -160,12 +160,11 @@ class CampoProvincias extends Campo
             $this->nombre . '.region' => implode('|', $this->validacion),
             $this->nombre . '.provincia' => implode('|', $this->validacion),
             $this->nombre . '.comuna' => implode('|', $this->validacion),
+        ], [], [
+            $this->nombre . '.region' => "<b>Región de $this->etiqueta</b>",
+            $this->nombre . '.provincia' => "<b>Provincia de $this->etiqueta</b>",
+            $this->nombre . '.comuna' => "<b>Comuna de $this->etiqueta</b>"
         ]);
-        /*
-        $CI =& get_instance();
-        $CI->form_validation->set_rules($this->nombre . '[region]', $this->etiqueta . ' - Región', implode('|', $this->validacion));
-        $CI->form_validation->set_rules($this->nombre . '[comuna]', $this->etiqueta . ' - Comuna', implode('|', $this->validacion));
-        */
     }
 
     public function backendExtraFields(){
