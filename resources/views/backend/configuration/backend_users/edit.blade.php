@@ -58,7 +58,7 @@
                                     $valores = isset($form->rol) ? explode(",", $form->rol) : [];
                                 @endphp
 
-                                <select name="rol" id="rol" class="form-control" multiple>
+                                <select name="rol[]" id="rol" class="form-control" multiple>
                                     @foreach($roles as $rol)
                                         <option value="<?= $rol ?>" <?= in_array($rol, $valores) ? 'selected' : ''?> > <?= $rol ?> </option>
                                     @endforeach
