@@ -289,7 +289,7 @@ class Campo extends Doctrine_Record
 
                 }
 
-                if ($this->dependiente_relacion == '!=')
+                if ($this->dependiente_relacion == '!=' || $this->dependiente_relacion == '>=' ||  $this->dependiente_relacion == '<=' || $this->dependiente_relacion == '<' || $this->dependiente_relacion == '>' )
                     $resultado = !$resultado;
             }
 
@@ -345,7 +345,7 @@ class Campo extends Doctrine_Record
         
                         }
         
-                        if ($condicion->igualdad == '!=')
+                        if ($condicion->igualdad == '!=' || $condicion->igualdad == '>=' ||  $condicion->igualdad == '<=' || $condicion->igualdad == '<' || $condicion->igualdad == '>')
                             $resultado = !$resultado;
 
                         array_push($resultados,$resultado);
@@ -481,7 +481,7 @@ class Campo extends Doctrine_Record
                     $visible = $this->dependiente_valor == $valor
                         || $this->dependiente_valor == '"' . $valor . '"';                    
                 }
-                if ($this->dependiente_relacion == "!=")
+                if ($this->dependiente_relacion == "!=" || $this->dependiente_relacion == ">=" || $this->dependiente_relacion == "<=" || $this->dependiente_relacion == "<" || $this->dependiente_relacion == ">")
                     $visible = !$visible;
 
                 $resultados = array();
