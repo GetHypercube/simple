@@ -160,4 +160,72 @@ class TramitesController extends Controller
 
         return redirect($_SERVER['HTTP_REFERER']);
     }
+
+    public function iniciar_post(Request $request, $proceso_id){
+        Log::info('Iniciando proceso ' . $proceso_id);
+        $json = json_decode($request->getContent(), true);
+
+        //return count($json);
+
+        //Token
+        if(count($json)>0){
+            $existe_token = false;
+            foreach($json as $key => $value){
+                if($key=='token'){
+                    $api_token = $value;
+                    $cuenta = Cuenta::cuentaSegunDominio();
+
+                    if (!$cuenta->api_token)
+                        return response()->json(['status' => 'ERROR', 'message' => 'La cuenta no tiene configurado un token.'], 403);
+
+                    if ($cuenta->api_token != $api_token) {
+                        return response()->json(['status' => 'ERROR', 'message' => 'Token incorrecto.'], 403);
+                    }
+                    $existe_token = true;
+                }
+            }
+            if(!$existe_token)
+                return response()->json(['status' => 'ERROR', 'message' => 'Usuario no tiene permisos para ejecutar esta etapa.'], 403);
+        }else{
+            return response()->json(['status' => 'ERROR', 'message' => 'Solicitud sin datos de entrada.'], 403);
+        }
+        //Fin token
+
+        $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
+        
+        if (!$proceso->canUsuarioIniciarlo(Auth::user()->id)) {
+            $url = $proceso->getTareaInicial()->acceso_modo == 'claveunica' ? route('login.claveunica').'?redirect='.route('tramites.iniciar', [$proceso->id]) : route('login').'?redirect='.route('tramites.iniciar', $proceso->id);
+            return redirect()->away($url);
+        }
+        $bodyContent = $request->getContent();
+        if($proceso->concurrente==1){
+            $tramite = new \Tramite();
+            $tramite->iniciar($proceso->id, $bodyContent);
+
+            if(session()->has('redirect_url')){
+                return redirect()->away(session()->get('redirect_url'));
+            }
+        }else{
+            //Vemos si es que usuario ya tiene un tramite de proceso_id ya iniciado, y que se encuentre en su primera etapa.
+            //Si es asi, hacemos que lo continue. Si no, creamos uno nuevo
+            $tramite = Doctrine_Query::create()
+                ->from('Tramite t, t.Proceso p, t.Etapas e, e.Tramite.Etapas hermanas')
+                ->where('t.pendiente=1 AND p.activo=1 AND p.id = ? AND e.usuario_id = ?', array($proceso_id, Auth::user()->id))
+                ->groupBy('t.id')
+                ->having('COUNT(hermanas.id) = 1')
+                ->fetchOne();
+
+            if (!$tramite) {
+                $tramite = new \Tramite();
+                $tramite->iniciar($proceso->id, $bodyContent);
+
+                if(session()->has('redirect_url')){
+                    return redirect()->away(session()->get('redirect_url'));
+                }
+            }
+        }
+        $qs = $request->getQueryString();
+
+        return redirect('etapas/ejecutar/' . $tramite->getEtapasActuales()->get(0)->id . ($qs ? '?' . $qs : ''));
+    }
 }
