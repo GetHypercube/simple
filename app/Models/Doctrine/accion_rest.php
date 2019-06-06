@@ -55,6 +55,9 @@ class AccionRest extends Accion
         $display .= '<input type="text" class="form-control col-2" name="extra[timeout_reintentos]" value="' . ($this->extra ? $this->extra->timeout_reintentos : '3') . '" />';
 
         if (!is_null($this->extra) && $this->extra->tipoMetodo && ($this->extra->tipoMetodo == "PUT" || $this->extra->tipoMetodo == "POST")) {
+
+            $paramType = isset($this->extra->paramType) ? $this->extra->paramType : GuzzleHttp\RequestOptions::JSON;
+
             $display .= '
             <div id="divObject">
 
@@ -65,12 +68,12 @@ class AccionRest extends Accion
                 <div class="form-check form-group">
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="extra[paramType]" id="jsonParam" value="'. GuzzleHttp\RequestOptions::JSON .'"
-                          '.  ( $this->extra && $this->extra->paramType === GuzzleHttp\RequestOptions::JSON ? "checked" : "" ) .'>
+                          '.  ( $paramType === GuzzleHttp\RequestOptions::JSON ? "checked" : "" ) .'>
                     <label class="form-check-label" for="jsonParam">json</label>
                   </div>
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="extra[paramType]" id="formParam" value="'. GuzzleHttp\RequestOptions::FORM_PARAMS .'"
-                          '.  ( $this->extra && $this->extra->paramType === GuzzleHttp\RequestOptions::FORM_PARAMS ? "checked" : "" ) .'>
+                          '.  ( $paramType === GuzzleHttp\RequestOptions::FORM_PARAMS ? "checked" : "" ) .'>
                     <label class="form-check-label" for="formParam">form-data</label>
                   </div>
                 </div>
@@ -188,7 +191,6 @@ class AccionRest extends Accion
 
             Log::info("Config: " . $this->varDump($config));
 
-
             $request = '';
             if (isset($this->extra->request)) {
                 $request = $this->extra->request;
@@ -236,6 +238,8 @@ class AccionRest extends Accion
             $ultimo_codigo_http = -1;
             do {
 
+                $paramType = isset($this->extra->paramType) ? $this->extra->paramType : GuzzleHttp\RequestOptions::JSON;
+
                 try {
                     // Se ejecuta la llamada segun el metodo
                     if ($this->extra->tipoMetodo == "GET") {
@@ -244,11 +248,11 @@ class AccionRest extends Accion
                         ]);
                     } else if ($this->extra->tipoMetodo == "POST") {
                         $result = $client->request('POST', $uri, [
-                            $this->extra->paramType => json_decode($request)
+                            $paramType => json_decode($request)
                         ]);
                     } else if ($this->extra->tipoMetodo == "PUT") {
                         $result = $client->put($uri, [
-                            $this->extra->paramType => json_decode($request)
+                            $paramType => json_decode($request)
                         ]);
                     } else if ($this->extra->tipoMetodo == "DELETE") {
                         $result = $client->delete($uri, [
