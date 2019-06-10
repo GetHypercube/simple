@@ -349,28 +349,14 @@
                                     @endforeach
                                 </div>
                             </div>
-
-                            <!-- <select class="input-medium" name="dependiente_campo"> -->
-                            <!-- </select> -->
-                            <div class="form-group">
-                              <label for="ControlBotones"></label>
-                               <select class="form-control" id="ControlBotones">
-                                 <option><button type="button" class="buttonIgualdad btn btn-secondary">es igual a</button></option>
-                                 <option><button type="button" class="buttonDesigualdad btn btn-secondary">distinto a</button></option>
-                                 <option><button type="button" class="buttonMayorque btn btn-secondary">mayor que</button></option>
-                                 <option><button type="button" class="buttonMenorque btn btn-secondary">menor que</button></option>
-                                 <option><button type="button" class="buttonMayoroigualque btn btn-secondary">mayor = que </button></option>
-                                 <option><button type="button" class="buttonMenoroigualque btn btn-secondary">menor = que </button></option>
-                                 
-                               </select>
-                            </div>
-
-                         <!-- OLD  <div class="btn-group ml-3 mr-3">
+                       <div class="btn-group btn-group-sm">
                                 <button type="button" class="buttonIgualdad btn btn-secondary">=</button>
                                 <button type="button" class="buttonDesigualdad btn btn-secondary">!=</button>
                                 <button type="button" class="buttonMayorque btn btn-secondary">></button>
                                 <button type="button" class="buttonMenorque btn btn-secondary"><</button>
-                            </div>-->
+                                <button type="button" class="buttonMayoroigualque btn btn-secondary">>=</button>
+                                <button type="button" class="buttonMenoroigualque btn btn-secondary"><=</button>
+                            </div>
 
                             <input type="hidden" name="dependiente_relacion"
                                    value="<?=isset($campo) && $campo->dependiente_relacion ? $campo->dependiente_relacion : '==' ?>"/>
@@ -379,15 +365,9 @@
                            
                             <input type="text" class="form-control" name="dependiente_valor"
                                    value="<?= isset($campo) ? $campo->dependiente_valor : '' ?>"/>
-                                   <select class="form-control">
-                                     <option><button type="button" class="buttonString btn btn-secondary">String</button></option>
-                                     <option><button type="button" class="buttonRegex btn btn-secondary">Regex</button></option>
-                                     <option><button type="button" class="buttonNumeric btn btn-secondary">Numeric</button></option>
-                                 </select>                    
-
-                          <!--  OLD <button type="button" class="buttonString btn btn-secondary">String</button>
+                            <button type="button" class="buttonString btn btn-secondary">String</button>
                             <button type="button" class="buttonRegex btn btn-secondary">Regex</button>
-                            <button type="button" class="buttonNumeric btn btn-secondary">Numeric</button>-->
+                            <button type="button" class="buttonNumeric btn btn-secondary">Numeric</button>
                         </span>
                             <input type="hidden" name="dependiente_tipo"
                                    value="<?=isset($campo) && $campo->dependiente_tipo ? $campo->dependiente_tipo : 'string' ?>"/>
@@ -535,12 +515,12 @@
 
                                 <div class="btn-group col-8">
                                     <select name="condiciones[<?= $i ?>][igualdad]" class="form-control col-3">
-                                        <option value="==" <?=$d->igualdad=='=' ? 'selected="selected"' : '' ?>>es igual a</button>
-                                        <option value="!=" <?=$d->igualdad=='!=' ? 'selected="selected"' : '' ?>>distinto a</button>
-                                        <option value=">" <?=$d->igualdad=='>' ? 'selected="selected"' : '' ?>>mayor que</button>
-                                        <option value="<" <?=$d->igualdad=='<' ? 'selected="selected"' : '' ?>>menor que</button>
-                                        <option value=">=" <?=$d->igualdad=='>=' ? 'selected="selected"' : '' ?>>mayor = que</button>
-                                        <option value="<=" <?=$d->igualdad=='<=' ? 'selected="selected"' : '' ?>>menor = que</button>
+                                        <option value="==" <?=$d->igualdad=='=' ? 'selected="selected"' : '' ?>>Es igual a</button>
+                                        <option value="!=" <?=$d->igualdad=='!=' ? 'selected="selected"' : '' ?>>Distinto a</button>
+                                        <option value=">" <?=$d->igualdad=='>' ? 'selected="selected"' : '' ?>>Mayor que</button>
+                                        <option value="<" <?=$d->igualdad=='<' ? 'selected="selected"' : '' ?>>Menor que</button>
+                                        <option value=">=" <?=$d->igualdad=='>=' ? 'selected="selected"' : '' ?>>Mayor ó = que</button>
+                                        <option value="<=" <?=$d->igualdad=='<=' ? 'selected="selected"' : '' ?>>Menor ó = que</button>
                                     </select>
                                     <span class="input-append"></span>
                                     <input type="text" class="form-control" name="condiciones[<?= $i ?>][valor]" value="<?=$d->valor?>" />
@@ -558,6 +538,7 @@
 
                         </div>
 
+
                         <script type="text/javascript">
                             $('#formEditarCampo .campoDependientes .condicion').click(function () {
                                 var registro = $('#formEditarCampo .campoDependientes .camposDependientesAdicionales .item').length;
@@ -567,12 +548,12 @@
                                 
                                 html += '<div class="btn-group col-8">';
                                 html += '<select name="condiciones['+registro+'][igualdad]" class="form-control col-3">';
-                                html += '<option value="==">es igual a</button>';
-                                html += '<option value="!=">distinto a</button>';
-                                html += '<option value=">">mayor que</button>';
-                                html += '<option value="<">menor que</button>';
-                                html += '<option value=">=">mayor = que</button>';
-                                html += '<option value="<=">menor = que</button>';
+                                html += '<option value="==">Es igual a</button>';
+                                html += '<option value="!=">Distinto a</button>';
+                                html += '<option value=">">Mayor que</button>';
+                                html += '<option value="<">Menor que</button>';
+                                html += '<option value=">=">Mayor ó = que</button>';
+                                html += '<option value="<=">Menor ó = que</button>';
                                 html += '</select>';
                                 html += '<span class="input-append"></span>';
                                 html += '<input type="text" class="form-control" name="condiciones['+registro+'][valor]" />';                                
@@ -592,6 +573,8 @@
                                 $(this).closest('.item').remove();
                             });
                         </script>
+
+
 
                     </div>
                     
@@ -707,3 +690,9 @@
         </div>
     </div>
 </div>
+<script>
+function myNewFunction(element) {
+    var text = element.options[element.selectedIndex].text;
+    // ...
+}
+</script>
