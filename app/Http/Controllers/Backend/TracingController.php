@@ -240,7 +240,7 @@ class TracingController extends Controller
             'title' => 'Seguimiento de ' . $proceso->nombre
         ];
 
-        return view('backend.tracing.index_process2', $data);
+        return view('backend.tracing.index_process', $data);
     }
 
     /**
