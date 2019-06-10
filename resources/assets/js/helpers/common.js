@@ -109,7 +109,11 @@ $(document).ready(function () {
     });
 });
 
-function prepareDynaForm(form) {
+
+
+
+
+function prepareDynaForm(form) {   //quedo filete
     $(form).find(":input[readonly]").prop("disabled", false);
     $(form).find(".file-uploader ~ input[type=hidden]").prop("type", "text");
     $(form).find(".campo[data-dependiente-campo]").each(function (i, el) {
@@ -135,7 +139,15 @@ function prepareDynaForm(form) {
                                 if(input[j].value==evaluacion[2]){
                                     resultado = true;
                                 }
-                            }else if(evaluacion[3]=='regex'){
+                            }
+                            if(evaluacion[3]=='numeric'){
+                                if(input[j].value==evaluacion[2]){
+                                    resultado = true;
+                                }
+                            }
+
+
+                            else if(evaluacion[3]=='regex'){
                                 var regex = new RegExp(evaluacion[2]);
                                 if (regex.test(input[j].value)) {
                                     resultado = true;
@@ -150,7 +162,14 @@ function prepareDynaForm(form) {
                         for(var j in input){
                             if(input[j].value!=evaluacion[2]){
                                 resultado = true;
-                            }else if(evaluacion[3]=='regex'){
+
+                            }
+
+                            if(input[j].value>=evaluacion[2]){
+                                resultado = true;
+                                
+                            }
+                            else if(evaluacion[3]=='regex'){
                                 var regex = new RegExp(evaluacion[2]);
                                 if (regex.test(input[j].value)) {
                                     resultado = true;
@@ -158,16 +177,42 @@ function prepareDynaForm(form) {
                             }
                         }
                     });
+                }//fin original
+                else if (evaluacion[1]==">" || evaluacion[1]=="<" || evaluacion[1]=="<=" || evaluacion[1]==">="){ //aqui estoy evaluando los nuevos caracteres de comparacion
+                     $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
+                        var input = $(el).serializeArray();
+                        for(var j in input){
+                            if(input[j].value!=evaluacion[2]){
+                                resultado = true;
+
+                            }
+
+                            if(input[j].value>=evaluacion[2]){
+                                resultado = true;
+                                
+                            }
+                            else if(evaluacion[3]=='numeric'){
+                                if (numeric.test(input[j].value)) {
+                                    resultado = true;
+                                }
+                            }
+                        }
+                    });
                 }
-                resultados.push(resultado);
+
+                    resultados.push(resultado);
             }
+            console.log(condicion_final, evaluacion, visible)
             if(resultados.indexOf(false)>-1){
                 $(el).hide();
             }else{
                 $(el).show();
             }
-        }else{
-            $(form).find(":input[name='" + campo + "']").each(function (i, el) {
+        }
+
+
+        else{
+            $(form).find(":input[name='" + campo + "']").each(function (i, el) {   //deberia arreglarla
                 existe = true;
                 var input = $(el).serializeArray();
                 for (var j in input) {
@@ -175,20 +220,51 @@ function prepareDynaForm(form) {
                         var regex = new RegExp(valor);
                         if (regex.test(input[j].value)) {
                             visible = true;
+                        } else if  (numeric.test(input[j].value)) {
+                            visible = true;
+                           
+                        } if (input[j].value == valor) {
+                            visible = true;
                         }
+
+                        else {
+                             if (relacion == "<=") { 
+                       visible = !visible;
+                       }
+                             if (relacion == ">=") { 
+                       visible = !visible;
+                       }
+                             if (relacion == "<") { 
+                       visible = !visible;
+                       }
+                             if (relacion == ">") { 
+                       visible = !visible;
+                       }
+                     
+                        }
+
+                       
                     } else {
                         if (input[j].value == valor) {
                             visible = true;
                         }
-                    }
-                    if (relacion == "!=") {
-                        visible = !visible;
-                    }
-                    if (visible) {
-                        break;
+                        
+                    }  if (relacion == "!=") { 
+                       visible = !visible;
+                       }
+                      
+                     //hasta aqui
+                    
+                   if (visible) { 
+                    
+                    break;
                     }
                 }
+
+                //
+
             });
+             console.log(relacion, valor, visible, tipo, existe)
             if (existe) {
                 if (visible) {
                     if ($(form).hasClass("debugForm"))
@@ -209,6 +285,7 @@ function prepareDynaForm(form) {
                 }
             }
         }
+
     });
 
     $(form).find(":input.disabled-temp").each(function (i, el) {
