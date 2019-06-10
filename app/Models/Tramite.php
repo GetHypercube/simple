@@ -11,6 +11,8 @@ class Tramite extends Model
 
     protected $table = 'tramite';
 
+    public $timestamps = false;
+
     /**
      * Get the indexable data array for the model.
      *
