@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Models\DatoSeguimiento;
+use App\Models\Etapa;
 use App\Models\Tramite;
+use App\Models\Proceso;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -34,42 +38,34 @@ class TracingController extends Controller
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      * @throws \Doctrine_Query_Exception
      */
-    public function indexProcess(Request $request, $proceso_id)
-    {
+    public function indexProcess(Request $request, $proceso_id) {
+
         Log::info("Detalle de seguimiento para proceso id: " . $proceso_id);
-
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
-        // if (is_null($proceso->root)) {
-        //     $proceso->root = $proceso->id;
-        // }
-        // $procesos_archivados = $proceso->findProcesosArchivados($proceso->root);
-        // $id_archivados = array();
-        // Log::info("Buscando procesos relacionados archivados");
-
-        // foreach ($procesos_archivados as $proc_arch) {
-        //     $id_archivados[] = $proc_arch['id'];
-        // }
-
-        // Log::info("Procesos relacionados archivados: " . $this->varDump($id_archivados));
-
         if (Auth::user()->cuenta_id != $proceso->cuenta_id) {
-            echo 'Usuario no tiene permisos';
-            exit;
+            abort(403);
         }
 
         if (!is_null(Auth::user()->procesos) && !in_array($proceso_id, explode(',', Auth::user()->procesos))) {
-            echo 'Usuario no tiene permisos para el seguimiento del tramite';
-            exit ();
+            abort(403);
         }
 
-        $query = $request->input('query');
-        $order = $request->input('order') ? $request->input('order') : 'updated_at';
-        $direction = $request->input('direction') ? $request->input('direction') : 'desc';
+        // query a evaluar
+        $search_option = $request->input('search_option');
+        $query_tramite_id = $request->input('query_tramite_id');
+        $query_asignado = $request->input('query_asignado');
+        $query_ref = $request->input('query_ref');
+        $query_name = $request->input('query_name');
+
+        $order = $request->input('order', 'updated_at');
+        $direction = $request->input('direction', 'desc');
         $created_at_desde = $request->input('created_at_desde');
         $created_at_hasta = $request->input('created_at_hasta');
         $updated_at_desde = $request->input('updated_at_desde');
         $updated_at_hasta = $request->input('updated_at_hasta');
-        $pendiente = $request->has('pendiente') && is_numeric($request->input('pendiente')) ? $request->input('pendiente') : -1;
+        $pendiente = $request->has('pendiente') &&
+            is_numeric($request->input('pendiente')) ? $request->input('pendiente') : -1;
+
         $page = $request->input('page', 1); // Get the ?page=1 from the url
         $per_page = 50;
         $busqueda_avanzada = $request->input('busqueda_avanzada');
@@ -77,83 +73,174 @@ class TracingController extends Controller
 
         Log::info("Creando query");
 
-        $doctrine_query = Doctrine_Query::create()->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
-            ->where('p.activo=1')
-            ->andWhereIn('p.id', $proceso_id)
-            ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')-> // Mostramos solo los que se han avanzado o tienen datos
-            groupBy('t.id')->orderBy($order . ' ' . $direction)->limit($per_page)->offset($offset);
+        // obtiene los tramites cuyo proceso este actiivo, y ademas de tener por lo menos una etapa creada
+        $preg = Tramite::where('p.activo', true)
+            ->select(
+                'tramite.id as id',
+                'tramite.pendiente as estado',
+                'e.id as etapa_id',
+                'e.usuario_id as etapa_usuario_id',
+                'tramite.created_at',
+                'tramite.updated_at'
+            )
+            ->leftjoin('proceso as p', 'tramite.proceso_id', '=', 'p.id')
+            ->leftjoin('etapa as e', 'tramite.id', '=', 'e.tramite_id')
+            ->leftjoin('dato_seguimiento as ds', 'e.id', '=', 'ds.etapa_id')
+            ->where('p.id', $proceso_id)
+            ->groupBy('tramite.id')
+            ->havingRaw('count(ds.id) > 0 or count(e.id) > 1')
+            ->orderBy('tramite.'.$order, $direction);
 
         if ($created_at_desde) {
-            $doctrine_query->andWhere('created_at >= ?', array(
-                date('Y-m-d', strtotime($created_at_desde))
-            ));
+            $preg->where('tramite.created_at', '>=', date('Y-m-d', strtotime($created_at_desde)));
         }
         if ($created_at_hasta) {
-            $doctrine_query->andWhere('created_at <= ?', array(
-                date('Y-m-d', strtotime($created_at_hasta))
-            ));
+            $preg->where('tramite.created_at', '<=', date('Y-m-d', strtotime($created_at_hasta)));
         }
         if ($updated_at_desde) {
-            $doctrine_query->andWhere('updated_at >= ?', array(
-                date('Y-m-d', strtotime($updated_at_desde))
-            ));
+            $preg->where('tramite.updated_at', '>=', date('Y-m-d', strtotime($updated_at_desde)));
         }
         if ($updated_at_hasta) {
-            $doctrine_query->andWhere('updated_at <= ?', array(
-                date('Y-m-d', strtotime($updated_at_hasta))
-            ));
+            $preg->where('tramite.updated_at', '<=', date('Y-m-d', strtotime($updated_at_desde)));
         }
         if ($pendiente != -1) {
-            $doctrine_query->andWhere('pendiente = ?', array(
-                $pendiente
-            ));
+            $preg->where('tramite.pendiente', $pendiente );
         }
 
-        if ($query) {
-            $result = Tramite::search(['query' => $query, 'filter' => ['proceso_id' => $proceso_id]])->get();
+        if ($search_option) {
+            switch ($search_option) {
+                case 'option1':
+                    // fltro por id de tramite
+                    $preg->where('tramite.id', $query_tramite_id);
+                    break;
+                case 'option2':
+                    // filtro por aignado rut, email, nombre usuario, etc (pending)
+                    break;
+                case 'option3':
+                    // filtro por tramite_ref
+                    $arrayDatos = [];
+                    $datosNombre = DatoSeguimiento::where('nombre', 'tramite_ref')
+                        ->select('dato_seguimiento.etapa_id')
+                        ->where('valor', 'like', '%'.DatoSeguimiento::addFormatNames(strtolower($query_ref)).'%')
+                        ->get()
+                        ->toArray();
 
-            if (!$result->isEmpty()) {
-                $matches = $result->groupBy('id')->keys()->toArray();
+                    foreach ($datosNombre as $dato) {
+                        $arrayDatos[] = $dato['etapa_id'];
+                    }
 
-                $doctrine_query->whereIn('t.id', $matches);
-            } else {
-                $doctrine_query->where('0');
+                    $preg->whereIn('ds.etapa_id', $arrayDatos);
+                    break;
+                case 'option4':
+                    // filtro por tramite_descripcion ($query_name)
+                    $arrayDatos = [];
+                    $datosNombre = DatoSeguimiento::where('nombre', 'tramite_descripcion')
+                        ->select('dato_seguimiento.etapa_id')
+                        ->where('valor', 'like', '%'.urldecode(DatoSeguimiento::addFormatNames(strtolower($query_name))).'%')
+                        ->get()
+                        ->toArray();
+
+                    foreach ($datosNombre as $dato) {
+                        $arrayDatos[] = $dato['etapa_id'];
+                    }
+
+                    $preg->whereIn('ds.etapa_id', $arrayDatos);
+                    break;
             }
         }
 
-        $tramites = $doctrine_query->execute();
-        $ntramites = $doctrine_query->count();
+        $tramitesTotal = $preg->get()->count();
+        $preg->limit($per_page)->offset($offset);
+        $tramitesResult = $preg->get();
+
+        $tramites = [];
+
+        foreach ($tramitesResult as $tr) {
+
+            $item = [
+                'id' => $tr->id,
+                'asignado' => 'Ninguno',
+                'ref' => null,
+                'nombre' => null,
+                'estado' => $tr->estado,
+                'etapas' => [],
+                'created_at' => Carbon::parse($tr->created_at)->format('d-m-Y H:i:s'),
+                'updated_at' => Carbon::parse($tr->updated_at)->format('d-m-Y H:i:s')
+            ];
+
+            // obtiene el valor para el usuario asignado
+            $ultimaEtapa = Etapa::where('tramite_id', $tr->id)
+                ->leftjoin('usuario as u', 'etapa.usuario_id', '=', 'u.id')
+                ->orderBy('etapa.id', 'DESC')
+                ->first();
+
+            $item['asignado'] = $ultimaEtapa->usuario;
+
+            if ($ultimaEtapa->open_id) {
+                $item['asignado']= $ultimaEtapa->rut;
+            }
+
+            if (!$ultimaEtapa->registrado) {
+                $item['asignado'] = 'No registrado';
+            }
+
+            // si cumple con la restriccion, se obtienen los valores para ref y nombre
+            $item['ref'] = $item['nombre'] = 'N/A';
+            $datosSeguimiento = DatoSeguimiento::where('etapa_id', $tr->etapa_id)->get();
+
+            foreach ($datosSeguimiento as $datoSeg) {
+                if ($datoSeg->nombre == 'tramite_ref') {
+                    $item['ref'] = DatoSeguimiento::removeFormatNames($datoSeg->valor);
+                }
+                if ($datoSeg->nombre == 'tramite_descripcion') {
+                    $item['nombre'] = DatoSeguimiento::removeFormatNames($datoSeg->valor);
+                }
+            }
+
+            // obtiene todas las etapas pendientes de c/tarea
+            $tareas = Etapa::where('pendiente', true)
+                ->join('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                ->where('tramite_id', $tr->id)
+                ->get();
+
+            foreach ($tareas as $tarea) {
+                $item['etapas'][] = $tarea->nombre;
+            }
+
+            $tramites[] = $item;
+        }
+
 
         $tramites = new LengthAwarePaginator(
             $tramites, // Only grab the items we need
-            $ntramites, // Total items
+            $tramitesTotal, // Total items
             $per_page, // Items per page
             $page, // Current page
-            ['path' => $request->url(), 'query' => $request->query()] // We need this so we can keep all old query parameters from the url
+            // We need this so we can keep all old query parameters from the url
+            ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        /*$this->load->library('pagination');
-        $this->pagination->initialize(array(
-            'base_url' => site_url('backend/seguimiento/index_proceso/' . $proceso_id . '?order=' . $order . '&direction=' . $direction . '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta),
-            'total_rows' => $ntramites,
-            'per_page' => $per_page
-        ));*/
 
-        $data ['query'] = $query;
-        $data ['order'] = $order;
-        $data ['direction'] = $direction;
-        $data ['created_at_desde'] = $created_at_desde;
-        $data ['created_at_hasta'] = $created_at_hasta;
-        $data ['updated_at_desde'] = $updated_at_desde;
-        $data ['updated_at_hasta'] = $updated_at_hasta;
-        $data ['pendiente'] = $pendiente;
-        $data ['busqueda_avanzada'] = $busqueda_avanzada;
-        $data ['proceso'] = $proceso;
-        $data ['tramites'] = $tramites;
+        $data = [
+            'search_option' => $search_option,
+            'query_tramite_id' => $query_tramite_id,
+            'query_asignado' => $query_asignado,
+            'query_ref' => $query_ref,
+            'query_name' => $query_name,
+            'order' => $order,
+            'direction' => $direction,
+            'created_at_desde' => $created_at_desde,
+            'created_at_hasta' => $created_at_hasta,
+            'updated_at_desde' => $updated_at_desde,
+            'updated_at_hasta' => $updated_at_hasta,
+            'pendiente' => $pendiente,
+            'busqueda_avanzada' => $busqueda_avanzada,
+            'proceso' => $proceso,
+            'tramites' => $tramites,
+            'title' => 'Seguimiento de ' . $proceso->nombre
+        ];
 
-        $data ['title'] = 'Seguimiento de ' . $proceso->nombre;
-
-        return view('backend.tracing.index_process', $data);
+        return view('backend.tracing.index_process2', $data);
     }
 
     /**
