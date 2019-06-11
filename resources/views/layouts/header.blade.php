@@ -37,8 +37,7 @@
                             <span class="icon-claveunica"></span> Bienvenido/a, {{ Auth::user()->nombres }}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right login" aria-labelledby="navbarDropdownMenuLink">
-                            <a href="{{ route('logout') }}" class="dropdown-item"
-                               onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                            <a href="{{ route('logout') }}" class="dropdown-item" id="cierreSesion" >
                                 <i class="material-icons">exit_to_app</i> {{__('auth.close_session')}}
                             </a>
 
