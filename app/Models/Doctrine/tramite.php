@@ -66,6 +66,7 @@ class Tramite extends Doctrine_Record
 
             if(!is_null($bodyContent))
                 $this->save_data($etapa->id, $bodyContent);
+                
         } else {
             throw new ApiException('Proceso no existe', 404);
         }
@@ -237,8 +238,7 @@ class Tramite extends Doctrine_Record
     }
 
     private function save_data($etapa_id, $bodyContent){
-        $json = json_decode($bodyContent, true);
-        foreach ($json as $key => $value){
+        foreach ($bodyContent as $key => $value){
             $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa_id);
             if (!$dato)
                 $dato = new DatoSeguimiento();
