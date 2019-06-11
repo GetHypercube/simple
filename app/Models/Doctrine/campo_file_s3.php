@@ -174,7 +174,7 @@ class CampoFileS3 extends Campo
         $output .= '</div>';
         $output .= '<div class="controls s3_max_file_size">
                         <label class="control-label">Tamaño máximo del archivo (MB)</label>
-                        <input type="text" name="extra[max_size]" class="form-control" value="' . ($this->extra && $this->extra->max_size ? $this->extra->max_size : '') . '">
+                        <input type="text" name="extra[max_size]" class="form-control" value="' . ($this->extra && property_exists($this->extra,'max_size') ? $this->extra->max_size : '') . '">
                         </div>';
         $min_vals = json_encode($this->min_validations); // solo expande variables, no evalua
         $output .= "
