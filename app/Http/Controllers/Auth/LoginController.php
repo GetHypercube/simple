@@ -151,4 +151,13 @@ class LoginController extends Controller
         }
         return view('auth.login',$data);
     }
+
+    public function logout_get(Request $request)
+    {
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        return redirect('/');
+    }
 }

@@ -20,6 +20,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::get('login/claveunica', 'Auth\LoginController@redirectToProvider')->name('login.claveunica');
     Route::get('login/claveunica/callback', 'Auth\LoginController@handleProviderCallback')->name('login.claveunica.callback');
+    Route::get('/logout', 'Auth\LoginController@logout_get')->name('logout');
 
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/home/procesos/{categoria_id}', 'HomeController@procesos')->name('home.procesos');
