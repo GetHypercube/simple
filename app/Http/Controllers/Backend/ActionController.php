@@ -311,11 +311,9 @@ class ActionController extends Controller
         $request->validate(['urlsoap' => 'required']);
 
         $client = new SoapClient($url);
-        $result['functions'] = $client->__getFunctions();
+        $result['functions'] = $this->get_functions($client);
         $result['types'] = $client->__getTypes();
         $result['caso'] = 1;
-        $result['functions'] = str_replace("\\n", " ", $result['functions']);
-        $result['functions'] = str_replace("\\r", " ", $result['functions']);
         $result['types'] = str_replace("\\n", " ", $result['types']);
         $result['types'] = str_replace("\\r", " ", $result['types']);
         $result = str_replace("\\n", " ", $result);
@@ -323,6 +321,35 @@ class ActionController extends Controller
         $array = json_encode($result);
         print_r($array);
         exit;
+    }
+
+    public function get_functions($client) {
+        $operations = $client->__getFunctions();
+        $list = array();
+
+        foreach($operations as $op){
+           $matches = array();
+           if(preg_match('/^(\w[\w\d_]*) (\w[\w\d_]*)\(([\w\$\d,_ ]*)\)$/',$op,$matches)){
+               $return = $matches[1];
+               $name = $matches[2];
+               $params = $matches[3];
+           }
+           elseif(preg_match('/^(list\([\w\$\d,_ ]*\)) (\w[\w\d_]*)\(([\w\$\d,_ ]*)\)$/',$op,$matches)) {
+               $return = $matches[1];
+               $name = $matches[2];
+               $params = $matches[3];
+           }
+           $paramList = array();
+           $params = explode(',',$params);
+           foreach($params as $param){
+               list($paramType,$paramName) = explode(' ',trim($param));
+               $paramName = trim($paramName,'$)');
+               $paramList[$paramName] = $paramType;
+           }
+           $list[$name] = array('in'=>$paramList,'out'=>$return);
+        }
+        ksort($list);
+        return $list;
     }
 
     /**

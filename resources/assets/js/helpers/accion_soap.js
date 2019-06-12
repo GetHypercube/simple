@@ -45,11 +45,11 @@ function CovertJson(myArrClean, operaciones) {
 function CambioRadio() {
     /*$("[id='operacion']").on("change", function (e) {
         $("#request").val("");
-    	$("#response").val("");
-    	ObjectSoap=this.value;
+        $("#response").val("");
+        ObjectSoap=this.value;
         jQuery.each(result.functions, function(i,val){
         var bool = val.indexOf(ObjectSoap);
-            if (bool>=0){       
+            if (bool>=0){
                 var res = val.split(" ");
                 var subtit = res[1].replace("(", " ");
                 var subtit = subtit.split(" ");
@@ -57,42 +57,42 @@ function CambioRadio() {
                 FunMetodo=subtit[0];
                 FuncResquest=subtit[1];
                 jQuery.each(tiposMetodos, function(i,val){
-            		var sep = val.split(" ");
-            		if (sep[1]==FuncResquest){
-            			// Caso Request
-            			var cadena= val.split("{");
-            			var ultimo = cadena.pop();
-            			var res= getCleanedString(ultimo);
-            			var res= res.split(" ");
-            			var myArrClean = res.filter(Boolean);
-            			myArrClean= myArrClean.reverse();
-            			var json = CovertJson(myArrClean,operaciones); 
-            			if(json==0){
-        			    	$("#warningSpan").text("La consulta al servicio SOAP no trajo resultados, verifique.");
-            			}else{
-            				var result= JSON.stringify(json,null,2);
-        	    			$("#request").val(result);
-            			}
-            		}
-            		if (sep[1]==FuncResponse){
-            			// Caso Response
-            			var cadena= val.split("{");
-            			var ultimo = cadena.pop();
-            			var res= getCleanedString(ultimo);
-            			var res= res.split(" ");
-            			var myArrClean = res.filter(Boolean);
-            			myArrClean= myArrClean.reverse();
-        				var json = CovertJson(myArrClean,operaciones); 
-            			if(json==0){
-        			    	$("#warningSpan").text("La consulta al servicio SOAP no trajo resultados, verifique.");
-            			}else{
-            				var result= JSON.stringify(json,null,2);
-        	    			$("#response").val(result);
-            			}
-            		}
-        		});
-    	    }
-	    });
+                    var sep = val.split(" ");
+                    if (sep[1]==FuncResquest){
+                        // Caso Request
+                        var cadena= val.split("{");
+                        var ultimo = cadena.pop();
+                        var res= getCleanedString(ultimo);
+                        var res= res.split(" ");
+                        var myArrClean = res.filter(Boolean);
+                        myArrClean= myArrClean.reverse();
+                        var json = CovertJson(myArrClean,operaciones);
+                        if(json==0){
+                            $("#warningSpan").text("La consulta al servicio SOAP no trajo resultados, verifique.");
+                        }else{
+                            var result= JSON.stringify(json,null,2);
+                            $("#request").val(result);
+                        }
+                    }
+                    if (sep[1]==FuncResponse){
+                        // Caso Response
+                        var cadena= val.split("{");
+                        var ultimo = cadena.pop();
+                        var res= getCleanedString(ultimo);
+                        var res= res.split(" ");
+                        var myArrClean = res.filter(Boolean);
+                        myArrClean= myArrClean.reverse();
+                        var json = CovertJson(myArrClean,operaciones);
+                        if(json==0){
+                            $("#warningSpan").text("La consulta al servicio SOAP no trajo resultados, verifique.");
+                        }else{
+                            var result= JSON.stringify(json,null,2);
+                            $("#response").val(result);
+                        }
+                    }
+                });
+            }
+        });
     });*/
 }
 
@@ -118,11 +118,8 @@ function manejorespuesta(data) {
         });
         tiposMetodos = result.types;
         $("#operacion").append("<option value=''>Seleccione...</option>");
-        jQuery.each(result.functions, function (i, val) {
-            var res = val.split(" ");
-            var subtit = res[1].replace("(", " ");
-            var subtit = subtit.split(" ");
-            $("#operacion").append("<option value='" + subtit[0] + "'>" + subtit[0] + "</option>");
+        jQuery.each(result.functions, function (key, val) {
+            $("#operacion").append("<option value='" + key + "'>" + key + "</option>");
         });
         CambioRadio();
     } else {

@@ -55,21 +55,59 @@ class AccionRest extends Accion
         $display .= '<input type="text" class="form-control col-2" name="extra[timeout_reintentos]" value="' . ($this->extra ? $this->extra->timeout_reintentos : '3') . '" />';
 
         if (!is_null($this->extra) && $this->extra->tipoMetodo && ($this->extra->tipoMetodo == "PUT" || $this->extra->tipoMetodo == "POST")) {
+
+            $paramType = isset($this->extra->paramType) ? $this->extra->paramType : GuzzleHttp\RequestOptions::JSON;
+
             $display .= '
             <div id="divObject">
-                <label>Request</label>
-                <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
-                <br />
-                <span id="resultRequest" class="spanError"></span>
-                <br /><br />
+
+                <div class="form-group">
+                  <label>Request</label>
+                </div>
+
+                <div class="form-check form-group">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="extra[paramType]" id="jsonParam" value="'. GuzzleHttp\RequestOptions::JSON .'"
+                          '.  ( $paramType === GuzzleHttp\RequestOptions::JSON ? "checked" : "" ) .'>
+                    <label class="form-check-label" for="jsonParam">json</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="extra[paramType]" id="formParam" value="'. GuzzleHttp\RequestOptions::FORM_PARAMS .'"
+                          '.  ( $paramType === GuzzleHttp\RequestOptions::FORM_PARAMS ? "checked" : "" ) .'>
+                    <label class="form-check-label" for="formParam">form-data</label>
+                  </div>
+                </div>
+
+                <div class="form-group" i>
+                  <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
+                  <br />
+                  <span id="resultRequest" class="spanError"></span>
+                </div>
+
             </div>';
         } else {
             $display .= '
             <div id="divObject" style="display:none;">
-                <label>Request</label>
-                <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
-                <br />
-                <span id="resultRequest" class="spanError"></span>
+                <div class="form-group">
+                  <label>Request</label>
+                </div>
+
+                <div class="form-check form-group">
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="extra[paramType]" id="jsonParam" value="'. GuzzleHttp\RequestOptions::JSON .'" checked >
+                    <label class="form-check-label" for="jsonParam">json</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="extra[paramType]" id="formParam" value="'. GuzzleHttp\RequestOptions::FORM_PARAMS .'" >
+                    <label class="form-check-label" for="formParam">form-data</label>
+                  </div>
+                </div>
+
+                <div class="form-group" i>
+                  <textarea id="request" name="extra[request]" rows="7" cols="70" placeholder="{ object }" class="form-control col-4">' . ($this->extra ? $this->extra->request : '') . '</textarea>
+                  <br />
+                  <span id="resultRequest" class="spanError"></span>
+                </div>
                 <br /><br />
             </div>';
         }
@@ -93,6 +131,7 @@ class AccionRest extends Accion
             }
         }
         $display .= '</select>';
+
         return $display;
     }
 
@@ -152,7 +191,6 @@ class AccionRest extends Accion
 
             Log::info("Config: " . $this->varDump($config));
 
-
             $request = '';
             if (isset($this->extra->request)) {
                 $request = $this->extra->request;
@@ -200,6 +238,8 @@ class AccionRest extends Accion
             $ultimo_codigo_http = -1;
             do {
 
+                $paramType = isset($this->extra->paramType) ? $this->extra->paramType : GuzzleHttp\RequestOptions::JSON;
+
                 try {
                     // Se ejecuta la llamada segun el metodo
                     if ($this->extra->tipoMetodo == "GET") {
@@ -208,11 +248,11 @@ class AccionRest extends Accion
                         ]);
                     } else if ($this->extra->tipoMetodo == "POST") {
                         $result = $client->request('POST', $uri, [
-                            GuzzleHttp\RequestOptions::JSON => json_decode($request)
+                            $paramType => json_decode($request)
                         ]);
                     } else if ($this->extra->tipoMetodo == "PUT") {
                         $result = $client->put($uri, [
-                            GuzzleHttp\RequestOptions::JSON => json_decode($request)
+                            $paramType => json_decode($request)
                         ]);
                     } else if ($this->extra->tipoMetodo == "DELETE") {
                         $result = $client->delete($uri, [
@@ -269,16 +309,16 @@ class AccionRest extends Accion
             $ultimo_codigo_http = $e->getCode();
             $result2['desc'] = $e->getMessage();
         }
-        
+
         try{
-            if( ! empty($result2) && is_array($result2) && array_key_exists('code', $result2) 
+            if( ! empty($result2) && is_array($result2) && array_key_exists('code', $result2)
                     && ! array_key_exists('status', $result2) ){
                 $result2['status'] = $result2['code'];
             }
         }catch (Exception $e){
             Log::info("Catch accion REST. Al result2['status']=result2['code']");
         }
-        
+
         $result2 = json_encode($result2);
         $result2 = str_replace(" - ", "_", $result2);
         $result2 = json_decode($result2);
@@ -296,7 +336,7 @@ class AccionRest extends Accion
             $dato->valor = $value;
             $dato->etapa_id = $etapa->id;
             $dato->save();
-            
+
             $key_code = trim($key).'_http_code';
             $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key_code, $etapa->id);
             if (!$dato)
