@@ -115,5 +115,17 @@
 <!-- Scripts -->
 <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=es"></script>
 <script src="{{ asset('js/helpers/grilla_datos_externos.js') }}"></script>
+
+<script>
+$(function () {
+    $(document).ready(function(){
+        $('#cierreSesion').click(function (){
+            $.ajax({ url: 'https://api.claveunica.gob.cl/api/v1/accounts/app/logout', dataType: 'script' }) .always(function() {
+                window.location.href = '/logout';
+            });
+        });
+    });
+});
+</script>
 </body>
 </html>
