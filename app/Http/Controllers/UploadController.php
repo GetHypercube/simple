@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use mysql_xdevapi\Exception;
 use App\Models\DatoSeguimiento;
 
+
 class UploadController extends Controller
 {
 
@@ -40,12 +41,11 @@ class UploadController extends Controller
             $allowedExtensions = $campo->extra->filetypes;
         }
 
-        if($request->headers->has('filename')){
-            $filename = urldecode($request->header('filename'));
-        }else{
+        if(!$request->headers->has('filename')){
             die('No se envio el nombre de archivo.');
         }
 
+        $filename = urldecode($request->header('filename'));
 
         if($request->header('content-length') > FileS3Uploader::$sizeLimit){
             echo json_encode(['error' => 'El archivo es muy grande'], JSON_UNESCAPED_UNICODE);
@@ -54,6 +54,9 @@ class UploadController extends Controller
             echo json_encode(['error'=>'Cabeceras no contienen content-length'], JSON_UNESCAPED_UNICODE);
             exit;
         }
+
+        $filename = $campo_id.$filename;
+
         if( ! is_null($multipart) && $multipart == 'multi'){
             $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename, $campo->id);
             $result = $s3_uploader->uploadPart($etapa_id, $part_number, $total_segments);
@@ -181,7 +184,7 @@ class UploadController extends Controller
         if (!$file) {
             abort(404, 'Archivo no encontrado.');
         }
-        
+
         $full_path_filename = 's3://'.$file->extra->s3_bucket.'/'.$file->extra->s3_filepath .'/'.$file->extra->file_name;
         $remote_full = $file->extra->s3_filepath .'/'.$file->extra->file_name;
         
