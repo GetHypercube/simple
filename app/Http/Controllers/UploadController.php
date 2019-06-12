@@ -55,7 +55,7 @@ class UploadController extends Controller
             exit;
         }
 
-        $filename = $campo_id.$filename;
+        $filename = $campo->id.$filename;
 
         if( ! is_null($multipart) && $multipart == 'multi'){
             $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename, $campo->id);
