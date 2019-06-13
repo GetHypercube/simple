@@ -113,7 +113,7 @@ $(document).ready(function () {
 
 
 
-function prepareDynaForm(form) {   //quedo filete
+function prepareDynaForm(form){
     $(form).find(":input[readonly]").prop("disabled", false);
     $(form).find(".file-uploader ~ input[type=hidden]").prop("type", "text");
     $(form).find(".campo[data-dependiente-campo]").each(function (i, el) {
@@ -123,6 +123,7 @@ function prepareDynaForm(form) {   //quedo filete
         var valor = $(el).data("dependiente-valor");
         var existe = false;
         var visible = false;
+        var imprimir = false;
         var condicion_final = $(el).data("condicion");
         if(condicion_final!='no-condition'){
             var myarr = condicion_final.split("&&");
@@ -131,7 +132,6 @@ function prepareDynaForm(form) {   //quedo filete
                 var evaluacion = myarr[x].split(";");
                 var resultado = false;
                 if(evaluacion[1]=="=="){
-
                     $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
                         var input = $(el).serializeArray();
                         for(var j in input){
@@ -139,15 +139,7 @@ function prepareDynaForm(form) {   //quedo filete
                                 if(input[j].value==evaluacion[2]){
                                     resultado = true;
                                 }
-                            }
-                            if(evaluacion[3]=='numeric'){
-                                if(input[j].value==evaluacion[2]){
-                                    resultado = true;
-                                }
-                            }
-
-
-                            else if(evaluacion[3]=='regex'){
+                            }else if(evaluacion[3]=='regex'){
                                 var regex = new RegExp(evaluacion[2]);
                                 if (regex.test(input[j].value)) {
                                     resultado = true;
@@ -155,21 +147,13 @@ function prepareDynaForm(form) {   //quedo filete
                             }
                         }
                     });
-
                 }else if(evaluacion[1]=="!="){
                     $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
                         var input = $(el).serializeArray();
                         for(var j in input){
                             if(input[j].value!=evaluacion[2]){
                                 resultado = true;
-
-                            }
-
-                            if(input[j].value>=evaluacion[2]){
-                                resultado = true;
-                                
-                            }
-                            else if(evaluacion[3]=='regex'){
+                            }else if(evaluacion[3]=='regex'){
                                 var regex = new RegExp(evaluacion[2]);
                                 if (regex.test(input[j].value)) {
                                     resultado = true;
@@ -177,94 +161,61 @@ function prepareDynaForm(form) {   //quedo filete
                             }
                         }
                     });
-                }//fin original
-                else if (evaluacion[1]==">" || evaluacion[1]=="<" || evaluacion[1]=="<=" || evaluacion[1]==">="){ //aqui estoy evaluando los nuevos caracteres de comparacion
+                }else if (evaluacion[1]==">" || evaluacion[1]=="<" || evaluacion[1]=="<=" || evaluacion[1]==">="){ //aqui estoy evaluando los nuevos caracteres de comparacion
                      $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
                         var input = $(el).serializeArray();
                         for(var j in input){
-                            if(input[j].value!=evaluacion[2]){
+                            if(evaluacion[1]==">" && input[j].value && Number(input[j].value) > Number(evaluacion[2])){
                                 resultado = true;
-
-                            }
-
-                            if(input[j].value>=evaluacion[2]){
+                            }else if(evaluacion[1]=="<" && input[j].value && Number(input[j].value) < Number(evaluacion[2])){
                                 resultado = true;
-                                
-                            }
-                            else if(evaluacion[3]=='numeric'){
-                                if (numeric.test(input[j].value)) {
-                                    resultado = true;
-                                }
+                            }else if(evaluacion[1]=="<=" && input[j].value && Number(input[j].value) <= Number(evaluacion[2])){
+                                resultado = true;
+                            }else if(evaluacion[1]==">=" && input[j].value && Number(input[j].value) >= Number(evaluacion[2])){
+                                resultado = true;
                             }
                         }
                     });
                 }
-
-                    resultados.push(resultado);
+                resultados.push(resultado);
             }
-            console.log(condicion_final, evaluacion, visible)
+
             if(resultados.indexOf(false)>-1){
                 $(el).hide();
             }else{
                 $(el).show();
             }
-        }
-
-
-        else{
-            $(form).find(":input[name='" + campo + "']").each(function (i, el) {   //deberia arreglarla
+        }else{
+            $(form).find(":input[name='" + campo + "']").each(function (i, el){
                 existe = true;
                 var input = $(el).serializeArray();
                 for (var j in input) {
-                    if (tipo == "regex") {
+                    if(tipo == "regex"){
                         var regex = new RegExp(valor);
                         if (regex.test(input[j].value)) {
                             visible = true;
-                        } else if  (numeric.test(input[j].value)) {
+                        }                       
+                    }else if(tipo == "numeric" || tipo == "string"){
+                        if (relacion == "==" && input[j].value && input[j].value == valor){
                             visible = true;
-                           
-                        } if (input[j].value == valor) {
+                        }else if (relacion == "!=" && input[j].value && input[j].value != valor){
                             visible = true;
-                        }
-
-                        else {
-                             if (relacion == "<=") { 
-                       visible = !visible;
-                       }
-                             if (relacion == ">=") { 
-                       visible = !visible;
-                       }
-                             if (relacion == "<") { 
-                       visible = !visible;
-                       }
-                             if (relacion == ">") { 
-                       visible = !visible;
-                       }
-                     
-                        }
-
-                       
-                    } else {
-                        if (input[j].value == valor) {
+                        }else if (relacion == "<=" && input[j].value && input[j].value <= valor){
+                            visible = true;
+                        }else if (relacion == ">=" && input[j].value && input[j].value >= valor){
+                            visible = true;
+                        }else if (relacion == "<" && input[j].value && input[j].value < valor){
+                            visible = true;
+                        }else if (relacion == ">" && input[j].value && input[j].value > valor){ 
                             visible = true;
                         }
-                        
-                    }  if (relacion == "!=") { 
-                       visible = !visible;
-                       }
-                      
-                     //hasta aqui
-                    
-                   if (visible) { 
-                    
-                    break;
+                    }
+                    if (visible){
+                        break;
                     }
                 }
-
-                //
-
             });
-             console.log(relacion, valor, visible, tipo, existe)
+            // console.log(relacion, valor, visible, tipo, existe)
             if (existe) {
                 if (visible) {
                     if ($(form).hasClass("debugForm"))
