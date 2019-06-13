@@ -316,29 +316,16 @@ class Tarea extends Doctrine_Record
             return FALSE;
 
         if ($this->activacion == 'entre_fechas') {
-            if ($this->activacion_inicio && $this->activacion_inicio > now())
+            $fecha_actual = \Carbon\Carbon::today();
+            $fecha_activacion_inicio = \Carbon\Carbon::parse($this->activacion_inicio)->format('Y-m-d H:i:s');
+            $fecha_activacion_fin = \Carbon\Carbon::parse($this->activacion_fin)->format('Y-m-d H:i:s');
+            if (isset($fecha_activacion_inicio) && $fecha_actual->lessThan($fecha_activacion_inicio))
                 return FALSE;
-            if ($this->activacion_fin && now() > $this->activacion_fin)
+            if (isset($fecha_activacion_fin) && $fecha_actual->greaterThan($fecha_activacion_fin))
                 return FALSE;
         }
 
         return TRUE;
-    }
-
-    public function getActivacionInicio()
-    {
-        if ($this->_get('activacion_inicio'))
-            return mysql_to_unix($this->_get('activacion_inicio'));
-        else
-            return NULL;
-    }
-
-    public function getActivacionFin()
-    {
-        if ($this->_get('activacion_fin'))
-            return mysql_to_unix($this->_get('activacion_fin'));
-        else
-            return NULL;
     }
 
     public function setActivacionInicio($date)

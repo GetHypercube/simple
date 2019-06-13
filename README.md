@@ -19,6 +19,7 @@
     * JSON
     * GD
     * SOAP
+    * bcmath
 
 ## Instalación
 

@@ -81,9 +81,9 @@
                     <!-- <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'agenda')">
                         Agenda
                     </button> -->
-                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'recaptcha')">
+                    <!-- <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'recaptcha')">
                         Recaptcha
-                    </button>
+                    </button> -->
                 </div>
                 <div class="btn-group ml-1 mb-1">
                     <button class="btn btn-secondary"
@@ -108,8 +108,8 @@
                             onclick="return agregarCampo(<?= $formulario->id ?>,'javascript')">
                         Javascript
                     </button>
-                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'maps')">Mapa
-                    </button>
+                    <!-- <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'maps')">Mapa
+                    </button> -->
                 </div>
                 <div class="btn-group ml-1 mb-1">
                     <button class="btn btn-secondary"

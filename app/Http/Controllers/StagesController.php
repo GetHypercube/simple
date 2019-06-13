@@ -192,7 +192,10 @@ class StagesController extends Controller
             $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(), "0", $buscar, $offset, $perpage);
             $contador = count($rowetapas);
         }
+ 
 
+
+         //echo "<script>console.log(".json_encode($rowetapas).")</script>";
         $config['base_url'] = url('etapas/sinasignar');
         $config['total_rows'] = $contador;
         $config['per_page'] = $perpage;

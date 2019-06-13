@@ -38,7 +38,7 @@ class Tramite extends Doctrine_Record
         ));
     }
 
-    public function iniciar($proceso_id)
+    public function iniciar($proceso_id, $bodyContent=null)
     {
         // Aumentar el contador de Proceso
         Doctrine_Query::create()
@@ -63,6 +63,10 @@ class Tramite extends Doctrine_Record
             $this->save();
 
             $etapa->asignar(UsuarioSesion::usuario()->id);
+
+            if(!is_null($bodyContent))
+                $this->save_data($etapa->id, $bodyContent);
+                
         } else {
             throw new ApiException('Proceso no existe', 404);
         }
@@ -233,4 +237,22 @@ class Tramite extends Doctrine_Record
             ->execute();
     }
 
+    private function save_data($etapa_id, $bodyContent){
+        foreach ($bodyContent as $key => $value){
+            $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($key, $etapa_id);
+            if (!$dato)
+                $dato = new DatoSeguimiento();
+            $key = str_replace("-", "_", $key);
+            $key = str_replace(" ", "_", $key);
+            $dato->nombre = $key;
+            $dato->valor = $value;
+            if (!is_object($dato->valor) && !is_array($dato->valor)) {
+                if (preg_match('/^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/', $dato->valor)) {
+                    $dato->valor = preg_replace("/^(\d{4})[\/\-](\d{2})[\/\-](\d{2})/i", "$3-$2-$1", $dato->valor);
+                }
+            }
+            $dato->etapa_id = $etapa_id;
+            $dato->save();
+        }
+    }
 }

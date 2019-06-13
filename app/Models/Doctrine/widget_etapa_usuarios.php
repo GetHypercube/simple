@@ -15,6 +15,10 @@ class WidgetEtapaUsuarios extends Widget
         }
 
         $tarea = Doctrine::getTable('Tarea')->find($this->config->tarea_id);
+        if(!$tarea){
+            $display = '<p>Widget requiere configuración</p>';
+            return $display;
+        }
 
         $tmp = Doctrine_Query::create()
             ->select('u.*, COUNT(e.id) as cantidad')

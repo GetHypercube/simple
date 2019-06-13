@@ -65,6 +65,15 @@ class CampoSelect extends Campo
                     </script>
     
                 ';
+
+        if($modo=='visualizacion'){
+            $display .= '
+            <script>
+                $(document).ready(function(){
+                    $("#'.$this->id.'").attr("disabled",true).trigger("chosen:updated");
+                });
+            </script>';
+        }
         if ($this->extra && $this->extra->ws){
             $display .= '
             <script>

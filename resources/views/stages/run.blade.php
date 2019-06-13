@@ -168,4 +168,6 @@
 
     <script src="{{asset('js/helpers/common.js')}}"></script>
     <script src="{{ asset('js/helpers/grilla_datos_externos.js') }}"></script>
+    <script src="{{ asset('js/helpers/jquery-ensure-max-length.min.js') }}"></script>
+    <script src="{{ asset('js/helpers/popper.min.js') }}"></script>
 @endpush

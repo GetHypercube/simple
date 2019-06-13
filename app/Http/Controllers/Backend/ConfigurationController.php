@@ -509,7 +509,7 @@ class ConfigurationController extends Controller
 
         $user->nombre = $request->input('nombre');
         $user->apellidos = $request->input('apellidos');
-        $user->rol = $request->input('rol');
+        $user->rol = implode(",", $request->input('rol'));
         $user->cuenta_id = Auth::user()->cuenta_id;
         $user->save();
 

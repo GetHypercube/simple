@@ -9,6 +9,7 @@ class CampoFileS3 extends Campo
     public $requiere_datos = false;
     public $min_validations = [];
     public $block_size = 5242880; // 5 MB
+    public $max_size = 5242880;
 
     protected function display($modo, $dato, $etapa_id = false)
     {
@@ -38,6 +39,12 @@ class CampoFileS3 extends Campo
 
         if(isset($this->extra->block_size)&& is_numeric($this->extra->block_size)){
             $this->block_size = intval($this->extra->block_size);
+        }
+
+        if(isset($this->extra->max_size)&& is_numeric($this->extra->max_size)){
+            $this->max_size = intval($this->extra->max_size)*1048576;
+        }else{
+            $this->max_size = env('AWS_S3_MAX_SINGLE_PART', 5242880);
         }
 
         if (!$etapa_id) {
@@ -87,7 +94,7 @@ class CampoFileS3 extends Campo
                 $(document).ready(function() {
                     var token = $(\'meta[name="csrf-token"]\').attr(\'content\');
                     set_up('.$this->id.', "'.url("uploader/datos_s3/" . $this->id . "/" . $etapa->id) .'", 
-                            token, '.$this->block_size.','.env('AWS_S3_MAX_SINGLE_PART', 5242800).');
+                            token, '.$this->block_size.','. $this->max_size.','. env('AWS_S3_MAX_SINGLE_PART', 5242800).');
                     '.($set_default ? 'set_default_s3_hidden('.$this->id.');': '');
             if( ! is_null($saved_url)){
                 $display .= 'set_s3_hidden('.$this->id.',"'.$saved_url.'",'.$saved_info.');';
@@ -128,6 +135,10 @@ class CampoFileS3 extends Campo
             $this->block_size = intval($this->extra->block_size);
         }
 
+        if(isset($this->extra->max_size) && is_numeric($this->extra->max_size)){
+            $this->max_size = intval($this->extra->max_size);
+        }
+
         $block_sizes = [ 5242880 => '5MB', 6291456 => '6MB', 8388608 => '8MB'];
         $output = '<div class="controls s3_upload_size">
                         <label class="control-label">Tamaño de cada bloque</label>
@@ -161,6 +172,10 @@ class CampoFileS3 extends Campo
         $output .= '<option name="odg" ' . (in_array('odg', $filetypes) ? 'selected' : '') . '>odg</option>';
         $output .= '</select>';
         $output .= '</div>';
+        $output .= '<div class="controls s3_max_file_size">
+                        <label class="control-label">Tamaño máximo del archivo (MB)</label>
+                        <input type="text" name="extra[max_size]" class="form-control" value="' . ($this->extra && property_exists($this->extra,'max_size') ? $this->extra->max_size : '') . '">
+                        </div>';
         $min_vals = json_encode($this->min_validations); // solo expande variables, no evalua
         $output .= "
         <script>

@@ -87,6 +87,7 @@ class SaferEval {
             'array_unshift', // Prepend one or more elements to the beginning of an array
             'array_values', // Return all the values of an array
             'array', // Create an array
+            'array_column', //Devuelve los valores de una sola columna del array de entrada
             'arsort', // Sort an array in reverse order and maintain index association
             'asort', // Sort an array and maintain index association
             'compact', // Create array containing variables and their values

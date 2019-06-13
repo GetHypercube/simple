@@ -21,17 +21,9 @@
 
 
         <div class="row-fluid">
-            <div class='float-right'>
-                <form class="form-search" method="GET" action="">
-                    <div class="input-append form-inline">
-                        <input name="query" value="<?= $query ?>" type="text" class="form-control search-query"/>
-                        <button type="submit" class="btn btn-light">Buscar</button>
-                    </div>
-                </form>
-                <div style='text-align: right;'><a href='#' onclick='toggleBusquedaAvanzada()'>Búsqueda avanzada</a>
-                </div>
+            <div class="float-right">
+                <a href='#' onclick='toggleBusquedaAvanzada()'>Opciones de Búsqueda</a>
             </div>
-
             @if(in_array('super', explode(',', Auth::user()->rol)))
                 <div class="btn-group float-left">
                     <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
@@ -46,7 +38,6 @@
                            onclick="return confirm('¿Esta seguro que desea reiniciar el contador de Proceso?');">
                             Reiniciar contador de Proceso
                         </a>
-
 
                         @if ($proceso->Cuenta->ambiente != 'prod')
                             <a href="<?= url('backend/seguimiento/borrar_proceso/' . $proceso->id) ?>"
@@ -66,13 +57,53 @@
                     <form class='form-horizontal'>
                         <input type='hidden' name='busqueda_avanzada' value='1'/>
                         <div class='row'>
-                            <div class='col-4'>
-                                <div class='control-group'>
-                                    <label class='col-form-label'>Término a buscar</label>
-                                        <input name="query" value="<?= $query ?>" type="text" class="form-control search-query"/>
+                            <div class='col-6'>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label class='col-form-label'>Seleccione tipo de búsqueda:</label><br>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input search-selector" type="radio"
+                                                   name="search_option" id="inlineRadio5" value="option5">
+                                            <label class="form-check-label" for="inlineRadio5">Sin filtro</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input search-selector" type="radio"
+                                                   name="search_option" id="inlineRadio1" value="option1">
+                                            <label class="form-check-label" for="inlineRadio1">Buscar por Id</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input search-selector" type="radio"
+                                                   name="search_option" id="inlineRadio3" value="option3">
+                                            <label class="form-check-label" for="inlineRadio3">
+                                                Buscar por Referencia
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input search-selector" type="radio"
+                                                   name="search_option" id="inlineRadio4" value="option4">
+                                            <label class="form-check-label" for="inlineRadio4">Buscar por Nombre</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class='control-group seg-input-search' id="input1">
+                                            <label class='col-form-label'>Ingrese Id:</label>
+                                            <input name="query_tramite_id" value="<?= $query_tramite_id ?>"
+                                                   type="text" class="form-control"/>
+                                        </div>
+                                        <div class='control-group seg-input-search' id="input3">
+                                            <label class='col-form-label'>Ingrese Valor de referencia:</label>
+                                            <input name="query_ref" value="<?= $query_ref ?>" type="text"
+                                                   class="form-control"/>
+                                        </div>
+                                        <div class='control-group seg-input-search' id="input4">
+                                            <label class='col-form-label'>Ingrese nombre:</label>
+                                            <input name="query_name" value="<?= $query_name ?>" type="text"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class='col-4'>
+                            <div class='col-2'>
                                 <div class='control-group'>
                                     <label class='col-form-label'>Estado del trámite</label>
                                     <div class="form-check">
@@ -103,18 +134,18 @@
                                     <label class='col-sm-5 col-form-label'>Fecha de creación</label>
                                     <div class='col-sm-6'>
                                         <input type='text' name='created_at_desde' placeholder='Desde'
-                                               class='datepicker form-control' value='<?= $created_at_desde ?>'/>
+                                               class='datetimepicker form-control' value='<?= $created_at_desde ?>'/>
                                         <input type='text' name='created_at_hasta' placeholder='Hasta'
-                                               class='datepicker form-control' value='<?= $created_at_hasta ?>'/>
+                                               class='datetimepicker form-control' value='<?= $created_at_hasta ?>'/>
                                     </div>
                                 </div>
                                 <div class='form-group row'>
                                     <label class='col-sm-5 col-form-label'>Fecha de último cambio</label>
                                     <div class='col-sm-6'>
                                         <input type='text' name='updated_at_desde' placeholder='Desde'
-                                               class='datepicker form-control' value='<?= $updated_at_desde ?>'/>
+                                               class='datetimepicker form-control' value='<?= $updated_at_desde ?>'/>
                                         <input type='text' name='updated_at_hasta' placeholder='Hasta'
-                                               class='datepicker form-control' value='<?= $updated_at_hasta ?>'/>
+                                               class='datetimepicker form-control' value='<?= $updated_at_hasta ?>'/>
                                     </div>
                                 </div>
                             </div>
@@ -135,22 +166,22 @@
             <thead>
             <tr>
                 <th>
-                    <a href="<?= url()->current() . '?query=' . $query . '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta . '&order=id&direction=' . ($direction == 'asc' ? 'desc' : 'asc') ?>">Id <?= $order == 'id' ? $direction == 'asc' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>' : '' ?></a>
+                    <a href="<?= url()->current() . '?search_option='. $search_option . '&query_tramite_id=' . $query_tramite_id . '&query_ref='. $query_ref. '&query_name='.$query_name. '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta . '&order=id&direction=' . ($direction == 'asc' ? 'desc' : 'asc') ?>">Id <?= $order == 'id' ? $direction == 'asc' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>' : '' ?></a>
                 </th>
                 <th>Asignado a.</th>
                 <th>Ref.</th>
                 <th>Nombre</th>
                 <th>
-                    <a href="<?= url()->current() . '?query=' . $query . '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta . '&order=pendiente&direction=' . ($direction == 'asc' ? 'desc' : 'asc') ?>">Estado <?= $order == 'pendiente' ? $direction == 'asc' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>' : '' ?></a>
+                    <a href="<?= url()->current() . '?search_option='. $search_option . '&query_tramite_id=' . $query_tramite_id . '&query_ref='. $query_ref. '&query_name='.$query_name. '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta . '&order=pendiente&direction=' . ($direction == 'asc' ? 'desc' : 'asc') ?>">Estado <?= $order == 'pendiente' ? $direction == 'asc' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>' : '' ?></a>
                 </th>
                 <th>Etapa actual</th>
                 <th>
-                    <a href="<?= url()->current() . '?query=' . $query . '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta . '&order=created_at&direction=' . ($direction == 'asc' ? 'desc' : 'asc') ?>">Fecha
+                    <a href="<?= url()->current() . '?search_option='. $search_option . '&query_tramite_id=' . $query_tramite_id . '&query_ref='. $query_ref. '&query_name='.$query_name. '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta . '&order=created_at&direction=' . ($direction == 'asc' ? 'desc' : 'asc') ?>">Fecha
                         de
                         creación <?= $order == 'created_at' ? $direction == 'asc' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>' : '' ?>
                 </th>
                 <th>
-                    <a href="<?= url()->current() . '?query=' . $query . '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta . '&order=updated_at&direction=' . ($direction == 'asc' ? 'desc' : 'asc') ?>">Fecha
+                    <a href="<?= url()->current() . '?search_option='. $search_option . '&query_tramite_id=' . $query_tramite_id . '&query_ref='. $query_ref. '&query_name='.$query_name. '&pendiente=' . $pendiente . '&created_at_desde=' . $created_at_desde . '&created_at_hasta=' . $created_at_hasta . '&updated_at_desde=' . $updated_at_desde . '&updated_at_hasta=' . $updated_at_hasta . '&order=updated_at&direction=' . ($direction == 'asc' ? 'desc' : 'asc') ?>">Fecha
                         de Último
                         cambio <?= $order == 'updated_at' ? $direction == 'asc' ? '<i class="icon-chevron-down"></i>' : '<i class="icon-chevron-up"></i>' : '' ?></a>
                 </th>
@@ -158,58 +189,40 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($tramites as $t): ?>
-            <tr>
-                <td><?= $t->id ?></td>
-                <?php
-                $etapa_id = $t->getUltimaEtapa()->id;
-                $etapa = \App\Helpers\Doctrine::getTable('Etapa')->find($etapa_id);
-                ?>
-                <td><?= !$etapa->usuario_id ? 'Ninguno' : !$etapa->Usuario->registrado ? 'No registrado' : $etapa->Usuario->displayUsername() ?></td>
-                <td class="name">
-                    <?php
-                    $tramite_nro = '';
-                    foreach ($t->getValorDatoSeguimiento() as $tra_nro) {
-                        if ($tra_nro->nombre == 'tramite_ref') {
-                            $tramite_nro = $tra_nro->valor;
-                        }
-                    }
-                    echo $tramite_nro != '' ? $tramite_nro : 'N/A';
-                    ?>
-                </td>
-                <td class="name">
-                    <?php
-                    $tramite_descripcion = '';
-                    foreach ($t->getValorDatoSeguimiento() as $tra) {
-                        if ($tra->nombre == 'tramite_descripcion') {
-                            $tramite_descripcion = $tra->valor;
-                        }
-                    }
-                    echo $tramite_descripcion != '' ? $tramite_descripcion : 'N/A';
-                    ?>
-                </td>
-
-                <td><?= $t->pendiente ? 'En curso' : 'Completado' ?></td>
-                <td>
-                    <?php
-                    $etapas_array = array();
-                    foreach ($t->getEtapasActuales() as $e)
-                        $etapas_array[] = $e->Tarea->nombre . ($e->vencimiento_at ? ' <a href="#" onclick="return editarVencimiento(' . $e->id . ')" title="Cambiar fecha de vencimiento">(' . $e->getFechaVencimientoSinDiasAsString() . ')</a>' : '');
-                    echo implode(', ', $etapas_array);
-                    ?>
-                </td>
-                <td><?= \Carbon\Carbon::parse($t->created_at)->format('d-m-Y H:i:s') ?></td>
-                <td><?= \Carbon\Carbon::parse($t->updated_at)->format('d-m-Y H:i:s') ?></td>
-                <td style="text-align: right;">
-                    <a class="btn btn-primary" href="<?= url('backend/seguimiento/ver/' . $t->id) ?>">
-                        <i class="material-icons">remove_red_eye</i> Seguimiento</a>
-                    @if(in_array('super', explode(',', Auth::user()->rol)))
-                        <a class="btn btn-danger" href="#" onclick="return eliminarTramite(<?=$t->id?>);">
-                            <i class="material-icons">delete</i> Borrar</a>
-                    @endif
-                </td>
-            </tr>
-            <?php endforeach; ?>
+                @foreach ($tramites as $t)
+                <tr>
+                    <td>
+                        {{ $t['id'] }}
+                    </td>
+                    <td>
+                        {{ $t['asignado'] }}
+                    </td>
+                    <td class="name">
+                        {{ trim($t['ref'], "\"") }}
+                    </td>
+                    <td class="name">
+                        {{ trim($t['nombre'], "\"") }}
+                    </td>
+                    <td>
+                        {{ $t['estado'] ? 'En curso' : 'Completado' }}
+                    </td>
+                    <td>
+                        @foreach ($t['etapas'] as $etapaNombre)
+                            {{ $etapaNombre }}@if (!$loop->last),@endif
+                        @endforeach
+                    </td>
+                    <td>{{ $t['created_at'] }}</td>
+                    <td>{{ $t['updated_at'] }}</td>
+                    <td style="text-align: right;">
+                        <a class="btn btn-primary" href="{{ url('backend/seguimiento/ver/' . $t['id']) }}">
+                            <i class="material-icons">remove_red_eye</i> Seguimiento</a>
+                        @if(in_array('super', explode(',', Auth::user()->rol)))
+                            <a class="btn btn-danger" href="#" onclick="return eliminarTramite({{ $t['id'] }});">
+                                <i class="material-icons">delete</i> Borrar</a>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
 
@@ -222,6 +235,22 @@
 @endsection
 @section('script')
     <script type="text/javascript">
+        let SEARCH_OPT = {!! json_encode($search_option) !!};
+        function checkSearchInputs(val) {
+            $('.seg-input-search').hide();
+            switch (val) {
+                case 'option1':
+                    $('#input1').show();
+                    break;
+                case 'option3':
+                    $('#input3').show();
+                    break;
+                case 'option4':
+                    $('#input4').show();
+                    break;
+            }
+        }
+
         function editarVencimiento(etapaId) {
             $("#modal").load("/backend/seguimiento/ajax_editar_vencimiento/" + etapaId);
             $("#modal").modal();
@@ -243,8 +272,40 @@
 
         function toggleBusquedaAvanzada() {
             $("#busquedaAvanzada").slideToggle();
-            return false;
         }
+
+        $(document).ready(function() {
+            $(function () {
+                checkSearchInputs(SEARCH_OPT);
+                switch (SEARCH_OPT) {
+                    case 'option1':
+                        $('#inlineRadio1').prop('checked', true);
+                        break;
+                    case 'option3':
+                        $('#inlineRadio3').prop('checked', true);
+                        break;
+                    case 'option4':
+                        $('#inlineRadio4').prop('checked', true);
+                        break;
+                    default:
+                        $('#inlineRadio5').prop('checked', true);
+                }
+
+
+                $('.datetimepicker').datetimepicker({
+                    format: 'DD-MM-YYYY',
+                    icons: {
+                        previous: "glyphicon glyphicon-chevron-left",
+                        next: "glyphicon glyphicon-chevron-right"
+                    },
+                    locale: 'es'
+                });
+
+                $('.search-selector').on('click', function() {
+                    checkSearchInputs($(this).val())
+                });
+            });
+        });
 
     </script>
 @endsection

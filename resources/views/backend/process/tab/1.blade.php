@@ -79,18 +79,18 @@
 
             <div id="activacionEntreFechas" class="hide" style="margin-left: 20px;">
                 <label>Fecha inicial</label>
-                <input class="datepicker form-control" rel="tooltip"
+                <input class="datetimepicker form-control" rel="tooltip"
                        title="Deje el campo en blanco para no considerar una fecha inicial"
                        type="text"
                        name="activacion_inicio"
-                       value="<?= $tarea->activacion_inicio ? date('d-m-Y', $tarea->activacion_inicio) : '' ?>"
+                       value="<?= $tarea->activacion_inicio ? \Carbon\Carbon::parse($tarea->activacion_inicio)->format('d-m-Y') : '' ?>"
                        placeholder="DD-MM-AAAA"/>
                 <label>Fecha final</label>
-                <input class="datepicker form-control" rel="tooltip"
+                <input class="datetimepicker form-control" rel="tooltip"
                        title="Deje el campo en blanco para no considerar una fecha final"
                        type="text"
                        name="activacion_fin"
-                       value="<?= $tarea->activacion_fin ? date('d-m-Y', $tarea->activacion_fin) : '' ?>"
+                       value="<?= $tarea->activacion_fin ? \Carbon\Carbon::parse($tarea->activacion_fin)->format('d-m-Y') : '' ?>"
                        placeholder="DD-MM-AAAA"/>
             </div>
             <div class="form-check">

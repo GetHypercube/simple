@@ -109,7 +109,11 @@ $(document).ready(function () {
     });
 });
 
-function prepareDynaForm(form) {
+
+
+
+
+function prepareDynaForm(form){
     $(form).find(":input[readonly]").prop("disabled", false);
     $(form).find(".file-uploader ~ input[type=hidden]").prop("type", "text");
     $(form).find(".campo[data-dependiente-campo]").each(function (i, el) {
@@ -119,6 +123,7 @@ function prepareDynaForm(form) {
         var valor = $(el).data("dependiente-valor");
         var existe = false;
         var visible = false;
+        var imprimir = false;
         var condicion_final = $(el).data("condicion");
         if(condicion_final!='no-condition'){
             var myarr = condicion_final.split("&&");
@@ -127,7 +132,6 @@ function prepareDynaForm(form) {
                 var evaluacion = myarr[x].split(";");
                 var resultado = false;
                 if(evaluacion[1]=="=="){
-
                     $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
                         var input = $(el).serializeArray();
                         for(var j in input){
@@ -143,7 +147,6 @@ function prepareDynaForm(form) {
                             }
                         }
                     });
-
                 }else if(evaluacion[1]=="!="){
                     $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
                         var input = $(el).serializeArray();
@@ -158,37 +161,61 @@ function prepareDynaForm(form) {
                             }
                         }
                     });
+                }else if (evaluacion[1]==">" || evaluacion[1]=="<" || evaluacion[1]=="<=" || evaluacion[1]==">="){ //aqui estoy evaluando los nuevos caracteres de comparacion
+                     $(form).find(":input[name='"+evaluacion[0]+"']").each(function (i, el) {
+                        var input = $(el).serializeArray();
+                        for(var j in input){
+                            if(evaluacion[1]==">" && input[j].value && Number(input[j].value) > Number(evaluacion[2])){
+                                resultado = true;
+                            }else if(evaluacion[1]=="<" && input[j].value && Number(input[j].value) < Number(evaluacion[2])){
+                                resultado = true;
+                            }else if(evaluacion[1]=="<=" && input[j].value && Number(input[j].value) <= Number(evaluacion[2])){
+                                resultado = true;
+                            }else if(evaluacion[1]==">=" && input[j].value && Number(input[j].value) >= Number(evaluacion[2])){
+                                resultado = true;
+                            }
+                        }
+                    });
                 }
                 resultados.push(resultado);
             }
+
             if(resultados.indexOf(false)>-1){
                 $(el).hide();
             }else{
                 $(el).show();
             }
         }else{
-            $(form).find(":input[name='" + campo + "']").each(function (i, el) {
+            $(form).find(":input[name='" + campo + "']").each(function (i, el){
                 existe = true;
                 var input = $(el).serializeArray();
                 for (var j in input) {
-                    if (tipo == "regex") {
+                    if(tipo == "regex"){
                         var regex = new RegExp(valor);
                         if (regex.test(input[j].value)) {
                             visible = true;
-                        }
-                    } else {
-                        if (input[j].value == valor) {
+                        }                       
+                    }else if(tipo == "numeric" || tipo == "string"){
+                        if (relacion == "==" && input[j].value && input[j].value == valor){
+                            visible = true;
+                        }else if (relacion == "!=" && input[j].value && input[j].value != valor){
+                            visible = true;
+                        }else if (relacion == "<=" && input[j].value && input[j].value <= valor){
+                            visible = true;
+                        }else if (relacion == ">=" && input[j].value && input[j].value >= valor){
+                            visible = true;
+                        }else if (relacion == "<" && input[j].value && input[j].value < valor){
+                            visible = true;
+                        }else if (relacion == ">" && input[j].value && input[j].value > valor){ 
                             visible = true;
                         }
                     }
-                    if (relacion == "!=") {
-                        visible = !visible;
-                    }
-                    if (visible) {
+                    if (visible){
                         break;
                     }
                 }
             });
+            // console.log(relacion, valor, visible, tipo, existe)
             if (existe) {
                 if (visible) {
                     if ($(form).hasClass("debugForm"))
@@ -209,6 +236,7 @@ function prepareDynaForm(form) {
                 }
             }
         }
+
     });
 
     $(form).find(":input.disabled-temp").each(function (i, el) {

@@ -96,7 +96,8 @@
                 icons: {
                     previous: "glyphicon glyphicon-chevron-left",
                     next: "glyphicon glyphicon-chevron-right"
-                }
+                },
+                locale: 'es'
             });
         });
     </script>

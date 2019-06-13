@@ -20,11 +20,13 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
     Route::get('login/claveunica', 'Auth\LoginController@redirectToProvider')->name('login.claveunica');
     Route::get('login/claveunica/callback', 'Auth\LoginController@handleProviderCallback')->name('login.claveunica.callback');
+    Route::get('/logout', 'Auth\LoginController@logout_get')->name('logout');
 
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/home/procesos/{categoria_id}', 'HomeController@procesos')->name('home.procesos');
 
     Route::get('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar')->name('tramites.iniciar');
+    Route::post('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar_post')->name('tramites.iniciar');
     Route::get('/tramites/participados', 'TramitesController@participados')->name('tramites.participados');
     Route::get('/tramites/disponibles', 'TramitesController@disponibles')->name('tramites.disponibles');
     Route::get('/etapas/ejecutar/{etapa_id}/{secuencia?}', 'StagesController@run')->name('stage.run');

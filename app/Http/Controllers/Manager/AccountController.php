@@ -97,6 +97,7 @@ class AccountController extends Controller
             $respuesta = new \stdClass();
             $cuenta->nombre = $request->input('nombre');
             $cuenta->nombre_largo = $request->has('nombre_largo') && !is_null($request->input('nombre_largo')) ? $request->input('nombre_largo') : '';
+            $cuenta->analytics = $request->has('analytics') && !is_null($request->input('analytics')) ? $request->input('analytics') : ''; //analytics
             $cuenta->mensaje = $request->has('mensaje') && !is_null($request->input('mensaje')) ? $request->input('mensaje') : '';
             $cuenta->entidad = $request->has('entidad') && !is_null($request->input('entidad')) ? $request->input('entidad') : '';
             //$cuenta->estilo = $request->input('estilo');

@@ -61,7 +61,7 @@ class CertificadoPDF extends TCPDF
 
         $this->Line(PAGE_MARGIN + 4 * CELL_WIDTH + 4 * GRID_WIDTH, PAGE_MARGIN, PAGE_MARGIN + 5 * CELL_WIDTH + 4 * GRID_WIDTH, PAGE_MARGIN, array('width' => 1));
         $this->SetFont('helvetica', '', 10);
-        $this->MultiCell(CELL_WIDTH, 5, 'Folio.:', 0, 'L', false, 1, PAGE_MARGIN + 4 * CELL_WIDTH + 4 * GRID_WIDTH, PAGE_MARGIN + 1);
+        $this->MultiCell(CELL_WIDTH, 5, 'Folio:', 0, 'L', false, 1, PAGE_MARGIN + 4 * CELL_WIDTH + 4 * GRID_WIDTH, PAGE_MARGIN + 1);
         $this->SetFont('helvetica', 'B', 10);
         $this->MultiCell(CELL_WIDTH, 5, $this->id, 0, 'L', false, 1, PAGE_MARGIN + 4 * CELL_WIDTH + 4 * GRID_WIDTH);
         $this->write1DBarcode($this->id, 'C128', PAGE_MARGIN + 4 * CELL_WIDTH + 4 * GRID_WIDTH, '', CELL_WIDTH, 7, '', array('text' => true));
