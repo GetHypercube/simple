@@ -21,6 +21,9 @@
 
 
         <div class="row-fluid">
+            <div class="float-right">
+                <a href='#' onclick='toggleBusquedaAvanzada()'>Opciones de Búsqueda</a>
+            </div>
             @if(in_array('super', explode(',', Auth::user()->rol)))
                 <div class="btn-group float-left">
                     <a class="btn btn-light dropdown-toggle" data-toggle="dropdown" href="#">
@@ -48,7 +51,7 @@
 
         <br>
 
-        <div id='busquedaAvanzada' class='row mt-5'>
+        <div id='busquedaAvanzada' class='row mt-5' style='display: <?=$busqueda_avanzada ? 'block' : 'none'?>;'>
             <div class='col-12'>
                 <div class='jumbotron'>
                     <form class='form-horizontal'>
@@ -265,6 +268,10 @@
             $("#modal").load("/backend/seguimiento/ajax_auditar_limpiar_proceso/" + procesoId);
             $("#modal").modal();
             return false;
+        }
+
+        function toggleBusquedaAvanzada() {
+            $("#busquedaAvanzada").slideToggle();
         }
 
         $(document).ready(function() {
