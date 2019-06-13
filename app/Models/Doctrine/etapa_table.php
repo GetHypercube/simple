@@ -3,7 +3,9 @@
 class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
-    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$buscar="0",$inicio=0,$limite=0){
+    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$buscar="0",$limite=0, $perpage=50){
+      // dd($perPage);
+       
         $tareas = DB::table('etapa')
             ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite_id',
                 'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
@@ -13,12 +15,16 @@ class EtapaTable extends Doctrine_Table {
             ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
             ->where('cuenta.nombre',$cuenta->nombre)
             ->whereNull('etapa.usuario_id')
+            ->limit(500)
+            ->orderBy('tramite.id', 'DESC')
             ->get()->toArray();
-
-        foreach($tareas as $key=>$t)
-            if(!$this->canUsuarioAsignarsela($usuario_id,$t->acceso_modo,$t->grupos_usuarios,$t->etapa_id))
-                unset($tareas[$key]);
-
+          //  ->paginate(15);
+                
+              //   \Log::debug("cantidad--".count($perPage));
+     foreach($tareas as $key=>$t)
+          if(!$this->canUsuarioAsignarsela($usuario_id,$t->acceso_modo,$t->grupos_usuarios,$t->etapa_id))
+               unset($tareas[$key]);
+ 
         return $tareas;
     }
     
