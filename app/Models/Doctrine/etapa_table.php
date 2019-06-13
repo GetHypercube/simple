@@ -16,7 +16,7 @@ class EtapaTable extends Doctrine_Table {
             ->where('cuenta.nombre',$cuenta->nombre)
             ->whereNull('etapa.usuario_id')
             ->limit(500)
-            ->orderBy('tramite.id', 'DESC')
+            ->orderBy('tramite.id', 'ASC')
             ->get()->toArray();
           //  ->paginate(15);
                 
