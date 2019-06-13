@@ -475,34 +475,28 @@ class Campo extends Doctrine_Record
 
             $valores = is_array($dato_dependiente->valor) ? $dato_dependiente->valor : array($dato_dependiente->valor);
             foreach ($valores as $valor) {
-                if ($this->dependiente_tipo == "regex") {
+                if($this->dependiente_tipo == "regex"){
                     if (preg_match('/' . $this->dependiente_valor . '/', $valor) == 1) {
                         $visible = true;
                     }
-
-                } else {
-                    $visible = $this->dependiente_valor == $valor
-                        || $this->dependiente_valor == '"' . $valor . '"';                    
-                }
-                if ($this->dependiente_relacion == "!="){
-                    $visible = !$visible; //fin original
-                  } //add reglas nuevas
-                     if ($this->dependiente_relacion == "<"){
-                        $visible = !$visible;
-
-                  } 
-                    if ($this->dependiente_relacion == ">"){
-                        $visible = !$visible;
-                    }
-                    
-                        if ($this->dependiente_relacion == "<="){
-                            $visible = !$visible;
+                }elseif($this->dependiente_tipo == "string"){
+                    $visible = $this->dependiente_valor == $valor || $this->dependiente_valor == '"' . $valor . '"';                    
+                }elseif($this->dependiente_tipo == "numeric"){
+                    if($this->dependiente_relacion == "<" || $this->dependiente_relacion == ">" || $this->dependiente_relacion == "<=" || $this->dependiente_relacion == ">="){
+                        if($this->dependiente_relacion == "<" && $this->dependiente_valor < $valor){
+                            $visible = true;
+                        }elseif($this->dependiente_relacion == ">" && $this->dependiente_valor > $valor){
+                            $visible = true;
+                        }elseif($this->dependiente_relacion == "<=" && $this->dependiente_valor <= $valor){
+                            $visible = true;
+                        }elseif($this->dependiente_relacion == ">=" && $this->dependiente_valor >= $valor){
+                            $visible = true;
                         }
-                    
-                    if($this->dependiente_relacion == ">=")
-                        $visible = !$visible; //fin reglas nuevas
-                  
-                  
+                    }
+                }
+                
+                if ($this->dependiente_relacion == "!=")
+                    $visible = !$visible;
 
                 $resultados = array();
                 array_push($resultados,$visible);
@@ -514,7 +508,7 @@ class Campo extends Doctrine_Record
                 $condiciones = $this->condiciones_extra_visible;
                 
                 foreach($condiciones as $condicion){
-                    //Log::info("condicion_campo: " . $condicion->campo);
+                    $visible_extra = false;
                     $dato_dependiente = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($condicion->campo, $etapa_id);
 
                     // Si no se encuentra, volvemos a buscar eliminando los corchetes(agregados para el checkbox) si existen
@@ -525,33 +519,29 @@ class Campo extends Doctrine_Record
                     if($dato_dependiente){
                         $valores = is_array($dato_dependiente->valor) ? $dato_dependiente->valor : array($dato_dependiente->valor);
                         foreach($valores as $valor){
-                            if ($condicion->tipo == "regex") {
+                            if($condicion->tipo == "regex"){
                                 if (preg_match('/' . $condicion->valor . '/', $valor) == 1) {
                                     $visible_extra = true;
                                 }
-            
-                            } else {
-                                $visible_extra = $condicion->valor == $valor
-                                    || $condicion->valor == '"' . $valor . '"';
-                                
-                                
+                            }elseif($condicion->tipo == "string") {
+                                $visible_extra = $condicion->valor == $valor || $condicion->valor == '"' . $valor . '"';
+                            }elseif($condicion->tipo == "numeric"){
+                                if($condicion->igualdad == "<" || $condicion->igualdad == ">" || $condicion->igualdad == "<=" || $condicion->igualdad == ">="){
+                                    if($condicion->igualdad == "<" && $condicion->valor < $valor){
+                                        $visible_extra = true;
+                                    }elseif($condicion->igualdad == ">" && $condicion->valor > $valor){
+                                        $visible_extra = true;
+                                    }elseif($condicion->igualdad == "<=" && $condicion->valor <= $valor){
+                                        $visible_extra = true;
+                                    }elseif($condicion->igualdad == ">=" && $condicion->valor >= $valor){
+                                        $visible_extra = true;
+                                    }
+                                }
                             }
-                            if ($condicion->igualdad == "!=")
-                                $visible_extra = !$visible_extra; //fin original
-                            else {
-                                if($condicion->igualdad == ">")
-                                    $visible_extra = !$visible_extra;
-                            }
-                                if($condicion->igualdad == "<")
-                                    $visible_extra = !$visible_extra;
-                            else {
-                                if($condicion->igualdad == ">=")
-                                    $visible_extra = !$visible_extra;
-                            }    
-                              
-                                if($condicion->igualdad == "<=")
-                                    $visible_extra = !$visible_extra;
 
+                            if ($condicion->igualdad == "!=")
+                                $visible_extra = !$visible_extra;
+            
                             array_push($resultados,$visible_extra);
                         }
                     }
