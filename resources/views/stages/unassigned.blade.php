@@ -125,7 +125,7 @@
     </div>
     <?php endif; ?>
     <?php endif; ?>
-    <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
+    <p>{{$etapas->links('vendor.pagination.bootstrap-4') }}</p>
     <?php else: ?>
     <p>No hay trámites para ser asignados.</p>
     <?php endif; ?>
