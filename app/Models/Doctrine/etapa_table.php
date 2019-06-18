@@ -6,6 +6,7 @@ class EtapaTable extends Doctrine_Table {
     public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$buscar="0",$offset=0, $perpage=50){
       // dd($perPage);
        $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+       if(!$usuario->open_id){
        $grupos =  DB::table('grupo_usuarios_has_usuario')
                     ->select('grupo_usuarios_id')
                     ->where('usuario_id',$usuario->id)
@@ -24,9 +25,12 @@ class EtapaTable extends Doctrine_Table {
             ->whereIn('tarea.grupos_usuarios',[$grupos])
             ->whereNull('etapa.usuario_id')
             ->limit(500)
-            ->offset($offset)
+            
             ->orderBy('tramite.id', 'ASC')
             ->get()->toArray();
+        }else{
+            $tareas = array();
+        }
           //  ->paginate(50);
                 
               //   \Log::debug("cantidad--".count($perPage));
