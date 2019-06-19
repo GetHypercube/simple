@@ -42,13 +42,14 @@ class ProcessReport implements ShouldQueue
     protected $desde;
     protected $hasta;
     protected $pendiente;
+    protected $cuenta;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente)
+    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente, $cuenta)
     {
         $this->user_id = $user_id;
         $this->user_type = $user_type;
@@ -68,6 +69,7 @@ class ProcessReport implements ShouldQueue
         $this->desde = $desde;
         $this->hasta = $hasta;
         $this->pendiente = $pendiente;
+        $this->cuenta = $cuenta;
         
         $this->job_info = new Job();
         $this->arguments = serialize([$user_id, $user_type, $proceso_id, $reporte_id]);
@@ -202,9 +204,9 @@ class ProcessReport implements ShouldQueue
     private function send_notification(){
         $link = "{$this->link_host}/backend/reportes/descargar_archivo/{$this->user_id}/{$this->job_info->id}/{$this->job_info->filename}";
         $data = ['link' => $link];
-        $cuenta = Cuenta::cuentaSegunDominio();
         $email_to = $this->email_to;
         $email_subject = $this->email_subject;
+        $cuenta = $this->cuenta;
         Mail::send('emails.download_link', $data, function($message) use ($cuenta, $link, $email_to, $email_subject){
 
             $message->subject($email_subject);

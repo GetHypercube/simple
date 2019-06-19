@@ -23,7 +23,7 @@ class WidgetTramitesCantidad extends Widget
                 $conteo = Doctrine_Query::create()
                     ->from('Tramite t, t.Etapas e, e.DatosSeguimiento d, t.Proceso p ,p.Cuenta c')
                     ->where('c.id = ?', $this->cuenta_id)
-                    ->andWhere('p.activo=1 AND (p.id = ? OR p.root = ?)', array($p->root, $p->root))
+                    ->andWhere('p.activo=1 AND p.id = ?', array($p->id))
                     ->andWhere('t.pendiente=1')
                     ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
                     ->groupBy('t.id')
@@ -40,7 +40,7 @@ class WidgetTramitesCantidad extends Widget
                 $conteo = Doctrine_Query::create()
                     ->from('Tramite t, t.Etapas e, e.DatosSeguimiento d, t.Proceso p ,p.Cuenta c')
                     ->where('c.id = ?', $this->cuenta_id)
-                    ->andWhere('p.activo=1 AND (p.id = ? OR p.root = ?)', array($p->root, $p->root))
+                    ->andWhere('p.activo=1 AND p.id = ?', array($p->id))
                     ->andWhere('t.pendiente=0')
                     ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
                     ->groupBy('t.id')

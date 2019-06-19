@@ -34,8 +34,8 @@ return [
     'between' => [
         'numeric' => 'El campo :attribute debe ser un valor entre :min y :max.',
         'file' => 'El archivo :attribute debe pesar entre :min y :max kilobytes.',
-        'string' => 'El campo :attribute debe contener entre :min y :max caracteres.',
-        'array' => 'El campo :attribute debe contener entre :min y :max elementos.',
+        'string' => ':attribute : Verificar si cumple con un mínimo de :min opciones y máximo de  :max opciones requeridas.', //JP
+        'array' => 'El campo :attribute debe contener entre :min y :max elementos.', 
     ],
     'boolean' => 'El campo :attribute debe ser verdadero o falso.',
     'confirmed' => 'El campo confirmación no coincide.',

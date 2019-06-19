@@ -3,27 +3,40 @@
 class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
-    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$buscar="0",$limite=0, $perpage=50){
+    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$buscar="0",$offset=0, $perpage=50){
       // dd($perPage);
-       
-        $tareas = DB::table('etapa')
+       $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+       if(!$usuario->open_id){
+       $grupos =  DB::table('grupo_usuarios_has_usuario')
+                    ->select('grupo_usuarios_id')
+                    ->where('usuario_id',$usuario->id)
+                    ->get()
+                    ->toArray();
+        $grupos = json_decode(json_encode($grupos), true);
+
+         $tareas = DB::table('etapa')
             ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite_id',
-                'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
+            'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
             ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
             ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
             ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
             ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
             ->where('cuenta.nombre',$cuenta->nombre)
+            ->whereIn('tarea.grupos_usuarios',[$grupos])
             ->whereNull('etapa.usuario_id')
             ->limit(500)
+            
             ->orderBy('tramite.id', 'ASC')
             ->get()->toArray();
-          //  ->paginate(15);
+        }else{
+            $tareas = array();
+        }
+          //  ->paginate(50);
                 
               //   \Log::debug("cantidad--".count($perPage));
-     foreach($tareas as $key=>$t)
-          if(!$this->canUsuarioAsignarsela($usuario_id,$t->acceso_modo,$t->grupos_usuarios,$t->etapa_id))
-               unset($tareas[$key]);
+   //  foreach($tareas as $key=>$t)
+     //     if(!$this->canUsuarioAsignarsela($usuario_id,$t->acceso_modo,$t->grupos_usuarios,$t->etapa_id))
+       //        unset($tareas[$key]);
  
         return $tareas;
     }
