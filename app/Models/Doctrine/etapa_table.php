@@ -7,58 +7,34 @@ class EtapaTable extends Doctrine_Table {
       // dd($perPage);
        $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
        if(!$usuario->open_id){
-       $grupos =  DB::table('grupo_usuarios_has_usuario')
-                    ->select('grupo_usuarios_id')
-                    ->where('usuario_id',$usuario->id)
-                    ->get()
-                    ->toArray();
-        $grupos = json_decode(json_encode($grupos), true);
+            $grupos =  DB::table('grupo_usuarios_has_usuario')
+                        ->select('grupo_usuarios_id')
+                        ->where('usuario_id',$usuario->id)
+                        ->get()
+                        ->toArray();
+            $grupos = json_decode(json_encode($grupos), true);
 
-         $tareas = DB::table('etapa')
-            ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite_id',
-            'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
-            ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
-            ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
-            ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
-            ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
-            ->where('cuenta.nombre',$cuenta->nombre)
-            ->whereIn('tarea.grupos_usuarios',[$grupos])
-            ->whereNull('etapa.usuario_id')
-            ->limit(500)
-            
-            ->orderBy('tramite.id', 'ASC')
-            ->get()->toArray();
+            if($grupos){
+                $tareas = DB::table('etapa')
+                ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite_id',
+                'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
+                ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
+                ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
+                ->where('cuenta.nombre',$cuenta->nombre)
+                ->whereIn('tarea.grupos_usuarios',[$grupos])
+                ->whereNull('etapa.usuario_id')
+                ->limit(500)
+                ->orderBy('tramite.id', 'ASC')
+                ->get()->toArray();
+            }else{
+                $tareas = array();
+            }
         }else{
             $tareas = array();
         }
-          //  ->paginate(50);
-                
-              //   \Log::debug("cantidad--".count($perPage));
-   //  foreach($tareas as $key=>$t)
-     //     if(!$this->canUsuarioAsignarsela($usuario_id,$t->acceso_modo,$t->grupos_usuarios,$t->etapa_id))
-       //        unset($tareas[$key]);
  
-        return $tareas;
-    }
-    
-    public function findAllSinAsignar($usuario_id, $cuenta='localhost'){
-        $query=Doctrine_Query::create()
-                ->from('Etapa e, e.Tarea tar, e.Tramite t, e.Tramite.Proceso.Cuenta c')
-                //Si la etapa no se encuentra asignada
-                ->where('e.usuario_id IS NULL')
-                //Si el usuario tiene permisos de acceso
-                //->andWhere('(tar.acceso_modo="grupos_usuarios" AND g.id IN (SELECT gru.id FROM GrupoUsuarios gru, gru.Usuarios usr WHERE usr.id = ?)) OR (tar.acceso_modo = "registrados" AND 1 = ?) OR (tar.acceso_modo = "claveunica" AND 1 = ?) OR (tar.acceso_modo="publico")',array($usuario->id,$usuario->registrado,$usuario->open_id))
-                ->orderBy('e.updated_at desc');
-        if($cuenta!='localhost')
-            $query->andWhere('c.nombre = ?',$cuenta->nombre);
-        
-        $tareas=$query->execute();
-        
-        //Chequeamos los permisos de acceso
-        foreach($tareas as $key=>$t)
-            if(!$t->canUsuarioAsignarsela($usuario_id))
-                unset($tareas[$key]);
-        
         return $tareas;
     }
     
