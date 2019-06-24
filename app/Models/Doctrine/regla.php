@@ -51,11 +51,18 @@ class Regla
             
             
             $dato = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapa($nombre_dato, $etapa_id);
-            
 
+            
             if ($dato){
-                $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
-                $valor_dato = 'json_decode(\'' . json_encode($dato_almacenado) . '\')';
+
+                try {
+                    $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
+                    $valor_dato = 'json_decode(\'' . json_encode($dato_almacenado) . '\')';
+                } catch (Exception $e) {
+                    $dato_almacenado = '';
+                    $valor_dato = 'json_decode(\'' . json_encode(null) . '\')';
+                }
+
                 if ($ev) {
                     $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
                     $campo = Doctrine_Query::create()
@@ -154,10 +161,15 @@ class Regla
 
             if ($dato) {
 
-                try {
-                    $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
+                try {                    
+                    if($dato->valor instanceof stdClass){
+                        $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\',true); return $x' . $accesor . ';');
+                    }else{
+                        $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
+                    }
                 } catch (Exception $e) {
                     $dato_almacenado = '';
+                    $valor_dato = '';
                     Log::error("Error" . $e);
                 }
 
