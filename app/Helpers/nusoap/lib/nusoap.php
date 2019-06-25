@@ -206,6 +206,8 @@ class nusoap_base {
     'http://xml.apache.org/xml-soap' => array('Map')
 	);
 
+	var $additionalHeaders = array();
+
 	/**
 	* XML entities to convert
 	*
@@ -7555,6 +7557,11 @@ class nusoap_client extends nusoap_base  {
 						$http->usePersistentConnection();
 					}
 				}
+
+				foreach ($this->additionalHeaders as $key => $value) {
+					$http->setHeader($key, $value);
+				}
+
 				$http->setContentType($this->getHTTPContentType(), $this->getHTTPContentTypeCharset());
 				$http->setSOAPAction($soapaction);
 				if($this->proxyhost && $this->proxyport){
