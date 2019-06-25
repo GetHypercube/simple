@@ -37,6 +37,9 @@ class Proceso extends Doctrine_Record
         if(\Schema::hasColumn('proceso', 'concurrente')){
             $this->hasColumn('concurrente');
         }
+        if(\Schema::hasColumn('proceso', 'eliminar_tramites')){
+            $this->hasColumn('eliminar_tramites');
+        }
     }
 
     function setUp()

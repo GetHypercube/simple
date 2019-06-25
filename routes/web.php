@@ -26,9 +26,11 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/home/procesos/{categoria_id}', 'HomeController@procesos')->name('home.procesos');
 
     Route::get('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar')->name('tramites.iniciar');
-    Route::post('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar_post')->name('tramites.iniciar');
+    //Route::get('/tramites/iniciar_post/{proceso_id}', 'TramitesController@iniciar_post')->name('tramites.iniciar');
     Route::get('/tramites/participados', 'TramitesController@participados')->name('tramites.participados');
     Route::get('/tramites/disponibles', 'TramitesController@disponibles')->name('tramites.disponibles');
+    Route::get('/tramites/eliminar/{tramite_id}', 'TramitesController@eliminar_form')->name('tramites.eliminar');
+    Route::post('/tramites/borrar_tramite/{tramite_id}', 'TramitesController@borrar_tramite')->name('tramites.borrar');
     Route::get('/etapas/ejecutar/{etapa_id}/{secuencia?}', 'StagesController@run')->name('stage.run');
     Route::get('/etapas/asignar/{etapa_id}', 'StagesController@asignar')->name('stage.asignar');
     Route::post('/etapas/ejecutar_form/{etapa_id}/{secuencia}', 'StagesController@ejecutar_form')->name('stage.ejecutar_form');

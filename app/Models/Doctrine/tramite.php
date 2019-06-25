@@ -14,6 +14,9 @@ class Tramite extends Doctrine_Record
         $this->hasColumn('updated_at');
         $this->hasColumn('ended_at');
         $this->hasColumn('tramite_proc_cont');
+        if(\Schema::hasColumn('tramite', 'deleted_at')){
+            $this->hasColumn('deleted_at');
+        }
     }
 
     function setUp()

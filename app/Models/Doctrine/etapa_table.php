@@ -48,6 +48,7 @@ class EtapaTable extends Doctrine_Table {
                 ->where('e.pendiente = 1 and u.id = ?',$usuario_id)
                 //Si la tarea se encuentra activa
                 ->andWhere('1!=(tar.activacion="no" OR ( tar.activacion="entre_fechas" AND ((tar.activacion_inicio IS NOT NULL AND tar.activacion_inicio>NOW()) OR (tar.activacion_fin IS NOT NULL AND NOW()>tar.activacion_fin) )))')
+                ->andWhere('t.deleted_at is NULL')
                 ->orderBy($orderby.' '.$direction);
 
         if($buscar){ 

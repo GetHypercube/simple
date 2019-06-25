@@ -78,6 +78,7 @@ class ApiController extends Controller
             $query = Doctrine_Query::create()
                 ->from('Tramite t, t.Proceso.Cuenta c')
                 ->where('c.id = ?', array($cuenta->id))
+                ->andWhere('t.deleted_at is NULL')
                 ->orderBy('id desc');
             if ($offset)
                 $query->andWhere('id < ?', $offset);
@@ -134,6 +135,7 @@ class ApiController extends Controller
                 $query = Doctrine_Query::create()
                     ->from('Tramite t, t.Proceso p')
                     ->where('p.activo=1 AND p.id = ?', array($proceso->id))
+                    ->andWhere('t.deleted_at is NULL')
                     ->orderBy('id desc');
                 if ($offset)
                     $query->andWhere('id < ?', $offset);

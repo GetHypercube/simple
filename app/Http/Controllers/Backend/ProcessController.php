@@ -256,6 +256,7 @@ class ProcessController extends Controller
         $proceso->descripcion = $request->input('descripcion');
         $proceso->url_informativa = $request->has('url_informativa') ? $request->get('url_informativa') : NULL;
         $proceso->concurrente = $request->has('concurrente') ? 1 : 0;
+        $proceso->eliminar_tramites = $request->has('eliminar_tramites') ? 1 : 0;
         $proceso->save();
 
         return response()->json([
