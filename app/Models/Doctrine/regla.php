@@ -162,11 +162,7 @@ class Regla
             if ($dato) {
 
                 try {                    
-                    if($dato->valor instanceof stdClass){
-                        $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\',true); return $x' . $accesor . ';');
-                    }else{
-                        $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
-                    }
+                    $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
                 } catch (Exception $e) {
                     $dato_almacenado = '';
                     $valor_dato = '';
