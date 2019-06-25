@@ -37,6 +37,7 @@ class TramitesController extends Controller
             $tramite = Doctrine_Query::create()
                 ->from('Tramite t, t.Proceso p, t.Etapas e, e.Tramite.Etapas hermanas')
                 ->where('t.pendiente=1 AND p.activo=1 AND p.id = ? AND e.usuario_id = ?', array($proceso_id, Auth::user()->id))
+                ->andWhere('t.deleted_at is NULL')
                 ->groupBy('t.id')
                 ->having('COUNT(hermanas.id) = 1')
                 ->fetchOne();
@@ -142,23 +143,47 @@ class TramitesController extends Controller
         return view('layouts.app', $data);
     }
 
-    public function eliminar($tramite_id)
+    public function borrar_tramite(Request $request, $tramite_id)
     {
         $tramite = Doctrine::getTable('Tramite')->find($tramite_id);
 
-        if ($tramite->Etapas->count() > 1) {
-            echo 'Tramite no se puede eliminar, ya ha avanzado mas de una etapa';
+        if (is_null($tramite->Proceso->eliminar_tramites) || !$tramite->Proceso->eliminar_tramites) {
+            echo 'No tiene permisos para eliminar este tramite.';
             exit;
         }
 
-        if (Auth::user()->id != $tramite->Etapas[0]->usuario_id) {
-            echo 'Usuario no tiene permisos para eliminar este tramite';
-            exit;
-        }
+        $request->validate(['razon' => 'required']);
 
-        $tramite->delete();
+        // Auditar
+        $fecha = new \DateTime ();
+        $proceso = $tramite->Proceso;
+        $registro_auditoria = new \AuditoriaOperaciones ();
+        $registro_auditoria->fecha = \Carbon\Carbon::now('America/Santiago')->format('Y-m-d H:i:s');
+        $registro_auditoria->operacion = 'Eliminación de Trámite';
+        $registro_auditoria->motivo = $request->input('razon');
+        $usuario = Auth::user();
+        $registro_auditoria->usuario = $usuario->nombres . ' ' . $usuario->apellido_paterno . ' ' . $usuario->apellido_materno .  ' <' . $usuario->email . '>';
+        $registro_auditoria->proceso = $proceso->nombre;
+        $cuenta = Cuenta::cuentaSegunDominio();
+        $registro_auditoria->cuenta_id = $cuenta->id;
 
-        return redirect($_SERVER['HTTP_REFERER']);
+        // Detalles
+        $tramite_array['proceso'] = $proceso->toArray(false);
+
+        $tramite_array['tramite'] = $tramite->toArray(false);
+        unset($tramite_array['tramite']['proceso_id']);
+
+        $registro_auditoria->detalles = json_encode($tramite_array);
+        $registro_auditoria->save();
+
+        $tramite = Tramite::find($tramite_id);
+        if($tramite)
+            $tramite->delete();
+
+        return response()->json([
+            'validacion' => true,
+            'redirect' => url('/etapas/inbox')
+        ]);
     }
 
     public function iniciar_post(Request $request, $proceso_id){
@@ -221,5 +246,10 @@ class TramitesController extends Controller
         $qs = $request->getQueryString();
 
         return redirect('etapas/ejecutar/' . $tramite->getEtapasActuales()->get(0)->id . ($qs ? '?' . $qs : ''));
+    }
+
+    public function eliminar_form($tramite_id){
+        $data['tramite'] = $tramite_id;
+        return view('stages.eliminar', $data);
     }
 }

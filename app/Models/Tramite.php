@@ -4,12 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tramite extends Model
 {
     use Searchable;
 
     protected $table = 'tramite';
+
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
 
     public $timestamps = false;
 

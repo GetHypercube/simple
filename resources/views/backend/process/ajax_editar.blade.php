@@ -63,6 +63,11 @@
                             name="concurrente" {{$proceso->concurrente == 1 ? 'checked' : ''}}>
                     <label class="form-check-label" for="concurrente">Permitir la ejecución de varios trámites a la vez por usuario.</label>
                 </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="eliminar_tramites"
+                            name="eliminar_tramites" {{$proceso->eliminar_tramites == 1 ? 'checked' : ''}}>
+                    <label class="form-check-label" for="eliminar_tramites">Permitir la eliminación de trámites.</label>
+                </div>
             </form>
         </div>
         <div class="modal-footer">

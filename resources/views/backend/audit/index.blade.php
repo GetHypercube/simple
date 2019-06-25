@@ -45,7 +45,7 @@
                     <tbody>
                     @foreach($registros as $r)
                         <tr>
-                            <td>{{$r->fecha}}</td>
+                            <td>{{\Carbon\Carbon::parse($r->fecha)->format('d-m-Y H:i:s')}}</td>
                             <td>{{$r->proceso}}</td>
                             <td>{{$r->operacion}}</td>
                             <td>{{htmlspecialchars($r->usuario)}}</td>
