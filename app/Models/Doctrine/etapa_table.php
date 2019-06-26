@@ -64,7 +64,7 @@ class EtapaTable extends Doctrine_Table {
         return $query->execute();
     }
 
-    public function findPendientesALL($usuario_id, $cuenta='localhost'){        
+    public function findPendientesALL($usuario_id, $cuenta='localhost', $orderby='updated_at',$direction='desc',$matches="0",$buscar="0"){        
         $query=Doctrine_Query::create()
                 ->from('Tramite t, t.Proceso.Cuenta c, t.Etapas e, e.Usuario u')
                 ->where('u.id = ?',$usuario_id)
