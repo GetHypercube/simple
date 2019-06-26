@@ -128,10 +128,11 @@ class StagesController extends Controller
 
         $matches = "";
         $rowetapas = "";
-        $resultotal = "";
+        $resultotal = "false";
         $contador= 0;
 
         $page = Input::get('page', 1);
+        //$page = $request->input('page', 1); // Get the ?page=1 from the url
         $paginate = 50;
         $offSet = ($page * $paginate) - $paginate;
 
@@ -146,14 +147,16 @@ class StagesController extends Controller
 
         if ($resultotal == "true") {
             $matches = $result->groupBy('id')->keys()->toArray();
+             $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
             $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, $matches, $buscar, $paginate, $offset);
         } else {
             $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, "0", $buscar, $paginate, $offset);
+            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
         }
         
         $config['base_url'] = url('etapas/inbox');
         $config['total_rows'] = $contador;
-        $config['per_page'] = $offset;
+        $config['per_page'] = $paginate;
         $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
         $config['full_tag_close'] = '</ul></div>';
         $config['page_query_string'] = false;
@@ -180,7 +183,7 @@ class StagesController extends Controller
         $data = \Cuenta::configSegunDominio();
         $data['etapas'] = new LengthAwarePaginator(
             $rowetapas,
-            $total=500,
+            $contador,
             $paginate, 
             $page,
             ['path' => $request->url(), 'buscar' => $request->query()]);
