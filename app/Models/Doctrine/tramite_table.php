@@ -31,6 +31,7 @@ class TramiteTable extends Doctrine_Table {
                 ->from('Tramite t, t.Proceso.Cuenta c, t.Etapas e, e.Usuario u')
                 ->where('u.id = ?',$usuario_id)
                 ->andWhere('e.pendiente=0')
+                ->limit(3000)
                 ->andWhere('t.deleted_at is NULL')
                 ->orderBy('t.updated_at desc');
         

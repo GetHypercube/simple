@@ -74,7 +74,10 @@
                         @php
                             $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
                                 ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
-                            $nsinasignar = count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
+                                //dd($npendientes);
+                            $nsinasignar =count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
+                          //  dd($nsinasignar);
+                           //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
                             $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
                         @endphp
                         <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'inbox' ? 'active' : ''}}"
