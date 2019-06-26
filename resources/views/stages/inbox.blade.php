@@ -142,7 +142,7 @@
             </div>
             <?php endif; ?>
             <?php endif; ?>
-
+             <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
             <?php else: ?>
             <p>No hay trámites pendientes en su bandeja de entrada.</p>
             <?php endif; ?>
