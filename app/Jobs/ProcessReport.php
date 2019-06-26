@@ -92,11 +92,17 @@ class ProcessReport implements ShouldQueue
 
         $this->generar_consulta();
 
-        $this->job_info->status = Job::$finished;
         $this->job_info->filename = $this->nombre_reporte.'.xls';
         $this->job_info->filepath = $this->_base_dir;
+        
+        try{
+            $this->send_notification();
+            $this->job_info->status = Job::$finished;
+        }catch(\Exception $e){
+            Log::error("ProcessReport::handle() Error al enviar notificacion: " . $e->getMessage());
+            $this->job_info->status = Job::$error;
+        }
         $this->job_info->save();
-        $this->send_notification();
     }
 
     private function generar_consulta(){
@@ -128,6 +134,8 @@ class ProcessReport implements ShouldQueue
 
         if($this->pendiente != -1)
             $query = $query->where('tramite.pendiente',$this->pendiente);
+
+        $query = $query->whereNull('tramite.deleted_at');
 
         $query = $query
             ->groupBy('tramite.id')

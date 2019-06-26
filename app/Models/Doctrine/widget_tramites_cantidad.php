@@ -25,6 +25,7 @@ class WidgetTramitesCantidad extends Widget
                     ->where('c.id = ?', $this->cuenta_id)
                     ->andWhere('p.activo=1 AND p.id = ?', array($p->id))
                     ->andWhere('t.pendiente=1')
+                    ->andWhere('t.deleted_at is NULL')
                     ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
                     ->groupBy('t.id')
                     ->count();
@@ -42,6 +43,7 @@ class WidgetTramitesCantidad extends Widget
                     ->where('c.id = ?', $this->cuenta_id)
                     ->andWhere('p.activo=1 AND p.id = ?', array($p->id))
                     ->andWhere('t.pendiente=0')
+                    ->andWhere('t.deleted_at is NULL')
                     ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
                     ->groupBy('t.id')
                     ->count();
