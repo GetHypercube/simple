@@ -10,6 +10,7 @@ class TramiteTable extends Doctrine_Table {
                 //->from('DatoSeguimiento d, d.Etapa ex, ex.Tramite t, t.Etapas e, t.Proceso.Cuenta c, e.Usuario u')               
                 ->where('u.id = ?',$usuario_id)
                 ->andWhere('e.pendiente=0')
+                ->andWhere('t.deleted_at is NULL')
                 ->having('COUNT(t.id) > 0')  //Mostramos solo los que se han avanzado o tienen datos
                 ->groupBy('t.id')
                 ->orderBy('t.updated_at desc')
@@ -30,6 +31,8 @@ class TramiteTable extends Doctrine_Table {
                 ->from('Tramite t, t.Proceso.Cuenta c, t.Etapas e, e.Usuario u')
                 ->where('u.id = ?',$usuario_id)
                 ->andWhere('e.pendiente=0')
+                ->limit(3000)
+                ->andWhere('t.deleted_at is NULL')
                 ->orderBy('t.updated_at desc');
         
         if($cuenta!='localhost')
@@ -43,6 +46,7 @@ class TramiteTable extends Doctrine_Table {
                 //->from('DatoSeguimiento d, d.Etapa ex, ex.Tramite t, t.Etapas e, t.Proceso.Cuenta c, e.Usuario u')               
                 ->where('u.id = ?',$usuario_id)
                 ->andWhere('e.pendiente=0')
+                ->andWhere('t.deleted_at is NULL')
                 ->having('COUNT(t.id) > 0')  //Mostramos solo los que se han avanzado o tienen datos
                 ->groupBy('t.id')
                 ->orderBy('t.updated_at desc');                
@@ -60,6 +64,7 @@ class TramiteTable extends Doctrine_Table {
         $query=Doctrine_Query::create()
             ->from('Tramite t, t.Proceso.Cuenta c, t.Etapas e, e.Usuario u')
             ->where('u.id = ?',$usuario_id)
+            ->andWhere('t.deleted_at is NULL')
             ->orderBy('t.updated_at desc');
 
         return $query->execute();

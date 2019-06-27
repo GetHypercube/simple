@@ -102,11 +102,17 @@ class ProcessReport implements ShouldQueue
 
         $this->generarExcel();
 
-        $this->job_info->status = Job::$finished;
         $this->job_info->filename = $this->nombre_reporte.'.xls';
         $this->job_info->filepath = $this->_base_dir;
+        
+        try{
+            $this->send_notification();
+            $this->job_info->status = Job::$finished;
+        }catch(\Exception $e){
+            Log::error("ProcessReport::handle() Error al enviar notificacion: " . $e->getMessage());
+            $this->job_info->status = Job::$error;
+        }
         $this->job_info->save();
-        $this->send_notification();
     }
 
     private function generarExcel(){

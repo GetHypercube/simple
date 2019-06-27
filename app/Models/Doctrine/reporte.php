@@ -79,7 +79,8 @@ class Reporte extends Doctrine_Record
         ini_set('memory_limit', '-1');
         $query = Doctrine_Query::create()
             ->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
-            ->where('p.id = ?', $this->proceso_id);
+            ->where('p.id = ?', $this->proceso_id)
+            ->andWhere('t.deleted_at is NULL');
 
         foreach ($params as $p) {
             Log::debug('Parametro p: ' . $p);
@@ -153,9 +154,9 @@ class Reporte extends Doctrine_Record
             foreach ($header_variables as $h) {
                 $var_find = explode("->", $h);
                 if (count($var_find) > 1) {
-                    $row[] = isSet($t[$var_find[0]]) ? json_decode($t[$var_find[0]])->$var_find[1] : '-';
+                    $row[] = isSet($t[$var_find[0]]) ? json_decode($t[$var_find[0]])->$var_find[1] : '';
                 } else {
-                    $row[] = isSet($t[$h]) ? $t[$h] : '-';
+                    $row[] = isSet($t[$h]) ? $t[$h] : '';
                 }
             }
             $excel[] = $row;

@@ -22,6 +22,18 @@
 <div class="col-xs-12 col-md-12">
     <?php if (count($etapas) > 0): ?>
 
+      <div class="col-lg-12">
+    @if(!empty($data))
+        @foreach($data as $key => $value)
+            <p>{{ $value['etapa_id'] }}</p>
+             <p>{{ $value['p_nombre'] }}</p>
+              <p>{{ $value['p_nombre'] }}</p>
+               <p>{{ $value['t_nombre'] }}</p>
+                <p>{{ $value['updated_at'] }}</p>
+        @endforeach
+        {!! $data->appends(Input::all())->render() !!}
+    @endif
+</div>
     <table id="mainTable" class="table">
         <thead>
         <tr>
@@ -125,7 +137,7 @@
     </div>
     <?php endif; ?>
     <?php endif; ?>
-    <p>{{$etapas->links('vendor.pagination.bootstrap-4') }}</p>
+    <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
     <?php else: ?>
     <p>No hay trámites para ser asignados.</p>
     <?php endif; ?>

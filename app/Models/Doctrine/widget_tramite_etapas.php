@@ -26,6 +26,7 @@ class WidgetTramiteEtapas extends Widget
             ->from('Tarea tar, tar.Etapas e, e.Tramite t, t.Proceso p, p.Cuenta c')
             ->where('p.activo=1 AND p.id = ? AND c.id = ?', array($proceso->id, $this->cuenta_id))
             ->andWhere('e.pendiente = 1')
+            ->andWhere('t.deleted_at is NULL')
             //->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')  //Mostramos solo los que se han avanzado o tienen datos
             ->groupBy('tar.id')
             ->execute();
