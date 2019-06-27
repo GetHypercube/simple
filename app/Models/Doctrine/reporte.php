@@ -153,9 +153,9 @@ class Reporte extends Doctrine_Record
             foreach ($header_variables as $h) {
                 $var_find = explode("->", $h);
                 if (count($var_find) > 1) {
-                    $row[] = isSet($t[$var_find[0]]) ? json_decode($t[$var_find[0]])->$var_find[1] : '';
+                    $row[] = isSet($t[$var_find[0]]) ? json_decode($t[$var_find[0]])->$var_find[1] : '-';
                 } else {
-                    $row[] = isSet($t[$h]) ? $t[$h] : '';
+                    $row[] = isSet($t[$h]) ? $t[$h] : '-';
                 }
             }
             $excel[] = $row;
