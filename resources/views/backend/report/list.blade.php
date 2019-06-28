@@ -52,14 +52,8 @@
                                     </div>
 
                                     <div class="report-action-form">
-                                        <button type="submit" class="btn btn-info">
-                                            <i class="material-icons">remove_red_eye</i> Ver
-                                        </button>
                                         <button type="submit" name="formato" value="xls" class="btn btn-info">
                                             <i class="material-icons">insert_drive_file</i> XLS
-                                        </button>
-                                        <button type="submit" name="formato" value="pdf" class="btn btn-info">
-                                            <i class="material-icons">picture_as_pdf</i> PDF
                                         </button>
                                         @if(!in_array('gestion', explode(",", $rol)) )
                                             <a href="{{route('backend.report.edit', [$p->id])}}"
