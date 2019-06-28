@@ -152,7 +152,7 @@ class TramitesController extends Controller
             exit;
         }
 
-        $request->validate(['razon' => 'required']);
+        $request->validate(['motivo' => 'required']);
 
         // Auditar
         $fecha = new \DateTime ();
@@ -160,7 +160,7 @@ class TramitesController extends Controller
         $registro_auditoria = new \AuditoriaOperaciones ();
         $registro_auditoria->fecha = \Carbon\Carbon::now('America/Santiago')->format('Y-m-d H:i:s');
         $registro_auditoria->operacion = 'Eliminación de Trámite';
-        $registro_auditoria->motivo = $request->input('razon');
+        $registro_auditoria->motivo = $request->input('motivo');
         $usuario = Auth::user();
         $registro_auditoria->usuario = $usuario->nombres . ' ' . $usuario->apellido_paterno . ' ' . $usuario->apellido_materno .  ' <' . $usuario->email . '>';
         $registro_auditoria->proceso = $proceso->nombre;
@@ -179,6 +179,8 @@ class TramitesController extends Controller
         $tramite = Tramite::find($tramite_id);
         if($tramite)
             $tramite->delete();
+
+        $request->session()->flash('status', 'Trámite eliminado exitósamente');
 
         return response()->json([
             'validacion' => true,
