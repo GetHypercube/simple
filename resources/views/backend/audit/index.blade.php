@@ -15,7 +15,7 @@
 
                 {{ $registros->links('vendor.pagination.bootstrap-4') }}
 
-                <table class="table">
+                <table class="table" style="table-layout: fixed;word-wrap: break-word;">
                     <thead>
                     <tr>
                         <th>
