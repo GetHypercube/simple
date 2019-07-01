@@ -180,7 +180,7 @@ class TramitesController extends Controller
         if($tramite)
             $tramite->delete();
 
-        $request->session()->flash('status', 'Trámite eliminado exitósamente');
+        $request->session()->flash('status', 'Trámite eliminado exitosamente');
 
         return response()->json([
             'validacion' => true,
