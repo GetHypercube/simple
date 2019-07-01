@@ -27,7 +27,7 @@
                         <dt> Fecha</dt>
                         <dd> {{$registro->fecha}}</dd>
                         <dt> Motivo</dt>
-                        <dd> {{$registro->motivo != '' ? $registro->motivo : ' '}}</dd>
+                        <dd style="word-wrap: break-word;"> {{$registro->motivo != '' ? $registro->motivo : ' '}}</dd>
                     </dl>
                 </div>
 
