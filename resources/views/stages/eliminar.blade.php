@@ -11,7 +11,7 @@
                   action="<?= url('tramites/borrar_tramite/' . $tramite) ?>">
                 {{csrf_field()}}
                 <div class='validacion'></div>
-                <label>Indique el motivo por la cual elimina el trámite (máximo 500 caracteres):</label>
+                <label>Indique el motivo por el cual elimina el trámite (máximo 500 caracteres):</label>
                 <textarea class="form-control col-12" name='motivo' type='text' maxlength="500" rows="7" required/>
             </form>
 
