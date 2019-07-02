@@ -243,9 +243,7 @@ class AccionRest extends Accion
                 try {
                     // Se ejecuta la llamada segun el metodo
                     if ($this->extra->tipoMetodo == "GET") {
-                        $result = $client->request('GET', $uri, [
-                            GuzzleHttp\RequestOptions::JSON => array()
-                        ]);
+                        $result = $client->request('GET', $uri);
                     } else if ($this->extra->tipoMetodo == "POST") {
                         $result = $client->request('POST', $uri, [
                             $paramType => json_decode($request)
