@@ -8,7 +8,7 @@
             <div class="input-group mb-3">
                 <input name="query" class="form-control" placeholder="Escribe aquí lo que deseas buscar"
                        type="text"
-                       value="<?= $query?>">
+                       value="<?=$query?>">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit">
                         <i class="material-icons">search</i>
@@ -21,19 +21,6 @@
 
 <div class="col-xs-12 col-md-12">
     <?php if (count($etapas) > 0): ?>
-
-      <div class="col-lg-12">
-    @if(!empty($data))
-        @foreach($data as $key => $value)
-            <p>{{ $value['etapa_id'] }}</p>
-             <p>{{ $value['p_nombre'] }}</p>
-              <p>{{ $value['p_nombre'] }}</p>
-               <p>{{ $value['t_nombre'] }}</p>
-                <p>{{ $value['updated_at'] }}</p>
-        @endforeach
-        {!! $data->appends(Input::all())->render() !!}
-    @endif
-</div>
     <table id="mainTable" class="table">
         <thead>
         <tr>
@@ -50,10 +37,9 @@
         <tbody>
         <?php $registros = false; ?>
         <?php foreach ($etapas as $e): ?>
-
         <?php
         $file = false;
-        if (\App\Helpers\Doctrine::getTable('File')->findByTramiteId($e->tramite_id)->count() > 0) {
+        if (\App\Helpers\Doctrine::getTable('File')->findByTramiteId($e->id)->count() > 0) {
             $file = true;
             $registros = true;
         }
@@ -71,7 +57,7 @@
             <?php if ($file): ?>
             <td>
                 <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]"
-                                                    value="<?=$e->tramite_id?>"></label></div>
+                                                    value="<?=$e->id?>"></label></div>
             </td>
             <?php else: ?>
             <td></td>
@@ -79,10 +65,10 @@
             <?php else: ?>
             <td></td>
             <?php endif; ?>
-            <td><?=$e->tramite_id?></td>
+            <td><?=$e->id?></td>
             <td class="name">
                 <?php
-                $t = \App\Helpers\Doctrine::getTable('Tramite')->find($e->tramite_id);
+                $t = \App\Helpers\Doctrine::getTable('Tramite')->find($e->id);
                 $tramite_nro = '';
                 foreach ($t->getValorDatoSeguimiento() as $tra_nro) {
                     if ($tra_nro->nombre == 'tramite_ref') {
@@ -112,7 +98,7 @@
                             class="icon-check icon-white"></i> Asignármelo</a>
                 <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                 <?php if ($file): ?>
-                <a href="#" onclick="return descargarDocumentos(<?=$e->tramite_id?>);" class="btn btn-link"><i
+                <a href="#" onclick="return descargarDocumentos(<?=$e->id?>);" class="btn btn-link"><i
                             class="icon-download icon-white"></i> Descargar</a>
                 <?php endif; ?>
                 <?php endif; ?>

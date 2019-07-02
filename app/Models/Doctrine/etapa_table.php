@@ -4,7 +4,6 @@ class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
     public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$query="0",$limite=2000, $inicio=0){
-      // dd($perPage);
        $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
        if(!$usuario->open_id){
             $grupos =  DB::table('grupo_usuarios_has_usuario')
@@ -16,7 +15,7 @@ class EtapaTable extends Doctrine_Table {
 
             if($grupos){
                 $tareas = DB::table('etapa')
-                ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite_id',
+                ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
                 'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
                 ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
                 ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
@@ -27,15 +26,51 @@ class EtapaTable extends Doctrine_Table {
                 ->whereNull('etapa.usuario_id')
                 ->limit($limite)
                 ->offset($inicio)
-                ->orderBy('tramite.id', 'ASC')
+                ->orderBy('etapa.tarea_id', 'ASC')
                 ->get()->toArray();
-            }else{
+            }
+            else{
                 $tareas = array();
             }
         }else{
             $tareas = array();
-        }
- 
+        } 
+         
+     
+        return $tareas;
+    }
+    
+   public function findSinAsignarMatch($usuario_id, $cuenta='localhost',$matches="0",$query="0"){
+       $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+       if(!$usuario->open_id){
+            $grupos =  DB::table('grupo_usuarios_has_usuario')
+                        ->select('grupo_usuarios_id')
+                        ->where('usuario_id',$usuario->id)
+                        ->get()
+                        ->toArray();
+            $grupos = json_decode(json_encode($grupos), true);
+
+            if($grupos){
+                $tareas = DB::table('etapa')
+                ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
+                'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
+                ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
+                ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
+                ->where('cuenta.nombre',$cuenta->nombre)
+                ->whereIn('tarea.grupos_usuarios',[$grupos])
+                ->whereIn('tramite.id',[$matches])
+                ->whereNull('etapa.usuario_id')
+                ->orderBy('etapa.tarea_id', 'ASC')
+                ->get()->toArray();
+            }
+            else{
+                $tareas = array();
+            }
+        }else{
+            $tareas = array();
+        }  
         return $tareas;
     }
     
