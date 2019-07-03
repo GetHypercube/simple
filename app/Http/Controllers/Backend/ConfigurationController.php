@@ -649,7 +649,7 @@ class ConfigurationController extends Controller
 
             switch ($e->errorInfo[1]) {
                 case 1451:
-                    $error_msg = 'El usuario no puede ser eliminado, asegúate de que éste no cuente con trámites pendientes.';
+                    $error_msg = 'El usuario no puede ser eliminado, asegúrate de que éste no cuente con trámites pendientes.';
                     break;
             }
 
