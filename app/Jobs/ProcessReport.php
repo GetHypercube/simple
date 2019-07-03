@@ -26,12 +26,10 @@ class ProcessReport implements ShouldQueue
     protected $user_type;
     protected $proceso_id;
     protected $reporte_id;
-    protected $params;
     protected $max_running_jobs = 1;
     protected $tries = 1;
     protected $job_info;
     protected $reporte_tabla;
-    protected $header_variables;
     protected $link_host;
     protected $email_to;
     protected $email_subject;
@@ -49,15 +47,27 @@ class ProcessReport implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente, $cuenta)
+    public function __construct(
+        $user_id,
+        $user_type,
+        $proceso_id,
+        $reporte_id,
+        $reporte_tabla,
+        $host,
+        $email_to,
+        $email_name,
+        $email_subject,
+        $desde,
+        $hasta,
+        $pendiente,
+        $cuenta
+    )
     {
         $this->user_id = $user_id;
         $this->user_type = $user_type;
         $this->proceso_id = $proceso_id;
         $this->reporte_id = $reporte_id;
-        $this->params = $params;
         $this->reporte_tabla = $reporte_tabla;
-        $this->header_variables = $header_variables;
         $this->link_host = $host;
         $this->email_to = $email_to;
         $this->email_name = $email_name;
@@ -90,108 +100,24 @@ class ProcessReport implements ShouldQueue
         $this->job_info->status = Job::$running;
         $this->job_info->save();
 
-        $this->generar_consulta();
+        $this->generarExcel();
 
-        $this->job_info->status = Job::$finished;
         $this->job_info->filename = $this->nombre_reporte.'.xls';
         $this->job_info->filepath = $this->_base_dir;
+        
+        try{
+            $this->send_notification();
+            $this->job_info->status = Job::$finished;
+        }catch(\Exception $e){
+            Log::error("ProcessReport::handle() Error al enviar notificacion: " . $e->getMessage());
+            $this->job_info->status = Job::$error;
+        }
         $this->job_info->save();
-        $this->send_notification();
     }
 
-    private function generar_consulta(){
+    private function generarExcel(){
 
         $excel_row = $this->reporte_tabla;
-        $header_variables = $this->header_variables;
-
-        $query = DB::table('tramite')
-            ->join('etapa', 'tramite.id', '=', 'etapa.tramite_id')
-            ->join('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
-            ->join('proceso', 'proceso.id', '=', 'tramite.proceso_id')
-            ->select(DB::raw('tramite.id as id, proceso.id as proceso_id, tramite.created_at as created_at'))
-            ->where('proceso.id',$this->proceso_id);
-
-
-        if(!is_null($this->desde)){
-            $this->desde = $this->desde.'00:00:00';
-            $this->desde = date('Y-m-d H:i:s', strtotime($this->desde));
-            $desde = Carbon::createFromFormat('Y-m-d H:i:s',$this->desde);
-            $query = $query->where('tramite.created_at','>=',$desde);
-        }
-            
-        if(!is_null($this->hasta)){
-            $this->hasta = $this->hasta.'23:59:59';
-            $this->hasta = date('Y-m-d H:i:s', strtotime($this->hasta));
-            $hasta = Carbon::createFromFormat('Y-m-d H:i:s',$this->hasta);
-            $query = $query->where('tramite.created_at','<=',$hasta);
-        }
-
-        if($this->pendiente != -1)
-            $query = $query->where('tramite.pendiente',$this->pendiente);
-
-        $query = $query
-            ->groupBy('tramite.id')
-            ->havingRaw('COUNT(dato_seguimiento.id) > 0 OR COUNT(etapa.id) > 1')
-            ->get();
-
-        $tramites = json_decode(json_encode($query), true);
-
-        foreach ($tramites as $t) {
-
-            $etapas_actuales = DB::table('tramite')
-                ->join('etapa', 'tramite.id', '=', 'etapa.tramite_id')
-                ->join('tarea', 'tarea.id', '=', 'etapa.tarea_id')
-                ->select(DB::raw('tarea.nombre as tarea_nombre'))
-                ->where('tramite.id',$t['id'])
-                ->where('etapa.pendiente',1)
-                ->get();
-            $etapas_actuales_arr = array();
-            foreach ($etapas_actuales as $etapa) {
-                $etapas_actuales_arr[] = $etapa->tarea_nombre;
-            }
-            $etapas_actuales_str = implode(',', $etapas_actuales_arr);
-            $t['etapa_actual'] = $etapas_actuales_str;
-
-            $row = array();
-
-            $datos_actuales = DB::table('tramite')
-                ->join('etapa', 'tramite.id', '=', 'etapa.tramite_id')
-                ->join('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
-                ->select(DB::raw('dato_seguimiento.id, MAX(dato_seguimiento.id) as max_id'))
-                ->where('tramite.id',$t['id'])
-                ->groupBy('dato_seguimiento.nombre')
-                ->get();
-
-            $datos_actuales_ids=array();
-            foreach($datos_actuales as $d)
-                $datos_actuales_ids[]=$d->max_id;
-
-            $datos = DB::table('tramite')
-                ->join('etapa', 'tramite.id', '=', 'etapa.tramite_id')
-                ->join('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
-                ->whereIn('dato_seguimiento.id',$datos_actuales_ids)
-                ->groupBy('dato_seguimiento.nombre')
-                ->get();
-
-
-            foreach ($datos as $d) {
-                $val = $d->valor;
-                if (!is_string($val)) {
-                    $val = json_encode($val, JSON_UNESCAPED_UNICODE);
-                }
-                $t[$d->nombre] = strip_tags($val);
-            }
-
-            foreach ($header_variables as $h) {
-                $var_find = explode("->", $h);
-                if (count($var_find) > 1) {
-                    $row[] = isSet($t[$var_find[0]]) ? json_decode($t[$var_find[0]])->$var_find[1] : '';
-                } else {
-                    $row[] = isSet($t[$h]) ? $t[$h] : '';
-                }
-            }
-            $excel_row[] = $row;
-        }
 
         $this->nombre_reporte = 'reporte-'.$this->reporte_id.'-'.Carbon::now('America/Santiago')->format('dmYHis');
         Excel::create($this->nombre_reporte, function ($excel) use ($excel_row) {

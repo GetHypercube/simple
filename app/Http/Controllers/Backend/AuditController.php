@@ -23,9 +23,10 @@ class AuditController extends Controller
         $query = AuditoriaOperaciones::select('id', 'fecha', 'motivo', 'operacion', 'usuario', 'proceso')
             ->whereCuentaId(Auth::user()->cuenta_id);
 
-        if ($order && $direction) {
+        if ($order && $direction)
             $query = $query->orderBy($order, $direction);
-        }
+        else
+            $query = $query->orderBy('id','DESC');
 
         $query = $query->paginate($per_page);
 

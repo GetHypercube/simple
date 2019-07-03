@@ -73,7 +73,7 @@ class TracingController extends Controller
 
         Log::info("Creando query");
 
-        // obtiene los tramites cuyo proceso este actiivo, y ademas de tener por lo menos una etapa creada
+        // obtiene los tramites cuyo proceso este activo, y ademas de tener por lo menos una etapa creada
         $preg = Tramite::where('p.activo', true)
             ->select(
                 'tramite.id as id',
@@ -338,7 +338,9 @@ class TracingController extends Controller
         $registro_auditoria->detalles = json_encode($tramite_array);
         $registro_auditoria->save();
 
-        $tramite->delete();
+        $tramite = Tramite::find($tramite_id);
+        if($tramite)
+            $tramite->delete();
 
         return response()->json([
             'validacion' => true,

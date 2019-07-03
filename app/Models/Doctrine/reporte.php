@@ -79,7 +79,8 @@ class Reporte extends Doctrine_Record
         ini_set('memory_limit', '-1');
         $query = Doctrine_Query::create()
             ->from('Tramite t, t.Proceso p, t.Etapas e, e.DatosSeguimiento d')
-            ->where('p.id = ?', $this->proceso_id);
+            ->where('p.id = ?', $this->proceso_id)
+            ->andWhere('t.deleted_at is NULL');
 
         foreach ($params as $p) {
             Log::debug('Parametro p: ' . $p);
