@@ -135,7 +135,7 @@ class UploadController extends Controller
         return implode($buff);
     }
 
-    public function datos_get($id, $token)
+    public function datos_get($id, $token, $usuario_backend = null)
     {
         //Chequeamos los permisos en el frontend
         $file = Doctrine_Query::create()
@@ -146,7 +146,7 @@ class UploadController extends Controller
             //Chequeamos permisos en el backend
             $file = Doctrine_Query::create()
                 ->from('File f, f.Tramite.Proceso.Cuenta.UsuariosBackend u')
-                ->where('f.id = ? AND f.llave = ? AND u.id = ? AND (u.rol like "%super%" OR u.rol like "%operacion%" OR u.rol like "%seguimiento%")', array($id, $token, UsuarioBackendSesion::usuario()->id))
+                ->where('f.id = ? AND f.llave = ? AND u.id = ? AND (u.rol like "%super%" OR u.rol like "%operacion%" OR u.rol like "%seguimiento%")', array($id, $token, $usuario_backend))
                 ->fetchOne();
 
             if (!$file) {
