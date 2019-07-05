@@ -86,7 +86,7 @@ class AccionSoap extends Accion
                 <select id="tipoSeguridad" class="form-control col-2" name="extra[idSeguridad]">';
         foreach ($conf_seguridad as $seg) {
             $display .= '<option value="">Sin seguridad</option>';
-            if ($this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
+            if(!is_null($this->extra) && isset($this->extra->idSeguridad) && $this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
                 $display .= '<option value="' . $seg->id . '" selected>' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
             } else {
                 $display .= '<option value="' . $seg->id . '">' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
