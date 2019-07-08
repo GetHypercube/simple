@@ -81,7 +81,10 @@ class CampoDocumento extends Campo
                 $dato->save();
             }
         }
-
+        $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);
+        if($usuario_backend)
+            $display = '<p><a class="btn btn-success" target="_blank" href="' . url('documentos/get/0/' . $file->filename.'/'.$usuario_backend->id) . '?id=' . $file->id . '&amp;token=' . $file->llave . '"><i class="icon-download-alt icon-white"></i> ' . $this->etiqueta . '</a></p>';
+        else
         $display = '<p><a class="btn btn-success" target="_blank" href="' . url('documentos/get/0/' . $file->filename) . '?id=' . $file->id . '&amp;token=' . $file->llave . '"><i class="icon-download-alt icon-white"></i> ' . $this->etiqueta . '</a></p>';
         if( ! $this->isClientMobile() && isset($this->extra->previsualizacion)){
             $pdf_file = "/documentos/get/1/$file->filename?id=$file->id&token=$file->llave";

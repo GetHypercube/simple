@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
 {
-    public function get(Request $request, $inline, $filename='')
+    public function get(Request $request, $inline, $filename='', $usuario_backend = null)
     {
         $id = $request->input('id');
         $token = $request->input('token');
@@ -23,7 +23,7 @@ class DocumentController extends Controller
             //Chequeamos permisos en el backend
             $file = Doctrine_Query::create()
                 ->from('File f, f.Tramite.Proceso.Cuenta.UsuariosBackend u')
-                ->where('f.id = ? AND f.llave = ? AND u.id = ? AND (u.rol like "%super%" OR u.rol like "%operacion%" OR u.rol like "%seguimiento%")', array($id, $token, Auth::user()->id))
+                ->where('f.id = ? AND f.llave = ? AND u.id = ? AND (u.rol like "%super%" OR u.rol like "%operacion%" OR u.rol like "%seguimiento%")', array($id, $token, $usuario_backend))
                 ->fetchOne();
 
             if (!$file) {
