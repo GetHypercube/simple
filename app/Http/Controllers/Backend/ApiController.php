@@ -244,8 +244,7 @@ class ApiController extends Controller
                     }
                 }
 
-                if ($regla->evaluar($a->Etapa->id)) {
-
+                if($regla->evaluar($a->Etapa->id) && !is_null($evento->metodo)){
                     $regla = new Regla($evento->mensaje);
                     $msg = $regla->getExpresionParaOutput($a->Etapa->id);
                     $regla = new Regla($evento->url);
@@ -287,6 +286,21 @@ class ApiController extends Controller
                             $dato->save();
                         }
                     }
+                    $a->estado = 0;
+                    $a->save();
+
+                    //Ejecutar eventos despues del evento externo
+                    $eventos = Doctrine_Query::create()->from('Evento e')
+                        ->where('e.tarea_id = ? AND e.instante = ? AND e.evento_externo_id = ?', array($tarea_id, 'despues', $evento->id))
+                        ->orderBy('e.id asc')
+                        ->execute();
+
+                    foreach ($eventos as $e) {
+                        $r = new Regla($e->regla);
+                        if ($r->evaluar($etapa_id))
+                            $e->Accion->ejecutar($etapa);
+                    }
+                }elseif($regla->evaluar($a->Etapa->id) && is_null($evento->metodo)){
                     $a->estado = 0;
                     $a->save();
 

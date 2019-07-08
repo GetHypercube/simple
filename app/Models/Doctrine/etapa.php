@@ -606,8 +606,7 @@ class Etapa extends Doctrine_Record
             if (!$acontecimiento)
                 $acontecimiento = new Acontecimiento();
             $acontecimiento->estado = 1;
-            if ($regla->evaluar($this->id)) {
-
+            if($regla->evaluar($this->id) && !is_null($evento->metodo)){
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL, $url);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -647,6 +646,8 @@ class Etapa extends Doctrine_Record
                         $dato->save();
                     }
                 }
+                $acontecimiento->estado = 0;
+            }elseif($regla->evaluar($this->id) && is_null($evento->metodo)){
                 $acontecimiento->estado = 0;
             }
             $acontecimiento->evento_externo_id = $evento->id;
