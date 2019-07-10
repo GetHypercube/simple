@@ -55,6 +55,7 @@
                 </td>
                 <td>
                     <select class="eventoSentido form-control">
+                        <option value="Ninguno">Ninguno</option>
                         <option value="GET">GET</option>
                         <option value="POST">POST</option>
                         <option value="PUT">PUT</option>
@@ -97,7 +98,7 @@
                 <tr>
                     <td><?= $key + 1 ?></td>
                     <td><?= $p->nombre ?></td>
-                    <td><?= $p->metodo ?></td>
+                    <td><?= is_null($p->metodo) ? 'Ninguno' : $p->metodo ?></td>
                     <td><?= $p->url ?></td>
                     <td><?= $p->mensaje ?></td>
                     <td><?= $p->regla ?></td>
@@ -125,3 +126,25 @@
         </table>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('.eventoSentido').change(function(evt){
+            if(evt.target.value != 'ninguno'){
+                // habilitar campo
+                $('#url').prop('disabled', false);
+                $('#mensaje').prop('disabled', false);
+                $('#opciones').prop('disabled', false);
+            }else{
+                // deshabilitar campo
+                $('#url').prop('disabled', true);
+                $('#mensaje').prop('disabled', true);
+                $('#opciones').prop('disabled', true);
+            }
+        });
+
+        $('#url').prop('disabled', true);
+        $('#mensaje').prop('disabled', true);
+        $('#opciones').prop('disabled', true);
+    });
+</script>

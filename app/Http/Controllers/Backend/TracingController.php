@@ -154,7 +154,6 @@ class TracingController extends Controller
         $tramitesResult = $preg->get();
 
         $tramites = [];
-
         foreach ($tramitesResult as $tr) {
 
             $item = [
@@ -186,7 +185,16 @@ class TracingController extends Controller
 
             // si cumple con la restriccion, se obtienen los valores para ref y nombre
             $item['ref'] = $item['nombre'] = 'N/A';
-            $datosSeguimiento = DatoSeguimiento::where('etapa_id', $tr->etapa_id)->get();
+
+            $etapasTramite = Etapa::where('tramite_id', $tr->id)->get();
+            $etapasTramiteIds = [];
+
+            foreach ($etapasTramite as $etapaTramite) {
+                $etapasTramiteIds[] = $etapaTramite->id;
+            }
+
+            $datosSeguimiento = DatoSeguimiento::whereIn('etapa_id', $etapasTramiteIds)->get();
+
 
             foreach ($datosSeguimiento as $datoSeg) {
                 if ($datoSeg->nombre == 'tramite_ref') {
@@ -197,11 +205,17 @@ class TracingController extends Controller
                 }
             }
 
-            // obtiene todas las etapas pendientes de c/tarea
-            $tareas = Etapa::where('pendiente', true)
-                ->join('tarea', 'etapa.tarea_id', '=', 'tarea.id')
-                ->where('tramite_id', $tr->id)
-                ->get();
+            // obtiene todas las etapas pendientes de c/tarea ojo MIRAR POR AQUI
+            $tareasList = Etapa::where('tramite_id',$tr->id)
+                ->join('tarea', 'etapa.tarea_id', '=', 'tarea.id');
+
+            if (intval($pendiente) == 1) {
+                $tareasList = Etapa::where('pendiente', $pendiente)
+                    ->join('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                    ->where('tramite_id', $tr->id);
+            }
+
+            $tareas = $tareasList->get();
 
             foreach ($tareas as $tarea) {
                 $item['etapas'][] = $tarea->nombre;
@@ -209,7 +223,6 @@ class TracingController extends Controller
 
             $tramites[] = $item;
         }
-
 
         $tramites = new LengthAwarePaginator(
             $tramites, // Only grab the items we need
