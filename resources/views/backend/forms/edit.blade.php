@@ -54,6 +54,9 @@
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'text')">
                         Textbox
                     </button>
+                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'password')">
+                        Password
+                    </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'textarea')">
                         Textarea
                     </button>

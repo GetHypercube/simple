@@ -19,6 +19,8 @@ class Campo extends Doctrine_Record
     {
         if ($tipo == 'text')
             $campo = new CampoText();
+        else if ($tipo == 'password')
+            $campo = new CampoPassword();
         else if ($tipo == 'textarea')
             $campo = new CampoTextArea();
         else if ($tipo == 'select')
@@ -100,6 +102,7 @@ class Campo extends Doctrine_Record
 
         $this->setSubclasses(array(
             'CampoText' => array('tipo' => 'text'),
+            'CampoPassword' => array('tipo' => 'password'),
             'CampoTextArea' => array('tipo' => 'textarea'),
             'CampoSelect' => array('tipo' => 'select'),
             'CampoRadio' => array('tipo' => 'radio'),
