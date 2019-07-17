@@ -260,6 +260,7 @@ class ProcessController extends Controller
         $proceso->idcha = $request->input('idcha') ? $request->get('idcha') : NULL;
         $proceso->concurrente = $request->has('concurrente') ? 1 : 0;
         $proceso->eliminar_tramites = $request->has('eliminar_tramites') ? 1 : 0;
+        $proceso->ocultar_front = $request->has('ocultar_front') ? 1 : 0;
         $proceso->save();
 
         return response()->json([
