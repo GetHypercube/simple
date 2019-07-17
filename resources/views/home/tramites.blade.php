@@ -14,6 +14,7 @@
     <div class="row">
         <?php foreach ($procesos as $p): ?>
         <?php if ($p->destacado == 1 || $sidebar == 'categorias'): ?>
+        @if(is_null($p->ocultar_front) || !$p->ocultar_front)
         <div class="{{$login ? 'col-md-6' : 'col-md-4' }} item">
             <div class="card text-center">
                 <div class="card-body">
@@ -54,10 +55,9 @@
                     @endif
                     <span>&#8594;</span>
                 </a>
-            </div>
-
-
+            </div> <!-- fin div card -->
         </div>
+        @endif
         <?php endif ?>
         <?php endforeach; ?>
     </div>
@@ -108,6 +108,7 @@
         </div>
         <div class="row">
             @foreach ($procesos as $p)
+                @if(is_null($p->ocultar_front) || !$p->ocultar_front)
                 @if($p->destacado == 0 || $p->categoria_id == 0)
                     <div class="{{$login ? 'col-md-6' : 'col-md-4' }} item">
 
@@ -155,6 +156,7 @@
                         </div>
 
                     </div>
+                @endif
                 @endif
             @endforeach
         </div>
