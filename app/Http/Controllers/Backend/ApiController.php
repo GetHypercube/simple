@@ -477,7 +477,7 @@ class ApiController extends Controller
 
         $tramites = $query->groupBy('p.id')->execute();
         foreach ($tramites as $p) {
-            $respuesta->tramites[] = (object)array('cuenta' => $p->Cuenta->nombre, 'proceso_id' => $p->id, 'proceso' => $p->nombre, 'completados' => $p->ntramites);
+            $respuesta->tramites[] = (object)array('cuenta' => $p->Cuenta->nombre, 'proceso_id' => $p->id, 'proceso' => $p->nombre, 'completados' => $p->ntramites, 'idrnt'=>$p->idrnt, 'idcha'=>$p->idcha);
         }
         header('Content-type: application/json');
         echo json_indent(json_encode($respuesta));
