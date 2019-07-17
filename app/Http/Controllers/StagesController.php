@@ -34,10 +34,19 @@ class StagesController extends Controller
         
         $iframe = $request->input('iframe');
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-
+       
+        
         $data = \Cuenta::configSegunDominio();
         $data['num_pasos'] = $etapa === false ? 0 : self::num_pasos($etapa->Tarea->id);
-
+        $proceso_id= $etapa->Tarea->proceso_id; 
+        Log::info("El Proceso_id: " . $proceso_id);
+        $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
+            Log::info("Se a identificado el Proceso Nº : " . $proceso);
+            $idrnt = $proceso->idrnt;
+            $idcha = $proceso->idcha;
+        Log::info("EL ID RNT es: " . $idrnt);
+        Log::info("EL ID CHA es: " . $idcha);
+        
         if (!$etapa) {
             return abort(404);
         }
@@ -77,6 +86,7 @@ class StagesController extends Controller
         } else if (($etapa->Tarea->final || !$etapa->Tarea->paso_confirmacion) && $paso->getReadonly() && end($pasosEjecutables) == $paso) { // No se requiere mas input
             $etapa->iniciarPaso($paso);
             $etapa->finalizarPaso($paso);
+             Log::info("El finalizar paso: " .  $etapa->finalizarPaso($paso));
             $etapa->avanzar();
             //Job para indexar contenido cada vez que se avanza de etapa
             $this->dispatch(new IndexStages($etapa->Tramite->id));
@@ -88,16 +98,18 @@ class StagesController extends Controller
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($pasosEjecutables) - 1));
         } else {
             $etapa->iniciarPaso($paso);
-
+           
             if(session()->has('redirect_url')){
                 return redirect()->away(session()->get('redirect_url'));
             }
+             Log::info("###MARCA INICIO GA : " . $etapa->pendiente);
 
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
             $data['paso'] = $paso;
+            $data['idcha'] = $idcha;
+            $data['idrnt'] = $idrnt;
             $data['qs'] = $request->getQueryString();
-
             $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
             $data['title'] = $etapa->Tarea->nombre;
             //$template = $request->has('iframe') ? 'template_iframe' : 'template';
@@ -105,6 +117,7 @@ class StagesController extends Controller
             return view('stages.run', $data);
         }
     }
+
 
     public function num_pasos($tarea_id)
     {
@@ -153,6 +166,7 @@ class StagesController extends Controller
         } else {
             $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, "0", $buscar, $paginate, $offset);
             $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+         
         }
         
         $config['base_url'] = url('etapas/inbox');
@@ -194,7 +208,7 @@ class StagesController extends Controller
         $data['sidebar'] = 'inbox';
         $data['title'] = 'Bandeja de Entrada';
 
-         //echo "<script>console.log(".json_encode($rowetapas).")</script>";    
+     //    echo "<script>console.log(".json_encode($idrnt_cha).")</script>";    
 
         return view('stages.inbox', $data);
     }
@@ -465,7 +479,10 @@ class StagesController extends Controller
         }
 
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-
+        $proceso_id= $etapa->Tarea->proceso_id; 
+        $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
+            $idrnt = $proceso->idrnt;
+            $idcha = $proceso->idcha;
         if ($etapa->usuario_id != Auth::user()->id) {
             echo 'Usuario no tiene permisos para ejecutar esta etapa.';
             exit;
@@ -487,6 +504,8 @@ class StagesController extends Controller
         $data = \Cuenta::configSegunDominio();
         $data['etapa'] = $etapa;
         $data['tareas_proximas'] = $etapa->getTareasProximas();
+        $data['idrnt'] = $idrnt;
+        $data['idcha'] = $idcha;
         $data['qs'] = $request->getQueryString();
 
         $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
@@ -540,6 +559,7 @@ class StagesController extends Controller
 
             Log::info("###Id etapa despues de avanzar: " . $etapa->id);
             Log::info("###Id tarea despues de avanzar: " . $etapa->tarea_id);
+             Log::info("###MARCA FIN PARA GA,estado completado: " . $etapa->pendiente);
             $cola = new \ColaContinuarTramite();
             $tareas_encoladas = $cola->findTareasEncoladas($etapa->tramite_id);
             if ($proximas->estado === 'pendiente') {
@@ -555,17 +575,17 @@ class StagesController extends Controller
 
         //Job para indexar contenido cada vez que se avanza de etapa
         $this->dispatch(new IndexStages($etapa->Tramite->id));
-
         if ($request->input('iframe')) {
             return response()->json([
                 'validacion' => true,
                 'redirect' => route('stage.ejecutar_exito')
             ]);
         }
-
+          
+          
         return response()->json([
             'validacion' => true,
-            'redirect' => route('home'),
+            'redirect' => route('home'), 
         ]);
     }
 
@@ -618,6 +638,10 @@ class StagesController extends Controller
             $request->session()->flash('error', 'Usuario no tiene permisos para descargar.');
             return redirect()->back();
         }
+        /*if (!Auth::user()->open_id) {
+            $request->session()->flash('error', 'El Usuario solo puede descargar sus propios archivos.');
+            return redirect()->back();
+        }*/
         $tramites = $request->input('tramites');
         $opcionesDescarga = $request->input('opcionesDescarga');
         $tramites = explode(",", $tramites);
@@ -636,6 +660,8 @@ class StagesController extends Controller
             case 'dato': // s3 son archivos subidos al igual que los dato
                 $tipoDocumento = ['dato', 's3'];
                 break;
+
+                
         }
 
         // Recorriendo los trámites
@@ -645,12 +671,15 @@ class StagesController extends Controller
         $docs_total_space = 0;
         $s3_missing_file_info_ids = [];
         $cuenta = null;
+    
+
         foreach ($tramites as $t) {
             if (empty($tipoDocumento)) {
                 $files = Doctrine::getTable('File')->findByTramiteId($t);
             } else {
                 $files = \Doctrine_Query::create()->from('File f')->where('f.tramite_id=?', $t)->andWhereIn('tipo', $tipoDocumento)->execute();
             }
+            
 
             if (count($files) > 0) {
                 // Recorriendo los archivos
@@ -661,9 +690,12 @@ class StagesController extends Controller
                         $request->session()->flash('error', 'Usuario no ha participado en el trámite.');
                         return redirect()->back();
                     }
+
+                    
                     if( (is_null($cuenta)|| $cuenta === FALSE) && $tr !== FALSE){
                         $cuenta = $tr->Proceso->Cuenta;
                     }
+                   
                     $nombre_documento = $tr->id;
                     $tramite_nro = '';
                     foreach ($tr->getValorDatoSeguimiento() as $tra_nro) {
@@ -816,11 +848,24 @@ class StagesController extends Controller
             return redirect()->back();
         }
 
+       /* if (Auth::user()->!$open_id) {
+            $request->session()->flash('error', 'Usuario solo puede descargar sus propios archivos.');
+            return redirect()->back();
+        }*/
+
         // validar que user_id y job_id sean enteros
 
         $job_info = Job::where('user_id', Auth::user()->id)
                         ->where('id', $job_id)
                         ->where('filename', $file_name)->first();
+        
+        echo "<script>console.log(".json_encode($job_info).")</script>"; 
+
+
+        $job_info_user_unica = Job::where('user_id', Auth::user()->open_id)
+                        ->where('id', $job_id)
+                        ->where('filename', $file_name)->first();
+        echo "<script>console.log(".json_encode($job_info_user_unica).")</script>"; 
 
         $full_path = $job_info->filepath.DIRECTORY_SEPARATOR.$job_info->filename;
         if(file_exists($full_path)){

@@ -25,6 +25,8 @@ class Proceso extends Doctrine_Record
         $this->hasColumn('estado');
         $this->hasColumn('descripcion');
         $this->hasColumn('url_informativa');
+        $this->hasColumn('idrnt');
+        $this->hasColumn('idcha');
         if(\Schema::hasColumn('proceso', 'usuario_id')){
             $this->hasColumn('usuario_id');
         }
