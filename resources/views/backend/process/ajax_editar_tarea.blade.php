@@ -188,7 +188,7 @@
           action="<?= route('backend.procesos.editar_tarea_form', [$tarea->id]) ?>">
         {{csrf_field()}}
 
-        <div class="modal-content" style="width: 1300px;">
+        <div class="modal-content" style="width: 1200px;">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Editar Tarea</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">

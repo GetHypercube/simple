@@ -164,9 +164,25 @@ class Tramite extends Doctrine_Record
     //Chequea si el usuario_id ha tenido participacion en este tramite.
     public function usuarioHaParticipado($usuario_id)
     {
+        
         $tramite = Doctrine_Query::create()
             ->from('Tramite t, t.Etapas e, e.Usuario u')
             ->where('t.id = ? AND u.id = ?', array($this->id, $usuario_id))
+            ->fetchOne();
+
+        if ($tramite)
+            return TRUE;
+
+        return FALSE;
+    }
+
+    public function usuarioClaveUnica($usuario_id)
+    {
+        $tramite = Doctrine_Query::create()
+            ->from('Tramite t, t.Etapas e, e.Usuario u')
+            ->where('t.id = ? AND u.id = ?', array($this->id, $usuario_id))
+            ->andWhere('u.open_id = 1')
+            ->andWhere('t.pendiente = 0')
             ->fetchOne();
 
         if ($tramite)

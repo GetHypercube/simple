@@ -638,10 +638,6 @@ class StagesController extends Controller
             $request->session()->flash('error', 'Usuario no tiene permisos para descargar.');
             return redirect()->back();
         }
-        /*if (!Auth::user()->open_id) {
-            $request->session()->flash('error', 'El Usuario solo puede descargar sus propios archivos.');
-            return redirect()->back();
-        }*/
         $tramites = $request->input('tramites');
         $opcionesDescarga = $request->input('opcionesDescarga');
         $tramites = explode(",", $tramites);
@@ -651,7 +647,8 @@ class StagesController extends Controller
         $fecha_obj = new \DateTime();
         $fecha = date_format($fecha_obj, "Y-m-d");
         $time_stamp = date_format($fecha_obj, "Y-m-d_His");
-
+        
+        
         $tipoDocumento = "";
         switch ($opcionesDescarga) {
             case 'documento':
@@ -660,9 +657,12 @@ class StagesController extends Controller
             case 'dato': // s3 son archivos subidos al igual que los dato
                 $tipoDocumento = ['dato', 's3'];
                 break;
+            case 'datounico':
+                $tipoDocumento = ['dato'];    
 
                 
         }
+       
 
         // Recorriendo los trámites
         $zip_path_filename = public_path($ruta_tmp).'tramites_'.$time_stamp.'.zip';
@@ -686,12 +686,13 @@ class StagesController extends Controller
                 foreach ($files as $f) {
                     $tr = Doctrine::getTable('Tramite')->find($t);
                     $participado = $tr->usuarioHaParticipado(Auth::user()->id);
+                    $claveunica = $tr->usuarioClaveUnica(Auth::user()->open_id);
                     if (!$participado) {
                         $request->session()->flash('error', 'Usuario no ha participado en el trámite.');
                         return redirect()->back();
-                    }
-
-                    
+                    } 
+                    Log::info("###El usuario a participado en : " . $participado);
+                   
                     if( (is_null($cuenta)|| $cuenta === FALSE) && $tr !== FALSE){
                         $cuenta = $tr->Proceso->Cuenta;
                     }
