@@ -652,8 +652,8 @@ class StagesController extends Controller
             case 'documento':
                 $tipoDocumento = ['documento'];
                 break;
-            case 'dato': // s3 son archivos subidos al igual que los dato
-                $tipoDocumento = ['dato', 's3'];
+            case 'dato': // s3 son archivos subidos al igual que los dato, se elimina el s3
+                $tipoDocumento = ['dato'];
                 break;
             case 'datounico':
                 $tipoDocumento = ['dato'];    
