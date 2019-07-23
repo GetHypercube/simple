@@ -256,8 +256,6 @@ class ProcessController extends Controller
         $proceso->destacado = $request->has('destacado') ? 1 : 0;
         $proceso->descripcion = $request->input('descripcion');
         $proceso->url_informativa = $request->has('url_informativa') ? $request->get('url_informativa') : NULL;
-        $proceso->idrnt = $request->input('idrnt') ? $request->get('idrnt') : NULL;
-        $proceso->idcha = $request->input('idcha') ? $request->get('idcha') : NULL;
         $proceso->concurrente = $request->has('concurrente') ? 1 : 0;
         $proceso->eliminar_tramites = $request->has('eliminar_tramites') ? 1 : 0;
         $proceso->ocultar_front = $request->has('ocultar_front') ? 1 : 0;

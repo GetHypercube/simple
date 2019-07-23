@@ -42,10 +42,10 @@ class StagesController extends Controller
         Log::info("El Proceso_id: " . $proceso_id);
         $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
             Log::info("Se a identificado el Proceso Nº : " . $proceso);
-            $idrnt = $proceso->idrnt;
+         /*   $idrnt = $proceso->idrnt;
             $idcha = $proceso->idcha;
         Log::info("EL ID RNT es: " . $idrnt);
-        Log::info("EL ID CHA es: " . $idcha);
+        Log::info("EL ID CHA es: " . $idcha);*/
         
         if (!$etapa) {
             return abort(404);
@@ -107,8 +107,7 @@ class StagesController extends Controller
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
             $data['paso'] = $paso;
-            $data['idcha'] = $idcha;
-            $data['idrnt'] = $idrnt;
+            
             $data['qs'] = $request->getQueryString();
             $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
             $data['title'] = $etapa->Tarea->nombre;
@@ -481,8 +480,7 @@ class StagesController extends Controller
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
         $proceso_id= $etapa->Tarea->proceso_id; 
         $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
-            $idrnt = $proceso->idrnt;
-            $idcha = $proceso->idcha;
+         
         if ($etapa->usuario_id != Auth::user()->id) {
             echo 'Usuario no tiene permisos para ejecutar esta etapa.';
             exit;
@@ -504,8 +502,8 @@ class StagesController extends Controller
         $data = \Cuenta::configSegunDominio();
         $data['etapa'] = $etapa;
         $data['tareas_proximas'] = $etapa->getTareasProximas();
-        $data['idrnt'] = $idrnt;
-        $data['idcha'] = $idcha;
+       // $data['idrnt'] = $idrnt;
+       // $data['idcha'] = $idcha;
         $data['qs'] = $request->getQueryString();
 
         $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';

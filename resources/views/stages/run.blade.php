@@ -132,13 +132,13 @@
     ga('send', 'pageview');
     ga('secondary.send', 'pageview'); 
     ////////////////////////// 1ER HIT  envia EL INICIO Y FIN DEL TTE RNT  X INSTITUCION ////////////////////////
-    ga('secondary.send', {   //2do ID GA: Este es el que envia el HIT por institución
+   /* ga('secondary.send', {   //2do ID GA: Este es el que envia el HIT por institución
     hitType: 'event',   //tipo de hit enviado al GA de tipo evento
-    eventCategory: 'Trámite Digital INICIADO:RNT', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
-    eventAction: 'Iniciado',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas
-    eventLabel: '<?= $idrnt; ?>',  //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA
-    eventValue: '<?= $etapa->pendiente; ?>' 
-    });
+    eventCategory: 'Trámite digital', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
+    eventAction: 'Inicio de la solicitud',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas
+    eventLabel: '<?//= $idrnt; ?>',  //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA
+    eventValue: '<?//= $etapa->pendiente; ?>' 
+    });*/
      ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
     
     ////////////////////////// 1ER HIT  envia EL INICIO Y FIN DEL TTE RNT o CHA X INSTITUCION ////////////////////////
@@ -146,8 +146,8 @@
     hitType: 'event',   //tipo de hit enviado al GA de tipo evento
     eventCategory: 'Trámite Digital INICIADO:CHA', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
     eventAction: 'Iniciado',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas 
-    eventLabel: '<?= $idcha;?>',  //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA,
-    eventValue: '<?= $etapa->pendiente;?>' //No se enviara por el momento el CHA 
+    eventLabel: '<?//= $idcha;?>',  //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA,
+    eventValue: '<?//= $etapa->pendiente;?>' //No se enviara por el momento el CHA 
     });
      ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT/CHA  ////////////////////////
     ga(function(tracker) {
