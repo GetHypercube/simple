@@ -16,13 +16,7 @@
                     <label>Nombre</label>
                     <input type="text" class="form-control" name="nombre" value="<?=$proceso->nombre?>"/><br>
                      <!--jp-->
-                     <label>ID RNT:</label>
-                     <input type="text" class="form-control" name="idrnt" value="<?=$proceso->idrnt?>"/><br>
-                    <!--finjp-->
-
-                    <!--jp-->
-                     <label>ID CHA:</label>
-                     <input type="text" class="form-control" name="idcha" value="<?=$proceso->idcha?>"/><br>
+                   
                     <!--finjp-->
                     <label>Tamaño de la Grilla</label>
                     <div class="form-group form-inline">

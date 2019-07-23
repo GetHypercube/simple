@@ -14,8 +14,7 @@
     <tr>
         <th>Proceso</th>
         <th>Nº de Trámites</th>
-        <th>ID RNT</th><!--Mostrando el ID RNT por proceso-->
-        <th>ID CHA</th><!--Mostrando el ID CHA por proceso-->
+      
     </tr>
     </thead>
     <tbody>
@@ -23,8 +22,7 @@
     <tr>
         <td><a href="<?=url('manager/estadisticas/cuentas/'.$p->cuenta_id.'/'.$p->id)?>"><?=$p->nombre?></a></td>
         <td><?=$p->ntramites?></td>
-        <td><?=$p->idrnt?></td><!--trayento el ID-->
-        <td><?=$p->idcha?></td><!--trayento el ID-->
+       
     </tr>
     <?php endforeach; ?>
 
