@@ -60,11 +60,11 @@
         <?php foreach ($tarea->Eventos as $key => $p): ?>
         <tr>
             <td><?= $key + 1 ?></td>
-            <td><a title="Editar" target="_blank"
+            <td><a tyle="width:30px" title="Editar" target="_blank"
                    href="<?= url('backend/acciones/editar/' . $p->Accion->id) ?>"><?= $p->Accion->nombre ?></a>
             </td>
             <td><input type="text" class="form-control" name="eventos[<?= $key + 1 ?>][regla]" value="<?= $p->regla ?>"/></td>
-            <td><select class="eventoInstante form-control" name="eventos[<?= $key + 1 ?>][instante]">
+            <td><select class="eventoInstante form-control" name="eventos[<?= $key + 1 ?>][instante]" style="width: 120px;">
                     <option value="antes" <?= $p->instante=='antes' ? 'selected' : '' ?> >Antes</option>
                     <option value="durante" <?= $p->instante=='durante' ? 'selected' : '' ?> >Durante</option>
                     <option value="despues" <?= $p->instante=='despues' ? 'selected' : '' ?>>Después</option>
@@ -72,7 +72,7 @@
             </td>
             <td><input type="text" class="form-control" name="eventos[<?= $key + 1 ?>][campo_asociado]" value="<?= $p->campo_asociado ?>"/></td>
             <td>
-                <select class="eventoPasoId form-control" name="eventos[<?= $key + 1 ?>][paso_id]">
+                <select class="eventoPasoId form-control" name="eventos[<?= $key + 1 ?>][paso_id]" style="width: 160px;">
                     <?php if($p->paso_id): ?>
                         <?php foreach ($tarea->Pasos as $paso): ?>
                             <?php if($paso->id===$p->paso_id): ?>

@@ -205,15 +205,11 @@ class TracingController extends Controller
                 }
             }
 
-            // obtiene todas las etapas pendientes de c/tarea ojo MIRAR POR AQUI
-            $tareasList = Etapa::where('tramite_id',$tr->id)
-                ->join('tarea', 'etapa.tarea_id', '=', 'tarea.id');
+            // obtiene todas las etapas actuales (pendientes) de c/tarea
+            $tareasList = Etapa::where('pendiente', true)
+                ->join('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                ->where('tramite_id', $tr->id);
 
-            if (intval($pendiente) == 1) {
-                $tareasList = Etapa::where('pendiente', $pendiente)
-                    ->join('tarea', 'etapa.tarea_id', '=', 'tarea.id')
-                    ->where('tramite_id', $tr->id);
-            }
 
             $tareas = $tareasList->get();
 

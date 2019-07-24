@@ -40,6 +40,9 @@ class Proceso extends Doctrine_Record
         if(\Schema::hasColumn('proceso', 'eliminar_tramites')){
             $this->hasColumn('eliminar_tramites');
         }
+        if(\Schema::hasColumn('proceso', 'ocultar_front')){
+            $this->hasColumn('ocultar_front');
+        }
     }
 
     function setUp()

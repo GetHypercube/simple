@@ -37,9 +37,21 @@ class CampoTitle extends Campo
             $etiqueta = $this->etiqueta;
         }
 
-        $display = '<h3>' . $etiqueta . '</h3>';
+        if($this->extra && $this->extra->nombre)
+            $display = '<h3 name="' . $this->extra->nombre . '" >' . $etiqueta . '</h3>';
+        else
+            $display = '<h3>' . $etiqueta . '</h3>';
 
         return $display;
+    }
+
+    public function backendExtraFields(){
+        $nombre = isset($this->extra->nombre) ? $this->extra->nombre : null;
+
+        $html = '<label>Nombre (Opcional). Solo configurar si desea visualizar contenido de variables generadas por botón asíncrono.</label>';
+        $html .= '<input class="form-control" name="extra[nombre]" value="' . $nombre . '" />';
+
+        return $html;
     }
 
 }

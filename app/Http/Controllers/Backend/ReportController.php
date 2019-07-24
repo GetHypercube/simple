@@ -238,7 +238,7 @@ class ReportController extends Controller
             }
         }
 
-        $reporte_tabla = $reporte->getReporteAsMatrix($params);
+        //$reporte_tabla = $reporte->getReporteAsMatrix($params);
 
         if ($formato == "pdf") {
 
@@ -279,23 +279,11 @@ class ReportController extends Controller
             $name_to = Auth::user()->nombres;
             $email_subject = 'Enlace para descargar reporte.';
 
+            $reporte_tabla = $reporte->getArregloInicial();
+            $header_variables = $reporte->getHeaderVariables();
 
             $cuenta = Cuenta::cuentaSegunDominio();
-            $this->dispatch( new ProcessReport(
-                Auth::user()->id,
-                Auth::user()->user_type,
-                $proceso->id,
-                $reporte->id,
-                $reporte_tabla,
-                $http_host,
-                $email_to,
-                $name_to,
-                $email_subject,
-                $created_at_desde,
-                $created_at_hasta,
-                $pendiente,
-                $cuenta
-            ));
+            $this->dispatch(new ProcessReport(Auth::user()->id, Auth::user()->user_type, $proceso->id, $reporte->id, $params, $reporte_tabla, $header_variables,$http_host,$email_to,$name_to,$email_subject,$created_at_desde,$created_at_hasta,$pendiente,$cuenta));
 
             $request->session()->flash('success', "Se enviará un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: ".$email_to);
             return redirect()->back();

@@ -24,9 +24,9 @@ console.log(analytica);
         <div class="form-text text-muted">En minusculas y sin espacios.</div><br>
         <label>Nombre largo</label>
         <input class="form-control col-6" type="text" name="nombre_largo" value="<?= $cuenta->nombre_largo ?>"/><br>
-        <label><b>¿Editar TÚ ID Seguimiento de Google Analytics?</b></label>
+        <label><b>ID Seguimiento de Google Analytics (ID Secundario)</b></label>
         <input type="text" name="analytics" value="<?= $cuenta->analytics ?>" class="form-control col-3"/><br><!--Gogole Analytics--->
-        <label>ID Seguimiento Analytics Primario</label>
+        <label>ID Seguimiento Analytics Primario (ID Default instancia)</label>
         <input type="text" class="form-control col-3" readonly="true" disabled="true" value="<?= env('ANALYTICS') ?>"/><br><!--Gogole Analytics--->
         <label>Mensaje de bienvenida (Puede contener HTML)</label>
         <textarea name="mensaje" class="form-control col-6"><?= $cuenta->mensaje ?></textarea>

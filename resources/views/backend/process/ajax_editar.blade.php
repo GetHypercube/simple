@@ -14,13 +14,19 @@
 
                 <div style="width: 45%;display: inline-block;">
                     <label>Nombre</label>
-                    <input type="text" class="form-control" name="nombre" value="<?=$proceso->nombre?>"/>
+                    <input type="text" class="form-control" name="nombre" value="<?=$proceso->nombre?>"/><br>
+                     <!--jp-->
+                   
+                    <!--finjp-->
                     <label>Tamaño de la Grilla</label>
                     <div class="form-group form-inline">
-                        <input type="text" name="width" value="<?=$proceso->width?>" class="form-control col-4"/> X
+                        <input type="text" name="width" value="<?=$proceso->width?>" class="form-control col-4"/>
                         <input type="text" name="height" value="<?=$proceso->height?>" class="form-control col-4"/>
                     </div>
                 </div>
+             
+                    
+                
                 <div style="width: 45%;float: right">
                     <label>Categoría</label>
                     <select name="categoria" id="categoria" class="form-control">
@@ -67,6 +73,11 @@
                     <input class="form-check-input" type="checkbox" id="eliminar_tramites"
                             name="eliminar_tramites" {{$proceso->eliminar_tramites == 1 ? 'checked' : ''}}>
                     <label class="form-check-label" for="eliminar_tramites">Permitir la eliminación de trámites.</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="ocultar_front"
+                            name="ocultar_front" {{$proceso->ocultar_front == 1 ? 'checked' : ''}}>
+                    <label class="form-check-label" for="ocultar_front">Ocultar tarjeta de inicio de solicitud en frontend.</label>
                 </div>
             </form>
         </div>

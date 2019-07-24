@@ -34,10 +34,19 @@ class StagesController extends Controller
         
         $iframe = $request->input('iframe');
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-
+       
+        
         $data = \Cuenta::configSegunDominio();
         $data['num_pasos'] = $etapa === false ? 0 : self::num_pasos($etapa->Tarea->id);
-
+        $proceso_id= $etapa->Tarea->proceso_id; 
+        Log::info("El Proceso_id: " . $proceso_id);
+        $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
+            Log::info("Se a identificado el Proceso Nº : " . $proceso);
+         /*   $idrnt = $proceso->idrnt;
+            $idcha = $proceso->idcha;
+        Log::info("EL ID RNT es: " . $idrnt);
+        Log::info("EL ID CHA es: " . $idcha);*/
+        
         if (!$etapa) {
             return abort(404);
         }
@@ -77,6 +86,7 @@ class StagesController extends Controller
         } else if (($etapa->Tarea->final || !$etapa->Tarea->paso_confirmacion) && $paso->getReadonly() && end($pasosEjecutables) == $paso) { // No se requiere mas input
             $etapa->iniciarPaso($paso);
             $etapa->finalizarPaso($paso);
+             Log::info("El finalizar paso: " .  $etapa->finalizarPaso($paso));
             $etapa->avanzar();
             //Job para indexar contenido cada vez que se avanza de etapa
             $this->dispatch(new IndexStages($etapa->Tramite->id));
@@ -88,16 +98,17 @@ class StagesController extends Controller
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($pasosEjecutables) - 1));
         } else {
             $etapa->iniciarPaso($paso);
-
+           
             if(session()->has('redirect_url')){
                 return redirect()->away(session()->get('redirect_url'));
             }
+             Log::info("###MARCA INICIO GA : " . $etapa->pendiente);
 
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
             $data['paso'] = $paso;
+            
             $data['qs'] = $request->getQueryString();
-
             $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
             $data['title'] = $etapa->Tarea->nombre;
             //$template = $request->has('iframe') ? 'template_iframe' : 'template';
@@ -105,6 +116,7 @@ class StagesController extends Controller
             return view('stages.run', $data);
         }
     }
+
 
     public function num_pasos($tarea_id)
     {
@@ -153,6 +165,7 @@ class StagesController extends Controller
         } else {
             $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, "0", $buscar, $paginate, $offset);
             $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+         
         }
         
         $config['base_url'] = url('etapas/inbox');
@@ -194,7 +207,7 @@ class StagesController extends Controller
         $data['sidebar'] = 'inbox';
         $data['title'] = 'Bandeja de Entrada';
 
-         //echo "<script>console.log(".json_encode($rowetapas).")</script>";    
+     //    echo "<script>console.log(".json_encode($idrnt_cha).")</script>";    
 
         return view('stages.inbox', $data);
     }
@@ -465,7 +478,9 @@ class StagesController extends Controller
         }
 
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-
+        $proceso_id= $etapa->Tarea->proceso_id; 
+        $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
+         
         if ($etapa->usuario_id != Auth::user()->id) {
             echo 'Usuario no tiene permisos para ejecutar esta etapa.';
             exit;
@@ -487,6 +502,8 @@ class StagesController extends Controller
         $data = \Cuenta::configSegunDominio();
         $data['etapa'] = $etapa;
         $data['tareas_proximas'] = $etapa->getTareasProximas();
+       // $data['idrnt'] = $idrnt;
+       // $data['idcha'] = $idcha;
         $data['qs'] = $request->getQueryString();
 
         $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
@@ -540,6 +557,7 @@ class StagesController extends Controller
 
             Log::info("###Id etapa despues de avanzar: " . $etapa->id);
             Log::info("###Id tarea despues de avanzar: " . $etapa->tarea_id);
+             Log::info("###MARCA FIN PARA GA,estado completado: " . $etapa->pendiente);
             $cola = new \ColaContinuarTramite();
             $tareas_encoladas = $cola->findTareasEncoladas($etapa->tramite_id);
             if ($proximas->estado === 'pendiente') {
@@ -555,17 +573,17 @@ class StagesController extends Controller
 
         //Job para indexar contenido cada vez que se avanza de etapa
         $this->dispatch(new IndexStages($etapa->Tramite->id));
-
         if ($request->input('iframe')) {
             return response()->json([
                 'validacion' => true,
                 'redirect' => route('stage.ejecutar_exito')
             ]);
         }
-
+          
+          
         return response()->json([
             'validacion' => true,
-            'redirect' => route('home'),
+            'redirect' => route('home'), 
         ]);
     }
 
@@ -607,7 +625,9 @@ class StagesController extends Controller
         return view('stages.download', $data);
     }
 
-    public function descargar_form(Request $request)
+   
+
+        public function descargar_form(Request $request)
     {
         if (!Cuenta::cuentaSegunDominio()->descarga_masiva) {
             $request->session()->flash('error', 'Servicio no tiene permisos para descargar.');
@@ -636,6 +656,10 @@ class StagesController extends Controller
             case 'dato': // s3 son archivos subidos al igual que los dato
                 $tipoDocumento = ['dato', 's3'];
                 break;
+
+             case 'datounico': // s3 son archivos subidos al igual que los dato
+                $tipoDocumento = ['dato'];
+                break;    
         }
 
         // Recorriendo los trámites
@@ -835,6 +859,9 @@ class StagesController extends Controller
             abort(404);
         }
     }
+
+
+
 
     public function estados($tramite_id)
     {
