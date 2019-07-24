@@ -625,7 +625,9 @@ class StagesController extends Controller
         return view('stages.download', $data);
     }
 
-    public function descargar_form(Request $request)
+   
+
+        public function descargar_form(Request $request)
     {
         if (!Cuenta::cuentaSegunDominio()->descarga_masiva) {
             $request->session()->flash('error', 'Servicio no tiene permisos para descargar.');
@@ -645,22 +647,20 @@ class StagesController extends Controller
         $fecha_obj = new \DateTime();
         $fecha = date_format($fecha_obj, "Y-m-d");
         $time_stamp = date_format($fecha_obj, "Y-m-d_His");
-        
-        
+
         $tipoDocumento = "";
         switch ($opcionesDescarga) {
             case 'documento':
                 $tipoDocumento = ['documento'];
                 break;
-            case 'dato': // s3 son archivos subidos al igual que los dato, se elimina el s3
+            case 'dato': // s3 son archivos subidos al igual que los dato
                 $tipoDocumento = ['dato', 's3'];
                 break;
-            case 'datounico':
-                $tipoDocumento = ['dato'];    
 
-                
+             case 'datounico': // s3 son archivos subidos al igual que los dato
+                $tipoDocumento = ['dato'];
+                break;    
         }
-       
 
         // Recorriendo los trámites
         $zip_path_filename = public_path($ruta_tmp).'tramites_'.$time_stamp.'.zip';
@@ -669,32 +669,25 @@ class StagesController extends Controller
         $docs_total_space = 0;
         $s3_missing_file_info_ids = [];
         $cuenta = null;
-    
-
         foreach ($tramites as $t) {
             if (empty($tipoDocumento)) {
                 $files = Doctrine::getTable('File')->findByTramiteId($t);
             } else {
                 $files = \Doctrine_Query::create()->from('File f')->where('f.tramite_id=?', $t)->andWhereIn('tipo', $tipoDocumento)->execute();
             }
-            
 
             if (count($files) > 0) {
                 // Recorriendo los archivos
                 foreach ($files as $f) {
                     $tr = Doctrine::getTable('Tramite')->find($t);
                     $participado = $tr->usuarioHaParticipado(Auth::user()->id);
-                    $claveunica = $tr->usuarioClaveUnica(Auth::user()->open_id);
                     if (!$participado) {
                         $request->session()->flash('error', 'Usuario no ha participado en el trámite.');
                         return redirect()->back();
-                    } 
-                    Log::info("###El usuario a participado en : " . $participado);
-                   
+                    }
                     if( (is_null($cuenta)|| $cuenta === FALSE) && $tr !== FALSE){
                         $cuenta = $tr->Proceso->Cuenta;
                     }
-                   
                     $nombre_documento = $tr->id;
                     $tramite_nro = '';
                     foreach ($tr->getValorDatoSeguimiento() as $tra_nro) {
@@ -847,24 +840,11 @@ class StagesController extends Controller
             return redirect()->back();
         }
 
-       /* if (Auth::user()->!$open_id) {
-            $request->session()->flash('error', 'Usuario solo puede descargar sus propios archivos.');
-            return redirect()->back();
-        }*/
-
         // validar que user_id y job_id sean enteros
 
         $job_info = Job::where('user_id', Auth::user()->id)
                         ->where('id', $job_id)
                         ->where('filename', $file_name)->first();
-        
-        echo "<script>console.log(".json_encode($job_info).")</script>"; 
-
-
-        $job_info_user_unica = Job::where('user_id', Auth::user()->open_id)
-                        ->where('id', $job_id)
-                        ->where('filename', $file_name)->first();
-        echo "<script>console.log(".json_encode($job_info_user_unica).")</script>"; 
 
         $full_path = $job_info->filepath.DIRECTORY_SEPARATOR.$job_info->filename;
         if(file_exists($full_path)){
@@ -879,6 +859,9 @@ class StagesController extends Controller
             abort(404);
         }
     }
+
+
+
 
     public function estados($tramite_id)
     {
