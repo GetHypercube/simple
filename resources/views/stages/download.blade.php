@@ -29,14 +29,7 @@
                     </label>
                 </div>
                 @endif
-                @if (!Auth::user()->open_id)
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="opcionesDescarga" id="opcionesDescarga3" value="all" checked>
-                        Todos: Recopila toda la documentación.
-                    </label>
-                </div>
-                @endif
+                
                 @if (Auth::user()->open_id)
                 <div class="radio">
                     <label>
