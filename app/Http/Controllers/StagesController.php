@@ -653,7 +653,7 @@ class StagesController extends Controller
                 $tipoDocumento = ['documento'];
                 break;
             case 'dato': // s3 son archivos subidos al igual que los dato, se elimina el s3
-                $tipoDocumento = ['dato'];
+                $tipoDocumento = ['dato', 's3'];
                 break;
             case 'datounico':
                 $tipoDocumento = ['dato'];    
@@ -664,7 +664,7 @@ class StagesController extends Controller
 
         // Recorriendo los trámites
         $zip_path_filename = public_path($ruta_tmp).'tramites_'.$time_stamp.'.zip';
-        $files_list = ['documento' => [], 'dato'=> []];
+        $files_list = ['documento' => [], 'dato'=> [], 's3' => []];
         $non_existant_files = [];
         $docs_total_space = 0;
         $s3_missing_file_info_ids = [];
