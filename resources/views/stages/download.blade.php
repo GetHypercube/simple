@@ -32,7 +32,7 @@
                 @if (!Auth::user()->open_id)
                 <div class="radio">
                     <label>
-                        <input type="radio" name="opcionesDescarga" id="opcionesDescarga3" value="all" checked>
+                        <input type="radio" name="opcionesDescarga" id="opcionesDescarga3" value="dato" checked>
                         Todos: Recopila toda la documentación.
                     </label>
                 </div>
