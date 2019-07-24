@@ -664,7 +664,7 @@ class StagesController extends Controller
 
         // Recorriendo los trámites
         $zip_path_filename = public_path($ruta_tmp).'tramites_'.$time_stamp.'.zip';
-        $files_list = ['documento' => [], 'dato'=> [], 's3' => []];
+        $files_list = ['documento' => [], 'dato'=> [];
         $non_existant_files = [];
         $docs_total_space = 0;
         $s3_missing_file_info_ids = [];
