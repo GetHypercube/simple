@@ -239,6 +239,14 @@
                     <strong>Advertencia!</strong> Al agregar este campo, reemplazará el botón siguiente por defecto y ocupará su posición.
                     </div>
                 @endif
+                @if($campo->tipo==='file_s3')
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>Advertencia!</strong> El campo File Transfer, solo se debe ocupar en trámites que tengan interoperabilidad de documentos. La url en la cual se almacena el adjunto tiene una vigencia de 30 días.
+                    </div>
+                @endif
                 <label>Etiqueta
                 </label>
                 @if ($campo->etiqueta_tamano == 'xxlarge')
