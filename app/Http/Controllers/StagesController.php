@@ -579,12 +579,21 @@ class StagesController extends Controller
                 'redirect' => route('stage.ejecutar_exito')
             ]);
         }
-          
-          
-        return response()->json([
-            'validacion' => true,
-            'redirect' => route('home'), 
-        ]);
+        
+        //redirigir a la siguiente etapa sin pasar por el home ni la bandeja de entrada si el usuario asigado es el mismo
+        $usuario_ultima_etapa = $etapa->Tramite->getEtapasActuales()->get(0)->usuario_id;
+        $etapa_actual = $etapa->Tramite->getEtapasActuales()->get(0)->id;
+        if(Auth::user()->id == $usuario_ultima_etapa){
+            return response()->json([
+                'validacion' => true,
+                'redirect' => route('stage.run', [$etapa_actual]),
+            ]);
+        }else{
+            return response()->json([
+                'validacion' => true,
+                'redirect' => route('home'), 
+            ]);
+        }
     }
 
     //Pagina que indica que la etapa se completo con exito. Solamente la ven los que acceden mediante iframe.
