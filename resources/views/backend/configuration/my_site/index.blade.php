@@ -34,13 +34,41 @@
                             </div>
                             <div class="form-group">
                                 <label for="name_large">Nombre largo</label>
-                                <input name="name_large" id="name_large" type="text" class="form-control"
+                                <input name="name_large" id="name_large" type="text"
+                                       class="form-control {{ $errors->has('name_large') ? ' is-invalid' : '' }}"
                                        value="{{$data->nombre_largo}}">
+                                @if ($errors->has('name_large'))
+                                    <div class="invalid-feedback">
+                                        <strong>{{ $errors->first('name_large') }}</strong>
+                                    </div>
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label for="message">Mensaje de bienvenida (Puede contener HTML)</label>
                                 <textarea name="message" id="message" rows="2"
                                           class="form-control">{{$data->mensaje}}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="footermeta">Email de contacto</label>
+                                <input name="contacto_email" id="footer_meta_email" type="text"
+                                       class="form-control {{ $errors->has('contacto_email') ? ' is-invalid' : '' }}"
+                                       value="{{$data->getMetadata('contacto_email')}}">
+                                @if ($errors->has('contacto_email'))
+                                    <div class="invalid-feedback">
+                                        <strong>{{ $errors->first('contacto_email') }}</strong>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="form-group">
+                                <label for="footermeta">Link de contacto</label>
+                                <input name="contacto_link" id="footer_meta_link" type="text"
+                                       class="form-control {{ $errors->has('contacto_link') ? ' is-invalid' : '' }}"
+                                       value="{{$data->getMetadata('contacto_link')}}">
+                                @if ($errors->has('contacto_link'))
+                                    <div class="invalid-feedback">
+                                        <strong>{{ $errors->first('contacto_link') }}</strong>
+                                    </div>
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label for="logo">Logo Header(Preferiblemente Ancho:153px x Alto:81px)</label>
