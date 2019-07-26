@@ -83,6 +83,11 @@ class WidgetTramitesCantidad extends Widget
                     xAxis: {
                         categories: ' . $categories . '
                     },
+                    plotOptions: {
+                        series: {
+                            minPointLength:3,
+                        },
+                    },
                     series: [{
                         name: "Pendientes",
                         data: ' . $pendientes . '
