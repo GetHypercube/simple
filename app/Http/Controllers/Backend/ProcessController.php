@@ -248,6 +248,7 @@ class ProcessController extends Controller
         $request->validate(['nombre' => 'required']);
 
         $proceso->nombre = $request->input('nombre');
+
         $proceso->width = $request->input('width');
         $proceso->height = $request->input('height');
         $proceso->categoria_id = $request->input('categoria');
@@ -256,6 +257,8 @@ class ProcessController extends Controller
         $proceso->descripcion = $request->input('descripcion');
         $proceso->url_informativa = $request->has('url_informativa') ? $request->get('url_informativa') : NULL;
         $proceso->concurrente = $request->has('concurrente') ? 1 : 0;
+        $proceso->eliminar_tramites = $request->has('eliminar_tramites') ? 1 : 0;
+        $proceso->ocultar_front = $request->has('ocultar_front') ? 1 : 0;
         $proceso->save();
 
         return response()->json([

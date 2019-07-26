@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Proceso;
 use App\Models\Tramite;
@@ -22,18 +23,30 @@ use App\Jobs\FilesDownload;
 use Carbon\Carbon;
 use Doctrine_Query;
 use App\Models\DatoSeguimiento;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 
 class StagesController extends Controller
 {
     public function run(Request $request, $etapa_id, $secuencia = 0)
-    {
+    {   
+        
         $iframe = $request->input('iframe');
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-
+       
+        
         $data = \Cuenta::configSegunDominio();
         $data['num_pasos'] = $etapa === false ? 0 : self::num_pasos($etapa->Tarea->id);
-
+        $proceso_id= $etapa->Tarea->proceso_id; 
+        Log::info("El Proceso_id: " . $proceso_id);
+        $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
+            Log::info("Se a identificado el Proceso Nº : " . $proceso);
+         /*   $idrnt = $proceso->idrnt;
+            $idcha = $proceso->idcha;
+        Log::info("EL ID RNT es: " . $idrnt);
+        Log::info("EL ID CHA es: " . $idcha);*/
+        
         if (!$etapa) {
             return abort(404);
         }
@@ -73,6 +86,7 @@ class StagesController extends Controller
         } else if (($etapa->Tarea->final || !$etapa->Tarea->paso_confirmacion) && $paso->getReadonly() && end($pasosEjecutables) == $paso) { // No se requiere mas input
             $etapa->iniciarPaso($paso);
             $etapa->finalizarPaso($paso);
+             Log::info("El finalizar paso: " .  $etapa->finalizarPaso($paso));
             $etapa->avanzar();
             //Job para indexar contenido cada vez que se avanza de etapa
             $this->dispatch(new IndexStages($etapa->Tramite->id));
@@ -84,23 +98,25 @@ class StagesController extends Controller
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($pasosEjecutables) - 1));
         } else {
             $etapa->iniciarPaso($paso);
-
+           
             if(session()->has('redirect_url')){
                 return redirect()->away(session()->get('redirect_url'));
             }
+             Log::info("###MARCA INICIO GA : " . $etapa->pendiente);
 
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
             $data['paso'] = $paso;
+            
             $data['qs'] = $request->getQueryString();
-
             $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
             $data['title'] = $etapa->Tarea->nombre;
             //$template = $request->has('iframe') ? 'template_iframe' : 'template';
-
+             
             return view('stages.run', $data);
         }
     }
+
 
     public function num_pasos($tarea_id)
     {
@@ -116,7 +132,7 @@ class StagesController extends Controller
         return $num_pasos[0][0];
     }
 
-    public function inbox(Request $request)
+    public function inbox(Request $request, $offset= 0)
     {
         $buscar = $request->input('buscar');
         $orderby = $request->has('orderby') ? $request->input('orderby') : 'updated_at';
@@ -124,7 +140,13 @@ class StagesController extends Controller
 
         $matches = "";
         $rowetapas = "";
-        $resultotal = "";
+        $resultotal = "false";
+        $contador= 0;
+
+        $page = Input::get('page', 1);
+        //$page = $request->input('page', 1); // Get the ?page=1 from the url
+        $paginate = 50;
+        $offSet = ($page * $paginate) - $paginate;
 
         if ($buscar) {
             $result = Tramite::search($buscar)->get();
@@ -137,68 +159,18 @@ class StagesController extends Controller
 
         if ($resultotal == "true") {
             $matches = $result->groupBy('id')->keys()->toArray();
-            $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, $matches, $buscar);
+             Log::info("El Valor de RESULTOTAL de INBOX es de: " . $resultotal);
+             $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+            $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, $matches, $buscar, $paginate, $offset);
         } else {
-            $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, "0", $buscar);
+            $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, "0", $buscar, $paginate, $offset);
+            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+         
         }
-
-        $data = \Cuenta::configSegunDominio();
-
-        $data['etapas'] = $rowetapas;
-        $data['buscar'] = $buscar;
-        $data['orderby'] = $orderby;
-        $data['direction'] = $direction;
-        $data['sidebar'] = 'inbox';
-        $data['title'] = 'Bandeja de Entrada';
-
-        return view('stages.inbox', $data);
-    }
-
-    public function sinasignar(Request $request, $offset = 0)
-    {
-
-        if (!Auth::user()->registrado) {
-            $request->session()->put('claveunica_redirect', URL::current());
-            return redirect()->route('login.claveunica');
-        }
-
-        //$this->load->library('pagination');
-        $buscar = $request->input('query');
-
-        $matches = "";
-        $rowetapas = "";
-        $resultotal = false;
-        $contador = "0";
-        $perpage = 50;
-        $page = $request->input('page', 1); // Get the ?page=1 from the url
-        $offset = ($page * $perpage) - $perpage;
-
-
-        if ($buscar) {
-            $result = Proceso::search($buscar)->get();
-            if (!$result->isEmpty()) {
-                $resultotal = true;
-            } else {
-                $resultotal = false;
-            }
-        }
-
-        if ($resultotal == true) {
-            $matches = $result->groupBy('id')->keys()->toArray();
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $buscar, 0, $perpage);
-            $contador = count($rowetapas);
-
-        } else {
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(), "0", $buscar, $offset, $perpage);
-            $contador = count($rowetapas);
-        }
- 
-
-
-         //echo "<script>console.log(".json_encode($rowetapas).")</script>";
-        $config['base_url'] = url('etapas/sinasignar');
+        
+        $config['base_url'] = url('etapas/inbox');
         $config['total_rows'] = $contador;
-        $config['per_page'] = $perpage;
+        $config['per_page'] = $paginate;
         $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
         $config['full_tag_close'] = '</ul></div>';
         $config['page_query_string'] = false;
@@ -220,16 +192,111 @@ class StagesController extends Controller
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
 
+            Log::info("El Valor de offset es de: " . $offSet);
+    
         $data = \Cuenta::configSegunDominio();
-        // $data['etapas'] = Doctrine::getTable('Etapa')->findSinAsignar(Auth::self::user()->id, Cuenta::cuentaSegunDominio());
         $data['etapas'] = new LengthAwarePaginator(
-            $rowetapas, // Only grab the items we need
-            $contador, // Total items
-            $perpage, // Items per page
-            $page, // Current page
-            ['path' => $request->url(), 'query' => $request->query()] // We need this so we can keep all old query parameters from the url
-        );
-        $data['query'] = $buscar;
+            $rowetapas,
+            $contador,
+            $paginate, 
+            $page,
+            ['path' => $request->url(), 'buscar' => $request->query()]);
+        $data['buscar'] = $buscar;
+        $data['orderby'] = $orderby;
+        $data['direction'] = $direction;
+        $data['sidebar'] = 'inbox';
+        $data['title'] = 'Bandeja de Entrada';
+
+     //    echo "<script>console.log(".json_encode($idrnt_cha).")</script>";    
+
+        return view('stages.inbox', $data);
+    }
+
+    public function sinasignar(Request $request, $offset = 0)
+    {
+       
+        if (!Auth::user()->registrado) {
+            $request->session()->put('claveunica_redirect', URL::current());
+            return redirect()->route('login.claveunica');
+        }
+
+        $query = $request->input('query');       
+        $matches = "";
+        $rowetapas = "";
+        $resultotal = 'false';
+        $contador = "0";
+
+        $page = Input::get('page', 1);
+        $paginate = 50;
+        $offset = ($page * $paginate) - $paginate;
+
+       if ($query) {
+            $result = Tramite::search($query)->get();
+            $matches = array();
+            foreach($result as $resultado){
+                array_push($matches, $resultado->id);
+            }
+            if(count($result) > 0){
+                $resultotal = "true";
+            }else{
+                $resultotal = "false";
+            }
+        }
+
+        if ($resultotal == 'true') {
+            $matches = $result->groupBy('id')->keys()->toArray();
+            Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
+            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . $resultotal);
+           $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+          //  $contador = count($rowetapas);
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+           
+
+        } else {
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset);
+           // $contador = count($rowetapas);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+        }
+
+        
+        //
+          //Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
+       // echo "<script>console.log(".json_encode($rowetapas).")</script>";
+       // echo "<script>console.log(".json_encode($contador).")</script>";
+        $config['base_url'] = url('etapas/sinasignar');
+        $config['total_rows'] = $contador;
+        $config['per_page'] = $paginate;
+        $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
+        $config['full_tag_close'] = '</ul></div>';
+        $config['page_query_string'] = false;
+        $config['query_string_segment'] = 'offset';
+        $config['first_link'] = 'Primero';
+        $config['first_tag_open'] = '<li>';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = 'Último';
+        $config['last_tag_open'] = '<li>';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '»';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '«';
+        $config['prev_tag_open'] = '<li>';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="#">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+            Log::info("El Valor de offset2 de SIN ASIGNAR es de: " . $offset);
+            Log::info("El Valor de page de SIN ASIGNAR es de: " . $page);
+        $data = \Cuenta::configSegunDominio();
+        $data['etapas'] = new LengthAwarePaginator(
+            $rowetapas, // Only grab the items we need$contador,
+            $total=1000, // Total items
+            $paginate, // Items per page
+            $page, // Current page,
+            ['path' => $request->url(), 'query' => $request->query()]); // We need this so we can keep all old query parameters from the url);
+        $data['query'] = $query;
+         // echo "<script>console.log(".json_encode($query).")</script>";
         $data['sidebar'] = 'sinasignar';
         $data['content'] = view('stages.unassigned', $data);
         $data['title'] = 'Sin Asignar';
@@ -411,7 +478,9 @@ class StagesController extends Controller
         }
 
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-
+        $proceso_id= $etapa->Tarea->proceso_id; 
+        $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
+         
         if ($etapa->usuario_id != Auth::user()->id) {
             echo 'Usuario no tiene permisos para ejecutar esta etapa.';
             exit;
@@ -433,6 +502,8 @@ class StagesController extends Controller
         $data = \Cuenta::configSegunDominio();
         $data['etapa'] = $etapa;
         $data['tareas_proximas'] = $etapa->getTareasProximas();
+       // $data['idrnt'] = $idrnt;
+       // $data['idcha'] = $idcha;
         $data['qs'] = $request->getQueryString();
 
         $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
@@ -486,6 +557,7 @@ class StagesController extends Controller
 
             Log::info("###Id etapa despues de avanzar: " . $etapa->id);
             Log::info("###Id tarea despues de avanzar: " . $etapa->tarea_id);
+             Log::info("###MARCA FIN PARA GA,estado completado: " . $etapa->pendiente);
             $cola = new \ColaContinuarTramite();
             $tareas_encoladas = $cola->findTareasEncoladas($etapa->tramite_id);
             if ($proximas->estado === 'pendiente') {
@@ -501,17 +573,17 @@ class StagesController extends Controller
 
         //Job para indexar contenido cada vez que se avanza de etapa
         $this->dispatch(new IndexStages($etapa->Tramite->id));
-
         if ($request->input('iframe')) {
             return response()->json([
                 'validacion' => true,
                 'redirect' => route('stage.ejecutar_exito')
             ]);
         }
-
+          
+          
         return response()->json([
             'validacion' => true,
-            'redirect' => route('home'),
+            'redirect' => route('home'), 
         ]);
     }
 
@@ -553,7 +625,9 @@ class StagesController extends Controller
         return view('stages.download', $data);
     }
 
-    public function descargar_form(Request $request)
+   
+
+        public function descargar_form(Request $request)
     {
         if (!Cuenta::cuentaSegunDominio()->descarga_masiva) {
             $request->session()->flash('error', 'Servicio no tiene permisos para descargar.');
@@ -582,6 +656,10 @@ class StagesController extends Controller
             case 'dato': // s3 son archivos subidos al igual que los dato
                 $tipoDocumento = ['dato', 's3'];
                 break;
+
+             case 'datounico': // s3 son archivos subidos al igual que los dato
+                $tipoDocumento = ['dato'];
+                break;    
         }
 
         // Recorriendo los trámites
@@ -623,7 +701,7 @@ class StagesController extends Controller
 
                     $tramite_nro = $tramite_nro != '' ? $tramite_nro : $tr->Proceso->nombre;
                     $tramite_nro = str_replace(" ", "", $tramite_nro);
-
+                     
                     if (empty($nombre_documento)){
                         continue;
                     }
@@ -781,6 +859,9 @@ class StagesController extends Controller
             abort(404);
         }
     }
+
+
+
 
     public function estados($tramite_id)
     {

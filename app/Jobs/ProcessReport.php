@@ -49,8 +49,7 @@ class ProcessReport implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente, $cuenta)
-    {
+    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente, $cuenta){
         $this->user_id = $user_id;
         $this->user_type = $user_type;
         $this->proceso_id = $proceso_id;
@@ -92,11 +91,17 @@ class ProcessReport implements ShouldQueue
 
         $this->generar_consulta();
 
-        $this->job_info->status = Job::$finished;
         $this->job_info->filename = $this->nombre_reporte.'.xls';
         $this->job_info->filepath = $this->_base_dir;
+        
+        try{
+            $this->send_notification();
+            $this->job_info->status = Job::$finished;
+        }catch(\Exception $e){
+            Log::error("ProcessReport::handle() Error al enviar notificacion: " . $e->getMessage());
+            $this->job_info->status = Job::$error;
+        }
         $this->job_info->save();
-        $this->send_notification();
     }
 
     private function generar_consulta(){
@@ -108,7 +113,7 @@ class ProcessReport implements ShouldQueue
             ->join('etapa', 'tramite.id', '=', 'etapa.tramite_id')
             ->join('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
             ->join('proceso', 'proceso.id', '=', 'tramite.proceso_id')
-            ->select(DB::raw('tramite.id as id, proceso.id as proceso_id, tramite.created_at as created_at'))
+            ->select(DB::raw('tramite.id as id, proceso.id as proceso_id, tramite.created_at as created_at, tramite.pendiente as pendiente ,tramite.created_at as created_at, tramite.updated_at as updated_at, tramite.ended_at as ended_at'))
             ->where('proceso.id',$this->proceso_id);
 
 
@@ -151,6 +156,10 @@ class ProcessReport implements ShouldQueue
             }
             $etapas_actuales_str = implode(',', $etapas_actuales_arr);
             $t['etapa_actual'] = $etapas_actuales_str;
+            $t['pendiente'] = $t['pendiente'] ? 'En curso' : 'Completado';
+            $t['created_at'] = isset($t['created_at']) ? \Carbon\Carbon::parse($t['created_at'])->format('d-m-Y H:i:s') : '';
+            $t['updated_at'] = isset($t['updated_at']) ? \Carbon\Carbon::parse($t['updated_at'])->format('d-m-Y H:i:s') : '';
+            $t['ended_at'] = isset($t['ended_at']) ? \Carbon\Carbon::parse($t['ended_at'])->format('d-m-Y H:i:s') : '';
 
             $row = array();
 

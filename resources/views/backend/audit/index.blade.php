@@ -15,7 +15,7 @@
 
                 {{ $registros->links('vendor.pagination.bootstrap-4') }}
 
-                <table class="table">
+                <table class="table" style="table-layout: fixed;word-wrap: break-word;">
                     <thead>
                     <tr>
                         <th>
@@ -45,7 +45,7 @@
                     <tbody>
                     @foreach($registros as $r)
                         <tr>
-                            <td>{{$r->fecha}}</td>
+                            <td>{{\Carbon\Carbon::parse($r->fecha)->format('d-m-Y H:i:s')}}</td>
                             <td>{{$r->proceso}}</td>
                             <td>{{$r->operacion}}</td>
                             <td>{{htmlspecialchars($r->usuario)}}</td>

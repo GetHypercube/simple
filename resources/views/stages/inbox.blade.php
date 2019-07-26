@@ -105,16 +105,21 @@
                         <td class="time">{{\Carbon\Carbon::parse($e->updated_at)->format('d-m-Y')}}</td>
                         <td><?=$e->vencimiento_at ? \Carbon\Carbon::parse($e->vencimiento_at)->format('d-m-Y') : 'N/A'?></td>
                         <td class="actions">
-                            <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
-                               class="btn btn-link preventDoubleRequest"><i class="icon-edit icon-white"></i>
-                                Realizar</a>
+                                <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
+                                class="btn btn-sm btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i>
+                                    Realizar</a>
                         <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                             <?php if ($file): ?>
                             <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);"
-                               class="btn btn-link"><i
+                               class="btn btn btn-sm btn-success"><i
                                         class="icon-download icon-white"></i> Descargar</a>
                         <?php endif; ?>
                         <?php endif; ?>
+                            @if(Auth::check() && Auth::user()->open_id && !is_null($e->Tarea->Proceso->eliminar_tramites) && $e->Tarea->Proceso->eliminar_tramites) 
+                                <a href="#" onclick="return eliminarTramite(<?=$e->Tramite->id?>);"
+                                class="btn btn-sm btn-danger preventDoubleRequest"><i class="icon-edit icon-red"></i>
+                                    Borrar</a>
+                            @endif
                         <!--<?php if($e->netapas == 1):?><a href="<?=url('tramites/eliminar/' . $e->tramite_id)?>" class="btn" onclick="return confirm('¿Esta seguro que desea eliminar este tramite?')"><i class="icon-trash"></i></a><?php endif ?>-->
                         </td>
                     </tr>
@@ -137,7 +142,7 @@
             </div>
             <?php endif; ?>
             <?php endif; ?>
-
+             <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
             <?php else: ?>
             <p>No hay trámites pendientes en su bandeja de entrada.</p>
             <?php endif; ?>
@@ -216,6 +221,29 @@
                 console.log("descargarSeleccionados.modal");
                 return false;
             }
+        }
+
+        function eliminarTramite(tramiteId) {
+            $("#modal").load("/tramites/eliminar/" + tramiteId);
+            $("#modal").modal();
+            $("#modal").css('display', 'block');
+
+            $(".closeModal").click(function () {
+                closeModal();
+                console.log("test1");
+            });
+
+            $(".modal-backdrop").click(function () {
+                closeModal();
+                console.log("test2");
+            });
+
+            $(".modal-backdrop").click(function () {
+                closeModal();
+                console.log("test3");
+            });
+
+            return false;
         }
     </script>
 @endpush

@@ -14,7 +14,7 @@ Route::middleware(['auth_user'])->group(function () {
 
     Route::post('/uploader/datos/{campo_id}/{etapa_id}', 'UploadController@datos');
     Route::post('/uploader/datos_s3/{campo_id}/{etapa_id}/{multipart?}/{part_number?}/{total_segments?}', 'UploadController@datos_s3');
-    Route::get('/uploader/datos_get/{id}/{token}', 'UploadController@datos_get');
+    Route::get('/uploader/datos_get/{id}/{token}/{usuario_backend?}', 'UploadController@datos_get');
     Route::get('/uploader/datos_get_s3/{id}/{campo_id}/{token}/{file_name?}', 'UploadController@datos_get_s3');
 
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -26,9 +26,11 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/home/procesos/{categoria_id}', 'HomeController@procesos')->name('home.procesos');
 
     Route::get('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar')->name('tramites.iniciar');
-    Route::post('/tramites/iniciar/{proceso_id}', 'TramitesController@iniciar_post')->name('tramites.iniciar');
+    Route::post('/tramites/iniciar_post/{proceso_id}', 'TramitesController@iniciar_post')->name('tramites.iniciar_post');
     Route::get('/tramites/participados', 'TramitesController@participados')->name('tramites.participados');
     Route::get('/tramites/disponibles', 'TramitesController@disponibles')->name('tramites.disponibles');
+    Route::get('/tramites/eliminar/{tramite_id}', 'TramitesController@eliminar_form')->name('tramites.eliminar');
+    Route::post('/tramites/borrar_tramite/{tramite_id}', 'TramitesController@borrar_tramite')->name('tramites.borrar');
     Route::get('/etapas/ejecutar/{etapa_id}/{secuencia?}', 'StagesController@run')->name('stage.run');
     Route::get('/etapas/asignar/{etapa_id}', 'StagesController@asignar')->name('stage.asignar');
     Route::post('/etapas/ejecutar_form/{etapa_id}/{secuencia}', 'StagesController@ejecutar_form')->name('stage.ejecutar_form');
@@ -40,7 +42,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/etapas/ejecutar_exito', 'StagesController@ejecutar_exito')->name('stage.ejecutar_exito');
     Route::get('/etapas/descargar/{tramites}', 'StagesController@descargar')->name('stage.download');
     Route::post('/etapas/descargar_form', 'StagesController@descargar_form')->name('stage.descargar_form');
-    Route::get('/documentos/get/{inline}/{filename}', 'DocumentController@get')->name('document.get');
+    Route::get('/documentos/get/{inline}/{filename}/{usuario_backend?}', 'DocumentController@get')->name('document.get');
     Route::get('/etapas/estados/{tramite_id}', 'StagesController@estados')->name('stage.estados');
     Route::post('/etapas/validar_campos_async', 'StagesController@validar_campos_async')->name('etapa.validar_campos_async');
     Route::post('/etapas/save/{etapa_id}', 'StagesController@saveForm')->name('stage.save_form');

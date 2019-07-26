@@ -4,7 +4,7 @@ namespace App\Libraries;
 
 use Elibyy\TCPDF\TCPDF;
 
-define('PAGE_MARGIN', 10);
+if (!defined('PAGE_MARGIN')) define('PAGE_MARGIN',10);
 
 class BlancoPDF extends TCPDF
 {

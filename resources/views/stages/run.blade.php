@@ -65,6 +65,7 @@
             @endif
         @endforeach
 
+
         <div class="form-actions mt-3">
             
             @if($existe_btn_siguiente)
@@ -105,8 +106,7 @@
                 @endif
                 <button class="btn btn-danger" type="submit">Siguiente</button>
             @endif        
-        </div>
-
+        </div>            
         <?php $campos_faltantes = array_diff(array_keys($campos_ocultos_extra), $campos_dependientes); ?>
         @foreach($campos_faltantes as $c_nombre)
             <input  class="camposvisibilidad" type="hidden" name="{{$c_nombre}}" value="{{$campos_ocultos_extra[$c_nombre]}}">
@@ -121,7 +121,42 @@
     <div id="modalcalendar" class="modal hide modalconfg modcalejec"></div>
     <input type="hidden" id="urlbase" value="<?= URL::to('/') ?>"/>
 @endsection
+@push('script')
+       <script> //SCRIPT INICIO
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', '<?= env('ANALYTICS') ?>', 'auto');
+    ga('create', '{{ \Cuenta::seo_tags()->analytics }}', 'auto', 'secondary');
+    ga('send', 'pageview');
+    ga('secondary.send', 'pageview'); 
+    ////////////////////////// 1ER HIT  envia EL INICIO Y FIN DEL TTE RNT  X INSTITUCION ////////////////////////
+   /* ga('secondary.send', {   //2do ID GA: Este es el que envia el HIT por institución
+    hitType: 'event',   //tipo de hit enviado al GA de tipo evento
+    eventCategory: 'Trámite digital', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
+    eventAction: 'Inicio de la solicitud',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas
+    eventLabel: '<?//= $idrnt; ?>',  //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA
+    eventValue: '<?//= $etapa->pendiente; ?>' 
+    });*/
+     ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
+    
+    ////////////////////////// 1ER HIT  envia EL INICIO Y FIN DEL TTE RNT o CHA X INSTITUCION ////////////////////////
+   /* ga('secondary.send', {   //2do ID GA: Este es el que envia el HIT por institución
+    hitType: 'event',   //tipo de hit enviado al GA de tipo evento
+    eventCategory: 'Trámite Digital INICIADO:CHA', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
+    eventAction: 'Iniciado',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas 
+    eventLabel: '<?//= $idcha;?>',  //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA,
+    eventValue: '<?//= $etapa->pendiente;?>' //No se enviara por el momento el CHA 
+    });
+     ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT/CHA  ////////////////////////
+    ga(function(tracker) {
+    console.log(tracker.get('trackingId')); //ID Seguimiento
+    console.log(tracker.get('clientId'));
+    });*/
+    </script>
 
+@endpush
 @push('script')
     <script src="{{asset('js/helpers/s3_upload.js')}}"></script>
     <script src="{{asset('js/helpers/fileuploader.js')}}"></script>

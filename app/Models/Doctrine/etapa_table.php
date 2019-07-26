@@ -3,8 +3,7 @@
 class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
-    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$buscar="0",$offset=0, $perpage=50){
-      // dd($perPage);
+    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$query="0",$limite=2000, $inicio=0){
        $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
        if(!$usuario->open_id){
             $grupos =  DB::table('grupo_usuarios_has_usuario')
@@ -16,7 +15,44 @@ class EtapaTable extends Doctrine_Table {
 
             if($grupos){
                 $tareas = DB::table('etapa')
-                ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite_id',
+                ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
+                'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
+                ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
+                ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
+                ->where('cuenta.nombre',$cuenta->nombre)
+                ->whereIn('tarea.grupos_usuarios',$grupos)
+                ->whereNull('etapa.usuario_id')
+                ->limit($limite)
+                ->offset($inicio)
+                ->orderBy('etapa.tarea_id', 'ASC')
+                ->get()->toArray();
+            }
+            else{
+                $tareas = array();
+            }
+        }else{
+            $tareas = array();
+        } 
+         
+     
+        return $tareas;
+    }
+    
+   public function findSinAsignarMatch($usuario_id, $cuenta='localhost',$matches="0",$query="0"){
+       $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+       if(!$usuario->open_id){
+            $grupos =  DB::table('grupo_usuarios_has_usuario')
+                        ->select('grupo_usuarios_id')
+                        ->where('usuario_id',$usuario->id)
+                        ->get()
+                        ->toArray();
+            $grupos = json_decode(json_encode($grupos), true);
+
+            if($grupos){
+                $tareas = DB::table('etapa')
+                ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
                 'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
                 ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
                 ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
@@ -24,22 +60,22 @@ class EtapaTable extends Doctrine_Table {
                 ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
                 ->where('cuenta.nombre',$cuenta->nombre)
                 ->whereIn('tarea.grupos_usuarios',[$grupos])
+                ->whereIn('tramite.id',[$matches])
                 ->whereNull('etapa.usuario_id')
-                ->limit(500)
-                ->orderBy('tramite.id', 'ASC')
+                ->orderBy('etapa.tarea_id', 'ASC')
                 ->get()->toArray();
-            }else{
+            }
+            else{
                 $tareas = array();
             }
         }else{
             $tareas = array();
-        }
- 
+        }  
         return $tareas;
     }
     
     //busca las etapas donde esta pendiente una accion de $usuario_id
-    public function findPendientes($usuario_id,$cuenta='localhost',$orderby='updated_at',$direction='desc',$matches="0",$buscar="0"){        
+    public function findPendientes($usuario_id,$cuenta='localhost',$orderby='updated_at',$direction='desc',$matches="0",$buscar="0", $limite=0, $inicio=0){        
         $query=Doctrine_Query::create()
                 ->from('Etapa e, e.Tarea tar, e.Usuario u, e.Tramite t, t.Etapas hermanas, t.Proceso p, p.Cuenta c')
                 ->select('e.*,COUNT(hermanas.id) as netapas, p.nombre as proceso_nombre, tar.nombre as tarea_nombre')
@@ -48,6 +84,9 @@ class EtapaTable extends Doctrine_Table {
                 ->where('e.pendiente = 1 and u.id = ?',$usuario_id)
                 //Si la tarea se encuentra activa
                 ->andWhere('1!=(tar.activacion="no" OR ( tar.activacion="entre_fechas" AND ((tar.activacion_inicio IS NOT NULL AND tar.activacion_inicio>NOW()) OR (tar.activacion_fin IS NOT NULL AND NOW()>tar.activacion_fin) )))')
+                ->andWhere('t.deleted_at is NULL')
+                ->limit($limite)
+                ->offset($inicio)
                 ->orderBy($orderby.' '.$direction);
 
         if($buscar){ 
@@ -57,6 +96,20 @@ class EtapaTable extends Doctrine_Table {
         if($cuenta!='localhost')
             $query->andWhere('c.nombre = ?',$cuenta->nombre);
         
+        return $query->execute();
+    }
+
+    public function findPendientesALL($usuario_id, $cuenta='localhost', $orderby='updated_at',$direction='desc',$matches="0",$buscar="0"){        
+        $query=Doctrine_Query::create()
+                ->from('Tramite t, t.Proceso.Cuenta c, t.Etapas e, e.Usuario u')
+                ->where('u.id = ?',$usuario_id)
+                ->andWhere('e.pendiente=1')
+                ->limit(3000)
+                ->andWhere('t.deleted_at is NULL')
+                ->orderBy('t.updated_at desc');
+        
+        if($cuenta!='localhost')
+            $query->andWhere('c.nombre = ?',$cuenta->nombre);        
         return $query->execute();
     }
 

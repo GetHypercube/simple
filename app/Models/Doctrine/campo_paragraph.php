@@ -33,8 +33,10 @@ class CampoParagraph extends Campo
         } else {
             $etiqueta = $this->etiqueta;
         }
-
-        $display = '<p>' . $etiqueta . '</p>';
+        if($this->extra && $this->extra->nombre)
+            $display = '<p name="' . $this->extra->nombre . '" >' . $etiqueta . '</p>';
+        else
+            $display = '<p>' . $etiqueta . '</p>';
 
         return $display;
     }
@@ -42,6 +44,15 @@ class CampoParagraph extends Campo
     public function setReadonly($readonly)
     {
         $this->_set('readonly', 1);
+    }
+
+    public function backendExtraFields(){
+        $nombre = isset($this->extra->nombre) ? $this->extra->nombre : null;
+
+        $html = '<label>Nombre (Opcional). Solo configurar si desea visualizar contenido de variables generadas por botón asíncrono.</label>';
+        $html .= '<input class="form-control" name="extra[nombre]" value="' . $nombre . '" />';
+
+        return $html;
     }
 
 

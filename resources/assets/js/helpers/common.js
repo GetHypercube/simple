@@ -303,10 +303,13 @@ var procesar_data = function(data){
             if(typeof valor !== 'string'){
                 valor = JSON.stringify(valor);
             }
-            $('[name="'+data[k].nombre+'"]').val(valor);
-            $('[name="'+data[k].nombre+'"]').trigger('change');
-        }
-        else {
+            if($('[name="'+data[k].nombre+'"]').is('p,h3,h4')){
+                $('[name="'+data[k].nombre+'"]').text(valor);
+            }else{
+                $('[name="'+data[k].nombre+'"]').val(valor);
+                $('[name="'+data[k].nombre+'"]').trigger('change');
+            }
+        }else{
 
             if( data[k].valor &&  (Array.isArray( JSON.parse( data[k].valor ) ) || isObject( JSON.parse( data[k].valor ) ) ) )
                 var valor = data[k].valor.replace(/[\r\n|\n|\r]+/g, '');

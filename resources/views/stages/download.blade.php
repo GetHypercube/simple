@@ -12,25 +12,34 @@
                 {{csrf_field()}}
 
                 <label>Seleccione:</label>
-
+                @if (!Auth::user()->open_id)
                 <div class="radio">
                     <label>
-                        <input type="radio" name="opcionesDescarga" id="opcionesDescarga1" value="documento">
-                        Generados: Documentación que el sistema genera al usuario.
+                        <input type="radio" name="opcionesDescarga" id="opcionesDescarga1" value="documento"> 
+                        Generados: Documentación que el sistema genera al usuario.   
                     </label>
                 </div>
+                @endif
+
+                @if (!Auth::user()->open_id)
                 <div class="radio">
                     <label>
                         <input type="radio" name="opcionesDescarga" id="opcionesDescarga2" value="dato">
                         Subidos: Documentación que el usuario adjuntó en el trámite.
                     </label>
                 </div>
+                @endif
+                
+                @if (Auth::user()->open_id)
                 <div class="radio">
                     <label>
-                        <input type="radio" name="opcionesDescarga" id="opcionesDescarga3" value="all" checked>
-                        Todos: Recopila toda la documentación.
+                        <input type="radio" name="opcionesDescarga" id="opcionesDescarga4" value="datounico" checked>
+                        Subidos: Documentación subida por el usuario de Clave Única.
                     </label>
                 </div>
+                @endif
+
+
                 <input type="hidden" id="tramites" name="tramites" value="<?= $tramites ?>">
             </form>
         </div>

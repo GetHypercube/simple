@@ -45,9 +45,14 @@ class AccionSoap extends Accion
                     <br /><br />
                 </div>';
         $display .= '
-                <label>Request</label>
+                <label>Request (XML)</label>
                 <textarea id="request" class="form-control col-5" name="extra[request]" rows="7" cols="70" placeholder="<xml></xml>" class="form-control">' . ($this->extra ? $this->extra->request : '') . '</textarea>
                 <!-- <span id="resultRequest" class="spanError"></span> -->
+                <br /><br />';
+        $display .= '
+                <label>Headers</label>
+                <textarea id="header" class="form-control col-5" name="extra[header]" rows="7" cols="70" placeholder="header" class="form-control">' . (isset($this->extra->header) ? $this->extra->header : '') . '</textarea>
+                <!-- <span id="headerRequest" class="spanError"></span> -->
                 <br /><br />';
         /*<div class="col-md-12">
              <label>Response</label>
@@ -81,7 +86,7 @@ class AccionSoap extends Accion
                 <select id="tipoSeguridad" class="form-control col-2" name="extra[idSeguridad]">';
         foreach ($conf_seguridad as $seg) {
             $display .= '<option value="">Sin seguridad</option>';
-            if ($this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
+            if(!is_null($this->extra) && isset($this->extra->idSeguridad) && $this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
                 $display .= '<option value="' . $seg->id . '" selected>' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
             } else {
                 $display .= '<option value="' . $seg->id . '">' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
@@ -122,6 +127,12 @@ class AccionSoap extends Accion
         $client->decode_utf8 = true;
 
         try {
+            if (isset($this->extra->header)) {
+                $r = new Regla($this->extra->header);
+                $header = $r->getExpresionParaOutput($etapa->id);
+                $client->additionalHeaders = json_decode($header, true);
+            }
+
             //$CI = &get_instance();
             $r = new Regla($this->extra->wsdl);
             $wsdl = $r->getExpresionParaOutput($etapa->id);

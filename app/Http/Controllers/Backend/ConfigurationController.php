@@ -15,6 +15,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
 
 class ConfigurationController extends Controller
 {
@@ -634,9 +635,30 @@ class ConfigurationController extends Controller
      */
     public function deleteFrontendUsers(Request $request, $id)
     {
-        User::destroy($id);
+        $error_msg = 'Lo sentimos no hemos podido ejecutar la acción solicitada.';
 
-        $request->session()->flash('status', 'Usuario eliminado con éxito');
+        try {
+            User::destroy($id);
+            $request->session()->flash('status', 'Usuario eliminado con éxito');
+        } catch (QueryException $e){
+
+            if (!isset($e->errorInfo[1])) {
+                $request->session()->flash('warning', $error_msg);
+                return redirect()->route('backend.configuration.frontend_users');
+            }
+
+            switch ($e->errorInfo[1]) {
+                case 1451:
+                    $error_msg = 'El usuario no puede ser eliminado, asegúrate de que éste no cuente con trámites pendientes.';
+                    break;
+            }
+
+            $request->session()->flash('warning', $error_msg);
+
+
+        } catch (\Exception $e) {
+            $request->session()->flash('warning', $error_msg);
+        }
 
         return redirect()->route('backend.configuration.frontend_users');
     }

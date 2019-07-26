@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
+
     <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', '<?= env('ANALYTICS') ?>', 'auto');
-    ga('create', '{{ \Cuenta::seo_tags()->analytics }}', 'auto', 'secondary');
+    ga('create', '<?= env('ANALYTICS') ?>', 'auto', 'primary'); //Default instancia
+    ga('create', '{{ \Cuenta::seo_tags()->analytics }}', 'auto', 'secondary'); //Configurado por cuenta
     ga('send', 'pageview');
     ga('secondary.send', 'pageview');
+    /*ga(function() { //Para eliminar una instancia de seguimiento
+    ga.remove('primary');
+    });*/
+
     </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -74,7 +79,10 @@
                         @php
                             $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
                                 ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
-                            $nsinasignar = count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
+                                //dd($npendientes);
+                            $nsinasignar =count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
+                          //  dd($nsinasignar);
+                           //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
                             $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
                         @endphp
                         <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'inbox' ? 'active' : ''}}"

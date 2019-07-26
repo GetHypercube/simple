@@ -14,6 +14,7 @@
     <tr>
         <th>Proceso</th>
         <th>Nº de Trámites</th>
+      
     </tr>
     </thead>
     <tbody>
@@ -21,6 +22,7 @@
     <tr>
         <td><a href="<?=url('manager/estadisticas/cuentas/'.$p->cuenta_id.'/'.$p->id)?>"><?=$p->nombre?></a></td>
         <td><?=$p->ntramites?></td>
+       
     </tr>
     <?php endforeach; ?>
 
