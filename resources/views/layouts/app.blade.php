@@ -42,7 +42,7 @@
         	@yield('content')
         	{!! isset($content) ? $content : '' !!}
     	</div>
-    	@include($dominio_footer)
+    	@include($dominio_footer, ['metadata' => $metadata_footer])
 	</div>
 
 <!-- Scripts -->

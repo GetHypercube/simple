@@ -51,6 +51,10 @@ function setTableDefinition()
         if(\Schema::hasColumn('cuenta', 'seo_tags')){
             $this->hasColumn('seo_tags');
         }
+
+        if(\Schema::hasColumn('cuenta', 'metadata')){
+            $this->hasColumn('metadata');
+        }
     }
 
     function setUp()
@@ -195,6 +199,7 @@ function setTableDefinition()
             $configDominio['dominio_header'] = $configSegunDominio->header;
             $configDominio['analytics'] = $configSegunDominio->analytics; //añado analytics
             $configDominio['dominio_footer'] = $configSegunDominio->footer;
+            $configDominio['metadata_footer'] = json_decode($configSegunDominio->metadata);
             $configDominio['personalizacion'] = "1" == $configSegunDominio->personalizacion_estado ? $configSegunDominio->personalizacion : '';
             $configDominio['personalizacion_estado'] = $configSegunDominio->personalizacion_estado;
         }
