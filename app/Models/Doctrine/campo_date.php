@@ -21,7 +21,7 @@ class CampoDate extends Campo
 
         $display = '<div class="form-group">';
         $display .= '<label class="control-label" for="' . $this->id . '">' . $this->etiqueta . (!in_array('required', $this->validacion) ? ' (Opcional)' : '') . '</label>';
-        $display .= '<input id="' . $this->id . '" class="datetimepicker form-control" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' type="text" name="' . $this->nombre . '" value="' . ($dato && $dato->valor ? date('Y-m-d', strtotime($dato->valor)) : ($valor_default ? date('Y-m-d', strtotime($valor_default)) : $valor_default)) . '" placeholder="dd-mm-aaaa" />';
+        $display .= '<input id="' . $this->id . '" class="datetimepicker form-control" ' . ($modo == 'visualizacion' ? 'readonly' : '') . ' type="text" name="' . $this->nombre . '" value="' . ($dato && $dato->valor ? $dato->valor : ($valor_default ? $valor_default : '')) . '" placeholder="dd-mm-aaaa" />';
 
         if ($this->ayuda) {
             $display .= '<span class="help-block">' . $this->ayuda . '</span>';

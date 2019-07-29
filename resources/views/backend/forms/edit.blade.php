@@ -71,7 +71,7 @@
                     </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'file')">File
                     </button>
-                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'file_s3')">FileS3
+                    <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'file_s3')">File Transfer
                     </button>
                     <button class="btn btn-secondary" onclick="return agregarCampo(<?= $formulario->id ?>,'date')">Date
                     </button>
