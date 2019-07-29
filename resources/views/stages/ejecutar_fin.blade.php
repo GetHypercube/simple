@@ -17,7 +17,7 @@
             @endif
             <?php if ($tareas_proximas->estado == 'pendiente'): ?>
             <?php foreach ($tareas_proximas->tareas as $t): ?>
-                @if(!is_null($etapa->Tarea->paso_confirmacion_contenido))paso_confirmacion_texto_boton_final
+                @if(!is_null($etapa->Tarea->paso_confirmacion_contenido))
                     <?php
                         $r = new \Regla($etapa->Tarea->paso_confirmacion_contenido);
                         $paso_confirmacion_contenido = $r->getExpresionParaOutput($etapa->id);
