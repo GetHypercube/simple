@@ -7,13 +7,14 @@
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', '<?= env('ANALYTICS') ?>', 'auto', 'primary'); //Default instancia
-    ga('create', '{{ \Cuenta::seo_tags()->analytics }}', 'auto', 'secondary'); //Configurado por cuenta
-    ga('send', 'pageview');
-    ga('secondary.send', 'pageview');
-    /*ga(function() { //Para eliminar una instancia de seguimiento
-    ga.remove('primary');
-    });*/
+    ga('create', '<?= env('ANALYTICS') ?>', 'auto', 'instancia'); //Default instancia
+    ga('create', '{{ \Cuenta::seo_tags()->analytics }}', 'auto', 'cuenta'); //Configurado por cuenta
+    ga('instancia.send', 'pageview');
+    ga('cuenta.send', 'pageview');
+  /*  ga(function() { //Para eliminar una instancia de seguimiento
+    ga.remove('instancia');
+    })*/
+    ;
 
     </script>
     <meta charset="utf-8">

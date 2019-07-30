@@ -19,6 +19,7 @@
                 <label>Tipo de acción</label>
                 <select name="tipo" class="form-control">
                     <option value="enviar_correo">Enviar Correo</option>
+                    <option value="evento_analytics">Evento Google Analytics</option>
                     <option value="variable">Generar Variable</option>
                     <option value="rest">Consultar Rest</option>
                     <option value="soap">Consultar Soap</option>

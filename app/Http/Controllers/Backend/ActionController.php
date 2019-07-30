@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use AccionEnviarCorreo;
+use AccionEventoAnalytics;
 use AccionWebservice;
 use AccionVariable;
 use AccionRest;
@@ -104,6 +105,8 @@ class ActionController extends Controller
             $accion = new AccionEnviarCorreo();
         else if ($tipo == 'webservice')
             $accion = new AccionWebservice();
+         else if($tipo == 'evento_analytics')
+            $accion = new AccionEventoAnalytics();
         else if ($tipo == 'variable')
             $accion = new AccionVariable();
         else if ($tipo == 'rest')
@@ -135,6 +138,7 @@ class ActionController extends Controller
         $data['title'] = 'Crear Acción';
 
         return view('backend.action.edit', $data);
+
     }
 
     /**
@@ -144,6 +148,7 @@ class ActionController extends Controller
     public function edit($accion_id)
     {
         Log::info("####En Editar, id: " . $accion_id);
+    
 
         $accion = Doctrine::getTable('Accion')->find($accion_id);
         if ($accion->Proceso->cuenta_id != Auth::user()->cuenta_id) {
@@ -172,6 +177,8 @@ class ActionController extends Controller
         } else {
             if ($request->input('tipo') == 'enviar_correo')
                 $accion = new AccionEnviarCorreo();
+            else if ($request->input('tipo') == 'evento_analytics')
+                $accion = new AccionEventoAnalytics();
             else if ($request->input('tipo') == 'webservice')
                 $accion = new AccionWebservice();
             else if ($request->input('tipo') == 'variable')

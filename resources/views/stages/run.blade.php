@@ -22,6 +22,7 @@
             $campos_dependientes = [];
             $campos_ocultos_extra = [];
         ?>
+
         <?php $existe_btn_siguiente = false; ?>
         @foreach($paso->Formulario->Campos as $c)
             <?php
@@ -30,6 +31,10 @@
                 if( !is_null($c->dependiente_campo) && ! array_key_exists($c->dependiente_campo, $campos_ocultos_extra)){
                     $campos_ocultos_extra[$c->dependiente_campo] = $c->getVariableUltimoValor($c->dependiente_campo, $etapa);
                 }
+
+              
+
+               
             ?>
             @if($c->condiciones_extra_visible)
                 @foreach($c->condiciones_extra_visible as $condicion)
@@ -39,8 +44,10 @@
                             $campos_ocultos_extra[$condicion->campo] = $c->getVariableUltimoValor($condicion->campo, $etapa);
                         }
                     ?>
+
                 @endforeach
             @endif
+           
             <?php $existe_btn_siguiente = $c->tipo==='btn_siguiente' ? true : false; ?>
             @if($c->tipo != 'btn_siguiente')
                 <?php $condicion_final = ""; ?>
@@ -51,6 +58,7 @@
                         ?>
                     @endforeach
                 @endif
+                
                 <?php
                     if(!is_null($c->dependiente_campo) && !is_null($c->dependiente_valor)){
                         $condicion_final = $c->dependiente_campo.";".$c->dependiente_relacion.";".$c->dependiente_valor.";".$c->dependiente_tipo."&&".$condicion_final;
@@ -64,8 +72,7 @@
                 </div>
             @endif
         @endforeach
-
-
+           
         <div class="form-actions mt-3">
             
             @if($existe_btn_siguiente)
@@ -83,6 +90,7 @@
                     }
                     $condicion_final = substr($condicion_final,0,-2);
                 ?>
+               
                 @if($secuencia > 0)
                     <span class="campo control-group">
                         <a class="btn btn-light"
@@ -111,12 +119,36 @@
         @foreach($campos_faltantes as $c_nombre)
             <input  class="camposvisibilidad" type="hidden" name="{{$c_nombre}}" value="{{$campos_ocultos_extra[$c_nombre]}}">
         @endforeach
-
         <input type="hidden" name="secuencia" value="{{$secuencia}}">
-
         <div class="ajaxLoader" style="position: fixed; left: 50%; top: 30%; display: none;">
             <img src="{{asset('img/loading.gif')}}">
         </div>
+      <!--ID ANAlYTICS POR TAREA DEL TTE-->
+                  <?php 
+                 if (isset($busca_evento_analytics)) {
+                    $nombre_marca_inicial=substr($busca_evento_analytics, 46, -127); //Marca a enviar 
+                    }     
+                   foreach ($busca_evento_analytics as $busca_envento => $value) {
+                      $accion_extra= $busca_evento_analytics[0]->extra ?: '';
+                      $busca_evento_analytics[0]->extra ?: '';
+                   }
+
+                  ?>
+                   <?php 
+                    if (isset($accion_extra)) {      
+                    $accion_extra= json_decode($busca_evento_analytics[0]->extra, true) ?: '' ; 
+                    //  echo "<script>console.log(".json_encode($accion_extra).")</script>";   
+                    }else
+                        $accion_extra =array(
+                      "categoria"  => "Hit_vacio_simple",
+                      "evento_enviante" => "Hit_vacio_simple",
+                      "id_seguimiento" => "Hit_vacio_simple"
+                    );
+                
+                  ?>
+
+              
+           <!--ID ANAlYTICS POR TAREA DEL TTE-->
     </form>
     <div id="modalcalendar" class="modal hide modalconfg modcalejec"></div>
     <input type="hidden" id="urlbase" value="<?= URL::to('/') ?>"/>
@@ -127,33 +159,17 @@
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', '<?= env('ANALYTICS') ?>', 'auto');
-    ga('create', '{{ \Cuenta::seo_tags()->analytics }}', 'auto', 'secondary');
-    ga('send', 'pageview');
-    ga('secondary.send', 'pageview'); 
+   
     ////////////////////////// 1ER HIT  envia EL INICIO Y FIN DEL TTE RNT  X INSTITUCION ////////////////////////
-   /* ga('secondary.send', {   //2do ID GA: Este es el que envia el HIT por institución
+    ga('cuenta.send', {   //2do ID GA: Este es el que envia el HIT por institución
     hitType: 'event',   //tipo de hit enviado al GA de tipo evento
-    eventCategory: 'Trámite digital', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
-    eventAction: 'Inicio de la solicitud',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas
-    eventLabel: '<?//= $idrnt; ?>',  //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA
-    eventValue: '<?//= $etapa->pendiente; ?>' 
-    });*/
-     ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
-    
-    ////////////////////////// 1ER HIT  envia EL INICIO Y FIN DEL TTE RNT o CHA X INSTITUCION ////////////////////////
-   /* ga('secondary.send', {   //2do ID GA: Este es el que envia el HIT por institución
-    hitType: 'event',   //tipo de hit enviado al GA de tipo evento
-    eventCategory: 'Trámite Digital INICIADO:CHA', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
-    eventAction: 'Iniciado',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas 
-    eventLabel: '<?//= $idcha;?>',  //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA,
-    eventValue: '<?//= $etapa->pendiente;?>' //No se enviara por el momento el CHA 
+    eventCategory: '<?=$accion_extra['categoria'];?>', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
+    eventAction: '<?=$nombre_marca_inicial;?>',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas
+    eventLabel: '<?=$accion_extra['evento_enviante'];?>', //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA
+    eventValue:'<?=$accion_extra['id_seguimiento'];?>' //Track Seguimiento que envia el HIT
     });
-     ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT/CHA  ////////////////////////
-    ga(function(tracker) {
-    console.log(tracker.get('trackingId')); //ID Seguimiento
-    console.log(tracker.get('clientId'));
-    });*/
+     ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
+
     </script>
 
 @endpush

@@ -42,10 +42,31 @@ class StagesController extends Controller
         Log::info("El Proceso_id: " . $proceso_id);
         $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
             Log::info("Se a identificado el Proceso Nº : " . $proceso);
-         /*   $idrnt = $proceso->idrnt;
-            $idcha = $proceso->idcha;
-        Log::info("EL ID RNT es: " . $idrnt);
-        Log::info("EL ID CHA es: " . $idcha);*/
+        
+         $busca_evento = DB::table('evento') //Buscando el evento analytics por tarea iniciada
+        ->select('accion.id',
+                 'accion.tipo',
+                 'proceso.nombre',
+                 'tarea.nombre',
+                 'accion.nombre',
+                 'accion.extra')
+        ->leftjoin('tarea','evento.tarea_id', '=','tarea.id')
+        ->leftjoin('accion','evento.accion_id','=', 'accion.id')
+        ->leftjoin('proceso', 'tarea.proceso_id', '=','proceso.id')->get();
+          Log::info("Busca Eventos: " . $busca_evento);
+
+        $busca_evento_analytics = DB::table('evento') //Buscando el evento analytics por tarea iniciada
+        ->select('accion.id',
+                 'accion.tipo',
+                 'proceso.nombre',
+                 'tarea.nombre',
+                 'accion.nombre',
+                 'accion.extra')
+        ->leftjoin('tarea','evento.tarea_id', '=','tarea.id')
+        ->leftjoin('accion','evento.accion_id','=', 'accion.id')
+        ->leftjoin('proceso', 'tarea.proceso_id', '=','proceso.id')
+        ->where('tarea.id', $etapa->Tarea->id)->where('accion.tipo','=','evento_analytics')->get();
+          Log::info("Evento Analytics: " . $busca_evento_analytics);
         
         if (!$etapa) {
             return abort(404);
@@ -107,7 +128,7 @@ class StagesController extends Controller
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
             $data['paso'] = $paso;
-            
+            $data['busca_evento_analytics'] = $busca_evento_analytics;
             $data['qs'] = $request->getQueryString();
             $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
             $data['title'] = $etapa->Tarea->nombre;
