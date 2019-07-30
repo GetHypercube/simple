@@ -18,6 +18,7 @@ class Accion extends Doctrine_Record
 
         $this->setSubclasses(array(
                 'AccionEnviarCorreo' => array('tipo' => 'enviar_correo'),
+                'AccionEventoAnalytics' => array('tipo' => 'evento_analytics'),
                 'AccionWebservice' => array('tipo' => 'webservice'),
                 'AccionVariable' => array('tipo' => 'variable'),
                 'AccionRest' => array('tipo' => 'rest'),
@@ -67,7 +68,7 @@ class Accion extends Doctrine_Record
     public function setExtra($datos_array)
     {
         if ($datos_array) {
-            Log::info('Accion.setExtra, $datos_array: ' . json_encode($datos_array));
+            Log::info('Accion.setExtra,Estos son los datos de la accion $datos_array: ' . json_encode($datos_array));
             $this->_set('extra', json_encode($datos_array));
         } else {
             Log::info('Accion.setExtra, $datos_array: NULL');
