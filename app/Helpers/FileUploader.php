@@ -175,7 +175,9 @@ class FileUploader
         if (!$replaceOldFile) {
             /// don't overwrite previous files that were uploaded
             while (file_exists($uploadDirectory . $filename . '.' . $ext)) {
-                $filename .= rand(10, 99);
+                $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                $nombre_random = $this->generate_string($permitted_chars,20);
+                $filename .= $nombre_random;
             }
         }
 
@@ -186,5 +188,15 @@ class FileUploader
                 'The upload was cancelled, or server error encountered');
         }
 
+    }
+
+    function generate_string($input, $strength = 16) {
+        $input_length = strlen($input);
+        $random_string = '';
+        for($i = 0; $i < $strength; $i++) {
+            $random_character = $input[mt_rand(0, $input_length - 1)];
+            $random_string .= $random_character;
+        }
+        return $random_string;
     }
 }
