@@ -159,7 +159,8 @@
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-   
+    ga('create', '<?=$accion_extra['id_seguimiento'];?>', 'auto', 'cuenta');
+    ga('cuenta.send', 'pageview');
     ////////////////////////// 1ER HIT  envia EL INICIO Y FIN DEL TTE RNT  X INSTITUCION ////////////////////////
     ga('cuenta.send', {   //2do ID GA: Este es el que envia el HIT por institución
     hitType: 'event',   //tipo de hit enviado al GA de tipo evento
