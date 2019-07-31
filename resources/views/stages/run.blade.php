@@ -140,6 +140,7 @@
                     //  echo "<script>console.log(".json_encode($accion_extra).")</script>";   
                     }else
                         $accion_extra =array(
+                      "nombre_marca"  => "Hit_vacio_simple",      
                       "categoria"  => "Hit_vacio_simple",
                       "evento_enviante" => "Hit_vacio_simple",
                       "id_seguimiento" => "Hit_vacio_simple"
@@ -165,7 +166,7 @@
     ga('cuenta.send', {   //2do ID GA: Este es el que envia el HIT por institución
     hitType: 'event',   //tipo de hit enviado al GA de tipo evento
     eventCategory: '<?=$accion_extra['categoria'];?>', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
-    eventAction: '<?=$nombre_marca_inicial;?>',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas
+    eventAction: '<?=$accion_extra['nombre_marca'];?>',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas
     eventLabel: '<?=$accion_extra['evento_enviante'];?>', //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA
     eventValue:'<?=$accion_extra['id_seguimiento'];?>' //Track Seguimiento que envia el HIT
     });
