@@ -171,6 +171,7 @@
     eventValue:'<?=$accion_extra['id_seguimiento'];?>' //Track Seguimiento que envia el HIT
     });
      ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
+
     </script>
 
 @endpush
