@@ -1,11 +1,3 @@
-<script>
-var analytica=<?php echo json_encode($cuenta->analytics); ?>;
-function analytics(){
- analytica=<?php echo json_encode($cuenta->analytics); ?>;
-}
-analytics(); //ejecutamos la función para que sea global
-console.log(analytica);
-</script>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="<?=url('manager/cuentas')?>">Cuentas</a></li>
@@ -26,8 +18,9 @@ console.log(analytica);
         <input class="form-control col-6" type="text" name="nombre_largo" value="<?= $cuenta->nombre_largo ?>"/><br>
         <label><b>ID Seguimiento de Google Analytics (ID Secundario)</b></label>
         <input type="text" name="analytics" value="<?= $cuenta->analytics ?>" class="form-control col-3"/><br><!--Gogole Analytics--->
-        <label>ID Seguimiento Analytics Primario (ID Default instancia)</label>
+         <label>ID Seguimiento Analytics Primario (ID Default instancia)</label>
         <input type="text" class="form-control col-3" readonly="true" disabled="true" value="<?= env('ANALYTICS') ?>"/><br><!--Gogole Analytics--->
+        
         <label>Mensaje de bienvenida (Puede contener HTML)</label>
         <textarea name="mensaje" class="form-control col-6"><?= $cuenta->mensaje ?></textarea>
         <label>Logo Header</label>

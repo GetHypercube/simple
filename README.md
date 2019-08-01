@@ -52,6 +52,7 @@ APP_DEBUG: true o false.
 APP_LOG_LEVEL: Nivel de log (EMERGENCY, ALERT, CRITICAL, ERROR, WARNING, NOTICE, INFO, DEBUG).
 APP_URL: URL de tu aplicación incluir http.
 APP_MAIN_DOMAIN: Dominio de tu aplicación, incluir http.
+ANALYTICS: Código de Seguimiento de google analytics
 
 DB_CONNECTION: Tipo de conexión de tu Base de datos, para este proyecto por defecto se usa mysql.
 DB_HOST: host donde se aloja tu Base de Datos.
