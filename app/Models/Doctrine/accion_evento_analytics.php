@@ -17,13 +17,13 @@ class AccionEventoAnalytics extends Accion
         if(!empty($id_cuenta) && !empty($id_instancia))  {
         $display .='<label>Selecciona el ID a enviar</label><br/>'; 
         $display .= '<div class="form-check form-check-inline" id="id_cuenta">
-                    <input class="form-check-input" type="checkbox" id="id_cuenta" name="extra[id_seguimiento]" value="' .  $id_cuenta . '">
-                    <label class="form-check-label" name="extra[id_seguimiento]" value="' .  $id_cuenta  . '" for="id_cuenta">' . $id_cuenta . '</label><br/>
+                    <input class="form-check-input" type="radio" id="id_cuenta" name="extra[id_seguimiento]" value="' .  $id_cuenta . '">
+                    <label class="form-check-label" name="extra[id_seguimiento]" value="' .  $id_cuenta  . '" for="id_cuenta">Cuenta</label><br/>
                     </div><p>';
 
          $display .=  '<div class="form-check form-check-inline" id="id_instancia">
-                    <input class="form-check-input" type="checkbox" id="extra[id_seguimiento]" name="extra[id_seguimiento]" value="'.$id_instancia.'">
-                    <label class="form-check-label" name="extra[id_seguimiento]" value="'.$id_instancia.'" for="id_instancia">'.$id_instancia.'</label>
+                    <input class="form-check-input" type="radio" id="extra[id_seguimiento]" name="extra[id_seguimiento]" value="'.$id_instancia.'">
+                    <label class="form-check-label" name="extra[id_seguimiento]" value="'.$id_instancia.'" for="id_instancia">Instancia</label>
                     </div><p>';
             
        /* $display .= '<br><label>Nombre de Marca</label>';
@@ -33,14 +33,40 @@ class AccionEventoAnalytics extends Accion
                       <option value="Ingreso Solicitud">Ingreso Solicitud</option>
                       <option value="Marca Final">Marca Final</option>
                     </select>';*/
-          $display .= '<label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">eventAction</label>';
-        $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
+        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">EventAction</label>';
+        $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" onkeyup=mostrar(this.value) value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
        
-        $display .= '<br><label title="Para Chile en Chile es Categoria Trámite Digital">eventCategory de Google Analytics</label>';
-        $display .= '<input type="text" class="form-control col-2" id="categoria" name="extra[categoria]" value="' . (isset($this->extra->categoria) ? $this->extra->categoria : '') . '" />';
-        $display .= '<br><label title="Para Chile es el ID RNT">eventLabel de Google Analytics</label>';
-        $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]" value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
-        $display .= '<label>Formación de tu JSON + HIT enviante (Se Muestra después de Guardar)</label>';
+        $display .= '<label title="Para Chile en Chile es Categoria Trámite Digital">EventCategory</label>';
+        $display .= '<input type="text" class="form-control col-2" id="categoria" name="extra[categoria]" onkeyup=eventos(this.value) value="' . (isset($this->extra->categoria) ? $this->extra->categoria : '') . '" />';
+          $display .= '<br><label title="Para Chile es el ID RNT">EventLabel</label>';
+        $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]"  onkeyup=evento(this.value) value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
+         $display .= '<br><label><b>JSON GA</b></label>';
+
+        $display .= '<br>{<br><br>
+                  hitType: "event",<br><br>
+                  eventAction: <label id="resultado"></label>, <br><br>
+                  eventCategory: <label id="eventos"></label>,<br><br>
+                  eventLabel:  <label id="evento"></label> <br><br>
+                  
+                     }';
+
+                     $display.= '<script type="text/javascript">
+                      function mostrar(valor)
+                      {
+                          document.getElementById("resultado").innerHTML=valor;
+                      }
+
+                      function eventos(valor)
+                      {
+                      document.getElementById("eventos").innerHTML=valor;
+                      }
+
+                      function evento(valor)
+                      {
+                          document.getElementById("evento").innerHTML=valor;
+                      }
+                      </script><br>';
+      /*  $display .= '<label>Formación de tu JSON + HIT enviante (Se Muestra después de Guardar)</label>';
     
 
        $display .='<textarea class="form-control col-4" rows="7" cols="70"> ga(create, "'. (isset($this->extra->id_seguimiento) ? $this->extra->id_seguimiento : '') .'", "auto")
@@ -51,15 +77,22 @@ class AccionEventoAnalytics extends Accion
                   eventAction: "'.(isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '').'",
                   eventLabel: "'.(isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') .'"
                   
-                     })</textarea><br/>'  ;  
+                     })</textarea><br/>'  ;  */
 
 
                       } elseif (!empty($id_cuenta) && empty($id_instancia)) {
                           $display .='<label>Selecciona el ID a enviar</label><br/>'; 
                           $display .= '<div class="form-check form-check-inline" id="id_cuenta">
-                    <input class="form-check-input" type="checkbox" id="id_cuenta" checked name="extra[id_seguimiento]" value="' .  $id_cuenta . '">
-                    <label class="form-check-label" name="extra[id_seguimiento]" checked value="' .  $id_cuenta  . '" for="id_cuenta">' . $id_cuenta . '</label><br/>
+                    <input class="form-check-input" type="radio" id="id_cuenta" checked name="extra[id_seguimiento]" value="' .  $id_cuenta . '">
+                    <label class="form-check-label" name="extra[id_seguimiento]" checked value="' .  $id_cuenta  . '" for="id_cuenta">Cuenta</label><br/>
                     </div><p>';
+
+                     $display .=  '<div class="form-check form-check-inline" id="id_instancia">
+                    <input class="form-check-input" type="radio" id="extra[id_seguimiento]" disabled name="extra[id_seguimiento]" value="'.$id_instancia.'">
+                    <label class="form-check-label" name="extra[id_seguimiento]" value="'.$id_instancia.'" for="id_instancia">Instancia</label>
+                    </div><p>';
+
+
 
                    /*  $display .= '<br><label>Nombre de Marca</label>';
         /*$display .= '<!--<select name="extra[nombre_marca]" class="form-control col-2">
@@ -69,14 +102,40 @@ class AccionEventoAnalytics extends Accion
                       <option value="Marca Final">Marca Final</option>
                     </select>-->';*/
 
-         $display .= '<label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">eventAction de Google Analytics</label>';
-        $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
+        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">EventAction</label>';
+        $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" onkeyup=mostrar(this.value) value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
        
-        $display .= '<br><label title="Para Chile en Chile es Categoria Trámite Digital">eventCategory de Google Analytics</label>';
-        $display .= '<input type="text" class="form-control col-2" id="categoria" name="extra[categoria]" value="' . (isset($this->extra->categoria) ? $this->extra->categoria : '') . '" />';
-        $display .= '<br><label title="Para Chile es el ID RNT">eventLabel de Google Analytics</label>';
-        $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]" value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
-        $display .= '<label>Formación de tu JSON + HIT enviante (Se Muestra después de Guardar)</label>';
+        $display .= '<label title="Para Chile en Chile es Categoria Trámite Digital">EventCategory</label>';
+        $display .= '<input type="text" class="form-control col-2" id="categoria" name="extra[categoria]" onkeyup=eventos(this.value) value="' . (isset($this->extra->categoria) ? $this->extra->categoria : '') . '" />';
+          $display .= '<br><label title="Para Chile es el ID RNT">EventLabel</label>';
+        $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]"  onkeyup=evento(this.value) value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
+         $display .= '<br><label><b>JSON GA</b></label>';
+
+        $display .= '<br>{<br><br>
+                  hitType: "event",<br><br>
+                  eventAction: <label id="resultado"></label>, <br><br>
+                  eventCategory: <label id="eventos"></label>,<br><br>
+                  eventLabel:  <label id="evento"></label> <br><br>
+                  
+                     }';
+
+                     $display.= '<script type="text/javascript">
+                      function mostrar(valor)
+                      {
+                          document.getElementById("resultado").innerHTML=valor;
+                      }
+
+                      function eventos(valor)
+                      {
+                      document.getElementById("eventos").innerHTML=valor;
+                      }
+
+                      function evento(valor)
+                      {
+                          document.getElementById("evento").innerHTML=valor;
+                      }
+                      </script><br>';
+      /*  $display .= '<label>Formación de tu JSON + HIT enviante (Se Muestra después de Guardar)</label>';
     
 
        $display .='<textarea class="form-control col-4" rows="7" cols="70"> ga(create, "'. (isset($this->extra->id_seguimiento) ? $this->extra->id_seguimiento : '') .'", "auto")
@@ -87,13 +146,18 @@ class AccionEventoAnalytics extends Accion
                   eventAction: "'.(isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '').'",
                   eventLabel: "'.(isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') .'"
                   
-                     })</textarea><br/>'  ;  
+                     })</textarea><br/>'  ;  */
 
 
                       } elseif (!empty($id_instancia) && empty($id_cuenta)) {
                            $display .=  '<div class="form-check form-check-inline" id="id_instancia">
-                    <input class="form-check-input" type="checkbox" id="extra[id_seguimiento]" checked name="extra[id_seguimiento]" value="'.$id_instancia.'">
-                    <label class="form-check-label" name="extra[id_seguimiento]" checked value="'.$id_instancia.'" for="id_instancia">'.$id_instancia.'</label>
+                    <input class="form-check-input" type="radio" id="extra[id_seguimiento]" checked name="extra[id_seguimiento]" value="'.$id_instancia.'">
+                    <label class="form-check-label" name="extra[id_seguimiento]" checked value="'.$id_instancia.'" for="id_instancia">Instancia</label>
+                    </div><p>';
+
+                     $display .= '<div class="form-check form-check-inline" id="id_cuenta">
+                    <input class="form-check-input" type="radio" id="id_cuenta" disabled name="extra[id_seguimiento]" value="' .  $id_cuenta . '">
+                    <label class="form-check-label" name="extra[id_seguimiento]" value="' .  $id_cuenta  . '" for="id_cuenta">Cuenta</label><br/>
                     </div><p>';
             
         /*$display .= '<br><label>Nombre de Marca</label>';
@@ -103,17 +167,42 @@ class AccionEventoAnalytics extends Accion
                       <option value="Ingreso Solicitud">Ingreso Solicitud</option>
                       <option value="Marca Final">Marca Final</option>
                     </select>';*/
-        $display .= '<label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">eventAction</label>';
-        $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
+        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">EventAction</label>';
+        $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" onkeyup=mostrar(this.value) value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
        
-        $display .= '<label title="Para Chile en Chile es Categoria Trámite Digital">eventCategory de Google Analytics</label>';
-        $display .= '<input type="text" class="form-control col-2" id="categoria" name="extra[categoria]" value="' . (isset($this->extra->categoria) ? $this->extra->categoria : '') . '" />';
-          $display .= '<br><label title="Para Chile es el ID RNT">eventLabel de Google Analytics</label>';
-        $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]" value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
-        $display .= '<label>Formación de tu JSON + HIT enviante (Se Muestra después de Guardar)</label>';
+        $display .= '<label title="Para Chile en Chile es Categoria Trámite Digital">EventCategory</label>';
+        $display .= '<input type="text" class="form-control col-2" id="categoria" name="extra[categoria]" onkeyup=eventos(this.value) value="' . (isset($this->extra->categoria) ? $this->extra->categoria : '') . '" />';
+          $display .= '<br><label title="Para Chile es el ID RNT">EventLabel</label>';
+        $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]"  onkeyup=evento(this.value) value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
+         $display .= '<br><label><b>JSON GA</b></label>';
+
+        $display .= '<br>{<br><br>
+                  hitType: "event",<br><br>
+                  eventAction: <label id="resultado"></label>, <br><br>
+                  eventCategory: <label id="eventos"></label>,<br><br>
+                  eventLabel:  <label id="evento"></label> <br><br>
+                  
+                     }';
+
+                     $display.= '<script type="text/javascript">
+                      function mostrar(valor)
+                      {
+                          document.getElementById("resultado").innerHTML=valor;
+                      }
+
+                      function eventos(valor)
+                      {
+                      document.getElementById("eventos").innerHTML=valor;
+                      }
+
+                      function evento(valor)
+                      {
+                          document.getElementById("evento").innerHTML=valor;
+                      }
+                      </script><br>';
     
 
-       $display .='<textarea class="form-control col-4" rows="7" cols="70"> 
+     /*  $display .='<textarea class="form-control col-4" rows="7" cols="70"> 
                   ga(create, "'. (isset($this->extra->id_seguimiento) ? $this->extra->id_seguimiento : '') .'", "auto")
                   ga("auto.send", "pageview");
                   ga("auto.send", {  
@@ -122,7 +211,7 @@ class AccionEventoAnalytics extends Accion
                   eventAction: "'.(isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '').'",
                   eventLabel: "'.(isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') .'"
                   
-                     })</textarea><br/>'  ;  
+                     })</textarea><br/>'  ;  */
 
                       }
 
@@ -150,9 +239,8 @@ class AccionEventoAnalytics extends Accion
     public function validateForm(Request $request)
     {
         $request->validate([
-              'extra.nombre_marca' => 'required',
-            'extra.categoria' => 'required',
-            'extra.evento_enviante' => 'required',
+              'extra.nombre_marca' => 'required'
+         
         ]);
     }
 
@@ -182,3 +270,4 @@ class AccionEventoAnalytics extends Accion
 
 }
 ?>
+

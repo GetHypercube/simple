@@ -107,7 +107,7 @@
                     <button class="btn btn-primary" value="Guardar" type="button" onclick="validateForm();">
                         Guardar
                     </button>
-                </div>
+                </div><br>
             </fieldset>
         </form>
     </div>
