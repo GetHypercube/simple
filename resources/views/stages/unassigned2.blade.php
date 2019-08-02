@@ -43,18 +43,18 @@
                     <div class="search-inputs">
                         <div class='control-group seg-input-search' id="input1">
                             <label class='col-form-label'>Ingrese Nro:</label>
-                            <input name="params[tramite_id]" value="{{ $params['tramite_id'] }}"
+                            <input name="params[tramite_id]" value=""
                                    type="text" class="form-control"/>
                         </div>
                         <div class='control-group seg-input-search' id="input3">
                             <label class='col-form-label'>Ingrese Valor de referencia:</label>
-                            <input name="params[ref]" value="{{ isset($params['ref']) ? $params['ref']:"''" }}"
-                                   type="text" class="form-control"/>
+                            <input name="params[ref]" value="" type="text"
+                                   class="form-control"/>
                         </div>
                         <div class='control-group seg-input-search' id="input4">
                             <label class='col-form-label'>Ingrese nombre:</label>
-                            <input name="params[name]" value="{{ isset($params['name']) ? $params['name']:"''" }}"
-                                   type="text" class="form-control"/>
+                            <input name="params[name]" value="" type="text"
+                                   class="form-control"/>
                         </div>
                     </div>
                 </div>
@@ -68,13 +68,11 @@
                                 </div>
                                 <div class="col-6">
                                     <input type='text' name='params[updated_date_from]' placeholder='Desde'
-                                           class='datetimepicker form-control'
-                                           value='{{ isset($params['updated_date_from']) ? $params['updated_date_from'] : "''" }}'/>
+                                           class='datetimepicker form-control' value=''/>
                                 </div>
                                 <div class="col-6">
                                     <input type='text' name='params[updated_date_to]' placeholder='Hasta'
-                                           class='datetimepicker form-control'
-                                           value='{{ isset($params['updated_date_to']) ? $params['updated_date_to']:"''" }}'/>
+                                           class='datetimepicker form-control' value=''/>
                                 </div>
                             </div>
                         </div>
@@ -85,13 +83,11 @@
                                 </div>
                                 <div class="col-6">
                                     <input type='text' name='params[deleted_date_from]' placeholder='Desde'
-                                           class='datetimepicker form-control'
-                                           value='{{ isset($params['deleted_date_from']) ? $params['deleted_date_from']:"''" }}'/>
+                                           class='datetimepicker form-control' value=''/>
                                 </div>
                                 <div class="col-6">
                                     <input type='text' name='params[deleted_date_to]' placeholder='Hasta'
-                                           class='datetimepicker form-control'
-                                           value='{{ isset($params['deleted_date_to']) ? $params['deleted_date_to']:"''" }}'/>
+                                           class='datetimepicker form-control' value=''/>
                                 </div>
                             </div>
                         </div>
@@ -120,67 +116,93 @@
         </thead>
         <tbody>
         <?php $registros = false; ?>
-        @foreach ($etapas as $e)
-            <tr {{ isset($e['previsualizacion ']) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($e['previsualizacion ']) . '" data-trigger="hover" data-placement="bottom"' : '' }}>
-                @if($hasCuentaMasiva && $e['file'])
+        <?php foreach ($etapas as $e): ?>
+        <?php
+        $file = false;
+        if (\App\Helpers\Doctrine::getTable('File')->findByTramiteId($e->id)->count() > 0) {
+            $file = true;
+            $registros = true;
+        }
+        ?>
+        <?php
+            $previsualizacion = '';
+            if ( ! empty($e->previsualizacion)){
+                $r = new Regla($e->previsualizacion);
+                $previsualizacion = $r->getExpresionParaOutput($e->etapa_id);
+            }
+
+        ?>
+        <tr <?=$previsualizacion ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : ''?>>
+            <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
+                <?php if ($file): ?>
                     <td>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" class="checkbox1" name="select[]" value="{{ $e['id']  }}">
-                            </label>
-                        </div>
+                        <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]"
+                                                            value="<?=$e->id?>"></label></div>
                     </td>
-                    <?php $registros = true; ?>
-                @else
+                <?php else: ?>
                     <td></td>
-                @endif
-                <td>{{ $e['id'] }}</td>
-                <td>
-                    @if($e['ref'] != null)
-                        {{ $e['ref'] }}
-                    @else
-                        {{ $e['p_nombre'] }}
-                    @endif
-                </td>
-                <td>
-                    @if($e['nombre'] != null)
-                        {{ $e['nombre'] }}
-                    @else
-                        {{ $e['p_nombre'] }}
-                    @endif
-                </td>
-                <td>
-                    @foreach ($e['etapas'] as $etapaNombre)
-                        {{ $etapaNombre }}@if (!$loop->last),@endif
-                    @endforeach
-                </td>
-                <td>{{ $e['updated_at'] }}</td>
-                <td>{{ $e['vencimiento_at'] }}</td>
-                <td>
-                    <a href="{{ url('etapas/asignar/' . $e['id'])  }}" class="btn btn-link">
-                        <i class="icon-check icon-white"></i> Asignármelo
-                    </a>
-                </td>
-            </tr>
-        @endforeach
+                <?php endif; ?>
+            <?php else: ?>
+                <td></td>
+            <?php endif; ?>
+            <td><?=$e->id?></td>
+            <td class="name">
+                <?php
+                $t = \App\Helpers\Doctrine::getTable('Tramite')->find($e->id);
+                $tramite_nro = '';
+                foreach ($t->getValorDatoSeguimiento() as $tra_nro) {
+                    if ($tra_nro->nombre == 'tramite_ref') {
+                        $tramite_nro = $tra_nro->valor;
+                    }
+                }
+                echo $tramite_nro != '' ? $tramite_nro : $e->p_nombre;
+                ?>
+            </td>
+            <td class="name">
+                <?php
+                $tramite_descripcion = '';
+                foreach ($t->getValorDatoSeguimiento() as $tra) {
+                    if ($tra->nombre == 'tramite_descripcion') {
+                        $tramite_descripcion = $tra->valor;
+                    }
+                }
+                echo $tramite_descripcion != '' ? $tramite_descripcion : $e->p_nombre;
+                ?>
+            </td>
+            <td><?=$e->t_nombre ?></td>
+            <td class="time"><?= strftime('%d.%b.%Y', mysql_to_unix($e->updated_at))?>
+                <br/><?= strftime('%H:%M:%S', mysql_to_unix($e->updated_at))?></td>
+            <td><?=$e->vencimiento_at ? strftime('%c', strtotime($e->vencimiento_at)) : 'N/A'?></td>
+            <td class="actions">
+                <a href="<?=url('etapas/asignar/' . $e->etapa_id)?>" class="btn btn-link"><i
+                            class="icon-check icon-white"></i> Asignármelo</a>
+                <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
+                <?php if ($file): ?>
+                <a href="#" onclick="return descargarDocumentos(<?=$e->id?>);" class="btn btn-link"><i
+                            class="icon-download icon-white"></i> Descargar</a>
+                <?php endif; ?>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
         </tbody>
     </table>
 
-    @if($hasCuentaMasiva)
-        @if($registros)
-        <div class="pull-right">
-            <div class="checkbox">
-                <input type="hidden" id="tramites" name="tramites"/>
-                <label>
-                    <input type="checkbox" id="select_all" name="select_all"/> Seleccionar todos
-                    <a href="#" onclick="return descargarSeleccionados();" class="btn btn-success preventDoubleRequest">
-                        <i class="icon-download icon-white"></i> Descargar seleccionados
-                    </a>
-                </label>
-            </div>
+    <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
+    <?php if ($registros): ?>
+    <div class="pull-right">
+        <div class="checkbox">
+            <input type="hidden" id="tramites" name="tramites"/>
+            <label>
+                <input type="checkbox" id="select_all" name="select_all"/> Seleccionar todos
+                <a href="#" onclick="return descargarSeleccionados();" class="btn btn-success preventDoubleRequest">
+                    <i class="icon-download icon-white"></i> Descargar seleccionados
+                </a>
+            </label>
         </div>
-        @endif
-    @endif
+    </div>
+    <?php endif; ?>
+    <?php endif; ?>
     <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
     <?php else: ?>
     <p>No hay trámites para ser asignados.</p>
@@ -189,7 +211,7 @@
 <div class="modal hide" id="modal"></div>
 @push('script')
     <script>
-        let SEARCH_OPT = {!! isset($params['option']) ? json_encode($params['option']) : "'option5'" !!};
+        let SEARCH_OPT = {!! json_encode(null) !!};
         function checkSearchInputs(val) {
             $('.seg-input-search').hide();
             switch (val) {
@@ -227,7 +249,6 @@
             });
 
             checkSearchInputs(SEARCH_OPT);
-
             switch (SEARCH_OPT) {
                 case 'option1':
                     $('#inlineRadio1').prop('checked', true);
@@ -237,9 +258,6 @@
                     break;
                 case 'option4':
                     $('#inlineRadio4').prop('checked', true);
-                    break;
-                case undefined:
-                    $('#inlineRadio5').prop('checked', true);
                     break;
                 default:
                     $('#inlineRadio5').prop('checked', true);
