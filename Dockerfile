@@ -49,6 +49,8 @@ COPY . $DIRECTORY_PROJECT
 RUN composer install
 
 RUN chown -R www-data:www-data storage/
+RUN echo "APP_KEY=$(php artisan key:generate --show)" > .env
+RUN echo "php artisan optimize;php artisan config:cache;php artisan config:clear;"
 
 ENV LANG es_CL.UTF-8
 ENV LANGUAGE es_CL:es
