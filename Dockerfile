@@ -57,8 +57,5 @@ ENV TZ America/Santiago
 
 WORKDIR $DIRECTORY_PROJECT
 
-RUN echo "APP_KEY=$(php artisan key:generate --show)" > .env
-RUN echo "php artisan optimize;php artisan config:cache;php artisan config:clear;"
-
 EXPOSE 9000
 CMD ["php-fpm"]
