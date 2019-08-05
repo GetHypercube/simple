@@ -38,17 +38,17 @@ class AccionEventoAnalytics extends Accion
        
         $display .= '<label title="Para Chile en Chile es Categoria Trámite Digital">EventCategory</label>';
         $display .= '<input type="text" class="form-control col-2" id="categoria" name="extra[categoria]" onkeyup=eventos(this.value) value="' . (isset($this->extra->categoria) ? $this->extra->categoria : '') . '" />';
-          $display .= '<br><label title="Para Chile es el ID RNT">EventLabel</label>';
+        $display .= '<br><label title="Para Chile es el ID RNT">EventLabel</label>';
         $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]"  onkeyup=evento(this.value) value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
-         $display .= '<br><label><b>JSON GA</b></label>';
+        $display .= '<br><label><b>JSON GA</b></label>';
 
-        $display .= '<br>{<br><br>
+        $display .= '<span><br>{<br><br>
                   hitType: "event",<br><br>
-                  eventAction: <label id="resultado"></label>, <br><br>
-                  eventCategory: <label id="eventos"></label>,<br><br>
-                  eventLabel:  <label id="evento"></label> <br><br>
+                  eventAction: <label id="resultado"></label>"'.(isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '').'", <br><br>
+                  eventCategory: <label id="eventos"></label>"'.(isset($this->extra->categoria) ? $this->extra->categoria : '').'",<br><br>
+                  eventLabel:  <label id="evento"></label>"'.(isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') .'" <br><br>
                   
-                     }';
+                     }</span>';
 
                      $display.= '<script type="text/javascript">
                       function mostrar(valor)
@@ -111,13 +111,13 @@ class AccionEventoAnalytics extends Accion
         $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]"  onkeyup=evento(this.value) value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
          $display .= '<br><label><b>JSON GA</b></label>';
 
-        $display .= '<br>{<br><br>
+        $display .= '<span><br>{<br><br>
                   hitType: "event",<br><br>
-                  eventAction: <label id="resultado"></label>, <br><br>
-                  eventCategory: <label id="eventos"></label>,<br><br>
-                  eventLabel:  <label id="evento"></label> <br><br>
+                  eventAction: <label id="resultado"></label>"'.(isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '').'", <br><br>
+                  eventCategory: <label id="eventos"></label>"'.(isset($this->extra->categoria) ? $this->extra->categoria : '').'",<br><br>
+                  eventLabel:  <label id="evento"></label>"'.(isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') .'" <br><br>
                   
-                     }';
+                     }</span>';
 
                      $display.= '<script type="text/javascript">
                       function mostrar(valor)
@@ -176,13 +176,13 @@ class AccionEventoAnalytics extends Accion
         $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]"  onkeyup=evento(this.value) value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
          $display .= '<br><label><b>JSON GA</b></label>';
 
-        $display .= '<br>{<br><br>
+        $display .= '<span><br>{<br><br>
                   hitType: "event",<br><br>
-                  eventAction: <label id="resultado"></label>, <br><br>
-                  eventCategory: <label id="eventos"></label>,<br><br>
-                  eventLabel:  <label id="evento"></label> <br><br>
+                  eventAction: <label id="resultado"></label>"'.(isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '').'", <br><br>
+                  eventCategory: <label id="eventos"></label>"'.(isset($this->extra->categoria) ? $this->extra->categoria : '').'",<br><br>
+                  eventLabel:  <label id="evento"></label>"'.(isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') .'" <br><br>
                   
-                     }';
+                     }</span>';
 
                      $display.= '<script type="text/javascript">
                       function mostrar(valor)
