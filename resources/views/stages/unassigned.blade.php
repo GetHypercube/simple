@@ -43,17 +43,17 @@
                     <div class="search-inputs">
                         <div class='control-group seg-input-search' id="input1">
                             <label class='col-form-label'>Ingrese Nro:</label>
-                            <input name="params[tramite_id]" value="{{ $params['tramite_id'] }}"
+                            <input name="params[tramite_id]" value="{{ isset($params['tramite_id']) ? $params['tramite_id']:"" }}"
                                    type="text" class="form-control"/>
                         </div>
                         <div class='control-group seg-input-search' id="input3">
                             <label class='col-form-label'>Ingrese Valor de referencia:</label>
-                            <input name="params[ref]" value="{{ isset($params['ref']) ? $params['ref']:"''" }}"
+                            <input name="params[ref]" value="{{ isset($params['ref']) ? $params['ref']:"" }}"
                                    type="text" class="form-control"/>
                         </div>
                         <div class='control-group seg-input-search' id="input4">
                             <label class='col-form-label'>Ingrese nombre:</label>
-                            <input name="params[name]" value="{{ isset($params['name']) ? $params['name']:"''" }}"
+                            <input name="params[name]" value="{{ isset($params['name']) ? $params['name']:"" }}"
                                    type="text" class="form-control"/>
                         </div>
                     </div>
@@ -69,12 +69,12 @@
                                 <div class="col-6">
                                     <input type='text' name='params[updated_date_from]' placeholder='Desde'
                                            class='datetimepicker form-control'
-                                           value='{{ isset($params['updated_date_from']) ? $params['updated_date_from'] : "''" }}'/>
+                                           value='{{ isset($params['updated_date_from']) ? $params['updated_date_from'] : "" }}'/>
                                 </div>
                                 <div class="col-6">
                                     <input type='text' name='params[updated_date_to]' placeholder='Hasta'
                                            class='datetimepicker form-control'
-                                           value='{{ isset($params['updated_date_to']) ? $params['updated_date_to']:"''" }}'/>
+                                           value='{{ isset($params['updated_date_to']) ? $params['updated_date_to']:"" }}'/>
                                 </div>
                             </div>
                         </div>
@@ -86,12 +86,12 @@
                                 <div class="col-6">
                                     <input type='text' name='params[deleted_date_from]' placeholder='Desde'
                                            class='datetimepicker form-control'
-                                           value='{{ isset($params['deleted_date_from']) ? $params['deleted_date_from']:"''" }}'/>
+                                           value='{{ isset($params['deleted_date_from']) ? $params['deleted_date_from']:"" }}'/>
                                 </div>
                                 <div class="col-6">
                                     <input type='text' name='params[deleted_date_to]' placeholder='Hasta'
                                            class='datetimepicker form-control'
-                                           value='{{ isset($params['deleted_date_to']) ? $params['deleted_date_to']:"''" }}'/>
+                                           value='{{ isset($params['deleted_date_to']) ? $params['deleted_date_to']:"" }}'/>
                                 </div>
                             </div>
                         </div>
@@ -157,9 +157,13 @@
                 <td>{{ $e['updated_at'] }}</td>
                 <td>{{ $e['vencimiento_at'] }}</td>
                 <td>
-                    <a href="{{ url('etapas/asignar/' . $e['id'])  }}" class="btn btn-link">
+                    <a href="{{ url('etapas/asignar/' . $e['etapa_id'])  }}" class="btn btn-link">
                         <i class="icon-check icon-white"></i> Asignármelo
                     </a>
+                    @if($e['file'])
+                        <a href="#" onclick="return descargarDocumentos({{$e['etapa_id']}});" class="btn btn-link"><i
+                            class="icon-download icon-white"></i> Descargar</a>
+                    @endif
                 </td>
             </tr>
         @endforeach
