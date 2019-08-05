@@ -17,12 +17,12 @@ class AccionEventoAnalytics extends Accion
         if(!empty($id_cuenta) && !empty($id_instancia))  {
         $display .='<label>Selecciona el ID a enviar</label><br/>'; 
         $display .= '<div class="form-check form-check-inline" id="id_cuenta">
-                    <input class="form-check-input" type="radio" id="id_cuenta" name="extra[id_seguimiento]" value="' .  $id_cuenta . '">
+                    <input class="form-check-input" type="radio" id="id_cuenta" name="extra[id_seguimiento]" value="' .  $id_cuenta . '" checked="' .  ($id_cuenta ? 'checked' : '') . '">
                     <label class="form-check-label" name="extra[id_seguimiento]" value="' .  $id_cuenta  . '" for="id_cuenta">Cuenta</label><br/>
                     </div><p>';
 
          $display .=  '<div class="form-check form-check-inline" id="id_instancia">
-                    <input class="form-check-input" type="radio" id="extra[id_seguimiento]" name="extra[id_seguimiento]" value="'.$id_instancia.'">
+                    <input class="form-check-input" type="radio" id="extra[id_seguimiento]" name="extra[id_seguimiento]" value="'.$id_instancia.'" checked="' .  ($id_instancia ? 'checked' : '') . '">
                     <label class="form-check-label" name="extra[id_seguimiento]" value="'.$id_instancia.'" for="id_instancia">Instancia</label>
                     </div><p>';
             
