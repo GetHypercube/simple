@@ -55,6 +55,10 @@ function setTableDefinition()
         if(\Schema::hasColumn('cuenta', 'metadata')){
             $this->hasColumn('metadata');
         }
+
+        if(\Schema::hasColumn('cuenta', 'favicon')){
+            $this->hasColumn('favicon');
+        }
     }
 
     function setUp()
@@ -136,6 +140,17 @@ function setTableDefinition()
 
         return $cuentaSegunDominio;
     }
+
+    public static function getAccountFavicon()
+    {
+        $cuenta = self::cuentaSegunDominio();
+        $favicon = '/img/favicon.png';
+        if ($cuenta['favicon'] != null) {
+            $favicon = '/logos/'.$cuenta['favicon'];
+        }
+        return $favicon;
+    }
+
 
     public function getLogoADesplegar()
     {
