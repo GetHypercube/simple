@@ -140,10 +140,10 @@
                     //  echo "<script>console.log(".json_encode($accion_extra).")</script>";   
                     }else
                         $accion_extra =array(
-                      "nombre_marca"  => "Hit_vacio_simple",      
-                      "categoria"  => "Hit_vacio_simple",
-                      "evento_enviante" => "Hit_vacio_simple",
-                      "id_seguimiento" => "Hit_vacio_simple"
+                      "nombre_marca"  => "",      
+                      "categoria"  => "",
+                      "evento_enviante" => "",
+                      "id_seguimiento" => ""
                     );
                 
                   ?>
@@ -160,15 +160,12 @@
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', '<?=$accion_extra['id_seguimiento'];?>', 'auto', 'cuenta');
-    ga('cuenta.send', 'pageview');
-    ////////////////////////// 1ER HIT  envia EL INICIO Y FIN DEL TTE RNT  X INSTITUCION ////////////////////////
-    ga('cuenta.send', {   //2do ID GA: Este es el que envia el HIT por institución
-    hitType: 'event',   //tipo de hit enviado al GA de tipo evento
-    eventCategory: '<?=$accion_extra['categoria'];?>', //Categoria del HIT: segun el manual de GA DGD debe ser Trámite Digital
-    eventAction: '<?=$accion_extra['nombre_marca'];?>',  //Acción del HIT: Para simple es el tte finalizado en todas sus etapas
-    eventLabel: '<?=$accion_extra['evento_enviante'];?>', //Etiqueta del hit en este contexto mandaré el ID de RNT o CHA
-    eventValue:'<?=$accion_extra['id_seguimiento'];?>' //Track Seguimiento que envia el HIT
+    ga('create', '<?=$accion_extra['id_seguimiento'];?>', 'auto');
+    ga('send', {
+    hitType: 'event',
+    eventCategory: '<?=$accion_extra['categoria'];?>',
+    eventAction: '<?=$accion_extra['nombre_marca'];?>',
+    eventLabel: '<?=$accion_extra['evento_enviante'];?>'
     });
      ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
 
