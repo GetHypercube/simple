@@ -92,6 +92,17 @@
                                     <img class="logof" src="" alt=""/>
                                 @endif
                             </div>
+                            <div class="form-group">
+                                <label for="favicon">Favicon(Preferiblemente Ancho:25px x Alto:25px)</label>
+                                <div id="file-uploader-favicon"></div>
+                                <input type="hidden" name="favicon" value="{{$data->favicon}}"/>
+
+                                @if(!empty($data->favicon) && file_exists(public_path("logos/{$data->favicon}")))
+                                    <img class="favicon" src="{{asset("logos/{$data->favicon}")}}" alt="favicon"/>
+                                @else
+                                    <img class="favicon" src="" alt=""/>
+                                @endif
+                            </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="massive_download"
                                        value="{{$data->descarga_masiva}}" id="massive_download"
@@ -132,6 +143,16 @@
             onComplete: function (id, filename, respuesta) {
                 $("input[name=logof]").val(respuesta.file_name);
                 $("img.logof").attr("src", "/logos/" + respuesta.file_name);
+            }
+        });
+
+        let upload_favicon = new qq.FileUploader({
+            element: document.getElementById('file-uploader-favicon'),
+            params: {_token: '{{csrf_token()}}'},
+            action: '/backend/uploader/logo',
+            onComplete: function (id, filename, respuesta) {
+                $("input[name=favicon]").val(respuesta.file_name);
+                $("img.favicon").attr("src", "/logos/" + respuesta.file_name);
             }
         });
     </script>

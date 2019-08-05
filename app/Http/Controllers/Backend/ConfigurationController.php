@@ -77,6 +77,7 @@ class ConfigurationController extends Controller
         $data->descarga_masiva = $request->has('massive_download') ? 1 : 0;
         $data->logo = $request->input('logo');
         $data->logof = $request->input('logof');
+        $data->favicon = $request->input('favicon');
         $data->setMetadata('contacto_email', $contacto_email);
         $data->setMetadata('contacto_link', $contacto_link);
         $data->save();
