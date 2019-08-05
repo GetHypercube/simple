@@ -175,19 +175,19 @@ class EtapaTable extends Doctrine_Table {
         }
 
         if (isset($params['updated_date_from'])) {
-            $sqlQuery->where('tramite.updated_at', '>=', date('Y-m-d', strtotime($params['updated_date_from'])));
+            $sqlQuery->where('etapa.updated_at', '>=', date('Y-m-d', strtotime($params['updated_date_from'])));
         }
 
         if (isset($params['updated_date_to'])) {
-            $sqlQuery->where('tramite.updated_at', '<=', date('Y-m-d', strtotime($params['updated_date_to'])));
+            $sqlQuery->where('etapa.updated_at', '<=', date('Y-m-d', strtotime($params['updated_date_to'])));
         }
 
         if (isset($params['deleted_date_from'])) {
-            $sqlQuery->where('tramite.deleted_at', '>=', date('Y-m-d', strtotime($params['deleted_date_from'])));
+            $sqlQuery->where('etapa.deleted_at', '>=', date('Y-m-d', strtotime($params['deleted_date_from'])));
         }
 
         if (isset($params['deleted_date_to'])) {
-            $sqlQuery->where('tramite.deleted_at', '<=', date('Y-m-d', strtotime($params['deleted_date_to'])));
+            $sqlQuery->where('etapa.deleted_at', '<=', date('Y-m-d', strtotime($params['deleted_date_to'])));
         }
 
         return $sqlQuery;
