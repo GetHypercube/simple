@@ -68,8 +68,6 @@ class AppServiceProvider extends ServiceProvider
                     env('APP_URL') . '/login/claveunica/callback' :
                     secure_url('login/claveunica/callback');
 
-                $redirect = 'http://127.0.0.1:8000/login/claveunica/callback';
-
                 $config = [
                     'client_id' => \Cuenta::cuentaSegunDominio()->client_id,
                     'client_secret' => \Cuenta::cuentaSegunDominio()->client_secret,
