@@ -151,6 +151,16 @@ function setTableDefinition()
         return $favicon;
     }
 
+    public static function getAccountMetadata()
+    {
+        $cuenta = self::cuentaSegunDominio();
+        $metadata = null;
+        if ($cuenta['metadata'] != null) {
+            $metadata = json_decode($cuenta['metadata']);
+        }
+        return $metadata;
+    }
+
 
     public function getLogoADesplegar()
     {
