@@ -41,7 +41,7 @@
         	@yield('content')
         	{!! isset($content) ? $content : '' !!}
     	</div>
-    	@include('layouts.footer')
+        @include('layouts.footer', ['metadata' => \Cuenta::getAccountMetadata()])
 	</div>
 
 <!-- Scripts -->

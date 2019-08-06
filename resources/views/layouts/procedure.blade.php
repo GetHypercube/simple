@@ -113,7 +113,7 @@
 
         </div>
     </div>
-    @include($dominio_footer)
+    @include($dominio_footer, ['metadata' => $metadata_footer])
 </div>
 
 @stack('script')
