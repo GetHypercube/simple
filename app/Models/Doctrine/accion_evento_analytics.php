@@ -14,17 +14,28 @@ class AccionEventoAnalytics extends Accion
         
         $id_cuenta = Cuenta::seo_tags()->analytics; 
         $id_instancia = env('ANALYTICS');
+        $cuenta_checked = '';
+        $instancia_checked = '';
+        if (isset($this->extra->tipo_id_seguimiento) && $this->extra->tipo_id_seguimiento== "id_cuenta"){
+            $cuenta_checked = "checked='checked'";
+        }
+        if (isset($this->extra->tipo_id_seguimiento) && $this->extra->tipo_id_seguimiento== "id_instancia"){
+            $instancia_checked = "checked='checked'";
+        }
+
         if(!empty($id_cuenta) && !empty($id_instancia))  {
         $display .='<label>Selecciona el ID a enviar</label><br/>'; 
         $display .= '<div class="form-check form-check-inline" id="id_cuenta">
-                    <input class="form-check-input" type="radio" id="id_cuenta" name="extra[id_seguimiento]" value="' .  $id_cuenta . '" checked="' .  ($id_cuenta ? 'checked' : '') . '">
-                    <label class="form-check-label" name="extra[id_seguimiento]" value="' .  $id_cuenta  . '" for="id_cuenta">Cuenta</label><br/>
+                    <input class="form-check-input tipo-seguimiento" type="radio" id="id_cuenta" name="extra[tipo_id_seguimiento]" value="id_cuenta" '.$cuenta_checked.'>
+                    <label class="form-check-label" for="tipo_id_seguimiento">Cuenta</label><br/>
                     </div><p>';
 
          $display .=  '<div class="form-check form-check-inline" id="id_instancia">
-                    <input class="form-check-input" type="radio" id="extra[id_seguimiento]" name="extra[id_seguimiento]" value="'.$id_instancia.'" checked="' .  ($id_instancia ? 'checked' : '') . '">
-                    <label class="form-check-label" name="extra[id_seguimiento]" value="'.$id_instancia.'" for="id_instancia">Instancia</label>
+                    <input class="form-check-input tipo-seguimiento" type="radio" id="id_instancia" name="extra[tipo_id_seguimiento]" value="id_instancia" '.$instancia_checked.'>
+                    <label class="form-check-label"  for="tipo_id_seguimiento">Instancia</label>
                     </div><p>';
+
+        $display .= '<input type="hidden" name="extra[id_seguimiento]" id="id_seguimiento" value="'. (isset($this->extra->id_seguimiento) ? $this->extra->id_seguimiento : '') .'"></input>';            
             
         $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">EventAction <br>  Nota: Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final</label>';
         $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" onkeyup=mostrar(this.value) value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
@@ -34,6 +45,21 @@ class AccionEventoAnalytics extends Accion
         $display .= '<br><label title="Para Chile es el ID RNT">EventLabel <br> Nota: Para Chile es el ID RNT</label>';
         $display .= '<input type="text" class="form-control col-2" name="extra[evento_enviante]"  onkeyup=evento(this.value) value="' . (isset($this->extra->evento_enviante) ? $this->extra->evento_enviante : '') . '" />';
         $display .= '<br><label><b>JSON GA</b></label>';
+        $display .='
+                    <script type="text/javascript">
+                        $(document).ready(function(){ 
+                            console.log("hola");  
+                            $(".tipo-seguimiento").on("click", function () {              
+                                let id_seguimiento = "'.$id_instancia.'";
+                                
+                                if ($(this).val()== "id_cuenta") {
+                                    id_seguimiento = "'.$id_cuenta.'";
+                                }
+
+                                $("#id_seguimiento").val(id_seguimiento);
+                            });
+                        });
+                    </script>';   
 
         $display .= '<span><br>{<br><br>
                   hitType: "event",<br><br>
@@ -43,7 +69,14 @@ class AccionEventoAnalytics extends Accion
                   
                      }</span>';
 
+                     $display .= '<script type="text/javascript>
+                     function myFunction() {
+                       alert("I am an alert box!");
+                     }
+                     </script>';
+
                      $display.= '<script type="text/javascript">
+                    
                       function mostrar(valor)
                       {
                           document.getElementById("resultado").innerHTML=valor;
@@ -58,7 +91,9 @@ class AccionEventoAnalytics extends Accion
                       {
                           document.getElementById("evento").innerHTML=valor;
                       }
-                      </script><br>';
+                     
+                      </script><br>'
+                      ;
 
                       } elseif (!empty($id_cuenta) && empty($id_instancia)) {
                           $display .='<label>Selecciona el ID a enviar</label><br/>'; 
@@ -103,6 +138,7 @@ class AccionEventoAnalytics extends Accion
                       function evento(valor)
                       {
                           document.getElementById("evento").innerHTML=valor;
+                          
                       }
                       </script><br>';
 
@@ -157,7 +193,7 @@ class AccionEventoAnalytics extends Accion
                 else
                        $display .= '<font color="red"><b>!!!No es posible enviar un evento sin ID de seguimiento Google Analytics!!!</font>';
                     
-
+                
         return $display;
     }
 
