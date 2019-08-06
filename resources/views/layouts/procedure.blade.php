@@ -32,12 +32,10 @@
 
     <meta name="google" content="notranslate"/>
 
-    <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
+    <link rel="shortcut icon" href="{{ asset(\Cuenta::getAccountFavicon()) }}">
     <link href="{{ asset('css/component-chosen.css') }}" rel="stylesheet">
 
     @yield('css')
-
-    <!-- <meta name="csrf-token" content="{{ csrf_token() }}"> -->
 
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= env('MAP_KEY') ?>&libraries=places&language=ES"></script>
     <script src="{{ asset('js/app.js') }}"></script>

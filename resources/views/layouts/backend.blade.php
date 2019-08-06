@@ -30,7 +30,7 @@
     <meta name="google" content="notranslate"/>
 
     <!-- fav and touch icons -->
-    <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
+    <link rel="shortcut icon" href="{{ asset(\Cuenta::getAccountFavicon()) }}">
     <link href="{{ asset('css/component-chosen.css') }}" rel="stylesheet">
 
     @yield('css')

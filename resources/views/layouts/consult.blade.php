@@ -28,8 +28,7 @@
     <meta name="google" content="notranslate"/>
 
     <!-- fav and touch icons -->
-    <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
-
+    <link rel="shortcut icon" href="{{ asset(\Cuenta::getAccountFavicon()) }}">
     @yield('css')
 
 
