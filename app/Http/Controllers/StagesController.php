@@ -117,7 +117,6 @@ class StagesController extends Controller
         }
     }
 
-
     public function num_pasos($tarea_id)
     {
         Log::debug('$etapa->Tarea->id [' . $tarea_id . ']');
@@ -144,7 +143,6 @@ class StagesController extends Controller
         $contador= 0;
 
         $page = Input::get('page', 1);
-        //$page = $request->input('page', 1); // Get the ?page=1 from the url
         $paginate = 50;
         $offSet = ($page * $paginate) - $paginate;
 
@@ -160,11 +158,29 @@ class StagesController extends Controller
         if ($resultotal == "true") {
             $matches = $result->groupBy('id')->keys()->toArray();
              Log::info("El Valor de RESULTOTAL de INBOX es de: " . $resultotal);
-             $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
-            $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, $matches, $buscar, $paginate, $offset);
+             $contador = Doctrine::getTable('Etapa')
+                 ->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+            $rowetapas = Doctrine::getTable('Etapa')
+                ->findPendientes(Auth::user()->id,
+                    \Cuenta::cuentaSegunDominio(),
+                    $orderby,
+                    $direction,
+                    $matches,
+                    $buscar,
+                    $paginate,
+                    $offset);
         } else {
-            $rowetapas = Doctrine::getTable('Etapa')->findPendientes(Auth::user()->id, \Cuenta::cuentaSegunDominio(), $orderby, $direction, "0", $buscar, $paginate, $offset);
-            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+            $rowetapas = Doctrine::getTable('Etapa')
+                ->findPendientes(Auth::user()->id,
+                    \Cuenta::cuentaSegunDominio(),
+                    $orderby,
+                    $direction,
+                    "0",
+                    $buscar,
+                    $paginate,
+                    $offset);
+            $contador = Doctrine::getTable('Etapa')
+                ->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
          
         }
         
@@ -195,12 +211,16 @@ class StagesController extends Controller
             Log::info("El Valor de offset es de: " . $offSet);
     
         $data = \Cuenta::configSegunDominio();
+
+        // paginador
         $data['etapas'] = new LengthAwarePaginator(
             $rowetapas,
             $contador,
             $paginate, 
             $page,
             ['path' => $request->url(), 'buscar' => $request->query()]);
+        // fin paginador
+
         $data['buscar'] = $buscar;
         $data['orderby'] = $orderby;
         $data['direction'] = $direction;
@@ -214,55 +234,36 @@ class StagesController extends Controller
 
     public function sinasignar(Request $request, $offset = 0)
     {
-       
         if (!Auth::user()->registrado) {
             $request->session()->put('claveunica_redirect', URL::current());
             return redirect()->route('login.claveunica');
         }
 
-        $query = $request->input('query');       
-        $matches = "";
-        $rowetapas = "";
-        $resultotal = 'false';
-        $contador = "0";
-
+        $params = $request->input('params');
         $page = Input::get('page', 1);
         $paginate = 50;
         $offset = ($page * $paginate) - $paginate;
 
-       if ($query) {
-            $result = Tramite::search($query)->get();
-            $matches = array();
-            foreach($result as $resultado){
-                array_push($matches, $resultado->id);
-            }
-            if(count($result) > 0){
-                $resultotal = "true";
-            }else{
-                $resultotal = "false";
-            }
-        }
+        $rowetapas = Doctrine::getTable('Etapa')
+            ->findSinAsignar(Auth::user()->id,
+                Cuenta::cuentaSegunDominio(),
+                "0",
+                $query=$params,
+                $limite=$paginate,
+                $offset
+            );
 
-        if ($resultotal == 'true') {
-            $matches = $result->groupBy('id')->keys()->toArray();
-            Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
-            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . $resultotal);
-           $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-          //  $contador = count($rowetapas);
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-           
+        $contador = Doctrine::getTable('Etapa')
+            ->findSinAsignar(Auth::user()->id,
+                Cuenta::cuentaSegunDominio(),
+                "0",
+                $query=$params,
+                $limite=null,
+                $offset,
+                $returnCount=true);
 
-        } else {
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset);
-           // $contador = count($rowetapas);
-            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-        }
+        $hasCuentaMasiva = Cuenta::cuentaSegunDominio()->descarga_masiva;
 
-        
-        //
-          //Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
-       // echo "<script>console.log(".json_encode($rowetapas).")</script>";
-       // echo "<script>console.log(".json_encode($contador).")</script>";
         $config['base_url'] = url('etapas/sinasignar');
         $config['total_rows'] = $contador;
         $config['per_page'] = $paginate;
@@ -286,17 +287,21 @@ class StagesController extends Controller
         $config['cur_tag_close'] = '</a></li>';
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
-            Log::info("El Valor de offset2 de SIN ASIGNAR es de: " . $offset);
-            Log::info("El Valor de page de SIN ASIGNAR es de: " . $page);
+        Log::info("El Valor de offset2 de SIN ASIGNAR es de: " . $offset);
+        Log::info("El Valor de page de SIN ASIGNAR es de: " . $page);
+
+            // paginador
         $data = \Cuenta::configSegunDominio();
         $data['etapas'] = new LengthAwarePaginator(
             $rowetapas, // Only grab the items we need$contador,
-            $total=1000, // Total items
+            $contador, // Total items
             $paginate, // Items per page
             $page, // Current page,
-            ['path' => $request->url(), 'query' => $request->query()]); // We need this so we can keep all old query parameters from the url);
-        $data['query'] = $query;
-         // echo "<script>console.log(".json_encode($query).")</script>";
+            ['path' => $request->url(), 'query' => $request->query()]);
+        // fin paginador, We need this so we can keep all old query parameters from the url);
+
+        $data['params'] = $params;
+        $data['hasCuentaMasiva'] = $hasCuentaMasiva;
         $data['sidebar'] = 'sinasignar';
         $data['content'] = view('stages.unassigned', $data);
         $data['title'] = 'Sin Asignar';
@@ -634,9 +639,7 @@ class StagesController extends Controller
         return view('stages.download', $data);
     }
 
-   
-
-        public function descargar_form(Request $request)
+    public function descargar_form(Request $request)
     {
         if (!Cuenta::cuentaSegunDominio()->descarga_masiva) {
             $request->session()->flash('error', 'Servicio no tiene permisos para descargar.');
@@ -868,9 +871,6 @@ class StagesController extends Controller
             abort(404);
         }
     }
-
-
-
 
     public function estados($tramite_id)
     {

@@ -11,7 +11,7 @@
 
 <div class="col-xs-12 col-md-12 ">
     <form method="GET" action="">
-        <div id="filters" class="jumbotron" style='padding: 2rem 2rem;display: {{ !null ? 'block' : 'none' }}'>
+        <div id="filters" class="jumbotron" style="padding: 2rem 2rem;display:{{ isset($params['option']) ? 'block' : 'none' }}">
             <input type='hidden' name='busqueda_avanzada' value='1'/>
             <div class="row">
                 <div class="col-12">
