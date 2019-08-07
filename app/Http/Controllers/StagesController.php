@@ -42,32 +42,16 @@ class StagesController extends Controller
         Log::info("El Proceso_id: " . $proceso_id);
         $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
             Log::info("Se a identificado el Proceso Nº : " . $proceso);
-        
-         $busca_evento = DB::table('evento') //Buscando el evento analytics por tarea iniciada
-        ->select('accion.id',
-                 'accion.tipo',
-                 'proceso.nombre',
-                 'tarea.nombre',
-                 'accion.nombre',
-                 'accion.extra')
-        ->leftjoin('tarea','evento.tarea_id', '=','tarea.id')
-        ->leftjoin('accion','evento.accion_id','=', 'accion.id')
-        ->leftjoin('proceso', 'tarea.proceso_id', '=','proceso.id')->get();
-          Log::info("Busca Eventos: " . $busca_evento);
+            $busca_evento = DB::table('evento') //Buscando el evento analytics por tarea iniciada
+            ->select('accion.id',
+                     'accion.nombre')
+            ->leftjoin('tarea','evento.tarea_id', '=','tarea.id')
+            ->leftjoin('accion','evento.accion_id','=', 'accion.id')
+            ->leftjoin('proceso', 'tarea.proceso_id', '=','proceso.id')->get();
+              Log::info("Busca Eventos: " . $busca_evento);
+    
+    
 
-        $busca_evento_analytics = DB::table('evento') //Buscando el evento analytics por tarea iniciada
-        ->select('accion.id',
-                 'accion.tipo',
-                 'proceso.nombre',
-                 'tarea.nombre',
-                 'accion.nombre',
-                 'accion.extra')
-        ->leftjoin('tarea','evento.tarea_id', '=','tarea.id')
-        ->leftjoin('accion','evento.accion_id','=', 'accion.id')
-        ->leftjoin('proceso', 'tarea.proceso_id', '=','proceso.id')
-        ->where('tarea.id', $etapa->Tarea->id)->where('accion.tipo','=','evento_analytics')->get();
-          Log::info("Evento Analytics: " . $busca_evento_analytics);
-        
         if (!$etapa) {
             return abort(404);
         }
@@ -124,16 +108,47 @@ class StagesController extends Controller
                 return redirect()->away(session()->get('redirect_url'));
             }
              Log::info("###MARCA INICIO GA : " . $etapa->pendiente);
+            $data['extra']['analytics'] = null;
+            $extra_etapa = json_decode($etapa->extra, true);
+            $extra_etapa = ($extra_etapa === null ) ? [] : $extra_etapa;
+             
+             if($etapa->Tarea->inicial==true && !isset($extra_etapa['mostrar_hit'])){ //isset
 
+                $busca_evento_analytics = DB::table('etapa') //Buscando el evento analytics por tarea iniciada
+                ->select('accion.id',
+                        'accion.tipo',
+                        'tarea.nombre',
+                        'accion.nombre',
+                        'accion.extra',
+                        'evento.regla')
+                ->join('tarea','etapa.tarea_id', '=','tarea.id')
+                ->join('evento', 'evento.tarea_id', '=', 'tarea.id')
+                ->join('accion','evento.accion_id','=', 'accion.id')
+                ->where('etapa.id', $etapa->id)->where('accion.tipo','=','evento_analytics')->get();
+                Log::info("###Lo que trae busca_analyiticd : " . $busca_evento_analytics);
+                  if (count($busca_evento_analytics)>0){
+                    $data['extra']['analytics'] =json_decode($busca_evento_analytics[0]->extra, true);
+                    $extra_hit =  $data['extra']['analytics'];
+                    $extra_etapa['analytics']=$extra_hit;
+                    
+                    
+                  }
+                
+            }
+
+            $extra_etapa['mostrar_hit'] = true; 
+            $etapa->extra= json_encode($extra_etapa, true);
+            $etapa->save();
+           
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
             $data['paso'] = $paso;
-            $data['busca_evento_analytics'] = $busca_evento_analytics;
+            
             $data['qs'] = $request->getQueryString();
             $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
             $data['title'] = $etapa->Tarea->nombre;
             //$template = $request->has('iframe') ? 'template_iframe' : 'template';
-             
+            
             return view('stages.run', $data);
         }
     }
@@ -515,11 +530,8 @@ class StagesController extends Controller
             exit;
         }
 
-        //if ($etapa->Tarea->asignacion!='manual') {
-        //    $etapa->Tramite->avanzarEtapa();
-        //    redirect();
-        //    exit;
-        //}
+       
+
         $data = \Cuenta::configSegunDominio();
         $data['etapa'] = $etapa;
         $data['tareas_proximas'] = $etapa->getTareasProximas();
@@ -531,6 +543,10 @@ class StagesController extends Controller
         $data['title'] = $etapa->Tarea->nombre;
         $template = $request->input('iframe') ? 'template_iframe' : 'template_newhome';
 
+      
+        
+         //fin de evento unico en etapa
+       
         return view('stages.ejecutar_fin', $data);
     }
 
@@ -575,6 +591,8 @@ class StagesController extends Controller
             $etapa->avanzar($request->input('usuarios_a_asignar'));
 
             $proximas = $etapa->getTareasProximas();
+
+
 
             Log::info("###Id etapa despues de avanzar: " . $etapa->id);
             Log::info("###Id tarea despues de avanzar: " . $etapa->tarea_id);
