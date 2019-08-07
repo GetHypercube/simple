@@ -126,25 +126,35 @@
       <!--ID ANAlYTICS POR TAREA DEL TTE-->
     
         @if(!is_null($extra['analytics']))
+
             @push('script')
-                <script> 
-                let marca_action = '<?=$extra['analytics']['nombre_marca'];?>'; //Marca Inicial, Ingreso Solicitud, Marca Final
-                let categoria = '<?=$extra['analytics']['categoria'];?>';
-                let id_evento = '<?=$extra['analytics']['evento_enviante'];?>';
-                let hit_inicio = 'simple_marca_inicial'+categoria+id_evento;
-                let hit_final = 'simple_final'+categoria+id_evento;
-                        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-                        ga('create', '<?=$extra['analytics']['id_seguimiento'];?>', 'auto');
-                        
-                        ga('send', {
+                <script>
+                    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+                    ga('create', '<?=$extra['analytics']['id_seguimiento'];?>', 'auto');
+
+                    const ES_FINAL = '<?=$extra['es_final'];?>';
+                    const GA_PARAMS = {
                         hitType: 'event',
-                        eventCategory: categoria,
-                        eventAction: marca_action,
-                        eventLabel: id_evento
+                        eventCategory: '<?=$extra['analytics']['categoria'];?>',
+                        eventAction: '<?=$extra['analytics']['nombre_marca'];?>',
+                        eventLabel: '<?=$extra['analytics']['evento_enviante'];?>'
+                    };
+
+                    if (ES_FINAL=='si') {
+                        function buttonGa(params) {
+                            ga('send',params);
+                        }
+                        $(document).ready(function () {
+                            $('#boton-termino').on('click', function () {
+                                buttonGa(GA_PARAMS);
+                            });
                         });
+                    } else {
+                        ga('send', GA_PARAMS);
+                    }
                 ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
 
                 </script>

@@ -107,38 +107,42 @@ class StagesController extends Controller
             if(session()->has('redirect_url')){
                 return redirect()->away(session()->get('redirect_url'));
             }
-             Log::info("###MARCA INICIO GA : " . $etapa->pendiente);
+
+            Log::info("###MARCA INICIO GA : " . $etapa->pendiente);
             $data['extra']['analytics'] = null;
             $extra_etapa = json_decode($etapa->extra, true);
             $extra_etapa = ($extra_etapa === null ) ? [] : $extra_etapa;
-             
-             if($etapa->Tarea->inicial==true && !isset($extra_etapa['mostrar_hit'])){ //isset
 
+            if(!isset($extra_etapa['mostrar_hit'])){ //isset
                 $busca_evento_analytics = DB::table('etapa') //Buscando el evento analytics por tarea iniciada
-                ->select('accion.id',
+                    ->select('accion.id',
                         'accion.tipo',
-                        'tarea.nombre',
+                        'tarea.nombre as tarea_nombre',
+                        'tarea.es_final as es_tarea_final',
                         'accion.nombre',
                         'accion.extra',
-                        'evento.regla')
-                ->join('tarea','etapa.tarea_id', '=','tarea.id')
-                ->join('evento', 'evento.tarea_id', '=', 'tarea.id')
-                ->join('accion','evento.accion_id','=', 'accion.id')
-                ->where('etapa.id', $etapa->id)->where('accion.tipo','=','evento_analytics')->get();
+                        'evento.regla'
+                    )
+                    ->join('tarea','etapa.tarea_id', '=','tarea.id')
+                    ->join('evento', 'evento.tarea_id', '=', 'tarea.id')
+                    ->join('accion','evento.accion_id','=', 'accion.id')
+                    ->where('etapa.id', $etapa->id)->where('accion.tipo','=','evento_analytics')->get();
+
                 Log::info("###Lo que trae busca_analyiticd : " . $busca_evento_analytics);
-                  if (count($busca_evento_analytics)>0){
-                    $data['extra']['analytics'] =json_decode($busca_evento_analytics[0]->extra, true);
+
+                if (count($busca_evento_analytics) > 0) {
+                    $data['extra']['analytics'] = json_decode($busca_evento_analytics[0]->extra, true);
+                    $data['extra']['es_final'] = $busca_evento_analytics[0]->es_tarea_final ? 'si':'no';
                     $extra_hit =  $data['extra']['analytics'];
                     $extra_etapa['analytics']=$extra_hit;
-                    
-                    
-                  }
-                
-            }
+                    $extra_etapa['mostrar_hit'] = true;
+                } else {
+                    $extra_etapa['mostrar_hit'] = false;
+                }
 
-            $extra_etapa['mostrar_hit'] = true; 
-            $etapa->extra= json_encode($extra_etapa, true);
-            $etapa->save();
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
+            }
            
             $data['secuencia'] = $secuencia;
             $data['etapa'] = $etapa;
