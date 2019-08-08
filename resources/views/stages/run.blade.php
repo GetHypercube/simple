@@ -124,8 +124,8 @@
             <img src="{{asset('img/loading.gif')}}">
         </div>
       <!--ID ANAlYTICS POR TAREA DEL TTE-->
-    
-        @if(!is_null($extra['analytics']))
+ 
+       @if(!is_null($extra['analytics']))
 
             @push('script')
                 <script>
@@ -134,8 +134,9 @@
                     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
                     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
                     ga('create', '<?=$extra['analytics']['id_seguimiento'];?>', 'auto');
-
+                      
                     const ES_FINAL = '<?=$extra['es_final'];?>';
+                    
                     const GA_PARAMS = {
                         hitType: 'event',
                         eventCategory: '<?=$extra['analytics']['categoria'];?>',
@@ -143,24 +144,16 @@
                         eventLabel: '<?=$extra['analytics']['evento_enviante'];?>'
                     };
 
-                    if (ES_FINAL=='si') {
-                        function buttonGa(params) {
-                            ga('send',params);
-                        }
-                        $(document).ready(function () {
-                            $('#boton-termino').on('click', function () {
-                                buttonGa(GA_PARAMS);
-                            });
-                        });
-                    } else {
-                        ga('send', GA_PARAMS);
-                    }
+                    if (ES_FINAL=='no') {
+                       ga('send', GA_PARAMS);
+                    } 
                 ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
 
                 </script>
 
             @endpush
         @endif
+
 
 
               

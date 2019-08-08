@@ -37,7 +37,7 @@ class AccionEventoAnalytics extends Accion
 
         $display .= '<input type="hidden" name="extra[id_seguimiento]" id="id_seguimiento" value="'. (isset($this->extra->id_seguimiento) ? $this->extra->id_seguimiento : '') .'"></input>';            
             
-        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">EventAction <br>  Nota: Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final</label>';
+        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud">EventAction <br>  Nota: Para Chile corresponde: Marca Inicial, Ingreso Solicitud</label>';
         $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" onkeyup=mostrar(this.value) value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '">';            
        
         $display .= '<label title="Para Chile es Categoria Trámite Digital">EventCategory <br>  Nota: Para Chile es Categoria Trámite Digital</label>';
@@ -100,7 +100,7 @@ class AccionEventoAnalytics extends Accion
                     <label class="form-check-label" name="extra[id_seguimiento]" value="'.$id_instancia.'" for="id_instancia">Instancia</label>
                     </div><p>';
 
-        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">EventAction <br>  Nota: Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final</label>';
+        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud">EventAction <br>  Nota: Para Chile corresponde: Marca Inicial, Ingreso Solicitud</label>';
         $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" onkeyup=mostrar(this.value) value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
        
         $display .= '<label title="Para Chile es Categoria Trámite Digital">EventCategory  <br>  Nota: Para Chile es Categoria Trámite Digital</label>';
@@ -147,7 +147,7 @@ class AccionEventoAnalytics extends Accion
                     <label class="form-check-label" name="extra[id_seguimiento]" value="' .  $id_cuenta  . '" for="id_cuenta">Cuenta</label><br/>
                     </div><p>';
             
-        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final">EventAction <br>  Nota: Para Chile corresponde: Marca Inicial, Ingreso Solicitud, Marca Final</label>';
+        $display .= '<br><label title="Para Chile corresponde: Marca Inicial, Ingreso Solicitud">EventAction <br>  Nota: Para Chile corresponde: Marca Inicial, Ingreso Solicitud</label>';
         $display .= '<input type="text" class="form-control col-2" id="nombre_marca" name="extra[nombre_marca]" onkeyup=mostrar(this.value) value="' . (isset($this->extra->nombre_marca) ? $this->extra->nombre_marca : '') . '" />';            
        
         $display .= '<label title="Para Chile la Categoria Trámite Digital">EventCategory <br>  Nota: Para Chile es Categoria Trámite Digital</label>';
