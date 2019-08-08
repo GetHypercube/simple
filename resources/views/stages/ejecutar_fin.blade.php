@@ -102,7 +102,9 @@
                     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
                     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
                     ga('create', '<?=$extra['analytics']['id_seguimiento'];?>', 'auto');
-                     
+                      function buttonGa(params) {
+                         ga('send', GA_PARAMS);
+                         }
                     const ES_FINAL = '<?=$extra['es_final'];?>';
 
                     const GA_PARAMS = {
@@ -111,8 +113,21 @@
                         eventAction: '<?=$extra['analytics']['nombre_marca'];?>',
                         eventLabel: '<?=$extra['analytics']['evento_enviante'];?>'
                     };
+                    if (ES_FINAL==1) { 
+                                
+                          $(document).ready(function () {
+                            $('#boton-termino').on('click', function () {
+                              // event.preventDefault();d
+                               // console.log(GA_PARAMS);
+                                buttonGa(GA_PARAMS);
+                            });
+                        });
 
-                 /*   if (ES_FINAL==1) { //esto enviaba 2 veces
+                      }
+                    
+
+
+              /*    if (ES_FINAL==1) { //esto enviaba 2 veces
                         function buttonGa(params) {
                             ga('send',params);
                         }
@@ -126,9 +141,9 @@
                     } else {
                         ga('send', GA_PARAMS);
                     }*/
-                    if (ES_FINAL==1) {
+                 /*  if (ES_FINAL==1) {
                        ga('send', GA_PARAMS);
-                    } 
+                    } */
                 ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
 
                 </script>
