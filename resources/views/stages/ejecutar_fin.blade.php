@@ -112,14 +112,14 @@
                         eventLabel: '<?=$extra['analytics']['evento_enviante'];?>'
                     };
 
-                    if (ES_FINAL=='si') {
+                    if (ES_FINAL==1) {
                         function buttonGa(params) {
                             ga('send',params);
                         }
                         $(document).ready(function () {
-                            $('#boton-termino').on('click', function (event) {
-                            //    event.preventDefault();
-                                //console.log(GA_PARAMS);
+                            $('#boton-termino').on('click', function () {
+                              // event.preventDefault();
+                               // console.log(GA_PARAMS);
                                 buttonGa(GA_PARAMS);
                             });
                         });

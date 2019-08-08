@@ -538,14 +538,14 @@ class StagesController extends Controller
             exit;
         }
 
-       
+     //dd($etapa->id);
 
         $data = \Cuenta::configSegunDominio();
         $data['extra']['analytics'] = null;
         $data['tareas_proximas'] = $etapa->getTareasProximas();
             $extra_etapa = json_decode($etapa->extra, true);
             $extra_etapa = ($extra_etapa === null ) ? [] : $extra_etapa;
-            if(!isset($extra_etapa['mostrar_hit'])||$extra_etapa['mostrar_hit']){ //isset
+            if(!isset($extra_etapa['mostrar_hit'])){ //isset ||$extra_etapa['mostrar_hit']
                 $busca_evento_analytics = DB::table('etapa') //Buscando el evento analytics por tarea iniciada
                     ->select('accion.id',
                         'accion.tipo',
@@ -564,7 +564,8 @@ class StagesController extends Controller
 
                 if (count($busca_evento_analytics) > 0) {
                     $data['extra']['analytics'] = json_decode($busca_evento_analytics[0]->extra, true);   
-                    $data['extra']['es_final'] = $busca_evento_analytics[0]->es_tarea_final ? 'si':'no';
+                   $data['extra']['es_final'] = $busca_evento_analytics[0]->es_tarea_final ? 1: 0;
+                    //$data['extra']['es_final'] =1 ? 0;
                     $extra_hit =  $data['extra']['analytics'];
                     $extra_etapa['analytics']=$extra_hit;
                 }
@@ -588,7 +589,8 @@ class StagesController extends Controller
                     ->where('etapa.id', $etapa->id)->where('accion.tipo','=','evento_analytics')->get();
                 // dd($busca_evento_analytics);
                 if (count($busca_evento_analytics) > 0) {
-                    $data['extra']['es_final'] = $busca_evento_analytics[0]->es_tarea_final ? 'si':'no';
+                    $data['extra']['es_final'] = $busca_evento_analytics[0]->es_tarea_final ? 1: 0;
+                  //  $data['extra']['es_final'] = $busca_evento_analytics[0]->es_tarea_final ? 'si':'no';
                     $data['extra']['analytics'] = json_decode($busca_evento_analytics[0]->extra, true);
                     // TOOD: Marcar para no mostrar nunca mas
                     $extra_hit =  $data['extra']['analytics'];
