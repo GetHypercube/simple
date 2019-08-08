@@ -124,54 +124,46 @@
             <img src="{{asset('img/loading.gif')}}">
         </div>
       <!--ID ANAlYTICS POR TAREA DEL TTE-->
-                  <?php 
-                 if (isset($busca_evento_analytics)) {
-                    $nombre_marca_inicial=substr($busca_evento_analytics, 46, -127); //Marca a enviar 
-                    }     
-                   foreach ($busca_evento_analytics as $busca_envento => $value) {
-                      $accion_extra= $busca_evento_analytics[0]->extra ?: '';
-                      $busca_evento_analytics[0]->extra ?: '';
-                   }
+ 
+       @if(!is_null($extra['analytics']))
 
-                  ?>
-                   <?php 
-                    if (isset($accion_extra)) {      
-                    $accion_extra= json_decode($busca_evento_analytics[0]->extra, true) ?: '' ; 
-                    //  echo "<script>console.log(".json_encode($accion_extra).")</script>";   
-                    }else
-                        $accion_extra =array(
-                      "nombre_marca"  => "",      
-                      "categoria"  => "",
-                      "evento_enviante" => "",
-                      "id_seguimiento" => ""
-                    );
-                
-                  ?>
+            @push('script')
+                <script>
+                    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+                    ga('create', '<?=$extra['analytics']['id_seguimiento'];?>', 'auto');
+                      
+                    const ES_FINAL = '<?=$extra['es_final'];?>';
+                    
+                    const GA_PARAMS = {
+                        hitType: 'event',
+                        eventCategory: '<?=$extra['analytics']['categoria'];?>',
+                        eventAction: '<?=$extra['analytics']['nombre_marca'];?>',
+                        eventLabel: '<?=$extra['analytics']['evento_enviante'];?>'
+                    };
+
+                    if (ES_FINAL=='no') {
+                       ga('send', GA_PARAMS);
+                    } 
+                ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
+
+                </script>
+
+            @endpush
+        @endif
+
+
 
               
-           <!--ID ANAlYTICS POR TAREA DEL TTE-->
+      <!--ID ANAlYTICS POR TAREA DEL TTE-->
     </form>
     <div id="modalcalendar" class="modal hide modalconfg modcalejec"></div>
     <input type="hidden" id="urlbase" value="<?= URL::to('/') ?>"/>
 @endsection
-@push('script')
-       <script> //SCRIPT INICIO
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-    ga('create', '<?=$accion_extra['id_seguimiento'];?>', 'auto');
-    ga('send', {
-    hitType: 'event',
-    eventCategory: '<?=$accion_extra['categoria'];?>',
-    eventAction: '<?=$accion_extra['nombre_marca'];?>',
-    eventLabel: '<?=$accion_extra['evento_enviante'];?>'
-    });
-     ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
 
-    </script>
 
-@endpush
 @push('script')
     <script src="{{asset('js/helpers/s3_upload.js')}}"></script>
     <script src="{{asset('js/helpers/fileuploader.js')}}"></script>
