@@ -112,7 +112,7 @@
                         eventLabel: '<?=$extra['analytics']['evento_enviante'];?>'
                     };
 
-                    if (ES_FINAL==1) {
+                 /*   if (ES_FINAL==1) { //esto enviaba 2 veces
                         function buttonGa(params) {
                             ga('send',params);
                         }
@@ -125,7 +125,10 @@
                         });
                     } else {
                         ga('send', GA_PARAMS);
-                    }
+                    }*/
+                    if (ES_FINAL==1) {
+                       ga('send', GA_PARAMS);
+                    } 
                 ////////////////////////  FIN 1ER HIT  envia EL INICIO DEL TTE RNT  ////////////////////////
 
                 </script>
