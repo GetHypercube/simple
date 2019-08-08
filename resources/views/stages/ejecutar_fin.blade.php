@@ -118,7 +118,7 @@
                         }
                         $(document).ready(function () {
                             $('#boton-termino').on('click', function () {
-                              // event.preventDefault();
+                              // event.preventDefault();d
                                // console.log(GA_PARAMS);
                                 buttonGa(GA_PARAMS);
                             });

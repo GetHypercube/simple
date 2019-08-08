@@ -587,7 +587,7 @@ class StagesController extends Controller
                     ->join('evento', 'evento.tarea_id', '=', 'tarea.id')
                     ->join('accion','evento.accion_id','=', 'accion.id')
                     ->where('etapa.id', $etapa->id)->where('accion.tipo','=','evento_analytics')->get();
-                // dd($busca_evento_analytics);
+                // dd($busca_evento_analytics); h
                 if (count($busca_evento_analytics) > 0) {
                     $data['extra']['es_final'] = $busca_evento_analytics[0]->es_tarea_final ? 1: 0;
                   //  $data['extra']['es_final'] = $busca_evento_analytics[0]->es_tarea_final ? 'si':'no';
