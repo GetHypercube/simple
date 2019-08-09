@@ -133,6 +133,7 @@ class StagesController extends Controller
 
     public function inbox(Request $request, $offset= 0)
     {
+
         $buscar = $request->input('buscar');
         $orderby = $request->has('orderby') ? $request->input('orderby') : 'updated_at';
         $direction = $request->has('direction') ? $request->input('direction') : 'desc';
