@@ -19,6 +19,7 @@ class Etapa extends Doctrine_Record
         $this->hasColumn('created_at');
         $this->hasColumn('updated_at');
         $this->hasColumn('ended_at');
+        $this->hasColumn('extra');
     }
 
     function setUp()

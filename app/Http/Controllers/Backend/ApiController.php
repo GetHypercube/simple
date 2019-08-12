@@ -189,6 +189,8 @@ class ApiController extends Controller
         $t = Doctrine::getTable('Tramite')->find($tramite_id);
         $etapa_id = $t->getUltimaEtapa()->id;
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        if(!$etapa->Tarea->externa)
+            return response()->json(['status' => 'La operación no es permitida',], 403);
         $pendientes = Doctrine_Core::getTable('Acontecimiento')->findByEtapaIdAndEstado($etapa_id, 1)->count();
         if ($pendientes > 0) {
 
