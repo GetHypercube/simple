@@ -12,7 +12,7 @@ class EtapaTable extends Doctrine_Table {
                         ->get()
                         ->toArray();
             $grupos = json_decode(json_encode($grupos), true);
-            
+
             if($grupos){
                 $tareas = DB::table('etapa')
                 ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
@@ -22,17 +22,17 @@ class EtapaTable extends Doctrine_Table {
                 ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
                 ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
                 ->where('cuenta.nombre',$cuenta->nombre)
-                ->where(function($query) use($grupos){
+                ->whereIn('tarea.grupos_usuarios',$grupos)
+               /* ->where(function($query) use($grupos){
                     foreach ($grupos as $grupo){
-                       $query->orWhere('tarea.grupos_usuarios', 'LIKE', '%'.$grupo['grupo_usuarios_id'].'%');
+                        $query->orWhere('tarea.grupos_usuarios', $grupo['grupo_usuarios_id']);
                     }
-                })
+                })*/
                 ->whereNull('etapa.usuario_id')
                 ->limit($limite)
                 ->offset($inicio)
                 ->orderBy('etapa.tarea_id', 'ASC')
                 ->get()->toArray();
-
                 //se buscan etapas cuyas tareas que por nivel de acceso esten configuradas por nombre de grupo como variables @@
                 $tareas_aa = DB::table('etapa')
                 ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
