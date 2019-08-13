@@ -22,11 +22,12 @@ class EtapaTable extends Doctrine_Table {
                 ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
                 ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
                 ->where('cuenta.nombre',$cuenta->nombre)
-                ->where(function($query) use($grupos){
+                ->whereIn('tarea.grupos_usuarios',$grupos)
+               /* ->where(function($query) use($grupos){
                     foreach ($grupos as $grupo){
                         $query->orWhere('tarea.grupos_usuarios', $grupo['grupo_usuarios_id']);
                     }
-                })
+                })*/
                 ->whereNull('etapa.usuario_id')
                 ->limit($limite)
                 ->offset($inicio)
