@@ -45,11 +45,11 @@
         }
         ?>
         <?php
-            $previsualizacion = '';
-            if ( ! empty($e->previsualizacion)){
-                $r = new Regla($e->previsualizacion);
-                $previsualizacion = $r->getExpresionParaOutput($e->etapa_id);
-            }
+        $previsualizacion = '';
+        if ( ! empty($e->previsualizacion)){
+            $r = new Regla($e->previsualizacion);
+            $previsualizacion = $r->getExpresionParaOutput($e->etapa_id);
+        }
 
         ?>
         <tr <?=$previsualizacion ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : ''?>>

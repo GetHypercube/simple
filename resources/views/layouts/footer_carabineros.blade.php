@@ -12,8 +12,12 @@
                 <br>
             </div>
             <div class="col-4 mt-4 text-right">
-                <img src="{{asset('img/cc.svg')}}" alt="CC">
-                <img src="{{asset('img/by.svg')}}" alt="BY">
+                @if (isset($metadata->contacto_email))
+                    <span>Email de soporte: {{ $metadata->contacto_email }}</span><br>
+                    <a href="{{ $metadata->contacto_link }}" target="_blank">
+                        Sitio de soporte
+                    </a>
+                @endif
             </div>
         </div>
 
