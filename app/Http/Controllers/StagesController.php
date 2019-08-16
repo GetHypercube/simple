@@ -235,36 +235,55 @@ class StagesController extends Controller
 
     public function sinasignar(Request $request, $offset = 0)
     {
+
         if (!Auth::user()->registrado) {
             $request->session()->put('claveunica_redirect', URL::current());
             return redirect()->route('login.claveunica');
         }
 
-        $params = $request->input('params');
+        $query = $request->input('query');
+        $matches = "";
+        $rowetapas = "";
+        $resultotal = 'false';
+        $contador = "0";
+
         $page = Input::get('page', 1);
         $paginate = 50;
         $offset = ($page * $paginate) - $paginate;
 
-        $rowetapas = Doctrine::getTable('Etapa')
-            ->findSinAsignar(Auth::user()->id,
-                Cuenta::cuentaSegunDominio(),
-                "0",
-                $query=$params,
-                $limite=$paginate,
-                $offset
-            );
+        if ($query) {
+            $result = Tramite::search($query)->get();
+            $matches = array();
+            foreach($result as $resultado){
+                array_push($matches, $resultado->id);
+            }
+            if(count($result) > 0){
+                $resultotal = "true";
+            }else{
+                $resultotal = "false";
+            }
+        }
 
-        $contador = Doctrine::getTable('Etapa')
-            ->findSinAsignar(Auth::user()->id,
-                Cuenta::cuentaSegunDominio(),
-                "0",
-                $query=$params,
-                $limite=null,
-                $offset,
-                $returnCount=true);
+        if ($resultotal == 'true') {
+            $matches = $result->groupBy('id')->keys()->toArray();
+            Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
+            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . $resultotal);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+            //  $contador = count($rowetapas);
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
 
-        $hasCuentaMasiva = Cuenta::cuentaSegunDominio()->descarga_masiva;
 
+        } else {
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset);
+            // $contador = count($rowetapas);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+        }
+
+
+        //
+        //Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
+        // echo "<script>console.log(".json_encode($rowetapas).")</script>";
+        // echo "<script>console.log(".json_encode($contador).")</script>";
         $config['base_url'] = url('etapas/sinasignar');
         $config['total_rows'] = $contador;
         $config['per_page'] = $paginate;
@@ -290,25 +309,22 @@ class StagesController extends Controller
         $config['num_tag_close'] = '</li>';
         Log::info("El Valor de offset2 de SIN ASIGNAR es de: " . $offset);
         Log::info("El Valor de page de SIN ASIGNAR es de: " . $page);
-
-            // paginador
         $data = \Cuenta::configSegunDominio();
         $data['etapas'] = new LengthAwarePaginator(
             $rowetapas, // Only grab the items we need$contador,
-            $contador, // Total items
+            $total=1000, // Total items
             $paginate, // Items per page
             $page, // Current page,
-            ['path' => $request->url(), 'query' => $request->query()]);
-        // fin paginador, We need this so we can keep all old query parameters from the url);
-
-        $data['params'] = $params;
-        $data['hasCuentaMasiva'] = $hasCuentaMasiva;
+            ['path' => $request->url(), 'query' => $request->query()]); // We need this so we can keep all old query parameters from the url);
+        $data['query'] = $query;
+        // echo "<script>console.log(".json_encode($query).")</script>";
         $data['sidebar'] = 'sinasignar';
         $data['content'] = view('stages.unassigned', $data);
         $data['title'] = 'Sin Asignar';
 
         return view('layouts.procedure', $data);
     }
+
 
     public function ejecutar_form(Request $request, $etapa_id, $secuencia)
     {

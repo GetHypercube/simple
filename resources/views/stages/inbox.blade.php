@@ -7,113 +7,26 @@
         </div>
         <div class="col-xs-12 col-md-4">
             <!--buscador-->
-            <div class="float-right">
-                <a href='#' onclick='toggleBusquedaAvanzada()'>Opciones de Búsqueda</a>
-            </div>
+            <form class="form-search" method="GET" action="">
+                <div class="search-form form-inline float-right">
+                    <div class="input-group mb-3">
+                        <input class="search-form_input form-control" placeholder="Escribe aquí lo que deseas buscar"
+                               type="text"
+                               name="buscar"
+                               value="<?= $buscar?>">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">
+                                <i class="material-icons">search</i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-12">
-            <form method="GET" action="">
-                <div id="filters" class="jumbotron" style="padding: 2rem 2rem;display:{{ isset($params['option']) ? 'block' : 'none' }}">
-                    <input type='hidden' name='busqueda_avanzada' value='1'/>
-                    <div class="row">
-                        <div class="col-12">
-                            <label class='col-form-label'>Seleccione tipo de búsqueda:</label><br>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input search-selector" type="radio"
-                                       name="params[option]" id="inlineRadio5" value="option5">
-                                <label class="form-check-label" for="inlineRadio5">Sin cartgoría</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input search-selector" type="radio"
-                                       name="params[option]" id="inlineRadio1" value="option1">
-                                <label class="form-check-label" for="inlineRadio1">Buscar por Nro</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input search-selector" type="radio"
-                                       name="params[option]" id="inlineRadio3" value="option3">
-                                <label class="form-check-label" for="inlineRadio3">
-                                    Buscar por Referencia
-                                </label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input search-selector" type="radio"
-                                       name="params[option]" id="inlineRadio4" value="option4">
-                                <label class="form-check-label" for="inlineRadio4">Buscar por Nombre</label>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="search-inputs">
-                                <div class='control-group seg-input-search' id="input1">
-                                    <label class='col-form-label'>Ingrese Nro:</label>
-                                    <input name="params[tramite_id]" value="{{ isset($params['tramite_id']) ? $params['tramite_id']:"" }}"
-                                           type="text" class="form-control"/>
-                                </div>
-                                <div class='control-group seg-input-search' id="input3">
-                                    <label class='col-form-label'>Ingrese Valor de referencia:</label>
-                                    <input name="params[ref]" value="{{ isset($params['ref']) ? $params['ref']:"" }}"
-                                           type="text" class="form-control"/>
-                                </div>
-                                <div class='control-group seg-input-search' id="input4">
-                                    <label class='col-form-label'>Ingrese nombre:</label>
-                                    <input name="params[name]" value="{{ isset($params['name']) ? $params['name']:"" }}"
-                                           type="text" class="form-control"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <br><br>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label class='col-form-label'>Última modificación (opcional):</label>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type='text' name='params[updated_date_from]' placeholder='Desde'
-                                                   class='datetimepicker form-control'
-                                                   value='{{ isset($params['updated_date_from']) ? $params['updated_date_from'] : "" }}'/>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type='text' name='params[updated_date_to]' placeholder='Hasta'
-                                                   class='datetimepicker form-control'
-                                                   value='{{ isset($params['updated_date_to']) ? $params['updated_date_to']:"" }}'/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <label class='col-form-label'>Fecha de vencimiento (opcional):</label>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type='text' name='params[deleted_date_from]' placeholder='Desde'
-                                                   class='datetimepicker form-control'
-                                                   value='{{ isset($params['deleted_date_from']) ? $params['deleted_date_from']:"" }}'/>
-                                        </div>
-                                        <div class="col-6">
-                                            <input type='text' name='params[deleted_date_to]' placeholder='Hasta'
-                                                   class='datetimepicker form-control'
-                                                   value='{{ isset($params['deleted_date_to']) ? $params['deleted_date_to']:"" }}'/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <br>
-                            ** Las fechas son filtros adicionales a las opciones de búsqueda en la parte superior.
-                        </div>
-                    </div>
-                    <hr/>
-                    <div style='text-align: right;'>
-                        <button type="submit" class="btn btn-primary">Buscar</button>
-                    </div>
-                </div>
-            </form>
-        </div>
         <div class="col-xs-12 col-md-12">
             <?php if (count($etapas) > 0): ?>
             <div class="table-responsive">
@@ -192,21 +105,21 @@
                         <td class="time">{{\Carbon\Carbon::parse($e->updated_at)->format('d-m-Y')}}</td>
                         <td><?=$e->vencimiento_at ? \Carbon\Carbon::parse($e->vencimiento_at)->format('d-m-Y') : 'N/A'?></td>
                         <td class="actions">
-                                <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
-                                class="btn btn-sm btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i>
-                                    Realizar</a>
-                        <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
+                            <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
+                               class="btn btn-sm btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i>
+                                Realizar</a>
+                            <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
                             <?php if ($file): ?>
                             <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);"
                                class="btn btn btn-sm btn-success"><i
                                         class="icon-download icon-white"></i> Descargar</a>
-                        <?php endif; ?>
-                        <?php endif; ?>
-                            @if(Auth::check() && Auth::user()->open_id && !is_null($e->Tarea->Proceso->eliminar_tramites) && $e->Tarea->Proceso->eliminar_tramites) 
+                            <?php endif; ?>
+                            <?php endif; ?>
+                            @if(Auth::check() && Auth::user()->open_id && !is_null($e->Tarea->Proceso->eliminar_tramites) && $e->Tarea->Proceso->eliminar_tramites)
                                 <a href="#" onclick="return eliminarTramite(<?=$e->Tramite->id?>);"
-                                class="btn btn-sm btn-danger preventDoubleRequest"><i class="icon-edit icon-red"></i>
+                                   class="btn btn-sm btn-danger preventDoubleRequest"><i class="icon-edit icon-red"></i>
                                     Borrar</a>
-                            @endif
+                        @endif
                         <!--<?php if($e->netapas == 1):?><a href="<?=url('tramites/eliminar/' . $e->tramite_id)?>" class="btn" onclick="return confirm('¿Esta seguro que desea eliminar este tramite?')"><i class="icon-trash"></i></a><?php endif ?>-->
                         </td>
                     </tr>
@@ -229,7 +142,7 @@
             </div>
             <?php endif; ?>
             <?php endif; ?>
-             <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
+            <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
             <?php else: ?>
             <p>No hay trámites pendientes en su bandeja de entrada.</p>
             <?php endif; ?>
@@ -241,21 +154,6 @@
 
 @push('script')
     <script>
-        let SEARCH_OPT = {!! isset($params['option']) ? json_encode($params['option']) : "'option5'" !!};
-        function checkSearchInputs(val) {
-            $('.seg-input-search').hide();
-            switch (val) {
-                case 'option1':
-                    $('#input1').show();
-                    break;
-                case 'option3':
-                    $('#input3').show();
-                    break;
-                case 'option4':
-                    $('#input4').show();
-                    break;
-            }
-        }
         function descargarDocumentos(tramiteId) {
             $("#modal").load("/etapas/descargar/" + tramiteId);
             $("#modal").modal();
@@ -294,43 +192,7 @@
                 }
                 $('#tramites').val(checked);
             });
-
-            checkSearchInputs(SEARCH_OPT);
-
-            switch (SEARCH_OPT) {
-                case 'option1':
-                    $('#inlineRadio1').prop('checked', true);
-                    break;
-                case 'option3':
-                    $('#inlineRadio3').prop('checked', true);
-                    break;
-                case 'option4':
-                    $('#inlineRadio4').prop('checked', true);
-                    break;
-                case undefined:
-                    $('#inlineRadio5').prop('checked', true);
-                    break;
-                default:
-                    $('#inlineRadio5').prop('checked', true);
-            }
-
-            $('.datetimepicker').datetimepicker({
-                format: 'DD-MM-YYYY',
-                icons: {
-                    previous: "glyphicon glyphicon-chevron-left",
-                    next: "glyphicon glyphicon-chevron-right"
-                },
-                locale: 'es'
-            });
-
-            $('.search-selector').on('click', function() {
-                checkSearchInputs($(this).val())
-            });
         });
-
-        function toggleBusquedaAvanzada() {
-            $("#filters").slideToggle();
-        }
 
         function closeModal() {
             $("#modal").removeClass("in");
