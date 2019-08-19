@@ -15,7 +15,7 @@ class AccionEventoAnalytics extends Accion
         $guarda_cuenta =  $data['cuentas'];
         foreach($guarda_cuenta as $cuenta){
           $id_cuenta = $cuenta->analytics; 
-         // dd($id_cuenta);77
+         // dd($id_cuenta);ddddddd
          }       
         $id_instancia = env('ANALYTICS');
         $cuenta_checked = '';
