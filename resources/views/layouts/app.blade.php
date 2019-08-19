@@ -19,8 +19,7 @@
     <meta name="google" content="notranslate"/>
 
     <!-- fav and touch icons -->
-    <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
-
+    <link rel="shortcut icon" href="{{ asset(\Cuenta::getAccountFavicon()) }}">
     @yield('css')
 
     <style type="text/css">{{ $personalizacion }}</style>
@@ -33,7 +32,7 @@
         	@yield('content')
         	{!! isset($content) ? $content : '' !!}
     	</div>
-    	@include($dominio_footer)
+    	@include($dominio_footer, ['metadata' => $metadata_footer])
 	</div>
 
 <!-- Scripts -->

@@ -54,9 +54,22 @@ class ConfigurationController extends Controller
      */
     public function saveMySite(Request $request)
     {
-        $this->validate($request, [
-            'name_large' => 'required|max:256'
-        ]);
+        $customMessages = [];
+        $validations = ['name_large' => 'required|max:256'];
+        $contacto_email = $request->input('contacto_email', null);
+        $contacto_link = $request->input('contacto_link', null);
+
+        if ($contacto_email && trim($contacto_email) != '') {
+            $validations['contacto_email'] = 'email';
+            $customMessages['email'] = 'El campo email de contacto no es válido.';
+        }
+
+        if ($contacto_link && trim($contacto_link) != '') {
+            $validations['contacto_link'] = 'url';
+            $customMessages['url'] = 'El campo link de contacto no es válido.';
+        }
+
+        $this->validate($request, $validations, $customMessages);
 
         $data = Cuenta::find(Auth::user()->cuenta_id);
         $data->nombre_largo = $request->input('name_large');
@@ -64,6 +77,9 @@ class ConfigurationController extends Controller
         $data->descarga_masiva = $request->has('massive_download') ? 1 : 0;
         $data->logo = $request->input('logo');
         $data->logof = $request->input('logof');
+        $data->favicon = $request->input('favicon');
+        $data->setMetadata('contacto_email', $contacto_email);
+        $data->setMetadata('contacto_link', $contacto_link);
         $data->save();
 
         $request->session()->flash('status', 'Cuenta modificada con éxito');
