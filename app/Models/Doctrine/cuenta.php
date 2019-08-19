@@ -51,6 +51,14 @@ function setTableDefinition()
         if(\Schema::hasColumn('cuenta', 'seo_tags')){
             $this->hasColumn('seo_tags');
         }
+
+        if(\Schema::hasColumn('cuenta', 'metadata')){
+            $this->hasColumn('metadata');
+        }
+
+        if(\Schema::hasColumn('cuenta', 'favicon')){
+            $this->hasColumn('favicon');
+        }
     }
 
     function setUp()
@@ -133,6 +141,27 @@ function setTableDefinition()
         return $cuentaSegunDominio;
     }
 
+    public static function getAccountFavicon()
+    {
+        $cuenta = self::cuentaSegunDominio();
+        $favicon = '/img/favicon.png';
+        if ($cuenta['favicon'] != null) {
+            $favicon = '/logos/'.$cuenta['favicon'];
+        }
+        return $favicon;
+    }
+
+    public static function getAccountMetadata()
+    {
+        $cuenta = self::cuentaSegunDominio();
+        $metadata = null;
+        if ($cuenta['metadata'] != null) {
+            $metadata = json_decode($cuenta['metadata']);
+        }
+        return $metadata;
+    }
+
+
     public function getLogoADesplegar()
     {
         if ($this->logo)
@@ -195,6 +224,7 @@ function setTableDefinition()
             $configDominio['dominio_header'] = $configSegunDominio->header;
             $configDominio['analytics'] = $configSegunDominio->analytics; //añado analytics
             $configDominio['dominio_footer'] = $configSegunDominio->footer;
+            $configDominio['metadata_footer'] = json_decode($configSegunDominio->metadata);
             $configDominio['personalizacion'] = "1" == $configSegunDominio->personalizacion_estado ? $configSegunDominio->personalizacion : '';
             $configDominio['personalizacion_estado'] = $configSegunDominio->personalizacion_estado;
         }
