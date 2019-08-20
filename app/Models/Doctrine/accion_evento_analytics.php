@@ -11,10 +11,9 @@ class AccionEventoAnalytics extends Accion
     {
        
         $display  = '<br><label><b>HIT enviante a Google Analytics</b></label><br/>';
-        $data['cuentas'] = Doctrine::getTable('Cuenta')->findAll();
-        $guarda_cuenta =  $data['cuentas'];
-        foreach($guarda_cuenta as $cuenta){
-          $id_cuenta = $cuenta->analytics; 
+        $cuentas = Doctrine::getTable('Cuenta')->findAll();
+        foreach($cuentas as $c){
+          $id_cuenta = $c->analytics; 
          // dd($id_cuenta);ddddddd
          }       
         $id_cuenta = Cuenta::seo_tags()->analytics; 
