@@ -219,7 +219,7 @@ function setTableDefinition()
                 'title' => config('app.name', 'Laravel'),
                 'description' => 'Simple',
                 'keywords' => 'Simple',
-                'analytics' => Doctrine::getTable('Cuenta')->findOneById(1)->analytics
+                'analytics' => Doctrine::getTable('Cuenta')->findAll()->analytics
              ];
             foreach ($default_tags as $key => $value) {
                 if(! isset($seo_tags->$key)){
