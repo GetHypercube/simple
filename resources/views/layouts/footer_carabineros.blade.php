@@ -12,11 +12,14 @@
                 <br>
             </div>
             <div class="col-4 mt-4 text-right">
-                @if (isset($metadata->contacto_email))
-                    <span>Email de soporte: {{ $metadata->contacto_email }}</span><br>
-                    <a href="{{ $metadata->contacto_link }}" target="_blank">
-                        Sitio de soporte
-                    </a>
+                @if (isset($metadata->contacto_email) && isset($metadata->contacto_link))
+                    <p>
+                        Si el sistema presenta problemas comuníquese con nosotros escribiendo al siguiente correo
+                        {{ $metadata->contacto_email }}, o bien ingresando en el siguiente
+                        <a href="{{ $metadata->contacto_link }}" target="_blank">
+                            link
+                        </a>
+                    </p>
                 @endif
             </div>
         </div>
