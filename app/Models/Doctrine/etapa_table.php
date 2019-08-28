@@ -1,12 +1,5 @@
 <?php
 
-use App\Models\DatoSeguimiento;
-use App\Models\Etapa;
-use App\Models\File;
-use App\Models\Tramie;
-use App\Models\Regla;
-use Carbon\Carbon;
-
 class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
