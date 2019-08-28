@@ -4,17 +4,18 @@ class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
     public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$query="0",$limite=2000, $inicio=0){
-       $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
-       if(!$usuario->open_id){
+        $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+        if(!$usuario->open_id){
             $grupos =  DB::table('grupo_usuarios_has_usuario')
-                        ->select('grupo_usuarios_id')
-                        ->where('usuario_id',$usuario->id)
-                        ->get()
-                        ->toArray();
+                ->select('grupo_usuarios_id')
+                ->where('usuario_id',$usuario->id)
+                ->get()
+                ->toArray();
             $grupos = json_decode(json_encode($grupos), true);
 
             if($grupos){
                 $tareas = DB::table('etapa')
+
                 ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
                 'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
                 ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
@@ -33,26 +34,27 @@ class EtapaTable extends Doctrine_Table {
                 ->offset($inicio)
                 ->orderBy('etapa.tarea_id', 'ASC')
                 ->get()->toArray();
+
                 //se buscan etapas cuyas tareas que por nivel de acceso esten configuradas por nombre de grupo como variables @@
                 $tareas_aa = DB::table('etapa')
-                ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
-                'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
-                ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
-                ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
-                ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
-                ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
-                ->where('cuenta.nombre',$cuenta->nombre)
-                ->where('tarea.grupos_usuarios','LIKE','%@@%')
-                ->whereNull('etapa.usuario_id')
-                ->limit($limite)
-                ->offset($inicio)
-                ->orderBy('etapa.tarea_id', 'ASC')
-                ->get()->toArray();
+                    ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo','grupos_usuarios','tramite.id',
+                        'previsualizacion','proceso.nombre as p_nombre','tarea.nombre as t_nombre','etapa.updated_at','etapa.vencimiento_at')
+                    ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                    ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                    ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
+                    ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
+                    ->where('cuenta.nombre',$cuenta->nombre)
+                    ->where('tarea.grupos_usuarios','LIKE','%@@%')
+                    ->whereNull('etapa.usuario_id')
+                    ->limit($limite)
+                    ->offset($inicio)
+                    ->orderBy('etapa.tarea_id', 'ASC')
+                    ->get()->toArray();
                 if(count($tareas_aa)){
                     foreach($tareas_aa as $key=>$t)
-                    if(!$this->canUsuarioAsignarsela($usuario_id,$t->acceso_modo,$t->grupos_usuarios,$t->etapa_id))
-                        unset($tareas_aa[$key]);
-                    
+                        if(!$this->canUsuarioAsignarsela($usuario_id,$t->acceso_modo,$t->grupos_usuarios,$t->etapa_id))
+                            unset($tareas_aa[$key]);
+
                     //se agregan al listado original de etapas solo las que cumplen los nombres de grupo como variables @@
                     foreach($tareas_aa as $tarea)
                         array_push($tareas,$tarea);
@@ -63,12 +65,12 @@ class EtapaTable extends Doctrine_Table {
             }
         }else{
             $tareas = array();
-        } 
-         
-     
+        }
+
+
         return $tareas;
     }
-    
+
    public function findSinAsignarMatch($usuario_id, $cuenta='localhost',$matches="0",$query="0"){
        $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
        if(!$usuario->open_id){

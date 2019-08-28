@@ -36,6 +36,7 @@ post_max_size = 100M\n\
 upload_max_filesize = 100M\n\
 memory_limit = 512M\n\
 max_input_vars = 2000\n\
+date.timezone = "America/La_Paz"\n\
 max_execution_time = 12000s" > /usr/local/etc/php/php.ini
 
 # Composer
