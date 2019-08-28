@@ -30,7 +30,7 @@ class UsersTableSeeder extends Seeder
             //Un usuario backend pertenece a una 'cuenta', por eso se crea la cuenta primero.
             $cuenta = Cuenta::create([
                 'nombre' => 'Admin',
-                'nombre_largo' => 'Asimov SPA',
+                'nombre_largo' => 'Gobierno Digital',
                 'mensaje' => 'mensaje de prueba',
                 'api_token' => '',
             ]);
