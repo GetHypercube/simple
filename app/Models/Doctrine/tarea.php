@@ -141,7 +141,7 @@ class Tarea extends Doctrine_Record
             ->where('u.vacaciones = 0')
             ->andWhere('c.id = ?', $this->Proceso->Cuenta->id);
 
-        if ($this->acceso_modo == 'publico') {
+        if ($this->acceso_modo == 'publico' || $this->acceso_modo == 'anonimo') {
             ;
         } else if ($this->acceso_modo == 'registrados') {
             $query->andWhere('u.registrado = 1');
@@ -348,7 +348,7 @@ class Tarea extends Doctrine_Record
     {
         $usuario = Doctrine::getTable('Usuario')->find($usuario_id);
 
-        if ($this->acceso_modo == 'publico')
+        if ($this->acceso_modo == 'publico' || $this->acceso_modo == 'anonimo')
             return true;
 
         if ($this->acceso_modo == 'claveunica' && $usuario->open_id)

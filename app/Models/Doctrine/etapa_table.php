@@ -152,7 +152,7 @@ class EtapaTable extends Doctrine_Table {
             $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
         }
 
-        if ($acceso_modo == 'publico')
+        if ($acceso_modo == 'publico' || $acceso_modo == 'anonimo')
             return true;
 
         if ($acceso_modo == 'claveunica' && $usuario->open_id)
