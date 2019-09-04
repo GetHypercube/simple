@@ -13,16 +13,7 @@ class AddEnumAnonimoToAccesoModoOnTarea extends Migration
      */
     public function up()
     {
-        
-        Schema::table('tarea', function (Blueprint $table) {
-            $table->dropColumn('acceso_modo');
-        });
-        
-        Schema::table('tarea', function (Blueprint $table) {
-
-            $table->enum('acceso_modo', ['grupos_usuarios', 'publico', 'registrados', 'claveunica', 'anonimo'])->default('grupos_usuarios')->after('almacenar_usuario_variable');
-        });
-        
+        DB::statement("ALTER TABLE tarea MODIFY COLUMN acceso_modo ENUM('grupos_usuarios', 'publico', 'registrados' , 'claveunica' , 'anonimo') NOT NULL");
     }
 
     /**
@@ -32,13 +23,6 @@ class AddEnumAnonimoToAccesoModoOnTarea extends Migration
      */
     public function down()
     {
-        
-        Schema::table('tarea', function (Blueprint $table) {
-            $table->dropColumn('acceso_modo');
-        });
-        Schema::table('tarea', function (Blueprint $table) {
-            $table->enum('acceso_modo', ['grupos_usuarios', 'publico', 'registrados', 'claveunica'])->default('grupos_usuarios')->after('almacenar_usuario_variable');
-        });
-        
+        DB::statement("ALTER TABLE tarea MODIFY COLUMN acceso_modo ENUM('grupos_usuarios', 'publico', 'registrados' , 'claveunica') NOT NULL");
     }
 }
