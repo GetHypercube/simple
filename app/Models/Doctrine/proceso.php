@@ -416,7 +416,7 @@ class Proceso extends Doctrine_Record
         $tareas = Doctrine_Query::create()
             ->from('Tarea t, t.Proceso p')
             ->where('t.inicial = 1 AND p.activo=1 AND p.id = ?', $this->id)
-            ->orderBy('FIELD(acceso_modo, "grupos_usuarios", "claveunica", "registrados", "publico")')
+            ->orderBy('FIELD(acceso_modo, "grupos_usuarios", "claveunica", "registrados", "publico", "anonimo")')
             ->execute();
 
         if ($usuario_id) {
@@ -517,7 +517,7 @@ class Proceso extends Doctrine_Record
             ->execute();
 
         foreach ($tareas as $t) {
-            if ($t->acceso_modo == 'publico')
+            if ($t->acceso_modo == 'publico' || $t->acceso_modo == 'anonimo')
                 return true;
 
             if ($t->acceso_modo == 'claveunica')

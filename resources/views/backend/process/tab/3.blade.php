@@ -56,6 +56,13 @@
         </label>
     </div>
     <div class="form-check">
+        <input class="form-check-input" id="acceso_modo_anonimo" type="radio" name="acceso_modo"
+               value="anonimo" <?= $tarea->acceso_modo == 'anonimo' ? 'checked' : '' ?> />
+        <label for="acceso_modo_anonimo" class="form-check-label">
+            An&oacute;nimo
+        </label>
+    </div>
+    <div class="form-check">
         <input class="form-check-input" id="acceso_modo_grupos_usuarios" type="radio" name="acceso_modo"
                value="grupos_usuarios" <?= $tarea->acceso_modo == 'grupos_usuarios' ? 'checked' : '' ?> />
         <label for="acceso_modo_grupos_usuarios" class="form-check-label">

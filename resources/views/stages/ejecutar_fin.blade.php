@@ -150,13 +150,3 @@
 
             @endpush
         @endif
-@push('script')
- <script>
-
-    ga(function(tracker) {
-    console.log(tracker.get('trackingId')); //ID Seguimiento
-    console.log(tracker.get('clientId'));
-    });
-    </script>
-@endpush
-

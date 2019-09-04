@@ -31,12 +31,11 @@ class StagesController extends Controller
 {
     public function run(Request $request, $etapa_id, $secuencia = 0)
     {   
-        
         $iframe = $request->input('iframe');
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
        
-        
         $data = \Cuenta::configSegunDominio();
+        
         $data['num_pasos'] = $etapa === false ? 0 : self::num_pasos($etapa->Tarea->id);
         $proceso_id= $etapa->Tarea->proceso_id; 
         Log::info("El Proceso_id: " . $proceso_id);
@@ -50,12 +49,10 @@ class StagesController extends Controller
             ->leftjoin('proceso', 'tarea.proceso_id', '=','proceso.id')->get();
               Log::info("Busca Eventos: " . $busca_evento);
     
-    
-
         if (!$etapa) {
             return abort(404);
         }
-        if ($etapa->usuario_id != Auth::user()->id) {
+        if ( $etapa->Tarea->acceso_modo != 'anonimo' && $etapa->usuario_id != Auth::user()->id) {
             if (!Auth::user()->registrado) {
                 return redirect()->route('home');
             }
@@ -79,11 +76,9 @@ class StagesController extends Controller
         // }
 
         $qs = $request->getQueryString();
-
         $pasosEjecutables = $etapa->getPasosEjecutables();
-
+        
         $paso = (isset($pasosEjecutables[$secuencia])) ? $pasosEjecutables[$secuencia] : null;
-      
         Log::info("Ejecutando paso: " . $paso);
         if (!$paso) {
             Log::info("Entra en no paso: ");
@@ -93,6 +88,7 @@ class StagesController extends Controller
             $etapa->finalizarPaso($paso);
              Log::info("El finalizar paso: " .  $etapa->finalizarPaso($paso));
             $etapa->avanzar();
+            
             //Job para indexar contenido cada vez que se avanza de etapa
             $this->dispatch(new IndexStages($etapa->Tramite->id));
 
@@ -102,12 +98,12 @@ class StagesController extends Controller
 
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($pasosEjecutables) - 1));
         } else {
+            
             $etapa->iniciarPaso($paso);
-           
             if(session()->has('redirect_url')){
                 return redirect()->away(session()->get('redirect_url'));
             }
-
+            
             ///DD MARCA
           //dd($etapa->id);
             ///FIN DD
@@ -116,7 +112,6 @@ class StagesController extends Controller
             $data['extra']['analytics'] = null;
             $extra_etapa = json_decode($etapa->extra, true);
             $extra_etapa = ($extra_etapa === null ) ? [] : $extra_etapa;
-                
             if(!isset($extra_etapa['mostrar_hit'])){ //isset
                 $busca_evento_analytics = DB::table('etapa') //Buscando el evento analytics por tarea iniciada
                     ->select('accion.id',
@@ -156,7 +151,6 @@ class StagesController extends Controller
             $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
             $data['title'] = $etapa->Tarea->nombre;
             //$template = $request->has('iframe') ? 'template_iframe' : 'template';
-            
             return view('stages.run', $data);
         }
     }
@@ -376,7 +370,7 @@ class StagesController extends Controller
 
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
-        if ($etapa->usuario_id != Auth::user()->id) {
+        if ( $etapa->Tarea->acceso_modo != 'anonimo' && $etapa->usuario_id != Auth::user()->id) {
             echo 'Usuario no tiene permisos para ejecutar esta etapa.';
             exit;
         }
@@ -547,7 +541,7 @@ class StagesController extends Controller
         $proceso_id= $etapa->Tarea->proceso_id; 
         $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
          
-        if ($etapa->usuario_id != Auth::user()->id) {
+        if ( $etapa->Tarea->acceso_modo != 'anonimo' && $etapa->usuario_id != Auth::user()->id) {
             echo 'Usuario no tiene permisos para ejecutar esta etapa.';
             exit;
         }
@@ -647,7 +641,7 @@ class StagesController extends Controller
     {
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
-        if ($etapa->usuario_id != Auth::user()->id) {
+        if ( $etapa->Tarea->acceso_modo != 'anonimo' && $etapa->usuario_id != Auth::user()->id) {
             echo 'Usuario no tiene permisos para ejecutar esta etapa.';
             exit;
         }

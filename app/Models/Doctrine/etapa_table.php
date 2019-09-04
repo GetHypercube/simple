@@ -1,12 +1,5 @@
 <?php
 
-use App\Models\DatoSeguimiento;
-use App\Models\Etapa;
-use App\Models\File;
-use App\Models\Tramie;
-use App\Models\Regla;
-use Carbon\Carbon;
-
 class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
@@ -159,7 +152,7 @@ class EtapaTable extends Doctrine_Table {
             $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
         }
 
-        if ($acceso_modo == 'publico')
+        if ($acceso_modo == 'publico' || $acceso_modo == 'anonimo')
             return true;
 
         if ($acceso_modo == 'claveunica' && $usuario->open_id)
