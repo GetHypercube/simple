@@ -78,7 +78,7 @@ class Etapa extends Doctrine_Record
         }
 
 
-        if ($this->Tarea->acceso_modo == 'publico')
+        if ($this->Tarea->acceso_modo == 'publico' || $this->Tarea->acceso_modo == 'anonimo')
             return true;
 
         if ($this->Tarea->acceso_modo == 'claveunica' && $usuario->open_id)
@@ -257,7 +257,6 @@ class Etapa extends Doctrine_Record
 
     public function asignar($usuario_id)
     {
-
         if ($this->Tarea->acceso_modo == 'claveunica') {
             $usuario = Doctrine::getTable('Usuario')->findOneByRut($usuario_id);
             if (!$usuario) {

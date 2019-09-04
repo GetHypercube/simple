@@ -165,6 +165,7 @@ class ApiController extends Controller
                         return TRUE;
                     }
                     throw new ApiException('Usuario no existe', 403);
+                case 'anonimo':
                 case 'publico':
                     if (!Auth::user()) {
                         //crear un usuario para sesion anonima

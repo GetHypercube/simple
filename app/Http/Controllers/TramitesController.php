@@ -16,14 +16,14 @@ class TramitesController extends Controller
     public function iniciar(Request $request, $proceso_id)
     {
         Log::info('Iniciando proceso ' . $proceso_id);
-
+        
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
         
         if (!$proceso->canUsuarioIniciarlo(Auth::user()->id)) {
             $url = $proceso->getTareaInicial()->acceso_modo == 'claveunica' ? route('login.claveunica').'?redirect='.route('tramites.iniciar', [$proceso->id]) : route('login').'?redirect='.route('tramites.iniciar', $proceso->id);
             return redirect()->away($url);
         }
-
+        
         if($proceso->concurrente==1){
             $tramite = new \Tramite();
             $tramite->iniciar($proceso->id);
@@ -51,8 +51,9 @@ class TramitesController extends Controller
                 }
             }
         }
-        $qs = $request->getQueryString();
 
+        $qs = $request->getQueryString();
+        
         return redirect('etapas/ejecutar/' . $tramite->getEtapasActuales()->get(0)->id . ($qs ? '?' . $qs : ''));
     }
 

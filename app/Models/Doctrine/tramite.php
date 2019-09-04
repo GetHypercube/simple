@@ -58,14 +58,15 @@ class Tramite extends Doctrine_Record
             $this->tramite_proc_cont = $proceso->proc_cont;
 
             $etapa = new Etapa();
+            
             $etapa->tarea_id = $proceso->getTareaInicial(UsuarioSesion::usuario()->id)->id;
             $etapa->pendiente = 1;
 
             $this->Etapas[] = $etapa;
 
             $this->save();
-
-            $etapa->asignar(UsuarioSesion::usuario()->id);
+            if( $etapa->Tarea->acceso_modo != "anonimo")
+                $etapa->asignar(UsuarioSesion::usuario()->id);
 
             if(!is_null($bodyContent))
                 $this->save_data($etapa->id, $bodyContent);
