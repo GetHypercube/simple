@@ -273,6 +273,14 @@ class Etapa extends Doctrine_Record
             $usuario_id = $usuario->id;
         }
 
+        if ($this->Tarea->acceso_modo == 'anonimo') {
+            $usuario = Doctrine::getTable('Usuario')->findOneByRegistrado(0);
+            if (!$usuario) {
+                $usuario = Doctrine::getTable('Usuario')->find($usuario_id);
+            }
+            $usuario_id = $usuario->id;
+        }
+
         if (!$this->canUsuarioAsignarsela($usuario_id))
             return;
 

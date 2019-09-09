@@ -65,8 +65,7 @@ class Tramite extends Doctrine_Record
             $this->Etapas[] = $etapa;
 
             $this->save();
-            if( $etapa->Tarea->acceso_modo != "anonimo")
-                $etapa->asignar(UsuarioSesion::usuario()->id);
+            $etapa->asignar(UsuarioSesion::usuario()->id);
 
             if(!is_null($bodyContent))
                 $this->save_data($etapa->id, $bodyContent);
