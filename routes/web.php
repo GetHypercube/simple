@@ -133,6 +133,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::get('acciones/ajax_seleccionar/{proceso_id}', 'ActionController@ajax_seleccionar')->name('action.ajax_seleccionar');
             Route::post('acciones/seleccionar_form/{proceso_id}', 'ActionController@seleccionar_form')->name('action.seleccionar_form');
             Route::post('acciones/functions_soap', 'ActionController@functions_soap')->name('action.functions_soap');
+            Route::get('acciones/eliminar_certificado/{accion_id}', 'ActionController@eliminar_certificado')->name('action.eliminar_certificado');
 
             Route::get('formularios/obtener_agenda', 'FormsController@obtener_agenda')->name('forms.obtener_agenda');
             Route::post('formularios/importar', 'FormsController@import')->name('forms.import');

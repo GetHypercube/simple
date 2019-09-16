@@ -14,7 +14,7 @@
 
         @include('backend.process.nav')
 
-        <form id="plantillaForm" class="ajaxForm" method="POST" onsubmit="return"
+        <form id="plantillaForm" enctype="multipart/form-data" method="POST" onsubmit="return"
               action="<?=route('backend.action.edit_form', ($edit ? [$accion->id] : ''))?>">
             {{csrf_field()}}
             <fieldset>

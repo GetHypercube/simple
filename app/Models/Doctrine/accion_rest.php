@@ -119,10 +119,45 @@ class AccionRest extends Accion
                 <span id="resultHeader" class="spanError"></span>
                 <br /><br />
             </div>';
+
+        $display .= '
+                <label>Certificado</label>
+                <div class="form-group form-inline">
+                    <input type="file" class="form-control col-5 AlignText" name="extra[crt]" />
+                </div>';
+        $display .= '<input type="hidden" class="form-control col-2" name="certificado" value="' . ($this->extra && isset($this->extra->crt) && $this->extra->crt ? $this->extra->crt : '') . '" />';
+        $display .= '<a href="#" class="alert-link"> ' . ($this->extra && isset($this->extra->crt) && $this->extra->crt ? $this->extra->crt : '') . ' </a><br><br> ';
+        
+        $display .= '<div id="modalImportarCrt" class="modal hide fade">
+                
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Importar Archivo Rest</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Cargue a continuación el archivo .crt del Servicio Rest.</p>
+                            <input type="file" name="archivo" />
+                            <input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value=""  />
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+                            <button type="button" id="btn-load" class="btn btn-primary" onclick="CargarCrt()">Importar</button>
+                        </div>
+                    </div>
+                  </div> 
+                
+            </div>
+            <div id="modal" class="modal hide fade"></div>';
+
         $display .= '
                 <label>Seguridad</label>
                 <select id="tipoSeguridad" class="form-control col-2" name="extra[idSeguridad]">
                 <option value="-1">Sin seguridad</option>';
+
         foreach ($conf_seguridad as $seg) {
             if (!is_null($this->extra) && isset($this->extra->idSeguridad) && $this->extra->idSeguridad && $this->extra->idSeguridad == $seg->id) {
                 $display .= '<option value="' . $seg->id . '" selected>' . $seg->institucion . ' - ' . $seg->servicio . '</option>';
@@ -141,6 +176,7 @@ class AccionRest extends Accion
             'extra.var_response' => 'required',
             'extra.url' => 'required',
             'extra.uri' => 'required',
+
         ], [
             'extra.var_response.required' => 'El campo Variable de respuesta es obligatorio',
             'extra.url.required' => 'El campo Endpoint es obligatorio',
@@ -152,9 +188,10 @@ class AccionRest extends Accion
     public function ejecutar($tramite_id)
     {
         $etapa = $tramite_id;
-
+        $msg = "Ejecuta REST";
         try {
 
+            //$crt = $this->extra->crt;
             Log::info("Ejecutando llamado REST");
 
             ($this->extra->timeout ? $timeout = $this->extra->timeout : $timeout = 30);
@@ -180,16 +217,19 @@ class AccionRest extends Accion
             Log::info("Server: " . $server);
             Log::info("Resource: " . $uri);
 
-            $seguridad = new SeguridadIntegracion();
+            $seguridad = new SeguridadIntegracion();   //Para usuario - clave servicio 
             $idSeguridad = null;
 
             if (isset($this->extra->idSeguridad)) {
                 $idSeguridad = $this->extra->idSeguridad;
             }
 
-            $config = $seguridad->getConfigRest($idSeguridad, $server, $timeout);
-
-            Log::info("Config: " . $this->varDump($config));
+            $crt = null;
+            if (isset($this->extra->crt)) {
+                $crt = public_path('uploads/certificados/').$this->extra->crt;
+            }
+            
+            $config = $seguridad->getConfigRest($idSeguridad, $server, $timeout, $crt);
 
             $request = '';
             if (isset($this->extra->request)) {
@@ -211,7 +251,7 @@ class AccionRest extends Accion
                 $request = $r->getExpresionParaOutput($etapa->id);
             }
 
-            Log::info("Request: " . $request);
+            //log::info("Request: " . $request);
 
             $headers = array();
 
@@ -237,10 +277,10 @@ class AccionRest extends Accion
 
             $ultimo_codigo_http = -1;
             do {
-
+                
                 $paramType = isset($this->extra->paramType) ? $this->extra->paramType : GuzzleHttp\RequestOptions::JSON;
-
                 try {
+                    
                     // Se ejecuta la llamada segun el metodo
                     if ($this->extra->tipoMetodo == "GET") {
                         $result = $client->request('GET', $uri);
@@ -297,7 +337,6 @@ class AccionRest extends Accion
                         $result2 = $response;
                     }
                 }
-
                 Log::debug("Respuesta REST: " . $this->varDump($result2));
             }
 
