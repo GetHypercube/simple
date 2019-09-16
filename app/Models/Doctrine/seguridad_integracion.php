@@ -5,10 +5,12 @@ use App\Helpers\Doctrine;
 class SeguridadIntegracion
 {
 
-    public function getConfigRest($id_seguridad, $server, $timeout)
+    public function getConfigRest($id_seguridad, $server, $timeout, $crt) //, $crt
     {
 
         $tipo_seguridad = "none";
+
+        Log::debug("Seguridad_integracion=> ".$crt);
 
         if (isset($id_seguridad) && strlen($id_seguridad) > 0 && $id_seguridad > 0) {
             $seguridad = Doctrine::getTable('Seguridad')->find($id_seguridad);
@@ -25,12 +27,19 @@ class SeguridadIntegracion
         switch ($tipo_seguridad) {
             case "HTTP_BASIC":
                 //Seguridad basic
+
                 $config = array(
                     'timeout' => $timeout,
                     'base_uri' => $server,
                     'auth' => [$user, $pass],
-                    'http_auth' => 'Basic'
+                    'http_auth' => 'Basic',
+                    'verify' => $crt
                 );
+
+                /*if(isset($crt)){
+                    $config['cert'] = $crt;    //es para los .pem
+                }*/
+
                 break;
             case "API_KEY":
                 //Seguriad api key
@@ -73,9 +82,7 @@ class SeguridadIntegracion
                 );
                 break;
         }
-
         return $config;
-
     }
 
     public function setSecuritySoap($client, $idSeguridad)

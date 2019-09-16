@@ -7,6 +7,7 @@ use AccionEventoAnalytics;
 use AccionWebservice;
 use AccionVariable;
 use AccionRest;
+use AccionRestCertificado;
 use AccionSoap;
 use AccionCallback;
 use AccionNotificaciones;
@@ -148,7 +149,6 @@ class ActionController extends Controller
     public function edit($accion_id)
     {
         Log::info("####En Editar, id: " . $accion_id);
-    
 
         $accion = Doctrine::getTable('Accion')->find($accion_id);
         if ($accion->Proceso->cuenta_id != Auth::user()->cuenta_id) {
@@ -205,6 +205,24 @@ class ActionController extends Controller
             $accion->tipo = $request->input('tipo');
         }
 
+        $certificado = NULL;
+        if($accion->tipo == 'rest'){
+            if ($request->hasFile('extra')){
+                $file = $request->file('extra');
+                $directorio_certificados = public_path('uploads/certificados');
+                if(!file_exists($directorio_certificados)){
+                    mkdir($directorio_certificados, 0777, true);
+                }
+                $filename = $accion->proceso_id.'-'.date('his').'-'.$file['crt']->getClientOriginalName(); 
+                $upload_success = $file['crt']->move($directorio_certificados,$filename);
+                $certificado = $filename;
+            }else{
+                if($request->has('certificado')){
+                    $certificado = $request->input('certificado');
+                }
+            }
+        }
+
         if ($accion->Proceso->cuenta_id != Auth::user()->cuenta_id) {
             echo 'Usuario no tiene permisos para editar esta accion.';
             exit;
@@ -221,13 +239,20 @@ class ActionController extends Controller
             ]);
         }
         $accion->nombre = $request->input('nombre');
-        $accion->extra = $request->input('extra', false);
+        $array_extra = $request->input('extra', false);
+        if(!is_null($certificado)){
+            $array_extra['crt'] = $certificado;
+            $accion->extra = $array_extra;
+        }else{
+            $accion->extra = $array_extra;
+        }
         $accion->save();
 
-        return response()->json([
-            'validacion' => true,
-            'redirect' => route('backend.action.list', [$accion->Proceso->id])
-        ]);
+        // return response()->json([
+        //     'validacion' => true,
+        //     'redirect' => route('backend.action.list', [$accion->Proceso->id])
+        // ]);
+        return redirect()->route('backend.action.list', [$accion->Proceso->id]);
     }
 
     /**
@@ -590,5 +615,34 @@ class ActionController extends Controller
         $ret_val = ob_get_contents();
         ob_end_clean();
         return $ret_val;
+    }
+
+    /**
+     * @param $accion_id
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
+     */
+    public function eliminar_certificado($accion_id){
+        $accion = Doctrine::getTable('Accion')->find($accion_id);
+
+        if ($accion->Proceso->cuenta_id != Auth::user()->cuenta_id) {
+            echo 'Usuario no tiene permisos para eliminar esta accion.';
+            exit;
+        }
+
+        $json_extra = json_decode(json_encode($accion->extra), true);
+        foreach($json_extra as $key => $value){
+            if(array_key_exists('crt',$json_extra)){
+                if(file_exists(public_path('uploads/certificados/').$json_extra['crt'])){
+                    unlink(public_path('uploads/certificados/').$json_extra['crt']);
+                }
+                unset($json_extra['crt']);
+            }
+        }
+        $accion->extra = $json_extra;
+        $accion->save();
+
+        $proceso = $accion->Proceso;
+        return redirect()->route('backend.action.list', [$proceso->id]);
     }
 }
