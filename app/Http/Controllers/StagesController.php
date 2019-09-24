@@ -41,13 +41,6 @@ class StagesController extends Controller
         Log::info("El Proceso_id: " . $proceso_id);
         $proceso = Doctrine::getTable('Proceso')->find($etapa->Tarea->proceso_id);
             Log::info("Se a identificado el Proceso Nº : " . $proceso);
-            $busca_evento = DB::table('evento') //Buscando el evento analytics por tarea iniciada
-            ->select('accion.id',
-                     'accion.nombre')
-            ->leftjoin('tarea','evento.tarea_id', '=','tarea.id')
-            ->leftjoin('accion','evento.accion_id','=', 'accion.id')
-            ->leftjoin('proceso', 'tarea.proceso_id', '=','proceso.id')->get();
-              Log::info("Busca Eventos: " . $busca_evento);
     
         if (!$etapa) {
             return abort(404);
@@ -103,10 +96,6 @@ class StagesController extends Controller
             if(session()->has('redirect_url')){
                 return redirect()->away(session()->get('redirect_url'));
             }
-            
-            ///DD MARCA
-          //dd($etapa->id);
-            ///FIN DD
 
             Log::info("###MARCA INICIO GA : " . $etapa->pendiente);
             $data['extra']['analytics'] = null;
