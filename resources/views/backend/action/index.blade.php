@@ -46,11 +46,18 @@
                         <a class="btn btn-light" href="<?=route('backend.action.export', [$p->id])?>">
                             <i class="material-icons">file_download</i> Exportar
                         </a>
-                        <a href="<?=route('backend.action.eliminar', [$p->id])?>" class="btn btn-light btn-danger"
+                        <a href="<?=route('backend.action.eliminar', [$p->id])?>" class="btn btn-danger"
                            onclick="return confirm('¿Esta seguro que desea eliminar?')">
                             <i class="material-icons">delete</i>
                             Eliminar
                         </a>
+                        @if($p->extra && isset($p->extra->crt) && $p->extra->crt)
+                        <a href="<?=route('backend.action.eliminar_certificado', [$p->id])?>" class="btn btn-danger"
+                           onclick="return confirm('¿Esta seguro que desea eliminar el certificado?')">
+                            <i class="material-icons">delete</i>
+                            Eliminar certificado
+                        </a>
+                        @endif
                     </td>
                 </tr>
             @endforeach
