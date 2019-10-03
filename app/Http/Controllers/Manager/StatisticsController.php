@@ -37,6 +37,24 @@ class StatisticsController extends Controller
                 ->groupBy('c.id')
                 ->execute();
 
+            $procesos_cuentas = Doctrine_Query::create()
+                ->from('Proceso p, p.Cuenta c')
+                ->select('COUNT(p.id) as num_procesos')
+                ->where('p.id = 1 AND c.id', $cuenta_id)
+                ->groupBy('c.id')
+                ->execute();   
+
+            $procesos_activos = Doctrine_Query::create()
+                ->from('Proceso p, p.Cuenta c')
+                ->select('p.id')
+                ->where('p.activo=1')
+                ->groupBy('p.id')
+                ->execute();    
+
+            $data['procesos_activos'] = count($procesos_activos);    
+
+            $data['procesos_cuentas'] = count($procesos_cuentas);    
+
             $data['cuentas'] = $cuentas;
 
             $data['title'] = 'Cuentas';
@@ -65,6 +83,8 @@ class StatisticsController extends Controller
                 ->whereIn('t.id', $tramites_arr)
                 ->groupBy('p.id')
                 ->execute();
+
+                
 
             $data['procesos'] = $procesos;
 

@@ -32,5 +32,13 @@
         </td>
     </tr>
     <?php endforeach ?>
+    <tr class="table-success">
+        <td>Total Procesos</td>
+        <td><?=$procesos_activos?> </td>
+         <td><a class="btn btn-success" href="<?=url('manager/estadisticas/cuentas/')?>">
+                <i class="material-icons">visibility</i>Ver Estadisticas
+            </a></td>
+
+    </tr>
     </tbody>
 </table>
