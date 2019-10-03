@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use Elibyy\TCPDF\TCPDF;
+use Carbon\Carbon;
 
 ini_set('memory_limit', '64M');
 
@@ -96,7 +97,7 @@ class CertificadoPDF extends TCPDF
         $this->Line(PAGE_MARGIN, $y, PAGE_MARGIN + 5 * CELL_WIDTH + 4 * GRID_WIDTH, $y);
         $this->SetFont('helvetica', '', 11);
         $this->MultiCell(CELL_WIDTH, 8, 'Fecha de Emisión:', 0, 'L', false, 1, PAGE_MARGIN, $y, true, 0, false, true, 8, 'M');
-        $this->MultiCell(2 * CELL_WIDTH + GRID_WIDTH, 8, strftime('%d %B %Y, %k:%M'), 0, 'L', false, 1, PAGE_MARGIN + CELL_WIDTH + GRID_WIDTH, $y, true, 0, false, true, 8, 'M');
+        $this->MultiCell(2 * CELL_WIDTH + GRID_WIDTH, 8, Carbon::now()->format('d-m-Y H:i:s'), 0, 'L', false, 1, PAGE_MARGIN + CELL_WIDTH + GRID_WIDTH, $y, true, 0, false, true, 8, 'M'); //dia, mes, año certificado
         $this->MultiCell(2 * CELL_WIDTH + GRID_WIDTH, 8, $this->validez === null ? 'Válido indefinidamente' : ($this->validez == 0 ? '' : 'Válido por ' . $this->validez . ' días' . ($this->validez_habiles ? ' hábiles' : '') . '.'), 0, 'R', false, 1, PAGE_MARGIN + 3 * CELL_WIDTH + 3 * GRID_WIDTH, $y, true, 0, false, true, 8, 'M');
         $this->Line(PAGE_MARGIN, $y + 8, PAGE_MARGIN + 5 * CELL_WIDTH + 4 * GRID_WIDTH, $y + 8);
 
