@@ -24,7 +24,7 @@ class StatisticsController extends Controller
                 ->from('Tramite t, t.Etapas e, e.DatosSeguimiento d')
                 ->select('t.id')
                 ->where('t.updated_at > DATE_SUB(NOW(),INTERVAL 30 DAY)')
-                ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
+                ->having('COUNT(e.id) > 0')//Mostramos solo los que se han avanzado o tienen datos
                 ->groupBy('t.id')
                 ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
@@ -51,7 +51,7 @@ class StatisticsController extends Controller
                 ->where('c.id = ?', $cuenta_id)
                 ->andWhere('t.updated_at > DATE_SUB(NOW(),INTERVAL 30 DAY)')
                 ->select('t.id')
-                ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
+                ->having('COUNT(e.id) > 0')//Mostramos solo los que se han avanzado o tienen datos
                 ->groupBy('t.id')
                 ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
@@ -79,7 +79,7 @@ class StatisticsController extends Controller
                 ->where('p.activo=1 AND p.id = ?', $proceso_id)
                 ->andWhere('t.updated_at > DATE_SUB(NOW(),INTERVAL 30 DAY)')
                 ->orderBy('t.updated_at DESC')
-                ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
+                ->having('COUNT(e.id) > 0')//Mostramos solo los que se han avanzado o tienen datos
                 ->groupBy('t.id')
                 ->execute();
 
