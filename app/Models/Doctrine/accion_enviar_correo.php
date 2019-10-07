@@ -44,7 +44,7 @@ class AccionEnviarCorreo extends Accion
         $to = $regla->getExpresionParaOutput($etapa->id);
 
         if (empty($to)) {
-            throw new Exception('email invalid.');
+            \Log::info('Acción de tipo correo sin destinatario');
         }
 
         $cc = null;
@@ -64,54 +64,55 @@ class AccionEnviarCorreo extends Accion
         $message = $regla->getExpresionParaOutput($etapa->id);
 
         $cuenta = $etapa->Tramite->Proceso->Cuenta;
+        if(!empty($to)){
+            Mail::send('emails.send', ['content' => $message], function ($message) use ($etapa, $subject, $cuenta, $to, $cc, $bcc) {
 
-        Mail::send('emails.send', ['content' => $message], function ($message) use ($etapa, $subject, $cuenta, $to, $cc, $bcc) {
-
-            $message->subject($subject);
-            $mail_from = env('MAIL_FROM_ADDRESS');
-            if(empty($mail_from)) {
-                $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
-            } else {
-                $message->from($mail_from);
-            }
-
-            if (!is_null($cc)) {
-                foreach (explode(',', $cc) as $cc) {
-                    if (!empty($cc)) {
-                        $message->cc(trim($cc));
-                    }
+                $message->subject($subject);
+                $mail_from = env('MAIL_FROM_ADDRESS');
+                if(empty($mail_from)) {
+                    $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                } else {
+                    $message->from($mail_from);
                 }
-            }
 
-            if (!is_null($bcc)) {
-                foreach (explode(',', $bcc) as $bcc) {
-                    if (!empty($bcc)) {
-                        $message->bcc(trim($bcc));
-                    }
-                }
-            }
-
-            $message->to($to);
-
-            if (isset($this->extra->adjunto)) {
-                $attachments = explode(",", trim($this->extra->adjunto));
-                foreach ($attachments as $a) {
-                    $regla = new Regla($a);
-                    $filename = $regla->getExpresionParaOutput($etapa->id);
-                    $file = Doctrine_Query::create()
-                        ->from('File f, f.Tramite t')
-                        ->where('f.filename = ? AND t.id = ?', array($filename, $etapa->Tramite->id))
-                        ->fetchOne();
-                    if ($file) {
-                        $folder = $file->tipo == 'dato' ? 'datos' : 'documentos';
-                        if (file_exists('uploads/' . $folder . '/' . $filename)) {
-                            $message->attach('uploads/' . $folder . '/' . $filename);
+                if (!is_null($cc)) {
+                    foreach (explode(',', $cc) as $cc) {
+                        if (!empty($cc)) {
+                            $message->cc(trim($cc));
                         }
                     }
                 }
-            }
 
-        });
+                if (!is_null($bcc)) {
+                    foreach (explode(',', $bcc) as $bcc) {
+                        if (!empty($bcc)) {
+                            $message->bcc(trim($bcc));
+                        }
+                    }
+                }
+
+                $message->to($to);
+
+                if (isset($this->extra->adjunto)) {
+                    $attachments = explode(",", trim($this->extra->adjunto));
+                    foreach ($attachments as $a) {
+                        $regla = new Regla($a);
+                        $filename = $regla->getExpresionParaOutput($etapa->id);
+                        $file = Doctrine_Query::create()
+                            ->from('File f, f.Tramite t')
+                            ->where('f.filename = ? AND t.id = ?', array($filename, $etapa->Tramite->id))
+                            ->fetchOne();
+                        if ($file) {
+                            $folder = $file->tipo == 'dato' ? 'datos' : 'documentos';
+                            if (file_exists('uploads/' . $folder . '/' . $filename)) {
+                                $message->attach('uploads/' . $folder . '/' . $filename);
+                            }
+                        }
+                    }
+                }
+
+            });
+        }
 
     }
 
