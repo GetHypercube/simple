@@ -187,7 +187,10 @@ function prepareDynaForm(form){
             }
         }else{
             $(form).find(":input[name='" + campo + "']").each(function (i, el){
-                existe = true;
+                if (existe=false) {
+                   var input = $(el).serializeArray();
+                }else 
+                 existe = true;
                 var input = $(el).serializeArray();
                 for (var j in input) {
                     if(tipo == "regex"){
