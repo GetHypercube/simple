@@ -28,6 +28,6 @@ class ScheduleController extends Controller
     {
         \Artisan::call('simple:avanzar');
         \Artisan::call('simple:sendmails');
-        \Artisan::call('simple:limpieza');
+	/* \Artisan::call('simple:limpieza'); <-- comentado para probar */
     }
 }
