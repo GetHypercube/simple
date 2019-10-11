@@ -45,6 +45,10 @@
 <div id="app" >
     @include('layouts.backend.header')
 
+    <div class="alert alert-warning" role="alert">
+        Estamos realizando labores de mantenimiento en el sitio, presentará intermitencia en su funcionamiento.
+    </div>
+
     <div class="container-fluid pb-5">
         @include('components.messages')
     </div>

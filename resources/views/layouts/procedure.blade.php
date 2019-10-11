@@ -49,6 +49,10 @@
 <div id="app" class="h-100 d-flex flex-column" >
     @include($dominio_header)
 
+    <div class="alert alert-warning" role="alert">
+        Estamos realizando labores de mantenimiento en el sitio, presentará intermitencia en su funcionamiento.
+    </div>
+
     <div class="main-container container pb-5">
         <div class="row">
             <div class="col-xs-12 col-md-3">
