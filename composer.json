@@ -26,6 +26,7 @@
     "maatwebsite/excel": "^2.1",
     "nategood/httpful": "^0.2.20",
     "predis/predis": "*",
+    "rap2hpoutre/laravel-log-viewer": "^1.3",
     "rollbar/rollbar-laravel": "2.4.1",
     "siturra/doctrine1-php7": "^1.2",
     "siturra/tcpdf-laravel": "^5.5",
