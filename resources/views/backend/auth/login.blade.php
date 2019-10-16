@@ -27,9 +27,9 @@
 </head>
 <body>
 
-<div class="alert alert-warning" role="alert">
+<!-- <div class="alert alert-warning" role="alert">
     Estamos realizando labores de mantenimiento en el sitio, presentará intermitencia en su funcionamiento.
-</div>
+</div> -->
 
 <div class="container">
     <div class="row justify-content-md-center mt-5">
