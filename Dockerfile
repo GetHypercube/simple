@@ -52,7 +52,8 @@ RUN composer install
 RUN chown -R www-data:www-data storage/
 
 
-RUN  ln -sf /dev/stderr /var/www/simple/storage/logs/laravel.log
+RUN  ln -sf /dev/stderr /var/log/php-errors.log
+#RUN  ln -sf /dev/stderr /var/www/simple/storage/logs/laravel.log
 
 ENV LANG es_CL.UTF-8
 ENV LANGUAGE es_CL:es
