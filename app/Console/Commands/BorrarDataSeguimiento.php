@@ -49,6 +49,7 @@ class BorrarDataSeguimiento extends Command
                     ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
                     ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
                     ->where('proceso.cuenta_id',$cuenta_id)
+                    ->take(1000)
                     ->get()->toArray();
         $etapas = json_decode(json_encode($etapas), true);
         $data_count = DB::table('dato_seguimiento')->whereIn('etapa_id', $etapas)->count();
