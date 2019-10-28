@@ -20,17 +20,25 @@ class WidgetTramitesCantidad extends Widget
         foreach ($this->config->procesos as $proceso_id) {
             $p = Doctrine::getTable('Proceso')->find($proceso_id);
             if ($p) {
-                $conteo = Doctrine_Query::create()
-                    ->from('Tramite t, t.Etapas e, e.DatosSeguimiento d, t.Proceso p ,p.Cuenta c')
-                    ->where('c.id = ?', $this->cuenta_id)
-                    ->andWhere('p.activo=1 AND p.id = ?', array($p->id))
-                    ->andWhere('t.pendiente=1')
-                    ->andWhere('t.deleted_at is NULL')
-                    ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
-                    ->groupBy('t.id')
-                    ->count();
+                $pid = (int) $p->id;
+                $cid = (int) $this->cuenta_id;
 
-                $datos[$p->nombre]['pendientes'] = $conteo;
+                $conteo = DB::table('tramite')
+                    ->select('tramite.id')
+                    ->leftJoin('etapa', 'etapa.tramite_id', '=', 'tramite.id')
+                    ->leftJoin('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
+                    ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
+                    ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
+                    ->where('tramite.pendiente',1)
+                    ->where('cuenta.id',$cid)
+                    ->where('proceso.id',$pid)
+                    ->where('proceso.activo',1)
+                    ->whereNull('tramite.deleted_at')
+                    ->havingRaw('COUNT(dato_seguimiento.id) > 0 OR COUNT(etapa.id) > 1')
+                    ->groupBy('tramite.id')
+                    ->get();
+
+                $datos[$p->nombre]['pendientes'] = count($conteo);
             }
         }
 
@@ -38,17 +46,25 @@ class WidgetTramitesCantidad extends Widget
         foreach ($this->config->procesos as $proceso_id) {
             $p = Doctrine::getTable('Proceso')->find($proceso_id);
             if ($p) {
-                $conteo = Doctrine_Query::create()
-                    ->from('Tramite t, t.Etapas e, e.DatosSeguimiento d, t.Proceso p ,p.Cuenta c')
-                    ->where('c.id = ?', $this->cuenta_id)
-                    ->andWhere('p.activo=1 AND p.id = ?', array($p->id))
-                    ->andWhere('t.pendiente=0')
-                    ->andWhere('t.deleted_at is NULL')
-                    ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
-                    ->groupBy('t.id')
-                    ->count();
+                $pid = (int) $p->id;
+                $cid = (int) $this->cuenta_id;
 
-                $datos[$p->nombre]['completados'] = $conteo;
+                $conteo = DB::table('tramite')
+                    ->select('tramite.id')
+                    ->leftJoin('etapa', 'etapa.tramite_id', '=', 'tramite.id')
+                    ->leftJoin('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
+                    ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
+                    ->leftJoin('cuenta', 'proceso.cuenta_id', '=', 'cuenta.id')
+                    ->where('tramite.pendiente',0)
+                    ->where('cuenta.id',$cid)
+                    ->where('proceso.id',$pid)
+                    ->where('proceso.activo',1)
+                    ->whereNull('tramite.deleted_at')
+                    ->havingRaw('COUNT(dato_seguimiento.id) > 0 OR COUNT(etapa.id) > 1')
+                    ->groupBy('tramite.id')
+                    ->get();
+
+                $datos[$p->nombre]['completados'] = count($conteo);
             }
         }
 

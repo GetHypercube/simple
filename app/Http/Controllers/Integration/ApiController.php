@@ -30,6 +30,8 @@ class ApiController extends Controller
 
             $data = $mediator->iniciarProceso($id_proceso, $id_tarea, $bodyContent);
 
+            $this->eliminarDataSeguimiento($data['idInstancia']);
+
             return response()->json($data);
         } catch (Exception $e) {
             Log::info("Recupera exception: " . $e->getMessage());
@@ -344,6 +346,17 @@ class ApiController extends Controller
         $ret_val = ob_get_contents();
         ob_end_clean();
         return $ret_val;
+    }
+
+    private function eliminarDataSeguimiento($tramite_id){
+        Log::info("eliminación data tramite_id: " . $tramite_id);
+        $etapas = \App\Models\Etapa::where('tramite_id',(int) $tramite_id)->get();
+        foreach($etapas as $etapa){
+            $datos = Doctrine::getTable('DatoSeguimiento')->findByEtapaId($etapa->id);
+            foreach($datos as $dato){
+                $dato->delete();
+            }
+        }
     }
 
 }

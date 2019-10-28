@@ -24,7 +24,7 @@ class StatisticsController extends Controller
                 ->from('Tramite t, t.Etapas e, e.DatosSeguimiento d')
                 ->select('t.id')
                 ->where('t.updated_at > DATE_SUB(NOW(),INTERVAL 30 DAY)')
-                ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
+                ->having('COUNT(e.id) > 0')//Mostramos solo los que se han avanzado o tienen datos
                 ->groupBy('t.id')
                 ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
@@ -36,6 +36,24 @@ class StatisticsController extends Controller
                 ->whereIn('t.id', empty($tramites_arr) ? array(-1) : $tramites_arr)
                 ->groupBy('c.id')
                 ->execute();
+
+            $procesos_cuentas = Doctrine_Query::create()
+                ->from('Proceso p, p.Cuenta c')
+                ->select('COUNT(p.id) as num_procesos')
+                ->where('p.id = 1 AND c.id', $cuenta_id)
+                ->groupBy('c.id')
+                ->execute();   
+
+            $procesos_activos = Doctrine_Query::create()
+                ->from('Proceso p, p.Cuenta c')
+                ->select('p.id')
+                ->where('p.activo=1')
+                ->groupBy('p.id')
+                ->execute();    
+
+            $data['procesos_activos'] = count($procesos_activos);    
+
+            $data['procesos_cuentas'] = count($procesos_cuentas);    
 
             $data['cuentas'] = $cuentas;
 
@@ -51,7 +69,7 @@ class StatisticsController extends Controller
                 ->where('c.id = ?', $cuenta_id)
                 ->andWhere('t.updated_at > DATE_SUB(NOW(),INTERVAL 30 DAY)')
                 ->select('t.id')
-                ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
+                ->having('COUNT(e.id) > 0')//Mostramos solo los que se han avanzado o tienen datos
                 ->groupBy('t.id')
                 ->execute(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
@@ -66,6 +84,8 @@ class StatisticsController extends Controller
                 ->groupBy('p.id')
                 ->execute();
 
+                
+
             $data['procesos'] = $procesos;
 
             $data['title'] = $cuenta->nombre;
@@ -79,7 +99,7 @@ class StatisticsController extends Controller
                 ->where('p.activo=1 AND p.id = ?', $proceso_id)
                 ->andWhere('t.updated_at > DATE_SUB(NOW(),INTERVAL 30 DAY)')
                 ->orderBy('t.updated_at DESC')
-                ->having('COUNT(d.id) > 0 OR COUNT(e.id) > 1')//Mostramos solo los que se han avanzado o tienen datos
+                ->having('COUNT(e.id) > 0')//Mostramos solo los que se han avanzado o tienen datos
                 ->groupBy('t.id')
                 ->execute();
 

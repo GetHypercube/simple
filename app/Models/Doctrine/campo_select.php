@@ -30,21 +30,26 @@ class CampoSelect extends Campo
         }
 
         //Para la carga masiva  en select mediante web service
-        if ($this->extra && $this->extra->ws) {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->extra->ws);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-            curl_setopt($ch, CURLOPT_HEADER, FALSE);
-            $response = curl_exec($ch);
-            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $err = curl_error($ch);
-            curl_close($ch);
-            $response = json_decode($response);
-            foreach ($response as $d) {
-                $display .= '<option value="' . $d->valor . '" ' . ($d->valor == $valor_default ? 'selected' : '') . '>' . $d->etiqueta . '</option>';
+         if ($this->extra && $this->extra->ws) {
+            try{
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $this->extra->ws);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                curl_setopt($ch, CURLOPT_HEADER, FALSE);
+                $response = curl_exec($ch);
+                if(!curl_errno($ch)){
+                    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    $err = curl_error($ch);
+                    curl_close($ch);
+                    $response = json_decode($response);
+                    foreach ($response as $d) {
+                        $display .= '<option value="' . $d->valor . '" ' . ($d->valor == $valor_default ? 'selected' : '') . '>' . $d->etiqueta . '</option>';
+                    }
+                }
+            }catch(Exception $e){
+                Log::error("Ocurrió un error al cargar datos desde url para campo select" . $e);
             }
         }
-
 
         $display .= '</select>';
         if ($this->ayuda)

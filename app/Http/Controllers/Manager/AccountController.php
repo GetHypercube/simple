@@ -7,17 +7,58 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Helpers\Doctrine;
 use Connect_services;
+use Doctrine_Query;
 use Doctrine_Manager;
 use Cuenta;
+use Illuminate\Support\Facades\DB;
 
 class AccountController extends Controller
 {
     public function index()
     {
-        $data['cuentas'] = Doctrine::getTable('Cuenta')->findAll();
+        $cuentas= Doctrine::getTable('Cuenta')->findAll();
+        foreach ($cuentas as $c) {
+            $id_cuenta = $c->id;
 
+      Log::debug('ID Cuenta: ' . $id_cuenta);
+        $procesos = Doctrine_Query::create()
+                ->from('Proceso p, p.Cuenta c')
+                ->select('COUNT(p.id) as num_procesos')
+                ->whereIn('c.id', $id_cuenta)
+                ->groupBy('c.id')
+                ->execute();
+               /* ->getSQLQuery();
+                dd($procesos);*/
+        Log::debug('Listando los procesos: ' . $procesos);
+        
+        $proceso_cuenta = DB::table('proceso')
+                    ->select('proceso.id as proces')           
+                    ->join('cuenta','proceso.cuenta_id', '=','cuenta.id')
+                    ->where('proceso.activo', '=','1')
+                    ->where('cuenta.id','=' ,$id_cuenta)
+                   // ->groupBy('proceso.cuenta_id')
+                    ->count(DB::raw('proceso.id'));
+                   // ->get();
+                 Log::info("Proceso por cuentas es : " . $proceso_cuenta);
+
+      //  dd(proceso_cuenta);
+
+        }
+        $procesos_activos = Doctrine_Query::create()
+                ->from('Proceso p, p.Cuenta c')
+                ->select('p.id')
+                ->where('p.activo=1')
+                ->groupBy('p.id')
+                ->execute();
+
+        $data['proceso_cuenta'] = $proceso_cuenta;        
+        $data['procesos_activos'] = count($procesos_activos);
+        $data['procesos'] = count($procesos);
+        $data['cuentas'] = $cuentas;
         $data['title'] = 'Cuentas';
         $data['content'] = view('manager.account.index', $data);
+
+
 
         return view('layouts.manager.app', $data);
     }
