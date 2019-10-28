@@ -12,14 +12,14 @@
                 {{csrf_field()}}
 
                 <label>Seleccione:</label>
-                @if (!Auth::user()->open_id)
+                
                 <div class="radio">
                     <label>
                         <input type="radio" name="opcionesDescarga" id="opcionesDescarga1" value="documento"> 
                         Generados: Documentación que el sistema genera al usuario.   
                     </label>
                 </div>
-                @endif
+                
 
                 @if (!Auth::user()->open_id)
                 <div class="radio">

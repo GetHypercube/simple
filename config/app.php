@@ -155,7 +155,8 @@ return [
         Illuminate\Mail\MailServiceProvider::class,
         Illuminate\Notifications\NotificationServiceProvider::class,
         Illuminate\Pagination\PaginationServiceProvider::class,
-        Illuminate\Pipeline\PipelineServiceProvider::class,
+        Illuminate\Pipeline\PipelineServiceProvider::class,Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+
         Illuminate\Queue\QueueServiceProvider::class,
         Illuminate\Redis\RedisServiceProvider::class,
         Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
@@ -180,6 +181,7 @@ return [
 
         Rollbar\Laravel\RollbarServiceProvider::class,
         VladimirYuldashev\LaravelQueueRabbitMQ\LaravelQueueRabbitMQServiceProvider::class,
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
     ],
 
     /*
