@@ -265,6 +265,13 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::put('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@updateElectronicSignature')->name('configuration.electronic_signature.update');
             Route::delete('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@deleteElectronicSignature')->name('configuration.electronic_signature.delete');
 
+            //Categorias
+
+             Route::get('/configuracion/categorias', 'ConfigurationController@list_categoria')->name('configuration.list_categoria');
+             Route::get('/configuracion/categorias/editar/{id?}', 'ConfigurationController@edit_category')->name('configuration.edit_category');
+             Route::post('/configuracion/categorias/editar_form/{id?}', 'ConfigurationController@editar_lista_categoria')->name('configuration.editar_lista_categoria');
+             Route::get('/configuracion/categorias/eliminar/{id?}', 'ConfigurationController@eliminar_categoria')->name('configuration.eliminar_categoria');
+
 			//Mis estilos
             Route::get('/configuracion/estilo', 'ConfigurationController@myStyle')->name('configuration.my_style');
             Route::post('/configuracion/estilo', 'ConfigurationController@saveMyStyle')->name('configuration.my_style.save');
@@ -297,7 +304,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
     });
 });
 
-Route::prefix('manager')->namespace('Manager')->name('manager.')->group(function () {
+    Route::prefix('manager')->namespace('Manager')->name('manager.')->group(function () {
     Route::get('/', 'HomeController@index')->name('home');
     Route::get('/home', 'HomeController@index')->name('home2');
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
