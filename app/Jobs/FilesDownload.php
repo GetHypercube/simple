@@ -99,13 +99,15 @@ class FilesDownload implements ShouldQueue
             echo "Error abriendo el zip :-(\n";
             return false;
         }
+        $directorios_remove = array();
         foreach ($this->tramites as $tramite){
             $dir_tramite = date('Ymdhis').'-'.$tramite;
+            array_push($directorios_remove,$dir_tramite);
             $this->create_temp_directory($dir_tramite);
             $dir_tramite_files = $this->_base_dir.DIRECTORY_SEPARATOR.date('Ymdhis').'-'.$tramite;
             $archivos_tramite = $this->file_list[$tramite];
             $source = self::copy_local_files_to_zip_folder($dir_tramite_files, $archivos_tramite, $this->added_files_path);
-            $compress_status = self::zip_dir_recursive($zip, $source, $this->zip_filename, FALSE, \ZipArchive::CM_STORE);
+            $compress_status = self::zip_dir_recursive($zip, $source, $this->zip_filename, TRUE, \ZipArchive::CM_STORE);
         }
         $zip->close();
         if(count($this->tramites) == 1){
@@ -125,7 +127,10 @@ class FilesDownload implements ShouldQueue
             Log::error("FilesDownload::handle() Error al enviar notificacion: " . $e->getMessage());
             $this->job_info->status = Job::$error;
         }
-        $this->remove_all_tmp($this->added_files_path,$dir_tramite);
+        foreach($directorios_remove as $directorio){
+            $this->remove_all_tmp($this->added_files_path,$directorio);
+        }
+        
         $this->job_info->filepath = $this->_base_dir;
         $this->job_info->save();
     }
@@ -135,30 +140,14 @@ class FilesDownload implements ShouldQueue
         $ignore_non_local_file_type = ['s3'];
         $tramite_id = NULL;
         foreach($file_list as $f_array[0] ){
-            // Log::debug($f_array);
-
-            // foreach($f_array as $file){
-            //     Log::debug($file);
-            // }
-            // exit;
-            // if( in_array($tipo, $ignore_non_local_file_type) )
-            //     continue;
             
-            
-
             foreach ($f_array as $file) {
-                // \Log::debug($file);
-                // exit;
-                // \Log::info("file_directory--".$file['directory']);
                 $dir = "{$out_dir}/{$file['nice_directory']}";
-                // \Log::info("out_dir--".$out_dir);
-                // \Log::info("dir--".$dir);
                 if( ! file_exists($dir)) {
                     mkdir($dir, 0777, true);
                 }
                 
                 $ori_full_path = $file['ori_path'];
-                // \Log::info("ori_full_path--".$ori_full_path);
                 $f = $dir.DIRECTORY_SEPARATOR.$file['nice_name'];
                 if( ! copy($ori_full_path, $f) ){
                     $errors_copying[] = $file;
@@ -287,7 +276,6 @@ class FilesDownload implements ShouldQueue
         }
         $source = realpath($source);
         $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source), \RecursiveIteratorIterator::LEAVES_ONLY);
-        $include_dir = true;
         if ($include_dir) {
             $start_last_dir = strrpos($source, DIRECTORY_SEPARATOR) + 1;
             $maindir = substr($source, $start_last_dir);
