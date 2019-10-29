@@ -763,9 +763,9 @@ class StagesController extends Controller
         $tramites = $request->input('tramites');
         $opcionesDescarga = $request->input('opcionesDescarga');
         $tramites = explode(",", $tramites);
-        $ruta_documentos = 'uploads/documentos/';
-        $ruta_generados = 'uploads/datos/';
-        $ruta_tmp = 'uploads/tmp/';
+        $ruta_documentos = public_path('uploads/documentos/');
+        $ruta_generados = public_path('uploads/datos/');
+        $ruta_tmp = public_path('uploads/tmp/');
         $fecha_obj = new \DateTime();
         $fecha = date_format($fecha_obj, "Y-m-d");
         $time_stamp = date_format($fecha_obj, "Y-m-d_His");
@@ -793,7 +793,7 @@ class StagesController extends Controller
             } else {
                 $files = \Doctrine_Query::create()->from('File f')->where('f.tramite_id=?', $t)->andWhereIn('tipo', $tipoDocumento)->execute();
             }
-
+            $dir_tramite_id = NULL;
             if (count($files) > 0) {
                 // Recorriendo los archivos
                 foreach ($files as $f) {
@@ -831,6 +831,17 @@ class StagesController extends Controller
                         $ruta_base = 's3';
                     }
 
+
+                    //verificar el nombre del archivo para obtener la etapa y verificar el nivel de acceso de la tarea
+                    $tarea = DB::table('etapa')
+                            ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo')
+                            ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                            ->leftJoin('dato_seguimiento', 'etapa.id', '=', 'dato_seguimiento.etapa_id')
+                            ->leftJoin('tramite','etapa.tramite_id', '=', 'tramite.id')
+                            ->where('tramite.id',(int)$f->tramite_id)
+                            ->where('dato_seguimiento.valor','LIKE', '%'.$f->filename.'%')
+                            ->first();
+
                     $path = $ruta_base . $f->filename;
                     $proceso_nombre = str_replace(' ', '_', $tr->Proceso->nombre);
                     $proceso_nombre = \App\Helpers\FileS3Uploader::filenameToAscii($proceso_nombre);
@@ -849,14 +860,37 @@ class StagesController extends Controller
                                                        'tramite_id' => $tr->id,
                                                        'directory' => $directory];
                         }
-                    }else if(file_exists($path)){
+                    }elseif(file_exists($path) && !is_null($tarea)){
+
+                        $nice_directory = 'generados';
+                        if($f->tipo=='dato'){
+                            switch ($tarea->acceso_modo){
+                                case 'grupos_usuarios':
+                                    $nice_directory = 'subidos_registrado';
+                                    break;
+                                case 'registrados':
+                                    $nice_directory = 'subidos_registrado';
+                                    break;
+                                case 'claveunica':
+                                    $nice_directory = 'subidos_claveunica';
+                                    break;
+                                case 'publico':
+                                    $nice_directory = 'subidos_anonimo';
+                                    break;
+                                case 'anonimo':
+                                    $nice_directory = 'subidos_anonimo';
+                                    break;
+                            }
+                        }
+
                         $docs_total_space += filesize($path);
-                        $files_list[$f->tipo][] = [
+                        $files_list[$tr->id][] = [
                             'ori_path' => $path,
                             'nice_name' => $f->filename,
                             'directory' => $directory,
                             'tramite_id' => $tr->id,
-                            'tramite' => $tr->Proceso->nombre
+                            'tramite' => $tr->Proceso->nombre,
+                            'nice_directory' => $nice_directory
                         ];
                     }else{
                         $non_existant_files[] = $path;
@@ -899,7 +933,7 @@ class StagesController extends Controller
             $name_to = Auth::user()->nombres;
             $email_subject = 'Enlace para descargar archivos.';
             $this->dispatch(new FilesDownload(Auth::user()->id, Auth::user()->user_type, $files_list, $email_to,
-                                              $name_to, $email_subject, $http_host, $cuenta));
+                                              $name_to, $email_subject, $http_host, $cuenta, $dir_tramite_id, $tramites));
 
             $request->session()->flash('success', "Se enviar&aacute; un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: {$email_to}");
             return redirect()->back();
