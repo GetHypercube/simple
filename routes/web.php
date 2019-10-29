@@ -351,5 +351,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
         Route::get('/tramites_expuestos', 'ProceduresExposedController@index')->name('procedures_exposed.index');
         Route::post('/tramites_expuestos/buscar_cuenta', 'ProceduresExposedController@searchAccount')->name('tramites_expuestos.search_account');
 
+        Route::get('/logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('logs');
+
     });
 });
