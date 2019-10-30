@@ -946,29 +946,87 @@ class StagesController extends Controller
                 break;
             }
         }
-
         if($files_to_compress_not_empty){
-            $zip = new ZipArchive;
-            $opened = $zip->open($zip_path_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-            foreach($files_list as $tipo => $f_array ){
-                if( count($files_list[$tipo]) === 0){
-                    continue;
-                }
-                foreach($f_array as $file){
-                    $dir = "{$file['tramite']}/{$file['tramite_id']}/{$tipo}/";
-                    if($zip->locateName($dir) === FALSE){
-                        $zip->addEmptyDir($dir);
+            foreach($tramites as $tramite){
+                $new_name = date('Ymdhis').'-'.$tramite.'.zip';
+                $zip_name = public_path('uploads/tmp/async_downloader').DIRECTORY_SEPARATOR.$new_name;
+                
+                $zip = new ZipArchive;
+                $opened = $zip->open($zip_name, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+                foreach($files_list[$tramite] as $file[0] ){
+
+                    $out_dir = public_path('uploads/tmp/async_downloader').DIRECTORY_SEPARATOR.date('Ymdhis').'-'.$f_array[0]['tramite_id'];
+                    $dir = "{$out_dir}/{$file[0]['nice_directory']}";
+                    if( ! file_exists($dir)) {
+                        mkdir($dir, 0777, true);
                     }
-                    $zip->addFile(public_path($file['ori_path']), $dir.$file['nice_name']);
-                    $zip->setCompressionName($dir.$file['nice_name'], ZipArchive::CM_STORE);
+                    
+                    $ori_full_path = $file[0]['ori_path'];
+                    $f = $dir.DIRECTORY_SEPARATOR.$file[0]['nice_name'];
+                    if( ! copy($ori_full_path, $f) ){
+                        $errors_copying[] = $file;
+                    }else{
+                        $copied_files[] = $f;
+                    }
+                    $source = realpath($out_dir);
+                    $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source), \RecursiveIteratorIterator::LEAVES_ONLY);
+                    $start_last_dir = strrpos($source, DIRECTORY_SEPARATOR) + 1;
+                    $maindir = substr($source, $start_last_dir);
+                    $source = substr($source, 0, $start_last_dir );
+                    $source_long_directories = strlen($source) - 1;
+                    $source_long_files = strlen($source);
+                    $omitted_directories = ['.', '..'];
+                    foreach ($files as $file){
+                        if( in_array($file->getFilename(), $omitted_directories) ){
+                            continue;
+                        }    
+                        $file = $file->getRealPath();        
+                        if (is_dir($file) === TRUE){
+                            $zip->addEmptyDir(substr($file, $source_long_directories));
+                        }else if (is_file($file) === TRUE ){ //&& file_exists($file)){
+                            $f_name_dest = substr($file, $source_long_files);
+                            try{
+                                $zip->addFile($file, $f_name_dest);
+                            }catch(\Exception $e){
+                                $this->failed($e);
+                            }
+                            $zip->setCompressionName($f_name_dest, \ZipArchive::CM_STORE);
+                        }
+                    }
+                }
+                $zip->close();
+            }
+            // Remove directorio y archivos
+            $master_directory = $out_dir;
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($master_directory, \RecursiveIteratorIterator::SELF_FIRST)
+            );
+            $dirs_delete = [];
+            foreach ($iterator as $info) {
+                if( ! in_array($info->getPath(), $dirs_delete))
+                    $dirs_delete[] = $info->getPath();
+            }
+            
+            rsort($dirs_delete);
+            foreach($dirs_delete as $dir){
+                foreach($copied_files as $file){
+                    $for_unlink = $file;
+                    if( ! empty($for_unlink) && strpos($for_unlink, '..') === FALSE && trim($for_unlink) !== '.' && file_exists($for_unlink) ){
+                        unlink($for_unlink);
+                    }
+                }
+                if(file_exists($dir) && $this->is_dir_empty($dir) ){
+                    @rmdir($dir);
+                }else{
+                    $error = "Directorio temporal '{$dir}' no existe o no esta vacio. No se puede borrar.";
+                    Log::error($error); 
                 }
             }
-            $zip->close();
             if(count($non_existant_files)> 0)
                 $request->session()->flash('warning', 'No se pudieron encontrar todos los archivos requeridos para descargar.');
             // archivo $zip tiene al menos 1 archivo
             return response()
-                ->download($zip_path_filename, 'tramites_'.$fecha.'.zip', ['Content-Type' => 'application/octet-stream'])
+                ->download($zip_name, $new_name, ['Content-Type' => 'application/octet-stream'])
                 ->deleteFileAfterSend(true);
         }else{
             $request->session()->flash('error', 'No se encontraron archivos para descargar.');
@@ -1150,4 +1208,16 @@ class StagesController extends Controller
 
         return response()->json($response);
     }
+
+    private function is_dir_empty($dir){
+        $files = scandir($dir);
+        foreach($files as $file){
+            if($file !== '.' && $file !== '..'){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }
