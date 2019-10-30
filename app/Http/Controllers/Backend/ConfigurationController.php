@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
+use Categoria;
 
 class ConfigurationController extends Controller
 {
@@ -924,4 +925,92 @@ class ConfigurationController extends Controller
         $response = (new FileUploader($allowedExtensions))->handleUpload($pathLogos);
         return $response;
     }
+
+    public function list_categoria()
+    {
+        $data['categorias'] = Doctrine::getTable('Categoria')->findAll();
+        $data['title'] = 'Categorias';
+        $data['content'] = view('backend.configuration.list_categoria.index', $data);
+        
+          return view('layouts.backend', $data);      
+       
+    }
+
+    public function edit_category($id = null)
+    {
+        if ($id) {
+            $categoria = Doctrine::getTable('Categoria')->find($id);
+        } else {
+            $categoria = new Categoria();
+        }
+
+        $data['categoria'] = $categoria;
+        $data['title'] = $categoria->id ? 'Editar' : 'Crear';
+        $data['content'] = view('backend.configuration.list_categoria.edit_category', $data);
+
+        return view('layouts.backend', $data);
+    }
+
+
+    public function editar_lista_categoria(Request $request, $id = null)
+    {
+
+        try {
+            if ($id)
+                $categoria = Doctrine::getTable('Categoria')->find($id);
+            else
+                $categoria = new Categoria();
+
+            $request->validate([
+                'nombre' => 'required',
+                'descripcion' => 'required',
+                'logo' => 'required',
+            ]);
+
+            $respuesta = new \stdClass();
+
+            // Cuenta
+            $categoria->nombre = $request->input('nombre');
+            $categoria->descripcion = $request->input('descripcion');
+          
+            if ($request->input('logo') != "nologo.png") {
+                $categoria->icon_ref = $request->input('logo');
+            }
+
+            $categoria->save();
+
+            $id = (int)$categoria->id;
+
+            if ($id > 0) {
+                $request->session()->flash('success', 'Categoria guardada con éxito.');
+                $respuesta->validacion = true;
+                $respuesta->redirect = url('/backend/configuracion/categorias/');
+
+            } else {
+                $respuesta->validacion = false;
+                $respuesta->errores = '<div class="alert alert-error"><a class="close" data-dismiss="alert">×</a>Ocurrió un error al guardar los datos.</div>';
+            }
+
+        } catch (Exception $ex) {
+            $respuesta->validacion = false;
+            $respuesta->errores = '<div class="alert alert-error"><a class="close" data-dismiss="alert">×</a>' . $ex->getMessage() . '</div>';
+        }
+
+        return response()->json($respuesta);
+
+    }
+
+    public function eliminar_categoria(Request $request, $id)
+    {
+        {
+        $categoria = Doctrine::getTable('Categoria')->find($id);
+        $categoria->delete();
+
+        $request->session()->flash('success', 'Categoria eliminada con éxito.');
+        return redirect('/backend/configuracion/categorias/');
+    }
+
+ }
+
+   
 }
