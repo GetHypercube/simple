@@ -21,16 +21,13 @@ class AnuncioController extends Controller
 
     public function edit($anuncio_id = null){
 
-        if ($anuncio_id) {
+        if($anuncio_id){
             $anuncio = Anuncio::find($anuncio_id);
             $data['anuncios'] = $anuncio;
-        } else {
+        }else{
             $anuncio = new Anuncio();
         }
-        
-        // $data['seo_tags'] = \Cuenta::seo_tags($cuenta->id);
         $data['anuncio'] = $anuncio;
-        // $data['calendar'] = $calendar;
         $data['title'] = $anuncio->id ? 'Editar' : 'Crear';
         $data['content'] = view('manager.anuncios.edit', $data);
 
@@ -41,7 +38,6 @@ class AnuncioController extends Controller
         Doctrine_Manager::connection()->beginTransaction();
 
         try {
-
             if ($anuncio_id)
                 $anuncio = Anuncio::find($anuncio_id);
             else
@@ -82,10 +78,18 @@ class AnuncioController extends Controller
         $anuncio = Anuncio::find($anuncio_id);
         $anuncio->delete();
 
-        $request->session()->flash('success', 'anuncio eliminado con éxito.');
+        $request->session()->flash('success', 'Anuncio eliminado con éxito.');
         return redirect('manager/anuncios');
     }
 
-    
-
+    public function activar(Request $request, $anuncio_id){
+        //Desactivando el que está activo
+        Anuncio::where('activo', 1)->update(['activo' => 0]);
+        
+        $anuncio = Anuncio::find($anuncio_id);
+        $anuncio->activo = 1;
+        $anuncio->save();
+        $request->session()->flash('success', 'Anuncio activado con éxito.');
+        return redirect('manager/anuncios');
+    }
 }

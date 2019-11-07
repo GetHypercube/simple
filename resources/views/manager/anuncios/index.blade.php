@@ -15,20 +15,22 @@
     </tr>
     </thead>
     <tbody>
-    <?php foreach($anuncios as $c):?>
+    <?php foreach($anuncios as $a):?>
     <tr>
-        <td><?=$c->texto?></td>
-        <td><?=$c->tipo?></td>
-        <!-- <td class="text-center"><span class="badge badge-secondary"><?=strtoupper($c->ambiente)?></span></td> -->
+        <td><?=$a->texto?></td>
+        <td><?=$a->tipo?></td>
+        <!-- <td class="text-center"><span class="badge badge-secondary"><?=strtoupper($a->ambiente)?></span></td> -->
         <td>
-            <a class="btn btn-primary" href="<?=url('manager/anuncios/editar/' . $c->id)?>">
+            <a class="btn btn-primary" href="<?=url('manager/anuncios/editar/' . $a->id)?>">
                 <i class="material-icons">edit</i> Editar
             </a>
-            <a class="btn btn-success" href="<?=url('manager/anuncios/activar/' . $c->id)?>"
-               onclick="return confirm('¿Está seguro que desea activar este anuncio?')">
-                <i class="material-icons">done</i> Activar
-            </a>
-            <a class="btn btn-danger" href="<?=url('manager/anuncios/eliminar/' . $c->id)?>"
+            @if($a->activo === 0)
+                <a class="btn btn-success" href="<?=url('manager/anuncios/activar/' . $a->id)?>"
+                onclick="return confirm('¿Está seguro que desea activar este anuncio?')">
+                    <i class="material-icons">done</i> Activar
+                </a>
+            @endif
+            <a class="btn btn-danger" href="<?=url('manager/anuncios/eliminar/' . $a->id)?>"
                onclick="return confirm('¿Está seguro que desea eliminar este anuncio?')">
                 <i class="material-icons">delete</i> Eliminar
             </a>
