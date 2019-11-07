@@ -27,6 +27,7 @@
 </head>
 <body>
 	<div id="app">
+        @include('layouts.anuncios')
     	@include($dominio_header)
     	<div class="main-container container pb-5">
         	@yield('content')

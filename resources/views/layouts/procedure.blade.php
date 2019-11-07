@@ -47,6 +47,7 @@
 </head>
 <body class="h-100">
 <div id="app" class="h-100 d-flex flex-column" >
+    @include('layouts.anuncios')
     @include($dominio_header)
 
     <!-- <div class="alert alert-warning" role="alert">
