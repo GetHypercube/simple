@@ -55,6 +55,7 @@
       "app/Helpers/SaferEval.php",
       "app/Helpers/dateHelper.php",
       "app/Helpers/nusoap/lib/nusoap.php"
+      "app/Helpers/Utils.php"
     ]
   },
   "autoload-dev": {
