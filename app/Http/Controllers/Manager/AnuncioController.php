@@ -82,14 +82,16 @@ class AnuncioController extends Controller
         return redirect('manager/anuncios');
     }
 
-    public function activar(Request $request, $anuncio_id){
+    public function cambiar_estado(Request $request, $anuncio_id, $activacion = null){
         //Desactivando el que está activo
-        Anuncio::where('activo', 1)->update(['activo' => 0]);
+        if(!is_null($activacion))
+            Anuncio::where('activo',1)->update(['activo' => 0]);
         
         $anuncio = Anuncio::find($anuncio_id);
-        $anuncio->activo = 1;
+        $anuncio->activo = $activacion ? 1 : 0;
         $anuncio->save();
-        $request->session()->flash('success', 'Anuncio activado con éxito.');
+        $mensaje_estado = $activacion ? 'Anuncio activado con éxito.' : 'Anuncio desactivado con éxito.';
+        $request->session()->flash('success', $mensaje_estado);
         return redirect('manager/anuncios');
     }
 }
