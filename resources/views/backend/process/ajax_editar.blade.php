@@ -2,7 +2,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Editar Proceso</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" data-dismiss="modal"  onclick="CloseModal();" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
@@ -81,9 +81,30 @@
                 </div>
             </form>
         </div>
-        <div class="modal-footer">
-            <a href="#" data-dismiss="modal" class="btn btn-light">Cerrar</a>
-            <a href="#" onclick="javascript:$('#formEditarProceso').submit();return false;" class="btn btn-primary">Guardar</a>
+        <div class="modal-footer" data-keyboard="false" aria-hidden="true" tabindex="-1">
+           <a href="#" type="close" data-dismiss="modal"  onclick="CloseModal();"  class="btn btn-light">Cerrar</a>
+           <a href="#" onclick="javascript:$('#formEditarProceso').submit();return false;" class="btn btn-primary">Guardar</a>
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function(){
+    $(".modal-open").click(function(){
+        $("#modal").modal({
+            backdrop: 'static',
+            keyboard: false
+           
+        });
+    });
+});
+
+  function CloseModal() {       
+   $( '.modal' ).remove();
+   $( '.modal-backdrop' ).remove();
+    window.location.replace("/backend/procesos/" + procesoId + "/edit");
+
+    }
+</script>
+<script> 
+$('body').removeClass('modal-backdrop show');
+</script>

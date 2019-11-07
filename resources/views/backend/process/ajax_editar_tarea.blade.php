@@ -17,10 +17,12 @@
             format: 'DD-MM-YYYY',
             locale: 'es'
         });
+        
 
         $('#formEditarTarea .nav-tabs a').click(function (e) {
             e.preventDefault();
             $(this).tab('show');
+
         });
 
         // Permite borrar pasos
@@ -121,6 +123,7 @@
             return false;
         });
 
+
         //Permite agregar nuevos eventos externos
         $(".tab-eventos-externos .form-agregar-evento-externo button").click(function () {
             var $form = $(".tab-eventos-externos .form-agregar-evento-externo");
@@ -183,19 +186,38 @@
         //$("#modalEditarTarea .botonEliminar").attr("href",function(i,href){return href+"?socket_id_emisor="+socketId;})
     });
 </script>
-<div class="modal-dialog modal-xl" role="document">
+
+
+
+<script>
+$(document).ready(function(){
+    $(".modal-open").click(function(){
+        $("#modal").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+    });
+});
+
+</script>
+<script> 
+$('body').removeClass('modal-backdrop show');
+</script>
+
+
+<div id="modalExample" class="modal-dialog modal-xl" role="document"  data-keyboard="false">
     <form id="formEditarTarea" class="ajaxForm" method="POST"
           action="<?= route('backend.procesos.editar_tarea_form', [$tarea->id]) ?>">
         {{csrf_field()}}
 
         <div class="modal-content" style="width: 1200px;">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Editar Tarea</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Tareas</h5>
+                <button type="close" class="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="modalExample">
                 <div class="validacion"></div>
 
                 <div class="tabbable">
@@ -261,10 +283,10 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" data-keyboard="true" aria-hidden="true" id="modal-footer"  tabindex="-1">
                 <a href="<?= url('backend/procesos/eliminar_tarea/' . $tarea->id) ?>" class="btn btn-danger"
                    onclick="return confirm('¿Esta seguro que desea eliminar esta tarea?')">Eliminar</a>
-                <button type="button" data-dismiss="modal" class="btn btn-light">Cerrar</button>
+                <button type="close" class="btn btn-light">Cerrar</button>
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </div>
