@@ -172,7 +172,7 @@ class StagesController extends Controller
 
         $page = Input::get('page', 1);
         $paginate = 50;
-        $offSet = ($page * $paginate) - $paginate;
+        $offset = ($page * $paginate) - $paginate;
 
         if ($buscar) {
             $result = Tramite::search($buscar)->get();
@@ -236,7 +236,7 @@ class StagesController extends Controller
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
 
-            Log::info("El Valor de offset es de: " . $offSet);
+            Log::info("El Valor de offset es de: " . $offset);
     
         $data = \Cuenta::configSegunDominio();
 
