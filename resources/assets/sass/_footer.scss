@@ -1,33 +1,33 @@
-//.footer {
-//  padding-top: 29px;
-//  bottom: 0px;
-//  width: 100%;
-//  color: #ffffff;
-//  background-color: $footer-bg;
-//  a {
-//    line-height: 26px;
-//    font-size: 14px;
-//    color: inherit;
-//  }
-//  .bicolor {
-//    margin-top: 30px;
-//    width: 170px;
-//    height: 10px;
-//    span {
-//      display: block;
-//      float: left;
-//      height: 100%;
-//      &.azul {
-//        background: #0f69b4;
-//        width: 46%;
-//      }
-//      &.rojo {
-//        background: #EB3646;
-//        width: 54%;
-//      }
-//    }
-//  }
-//}
+.footer {
+  padding-top: 29px;
+  bottom: 0px;
+  width: 100%;
+  color: #ffffff;
+  background-color: $footer-bg;
+  a {
+    line-height: 26px;
+    font-size: 14px;
+    color: inherit;
+  }
+  .bicolor {
+    margin-top: 30px;
+    width: 170px;
+    height: 10px;
+    span {
+      display: block;
+      float: left;
+      height: 100%;
+      &.azul {
+        background: #0f69b4;
+        width: 46%;
+      }
+      &.rojo {
+        background: #EB3646;
+        width: 54%;
+      }
+    }
+  }
+}
 
 #footer-simple {
 
@@ -51,6 +51,7 @@
     margin-top: 35px;
     font-size: 1rem;
     line-height: 22px;
+    font-family: Roboto;
     a {
       color: $footer-txt;
       text-decoration: underline;
@@ -80,6 +81,7 @@
   .text-segpres {
     margin-bottom: 20px;
     font-size: 0.8rem;
+    font-family: Roboto;
 
     a {
       color: $footer-txt;
@@ -126,6 +128,7 @@
 
     #footer-bootom {
       text-align: center;
+      font-family: Roboto;
     }
   }
 }
