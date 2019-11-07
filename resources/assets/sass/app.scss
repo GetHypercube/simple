@@ -580,3 +580,37 @@ progress::-webkit-progress-value {
 .rowheader_carab ul li {float: left;margin: 0 10px;position: relative;font-family: 'Roboto';font-size: 16px;    font-weight: 500;    line-height: 56px;}
 .rowheader_carab ul li a {color: #FFF;text-decoration: underline;}
 .rowheader_carab ul li:first-child a {border-right: 1px solid #fff;padding-right: 25px; }
+
+.anuncios {
+	width: 100%;
+  margin: auto; 
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  &.critica {
+    background-color: #E22C2C;
+  }
+
+  &.informativa {
+    background-color: #0F69C4;
+  }
+
+  &.warning {
+    background-color: #E22C2C;
+  }
+  
+  p {
+    color: #FFFFFF;
+    font-family: 'Roboto';
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 15px;
+    margin: 0;
+
+    .icono-anuncio{
+      margin-top: -1px;
+    }
+  }
+  
+}
+
