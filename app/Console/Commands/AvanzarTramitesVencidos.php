@@ -50,8 +50,8 @@ class AvanzarTramitesVencidos extends Command
                 $etapa->avanzar();
         }
         if(count($etapas_vencidas))
-            $this->info('etapas avanzadas--'.count($etapas_vencidas));
+            \Log::info('etapas vencidas avanzadas--'.count($etapas_vencidas));
         else
-            $this->info('No existen etapas para avanzar');
+            \Log::info('No existen etapas para avanzar');
     }   
 }
