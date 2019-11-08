@@ -25,3 +25,10 @@
         Trámites en curso
     </a>
 </div>
+<div class="nav flex-column nav-pills">
+    <a class="nav-link disabled" href="#">ALERTAS</a>
+    <a class="nav-link {{strstr(Request::path(), 'manager/anuncios') ? 'active' : ''}}"
+       href="{{route('manager.anuncios.index')}}">
+        Anuncios
+    </a>
+</div>
