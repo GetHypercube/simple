@@ -27,7 +27,7 @@
     <?php endforeach; ?>
 
     <tr class="table-success">
-        <td>Total</td>
+        <td>Total Trámites</td>
         <td><?=$ntramites?></td>
     </tr>
     </tbody>
