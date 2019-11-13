@@ -346,5 +346,12 @@ Route::prefix('manager')->namespace('Manager')->name('manager.')->group(function
 
         Route::get('/logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->name('logs');
 
+        //Anuncios
+        Route::get('/anuncios', 'AnuncioController@index')->name('anuncios.index');
+        Route::get('/anuncios/editar/{anuncio_id?}', 'AnuncioController@edit')->name('anuncio.edit');
+        Route::post('/anuncios/editar_form/{anuncio_id?}', 'AnuncioController@edit_form')->name('anuncio.edit_form');
+        Route::get('/anuncios/eliminar/{anuncio_id}', 'AnuncioController@delete')->name('anuncio.delete');
+        Route::get('/anuncios/cambiar_estado/{anuncio_id}/{activar?}', 'AnuncioController@cambiar_estado')->name('anuncio.cambiar_estado');
+
     });
 });
