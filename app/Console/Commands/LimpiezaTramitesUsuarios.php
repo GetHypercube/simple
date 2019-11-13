@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Helpers\Doctrine;
 use Doctrine_Query;
+use Illuminate\Support\Facades\DB;
 
 class LimpiezaTramitesUsuarios extends Command
 {
@@ -40,43 +41,57 @@ class LimpiezaTramitesUsuarios extends Command
     public function handle()
     {
         //Limpia los tramites que que llevan mas de 1 dia sin modificarse, sin avanzar de etapa y sin datos ingresados (En blanco).
-        $tramites_en_blanco=Doctrine_Query::create()
+        $error_blancos = NULL;
+        try{
+            $tramites_en_blanco=Doctrine_Query::create()
                 ->from('Tramite t, t.Etapas e, e.Usuario u, e.DatosSeguimiento d')
                 ->where('t.updated_at < DATE_SUB(NOW(),INTERVAL 1 DAY) AND t.pendiente = 1')
                 ->groupBy('t.id')
                 ->having('COUNT(e.id) = 1 AND COUNT(d.id) = 0')
                 ->execute();
-        $this->info('tramites en blanco eliminados--'.count($tramites_en_blanco));
-        \Log::info('tramites en blanco eliminados--'.count($tramites_en_blanco));
-        $tramites_en_blanco->delete();
-
-        //Limpia los tramites que han sido iniciados por usuarios no registrados, y que llevan mas de 1 dia sin modificarse, y sin avanzar de etapa.
-        $tramites_en_primera_etapa=Doctrine_Query::create()
-                ->from('Tramite t, t.Etapas e, e.Usuario u')
-                ->where('t.updated_at < DATE_SUB(NOW(),INTERVAL 1 DAY) AND t.pendiente = 1')
-                ->groupBy('t.id')
-                ->having('COUNT(e.id) = 1')
-                ->execute();
-        foreach($tramites_en_primera_etapa as $t){
-            $cantidad_tramites_primera_etapa = 0;
-            if($t->Etapas[0]->Usuario->registrado == 0){
-                $this->info('tramite--'.$t->id);
-                $t->delete();
-                $cantidad_tramites_primera_etapa++;
-            }
+            $this->info('tramites en blanco eliminados--'.count($tramites_en_blanco));
+            \Log::info('tramites en blanco eliminados--'.count($tramites_en_blanco));
+            $tramites_en_blanco->delete();
+        }catch (Exception $e) {
+            \Log::info('Se produjo un error al eliminar los trámites en blanco--'.$e);
         }
-        $this->info('tramites en primera etapa eliminados--'.$cantidad_tramites_primera_etapa);
-        \Log::info('tramites en primera etapa eliminados--'.$cantidad_tramites_primera_etapa);
+        
+        //Limpia los tramites que han sido iniciados por usuarios no registrados, y que llevan mas de 1 dia sin modificarse, y sin avanzar de etapa.
+        try{
+            $tramites_en_primera_etapa=Doctrine_Query::create()
+                    ->from('Tramite t, t.Etapas e, e.Usuario u')
+                    ->where('t.updated_at < DATE_SUB(NOW(),INTERVAL 1 DAY) AND t.pendiente = 1')
+                    ->groupBy('t.id')
+                    ->having('COUNT(e.id) = 1')
+                    ->execute();
+            foreach($tramites_en_primera_etapa as $t){
+                $cantidad_tramites_primera_etapa = 0;
+                if(!is_null($t->Etapas[0]->usuario_id)){
+                    if($t->Etapas[0]->Usuario->registrado == 0){
+                        $this->info('tramite--'.$t->id);
+                        $t->delete();
+                        $cantidad_tramites_primera_etapa++;
+                    }
+                }
+            }
+            $this->info('tramites en primera etapa eliminados--'.$cantidad_tramites_primera_etapa);
+            \Log::info('tramites en primera etapa eliminados--'.$cantidad_tramites_primera_etapa);
+        }catch (Exception $e) {
+            \Log::info('Se produjo un error al eliminar de usuarios no registrados--'.$e);
+        }        
 
         //Elimina los usuarios no registrados con mas de 1 dia de antiguedad y que no hayan iniciado etapas
-        $noregistrados=Doctrine_Query::create()
+        try{
+            $noregistrados=Doctrine_Query::create()
                 ->from('Usuario u, u.Etapas e')
                 ->where('u.registrado = 0 AND DATEDIFF(NOW(),u.updated_at) >= 1')
                 ->groupBy('u.id')
                 ->having('COUNT(e.id) = 0')
                 ->execute();
-        $this->info('usuarios no registrados sin actividad eliminados--'.count($noregistrados));
-        \Log::info('usuarios no registrados sin actividad eliminados--'.count($noregistrados));
-        $noregistrados->delete();
+            \Log::info('usuarios no registrados sin actividad eliminados--'.count($noregistrados));
+            $noregistrados->delete();
+        }catch (Exception $e) {
+            \Log::info('Se produjo un error al eliminar los usuarios no registrados sin actividad--'.$e);
+        }
     }
 }
