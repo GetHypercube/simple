@@ -30,6 +30,7 @@ class EtapaTable extends Doctrine_Table {
                     }
                 })*/
                 ->whereNull('etapa.usuario_id')
+                ->whereNull('tramite.deleted_at')
                 ->limit($limite)
                 ->offset($inicio)
                 ->orderBy('etapa.tarea_id', 'ASC')
@@ -46,6 +47,7 @@ class EtapaTable extends Doctrine_Table {
                     ->where('cuenta.nombre',$cuenta->nombre)
                     ->where('tarea.grupos_usuarios','LIKE','%@@%')
                     ->whereNull('etapa.usuario_id')
+                    ->whereNull('tramite.deleted_at')
                     ->limit($limite)
                     ->offset($inicio)
                     ->orderBy('etapa.tarea_id', 'ASC')
