@@ -194,15 +194,21 @@ $(document).ready(function(){
     $(".modal-open").click(function(){
         $("#modal").modal({
             backdrop: 'static',
-            keyboard: false
+           // keyboard: false
+           
         });
     });
+
 });
 
+  function CloseModal() {       
+   $( '.modal' ).remove();
+   $( '.modal-backdrop' ).remove();
+    window.location.replace("/backend/procesos/" + procesoId + "/edit");
+
+    }
 </script>
-<script> 
-$('body').removeClass('modal-backdrop show');
-</script>
+
 
 
 <div id="modalExample" class="modal-dialog modal-xl" role="document"  data-keyboard="false">
@@ -213,7 +219,7 @@ $('body').removeClass('modal-backdrop show');
         <div class="modal-content" style="width: 1200px;">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Editar Tareas</h5>
-                <button type="close" class="close" aria-label="Close">
+                <button type="button" data-dismiss="modal" onclick="CloseModal();" class="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -286,7 +292,7 @@ $('body').removeClass('modal-backdrop show');
             <div class="modal-footer" data-keyboard="true" aria-hidden="true" id="modal-footer"  tabindex="-1">
                 <a href="<?= url('backend/procesos/eliminar_tarea/' . $tarea->id) ?>" class="btn btn-danger"
                    onclick="return confirm('¿Esta seguro que desea eliminar esta tarea?')">Eliminar</a>
-                <button type="close" class="btn btn-light">Cerrar</button>
+                <button type="button" data-dismiss="modal" onclick="CloseModal();" class="btn btn-light">Cerrar</button>
                 <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </div>
