@@ -1,7 +1,7 @@
 <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
     <div class="form-group mt-3">
         <label for="nombre">Nombre
-            <a onclick=" ga('cuenta.send', 'event', 'Mejora UX Backend', 'OnClick', 'Midiendo Eventos de Google');" href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_definicion"
+            <a onclick="ga('cuenta.send', 'event', 'Ayuda Ux Backend', 'pentana_descripcion');" href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_definicion"
                target="_blank">
                 <i class="material-icons">help</i>
             </a>
