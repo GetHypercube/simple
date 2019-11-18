@@ -30,17 +30,16 @@ class CampoFile extends Campo
         $display .= '<div class="controls">';
         $display .= '<div class="file-uploader" data-action="' . url('uploader/datos/' . $this->id . '/' . $etapa->id) . '" ' . ($modo == 'visualizacion' ? ' hidden' : '') . ' "></div>';
         $display .= '<input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="' . ($dato ? htmlspecialchars($dato->valor) : '') . '" />';
-
+        
         if ($dato) {
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('dato', $dato->valor);
             if ($file) {
                 $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);
-                if($usuario_backend)
-                    $display .= '<p class="link"><a href="' . url("uploader/datos_get/{$file->id}/{$file->llave}/{$usuario_backend->id}") . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
-                else
-                    $display .= '<p class="link"><a href="' . url("uploader/datos_get/{$file->id}/{$file->llave}") . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
-                if (!($modo == 'visualizacion'))
-                    $display .= '(<a class="remove" href="#">X</a>)</p>';
+                $url = url("uploader/datos_get/{$file->id}/{$file->llave}". ($usuario_backend ? "/".$usuario_backend->id : ''));
+                $link= "link{$file->id}";
+                $display .= "<p class=\"link\" id=\"{$link}\"><a href=\"{$url}\" target=\"{$link}\">{$file->filename}</a>";
+                 if (!($modo == 'visualizacion'))
+                    $display .= "(<span class=\"remove text-danger\" onClick=\"borrarArchivo({$file->id},'{$file->llave}','{$file->filename}')\">X</span>)</p>";
             } else {
                 $display .= '<p class="link">No se ha subido archivo.</p>';
             }
