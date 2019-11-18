@@ -21,7 +21,7 @@
                value="1" <?= $tarea->almacenar_usuario ? 'checked' : '' ?> />
         <label for="almacenar_usuario" class="form-check-label">
             ¿Almacenar el identificador del usuario que lleva a cabo esta tarea?
-            <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_otros"
+            <a onclick="ga('cuenta.send','event','Mejora UX', 'Ayuda_pestana_otros');"href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_otros"
                target="_blank">
                 <i class="material-icons">help</i>
             </a>

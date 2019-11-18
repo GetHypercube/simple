@@ -21,7 +21,7 @@
                value="1" <?=$tarea->vencimiento ? 'checked' : ''?> />
         <label for="vencimiento" class="form-check-label">
             ¿La etapa tiene vencimiento?
-            <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_vencimiento"
+            <a onclick="ga('cuenta.send','event','Mejora UX', 'Ayuda_pestana_vencimiento')";href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_vencimiento"
                target="_blank">
                 <i class="material-icons">help</i>
             </a>

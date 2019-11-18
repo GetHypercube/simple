@@ -109,7 +109,7 @@
                                 </li>
                             @endcan
                             <li class="nav-item">
-                                <a target="_blank" href="{{asset('/ayuda/simple/index.html')}}" class="nav-link">
+                                <a target="_blank" onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_nav_index');" href="{{asset('/ayuda/simple/index.html')}}" class="nav-link">
                                     <i class="material-icons">help</i> {{__('nav.help')}}
                                 </a>
                             </li>

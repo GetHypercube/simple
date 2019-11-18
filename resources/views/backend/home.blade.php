@@ -213,7 +213,7 @@
                         </li>
                     </ul>
                 </div>
-                <a href="/ayuda/simple/backend/widgets.html" target="_blank">
+                <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_Widget');"href="/ayuda/simple/backend/widgets.html" target="_blank">
                     <i class="material-icons align-middle">help</i>
                 </a>
                 </p>
