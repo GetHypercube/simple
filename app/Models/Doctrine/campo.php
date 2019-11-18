@@ -507,7 +507,7 @@ class Campo extends Doctrine_Record
             }
 
             //condiciones extras de visibilidad
-            if (count($this->condiciones_extra_visible)>0){
+            if ($this->condiciones_extra_visible){
                 $condiciones = $this->condiciones_extra_visible;
                 
                 foreach($condiciones as $condicion){
