@@ -208,7 +208,16 @@
                     </td>
                     <td>
                         @foreach ($t['etapas'] as $etapaNombre)
-                            {{ $etapaNombre }}@if (!$loop->last),@endif
+                            {{ $etapaNombre }}  
+                            <?php
+                                $tr = \App\Helpers\Doctrine::getTable('Tramite')->find($t['id']);
+                                $etapas_vencimiento = array();
+                                foreach ($tr->getEtapasActuales() as $e)
+                                    $etapas_vencimiento[] = ($e->vencimiento_at ? ' <a href="#" onclick="return editarVencimiento(' . $e->id . ')" title="Cambiar fecha de vencimiento">(' . $e->getFechaVencimientoSinDiasAsString() . ')</a>' : '');
+                                echo implode(', ', $etapas_vencimiento);
+
+                            ?>
+                            @if (!$loop->last),@endif
                         @endforeach
                     </td>
                     <td>{{ $t['created_at'] }}</td>

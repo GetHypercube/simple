@@ -13,6 +13,7 @@
     <tr>
         <th>Cuenta</th>
         <th>Nº de Trámites</th>
+        <th>Nº de Procesos</th>
     </tr>
     </thead>
     <tbody>
@@ -20,12 +21,14 @@
     <tr>
         <td><a href="<?=url('manager/estadisticas/cuentas/' . $c->id)?>"><?=$c->nombre?></a></td>
         <td><?=$c->ntramites?></td>
+        <td><?=count($c->procesos_activos)?></td>
     </tr>
     <?php endforeach; ?>
 
     <tr class="table-success">
         <td>Total</td>
         <td><?=$ntramites?></td>
+        <td><?=$procesos_activos?></td>
     </tr>
     </tbody>
 </table>
