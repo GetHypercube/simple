@@ -8,10 +8,7 @@ use Doctrine_Query;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\FileUploader;
 use App\Helpers\FileS3Uploader;
-use App\Helpers\File;
-use Illuminate\Support\Facades\Log;
-use mysql_xdevapi\Exception;
-use App\Models\DatoSeguimiento;
+use App\Models\Etapa;
 
 
 class UploadController extends Controller
@@ -123,6 +120,17 @@ class UploadController extends Controller
         // to pass data through iframe you will need to encode all html tags
         //echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function del_datos_get($id, $token)
+    {
+        $tramites = Etapa::where(['usuario_id' => Auth::user()->id])->select('tramite_id')->pluck('tramite_id')->toArray();
+        $file = \App\Models\File::where(['id' => $id, 'llave' => $token])->whereIn('tramite_id', $tramites)->first();
+        if (!$file) {
+            return abort(500);
+        }
+        $file->delete();
+        return $file;
     }
 
     private static function readFromSTDIN(){
