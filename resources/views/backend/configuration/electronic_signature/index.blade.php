@@ -36,6 +36,7 @@
                             <th>Entidad</th>
                             <th>Propósito</th>
                             <th>Estado</th>
+                            <th>Procesos vinculados</th>
                             <th>Acciones</th>
                             </thead>
                             <tbody>
@@ -47,15 +48,26 @@
                                     <td>{{$c->proposito}}</td>
                                     <td>{{$c->estado ? 'Activo' : 'No Activo'}}</td>
                                     <td>
+                                        @if($c->documentos->count())
+                                            @foreach($c->documentos as $documento)
+                                                {{$documento->proceso->nombre}}<br>
+                                            @endforeach
+                                        @endif
+                                    </td>
+                                    <td>
                                         <a href="{{route('backend.configuration.electronic_signature.edit', $c->id)}}"
                                            class="btn btn-primary">
                                             <i class="material-icons">edit</i> Editar
                                         </a>
-                                        <form id="form-<?= $c->id ?>" method="post"
+                                        <a class="btn btn-danger" href="{{route('backend.configuration.electronic_signature.delete', $c->id)}}"
+                                        onclick="return confirm('¿Está seguro que desea eliminar esta firma? \n Los documentos asociados a esta firma serán desvinculados.')">
+                                            <i class="material-icons">delete</i> Eliminar
+                                        </a>
+                                        <!-- <form id="form-<?= $c->id ?>" method="post"
                                               action="{{route('backend.configuration.electronic_signature.delete', $c->id)}}"
                                               style="display: inline">
                                             <?= csrf_field() ?>
-                                        </form>
+                                        </form> -->
                                     </td>
                                 </tr>
                             @endforeach
