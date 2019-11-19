@@ -20,7 +20,7 @@
                            placeholder="Escribir regla condición aquí"/>
                     <div class="input-group-prepend">
                         <div class="input-group-text">
-                            <a href="/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html"
+                            <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_reglas_de_negocio_and_validacion');" href="/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html"
                                target="_blank">
                                 <i class="material-icons align-middle">help</i>
                             </a>
@@ -80,7 +80,7 @@
                value="1" <?=$tarea->paso_confirmacion ? 'checked' : ''?> >
         <label for="paso_confirmacion" class="form-check-label">
             Incluir último paso de confirmación antes de avanzar la tarea
-            <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_pasos"
+            <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_pestana_pasos');" href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_pasos"
                target="_blank">
                 <i class="material-icons">help</i>
             </a>

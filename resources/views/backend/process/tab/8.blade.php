@@ -24,7 +24,7 @@
     <div class="row">
         <div class="col-6">
             <h5>Variables de formulario
-                <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_datos"
+                <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_pestana_datos');"href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_datos"
                    target="_blank">
                     <i class="material-icons">help</i>
                 </a>

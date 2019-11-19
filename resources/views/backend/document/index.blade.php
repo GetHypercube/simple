@@ -26,7 +26,7 @@
             <tr>
                 <th>
                     Documento
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-documentos.html"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_generacion_documentos');" href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-documentos.html"
                        target="_blank">
                         <i class="material-icons">help</i>
                     </a>

@@ -1,6 +1,6 @@
 <div class="tab-pane fade pt-3" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
     <label>Regla de asignación
-        <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_asignacion"
+        <a onclick="ga('cuenta.send','event', 'Mejora UX', 'Ayuda_pestana_asignacion');" href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_asignacion"
            target="_blank">
             <i class="material-icons">help</i>
         </a>
