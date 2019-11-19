@@ -18,7 +18,7 @@
         </form>
     </div>
 </div>
-
+@include('stages.order_by', ['list' => $orderByList, 'selected' => ''  ,  'type' => $type??null])
 <div class="col-xs-12 col-md-12">
     <?php if (count($etapas) > 0): ?>
     <table id="mainTable" class="table">
@@ -53,18 +53,12 @@
 
         ?>
         <tr <?=$previsualizacion ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : ''?>>
-            <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
-            <?php if ($file): ?>
+           
             <td>
-                <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]"
-                                                    value="<?=$e->id?>"></label></div>
+                @if (Cuenta::cuentaSegunDominio()->descarga_masiva && $file)
+                <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]" value="<?=$e->id?>"></label></div>
+                @endif
             </td>
-            <?php else: ?>
-            <td></td>
-            <?php endif; ?>
-            <?php else: ?>
-            <td></td>
-            <?php endif; ?>
             <td><?=$e->id?></td>
             <td class="name">
                 <?php

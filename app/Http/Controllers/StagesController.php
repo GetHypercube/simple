@@ -271,10 +271,13 @@ class StagesController extends Controller
         $query = $request->input('query');
         $matches = "";
         $rowetapas = "";
-        $resultotal = 'false';
+        $resultotal = false;
         $contador = "0";
 
         $page = Input::get('page', 1);
+        $order_field = Input::get('order_field', null);
+        $order_type  = Input::get('order_type', null);
+        $order_by = !is_null($order_field) && !is_null($order_type) ? [$order_field => $order_type] : [];
         $paginate = 50;
         $offset = ($page * $paginate) - $paginate;
 
@@ -285,25 +288,24 @@ class StagesController extends Controller
                 array_push($matches, $resultado->id);
             }
             if(count($result) > 0){
-                $resultotal = "true";
+                $resultotal = true;
             }else{
-                $resultotal = "false";
+                $resultotal = false;
             }
         }
 
-        if ($resultotal == 'true') {
+        if ($resultotal) {
             $matches = $result->groupBy('id')->keys()->toArray();
             Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
-            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . $resultotal);
-            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . (string) $resultotal);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, null, null, $order_by);
             //  $contador = count($rowetapas);
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, null, null, $order_by);
 
         } else {
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset);
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset, $order_by);
             // $contador = count($rowetapas);
-            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, $order_by);
         }
 
 
@@ -311,7 +313,7 @@ class StagesController extends Controller
         //Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
         // echo "<script>console.log(".json_encode($rowetapas).")</script>";
         // echo "<script>console.log(".json_encode($contador).")</script>";
-        $config['base_url'] = url('etapas/sinasignar');
+        $config['base_url'] = url('etapas/sinasignar', $order_by);
         $config['total_rows'] = $contador;
         $config['per_page'] = $paginate;
         $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
@@ -348,6 +350,7 @@ class StagesController extends Controller
         $data['sidebar'] = 'sinasignar';
         $data['content'] = view('stages.unassigned', $data);
         $data['title'] = 'Sin Asignar';
+        $data['orderByList'] = ['Nro' => 'tramite.id', 'Etapa' => 't_nombre', 'Modificación' => 'etapa.updated_at', 'Vencimiento' => 'etapa.vencimiento_at'];
 
         return view('layouts.procedure', $data);
     }
