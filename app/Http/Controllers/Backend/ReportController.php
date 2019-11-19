@@ -277,7 +277,7 @@ class ReportController extends Controller
             $http_host = request()->getSchemeAndHttpHost();
             $email_to = Auth::user()->email;
             $name_to = Auth::user()->nombres;
-            $email_subject = 'Enlace para descargar reporte.';
+            $email_subject = '!Tú Reporte está listo!.';
 
             $reporte_tabla = $reporte->getArregloInicial();
             $header_variables = $reporte->getHeaderVariables();
@@ -288,6 +288,9 @@ class ReportController extends Controller
             $request->session()->flash('success', "Se enviará un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: ".$email_to);
             return redirect()->back();
         }
+      
+        Log::debug("Nombre de Prsona Mensaje: " . $name_to);
+        Log::info("Nombre de Prsona Mensaje: " . $name_to);
 
         Log::debug("cantidad reporte matriz");
         $ntramites = count($reporte->getReporteAsMatrix($params)) - 1;

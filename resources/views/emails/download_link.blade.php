@@ -6,8 +6,18 @@
 </head>
 <body>
   <p>
-    El archivo está listo para ser descargado<br>
-    en el siguiente enlace: <a href="{{ $link }}">Descargar</a>
+    Hola nombre de la persona, el reporte, nombre del reporte<br>
+    que has solicitado, se encuentra listo para que puedas<br>
+    descargarlo<br><p>
+
+    Para poder acceder a él, haz click en el siguiente enlace: <a href="{{ $link }}"></a><p>
+    
+    Una vez que hagas la descarga del documento, no podrás<br>
+    volver a acceder al mismo link. Si quieres volver a acceder<br>
+    al mismo reporte, deberás generarlo nuevamente.<br><p>
+
+    Saludos,<br><p>
+      Nombre de la Institución
   </p>
 </body>
 </html>
