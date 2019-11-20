@@ -283,14 +283,15 @@ class ReportController extends Controller
             $header_variables = $reporte->getHeaderVariables();
 
             $cuenta = Cuenta::cuentaSegunDominio();
-            $this->dispatch(new ProcessReport(Auth::user()->id, Auth::user()->user_type, $proceso->id, $reporte->id, $params, $reporte_tabla, $header_variables,$http_host,$email_to,$name_to,$email_subject,$created_at_desde,$created_at_hasta,$pendiente,$cuenta));
+            $nombre_cuenta = Cuenta::cuentaSegunDominio()->nombre_largo; //Nombre de la cuenta
+            $this->dispatch(new ProcessReport(Auth::user()->id, Auth::user()->user_type, $proceso->id, $reporte->id, $params, $reporte_tabla, $header_variables,$http_host,$email_to,$name_to,$email_subject,$created_at_desde,$created_at_hasta,$pendiente,$cuenta, $nombre_cuenta, $reporte->nombre));
 
             $request->session()->flash('success', "Se enviará un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: ".$email_to);
             return redirect()->back();
         }
       
-        Log::debug("Nombre de Prsona Mensaje: " . $name_to);
-        Log::info("Nombre de Prsona Mensaje: " . $name_to);
+        Log::debug("Nombre de Prsona Mensaje: " . $nombre_cuenta);
+        Log::info("Nombre_Cuenta: " . $name_to);
 
         Log::debug("cantidad reporte matriz");
         $ntramites = count($reporte->getReporteAsMatrix($params)) - 1;
