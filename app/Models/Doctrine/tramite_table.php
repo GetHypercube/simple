@@ -33,7 +33,8 @@ class TramiteTable extends Doctrine_Table {
                 ->andWhere('e.pendiente=0')
                 ->limit(3000)
                 ->andWhere('t.deleted_at is NULL')
-                ->orderBy('t.updated_at desc');
+                //->orderBy('t.updated_at desc')
+                ;
         
         if($cuenta!='localhost')
             $query->andWhere('c.nombre = ?',$cuenta->nombre);        
