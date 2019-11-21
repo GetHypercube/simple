@@ -3,8 +3,9 @@
 class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
-    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$query="0",$limite=2000, $inicio=0, $orderby = ['etapa.tarea_id' => 'ASC']){
+    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$query="0",$limite=2000, $inicio=0, $orderby  = null){
         $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+        $orderby = is_null($orderby) ? ['etapa.tarea_id' => 'ASC'] : $orderby;
         $field = key($orderby);
         $order = $orderby[$field];
         if(!$usuario->open_id){
@@ -73,8 +74,9 @@ class EtapaTable extends Doctrine_Table {
         return $tareas;
     }
 
-   public function findSinAsignarMatch($usuario_id, $cuenta='localhost',$matches="0",$query="0", $orderby = ['etapa.tarea_id' => 'ASC']){
+   public function findSinAsignarMatch($usuario_id, $cuenta='localhost',$matches="0",$query="0", $orderby = null){
        $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+       $orderby = is_null($orderby) ? ['etapa.tarea_id' => 'ASC'] : $orderby;
        $field = key($orderby);
        $order = $orderby[$field];
        if(!$usuario->open_id){
