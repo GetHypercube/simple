@@ -311,12 +311,12 @@ class StagesController extends Controller
         //Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
         // echo "<script>console.log(".json_encode($rowetapas).")</script>";
         // echo "<script>console.log(".json_encode($contador).")</script>";
-        $config['base_url'] = url('etapas/sinasignar', $order_by);
+        $config['base_url'] = url('etapas/sinasignar');
         $config['total_rows'] = $contador;
         $config['per_page'] = $paginate;
         $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
         $config['full_tag_close'] = '</ul></div>';
-        $config['page_query_string'] = false;
+        $config['page_query_string'] = $request->except(['page']);
         $config['query_string_segment'] = 'offset';
         $config['first_link'] = 'Primero';
         $config['first_tag_open'] = '<li>';
