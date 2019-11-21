@@ -1,8 +1,8 @@
 <div class="row">
-    <div class="col-xs-12 col-md-8">
+    <div class="col-xs-12 col-md-4">
         <h2>Etapas sin asignar</h2>
     </div>
-    <div class="col-xs-12 col-md-4">
+    <div class="col-xs-12 col-md-5" style="padding:0">
         <!--buscador-->
         <form class="form-search form-inline float-right" method="GET" action="">
             <div class="input-group mb-3">
@@ -17,8 +17,12 @@
             </div>
         </form>
     </div>
+    <div class="col-xs-12 col-md-3">
+        @include('stages.order_by', ['options' => $orderByList])
+    </div>
+    
 </div>
-@include('stages.order_by', ['list' => $orderByList, 'selected' => ''  ,  'type' => $type??null])
+
 <div class="col-xs-12 col-md-12">
     <?php if (count($etapas) > 0): ?>
     <table id="mainTable" class="table">

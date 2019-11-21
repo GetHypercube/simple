@@ -275,9 +275,7 @@ class StagesController extends Controller
         $contador = "0";
 
         $page = Input::get('page', 1);
-        $order_field = Input::get('order_field', null);
-        $order_type  = Input::get('order_type', null);
-        $order_by = !is_null($order_field) && !is_null($order_type) ? [$order_field => $order_type] : [];
+        $order_by = !is_null($request->order_field) && !is_null($request->order) ? [$request->order_field => $request->order] : null;
         $paginate = 50;
         $offset = ($page * $paginate) - $paginate;
 
@@ -345,12 +343,12 @@ class StagesController extends Controller
             $paginate, // Items per page
             $page, // Current page,
             ['path' => $request->url(), 'query' => $request->query()]); // We need this so we can keep all old query parameters from the url);
+        $data['orderByList'] = ['tramite.id' => 'Nro' , 't_nombre' => 'Etapa' , 'etapa.updated_at' => 'Modificación' , 'etapa.vencimiento_at' => 'Vencimiento' ];
         $data['query'] = $query;
         // echo "<script>console.log(".json_encode($query).")</script>";
         $data['sidebar'] = 'sinasignar';
         $data['content'] = view('stages.unassigned', $data);
         $data['title'] = 'Sin Asignar';
-        $data['orderByList'] = ['Nro' => 'tramite.id', 'Etapa' => 't_nombre', 'Modificación' => 'etapa.updated_at', 'Vencimiento' => 'etapa.vencimiento_at'];
 
         return view('layouts.procedure', $data);
     }
