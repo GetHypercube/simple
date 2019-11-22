@@ -6,11 +6,14 @@
 </head>
 <body>
   <p>
+   <img src="{{ asset('img/reportes/presidential_bar.svg') }}">
+   <h1 id="title">¡Tu reporte está listo! </h1>      
+    <text id="name_person">Hola</text> <?php echo $name_user; ?>, el reporte <b><?php echo $reportname; ?></b> que has solicitado se encuentra listo para que<br> 
+    puedas descargarlo.<br><p></p>
 
-    Hola <?php echo $name_user; ?>, el reporte <b><?php echo $reportname; ?></b> que has solicitado se encuentra listo para que<br> 
-    puedas descargarlo.<br><p>
+    Para poder acceder a él, haz click en el siguiente enlace:<p>
 
-    Para poder acceder a él, <a href="{{ $link }}"> haz click en el siguiente enlace</a><p>
+    <a href="{{ $link }}"><?php echo $link; ?> </a><p>
     
     Una vez que hagas la descarga del documento, no podrás<br>
     volver a acceder al mismo link. Si quieres volver a acceder<br>
@@ -21,3 +24,24 @@
   </p>
 </body>
 </html>
+<style>
+  .title
+  {	
+    height: 34px;	
+    width: 397px;	
+    color: #373737;	
+    font-family: "Roboto Slab";	
+    font-size: 25px;	
+    font-weight: bold;	
+    line-height: 31px;
+  }
+  .name_person
+  {	
+    height: 72px;	
+    width: 427px;	
+    color: #373737;	
+    font-family: Roboto;	
+    font-size: 16px;	
+    line-height: 24px;
+  }
+</style>

@@ -46,13 +46,14 @@ class ProcessReport implements ShouldQueue
     protected $nombre_cuenta;
     protected $reportname;
     protected $name_user;
+    protected $img_reporte;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente, $cuenta, $nombre_cuenta, $reportname, $name_user){
+    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente, $cuenta, $nombre_cuenta, $reportname, $name_user, $img_reporte){
         $this->user_id = $user_id;
         $this->user_type = $user_type;
         $this->proceso_id = $proceso_id;
@@ -75,6 +76,7 @@ class ProcessReport implements ShouldQueue
         $this->nombre_cuenta = $nombre_cuenta;
         $this->reportname = $reportname;
         $this->name_user = $name_user;
+        $this->img_reporte = $img_reporte;
 
         $this->job_info = new Job();
         $this->arguments = serialize([$user_id, $user_type, $proceso_id, $reporte_id, $cuenta]);
@@ -220,8 +222,9 @@ class ProcessReport implements ShouldQueue
         $nombre_cuenta = $this->nombre_cuenta;
         $reportname = $this->reportname;
         $name_user = $this->name_user;
+        $img_reporte = $this->img_reporte;
         $link = "{$this->link_host}/backend/reportes/descargar_archivo/{$this->user_id}/{$this->job_info->id}/{$this->job_info->filename}";
-        $data = ['link' => $link, 'reportname' => $reportname, 'nombre_cuenta' => $nombre_cuenta, 'name_user' => $name_user];
+        $data = ['link' => $link, 'reportname' => $reportname, 'nombre_cuenta' => $nombre_cuenta, 'name_user' => $name_user, 'img_reporte' => $img_reporte];
         $email_to = $this->email_to;
         $email_subject = $this->email_subject;
         $cuenta = $this->cuenta;
