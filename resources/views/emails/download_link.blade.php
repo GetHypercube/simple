@@ -6,9 +6,9 @@
 </head>
 <body>
   <p>
-    Hola nombre de la persona, el reporte, nombre del reporte<br>
-    que has solicitado, se encuentra listo para que puedas<br>
-    descargarlo<br><p>
+
+    Hola <?php echo $name_user; ?>, el reporte <b><?php echo $reportname; ?></b> que has solicitado se encuentra listo para que<br> 
+    puedas descargarlo.<br><p>
 
     Para poder acceder a él, <a href="{{ $link }}"> haz click en el siguiente enlace</a><p>
     
@@ -17,7 +17,7 @@
     al mismo reporte, deberás generarlo nuevamente.<br><p>
 
     Saludos,<br><p>
-    
+    <b><?php echo $nombre_cuenta; ?></b><p>
   </p>
 </body>
 </html>

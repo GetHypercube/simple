@@ -214,6 +214,7 @@ class ReportController extends Controller
         $params = array();
 
         Log::debug("Explorando proceso id: " . $proceso->id);
+       
 
         if ($created_at_desde) {
             array_push($params, 'created_at >= ' . "'" . date('Y-m-d', strtotime($created_at_desde)) . "'");
@@ -277,21 +278,24 @@ class ReportController extends Controller
             $http_host = request()->getSchemeAndHttpHost();
             $email_to = Auth::user()->email;
             $name_to = Auth::user()->nombres;
-            $email_subject = '!Tú Reporte está listo!.';
-
+            $email_subject = '!Tú reporte está listo!';
+           
             $reporte_tabla = $reporte->getArregloInicial();
             $header_variables = $reporte->getHeaderVariables();
 
             $cuenta = Cuenta::cuentaSegunDominio();
             $nombre_cuenta = Cuenta::cuentaSegunDominio()->nombre_largo; //Nombre de la cuenta
-            $this->dispatch(new ProcessReport(Auth::user()->id, Auth::user()->user_type, $proceso->id, $reporte->id, $params, $reporte_tabla, $header_variables,$http_host,$email_to,$name_to,$email_subject,$created_at_desde,$created_at_hasta,$pendiente,$cuenta, $nombre_cuenta, $reporte->nombre));
-
+            $reportname = $reporte->nombre;//Nombre del reporte
+            $name_user = Auth::user()->usuario;
+            $this->dispatch(new ProcessReport(Auth::user()->id, Auth::user()->user_type, $proceso->id, $reporte->id, $params, $reporte_tabla, $header_variables,$http_host,$email_to,$name_to,$email_subject,$created_at_desde,$created_at_hasta,$pendiente,$cuenta, $nombre_cuenta, $reportname, $name_user));
+            Log::debug("Nombre Cuenta " . $nombre_cuenta);
+            Log::debug("Nombre Reporte " . $reportname);
             $request->session()->flash('success', "Se enviará un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: ".$email_to);
             return redirect()->back();
         }
       
-        Log::debug("Nombre de Prsona Mensaje: " . $nombre_cuenta);
-        Log::info("Nombre_Cuenta: " . $name_to);
+
+
 
         Log::debug("cantidad reporte matriz");
         $ntramites = count($reporte->getReporteAsMatrix($params)) - 1;
