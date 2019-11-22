@@ -33,7 +33,7 @@
                            value="blanco" <?= !$edit || ($edit && $documento->tipo) == 'blanco' ? 'checked' : '' ?> />
                     <label for="tipo_blanco" class="form-check-label">
                         En blanco
-                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-documentos.html#documento_en_blanco"
+                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_generacion_documentos');" href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-documentos.html#documento_en_blanco"
                            target="_blank">
                             <i class="material-icons">help</i>
                         </a>
