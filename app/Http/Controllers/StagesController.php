@@ -185,9 +185,8 @@ class StagesController extends Controller
 
         if ($resultotal == "true") {
             $matches = $result->groupBy('id')->keys()->toArray();
-             Log::info("El Valor de RESULTOTAL de INBOX es de: " . $resultotal);
-             $contador = Doctrine::getTable('Etapa')
-                 ->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+            Log::info("El Valor de RESULTOTAL de INBOX es de: " . $resultotal);
+            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
             $rowetapas = Doctrine::getTable('Etapa')
                 ->findPendientes(Auth::user()->id,
                     \Cuenta::cuentaSegunDominio(),
@@ -207,8 +206,7 @@ class StagesController extends Controller
                     $buscar,
                     $paginate,
                     $offset);
-            $contador = Doctrine::getTable('Etapa')
-                ->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
          
         }
         

@@ -134,16 +134,15 @@ class EtapaTable extends Doctrine_Table {
 
     public function findPendientesALL($usuario_id, $cuenta='localhost', $orderby='updated_at',$direction='desc',$matches="0",$buscar="0"){        
         $query=Doctrine_Query::create()
+                ->select('count(*) as contador')
                 ->from('Tramite t, t.Proceso.Cuenta c, t.Etapas e, e.Usuario u')
                 ->where('u.id = ?',$usuario_id)
                 ->andWhere('e.pendiente=1')
-                ->limit(3000)
-                ->andWhere('t.deleted_at is NULL')
-                ->orderBy('t.updated_at desc');
+                ->andWhere('t.deleted_at is NULL');
         
         if($cuenta!='localhost')
             $query->andWhere('c.nombre = ?',$cuenta->nombre);        
-        return $query->execute();
+        return $query->execute()[0]->contador;
     }
 
     public function canUsuarioAsignarsela($usuario_id, $acceso_modo, $grupos_usuarios, $etapa_id)
