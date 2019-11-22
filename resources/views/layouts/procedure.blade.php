@@ -44,6 +44,7 @@
         });
     </script>
      <style type="text/css">{{ $personalizacion }}</style>
+     <style>button.btn.btn-outline-secondary[type="submit"]{height:35px}</style>
 </head>
 <body class="h-100">
 <div id="app" class="h-100 d-flex flex-column" >
