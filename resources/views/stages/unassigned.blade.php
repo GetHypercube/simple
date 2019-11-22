@@ -1,8 +1,8 @@
 <div class="row">
-    <div class="col-xs-12 col-md-8">
+    <div class="col-xs-12 col-md-4">
         <h2>Etapas sin asignar</h2>
     </div>
-    <div class="col-xs-12 col-md-4">
+    <div class="col-xs-12 col-md-5" style="padding:0">
         <!--buscador-->
         <form class="form-search form-inline float-right" method="GET" action="">
             <div class="input-group mb-3">
@@ -17,6 +17,10 @@
             </div>
         </form>
     </div>
+    <div class="col-xs-12 col-md-3">
+        @include('stages.order_by', ['options' => $orderByList])
+    </div>
+    
 </div>
 
 <div class="col-xs-12 col-md-12">
@@ -53,18 +57,12 @@
 
         ?>
         <tr <?=$previsualizacion ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : ''?>>
-            <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
-            <?php if ($file): ?>
+           
             <td>
-                <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]"
-                                                    value="<?=$e->id?>"></label></div>
+                @if (Cuenta::cuentaSegunDominio()->descarga_masiva && $file)
+                <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]" value="<?=$e->id?>"></label></div>
+                @endif
             </td>
-            <?php else: ?>
-            <td></td>
-            <?php endif; ?>
-            <?php else: ?>
-            <td></td>
-            <?php endif; ?>
             <td><?=$e->id?></td>
             <td class="name">
                 <?php
