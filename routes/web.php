@@ -264,7 +264,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::post('/configuracion/firmas_electronicas_editar', 'ConfigurationController@storeElectronicSignature')->name('configuration.electronic_signature.store');
             Route::get('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@editElectronicSignature')->name('configuration.electronic_signature.edit');
             Route::put('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@updateElectronicSignature')->name('configuration.electronic_signature.update');
-            Route::delete('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@deleteElectronicSignature')->name('configuration.electronic_signature.delete');
+            Route::get('/configuracion/firmas_electronicas_eliminar/{id}', 'ConfigurationController@deleteElectronicSignature')->name('configuration.electronic_signature.delete');
 
             //Categorias
 
