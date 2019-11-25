@@ -763,9 +763,9 @@ class StagesController extends Controller
         $tramites = $request->input('tramites');
         $opcionesDescarga = $request->input('opcionesDescarga');
         $tramites = explode(",", $tramites);
-        $ruta_documentos = 'uploads/documentos/';
-        $ruta_generados = 'uploads/datos/';
-        $ruta_tmp = 'uploads/tmp/';
+        $ruta_documentos = public_path('uploads/documentos/');
+        $ruta_generados = public_path('uploads/datos/');
+        $ruta_tmp = public_path('uploads/tmp/');
         $fecha_obj = new \DateTime();
         $fecha = date_format($fecha_obj, "Y-m-d");
         $time_stamp = date_format($fecha_obj, "Y-m-d_His");
@@ -793,7 +793,7 @@ class StagesController extends Controller
             } else {
                 $files = \Doctrine_Query::create()->from('File f')->where('f.tramite_id=?', $t)->andWhereIn('tipo', $tipoDocumento)->execute();
             }
-
+            $dir_tramite_id = NULL;
             if (count($files) > 0) {
                 // Recorriendo los archivos
                 foreach ($files as $f) {
@@ -831,6 +831,17 @@ class StagesController extends Controller
                         $ruta_base = 's3';
                     }
 
+
+                    //verificar el nombre del archivo para obtener la etapa y verificar el nivel de acceso de la tarea
+                    $tarea = DB::table('etapa')
+                            ->select('etapa.id as etapa_id','tarea.acceso_modo as acceso_modo')
+                            ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
+                            ->leftJoin('dato_seguimiento', 'etapa.id', '=', 'dato_seguimiento.etapa_id')
+                            ->leftJoin('tramite','etapa.tramite_id', '=', 'tramite.id')
+                            ->where('tramite.id',(int)$f->tramite_id)
+                            ->where('dato_seguimiento.valor','LIKE', '%'.$f->filename.'%')
+                            ->first();
+
                     $path = $ruta_base . $f->filename;
                     $proceso_nombre = str_replace(' ', '_', $tr->Proceso->nombre);
                     $proceso_nombre = \App\Helpers\FileS3Uploader::filenameToAscii($proceso_nombre);
@@ -849,14 +860,37 @@ class StagesController extends Controller
                                                        'tramite_id' => $tr->id,
                                                        'directory' => $directory];
                         }
-                    }else if(file_exists($path)){
+                    }elseif(file_exists($path) && !is_null($tarea)){
+
+                        $nice_directory = 'generados';
+                        if($f->tipo=='dato'){
+                            switch ($tarea->acceso_modo){
+                                case 'grupos_usuarios':
+                                    $nice_directory = 'subidos_registrado';
+                                    break;
+                                case 'registrados':
+                                    $nice_directory = 'subidos_registrado';
+                                    break;
+                                case 'claveunica':
+                                    $nice_directory = 'subidos_claveunica';
+                                    break;
+                                case 'publico':
+                                    $nice_directory = 'subidos_anonimo';
+                                    break;
+                                case 'anonimo':
+                                    $nice_directory = 'subidos_anonimo';
+                                    break;
+                            }
+                        }
+
                         $docs_total_space += filesize($path);
-                        $files_list[$f->tipo][] = [
+                        $files_list[$tr->id][] = [
                             'ori_path' => $path,
                             'nice_name' => $f->filename,
                             'directory' => $directory,
                             'tramite_id' => $tr->id,
-                            'tramite' => $tr->Proceso->nombre
+                            'tramite' => $tr->Proceso->nombre,
+                            'nice_directory' => $nice_directory
                         ];
                     }else{
                         $non_existant_files[] = $path;
@@ -899,7 +933,7 @@ class StagesController extends Controller
             $name_to = Auth::user()->nombres;
             $email_subject = 'Enlace para descargar archivos.';
             $this->dispatch(new FilesDownload(Auth::user()->id, Auth::user()->user_type, $files_list, $email_to,
-                                              $name_to, $email_subject, $http_host, $cuenta));
+                                              $name_to, $email_subject, $http_host, $cuenta, $dir_tramite_id, $tramites));
 
             $request->session()->flash('success', "Se enviar&aacute; un enlace para la descarga de los documentos una vez est&eacute; listo a la direcci&oacute;n: {$email_to}");
             return redirect()->back();
@@ -912,29 +946,87 @@ class StagesController extends Controller
                 break;
             }
         }
-
         if($files_to_compress_not_empty){
-            $zip = new ZipArchive;
-            $opened = $zip->open($zip_path_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-            foreach($files_list as $tipo => $f_array ){
-                if( count($files_list[$tipo]) === 0){
-                    continue;
-                }
-                foreach($f_array as $file){
-                    $dir = "{$file['tramite']}/{$file['tramite_id']}/{$tipo}/";
-                    if($zip->locateName($dir) === FALSE){
-                        $zip->addEmptyDir($dir);
+            foreach($tramites as $tramite){
+                $new_name = date('Ymdhis').'-'.$tramite.'.zip';
+                $zip_name = public_path('uploads/tmp/async_downloader').DIRECTORY_SEPARATOR.$new_name;
+                
+                $zip = new ZipArchive;
+                $opened = $zip->open($zip_name, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+                foreach($files_list[$tramite] as $file[0] ){
+
+                    $out_dir = public_path('uploads/tmp/async_downloader').DIRECTORY_SEPARATOR.date('Ymdhis').'-'.$f_array[0]['tramite_id'];
+                    $dir = "{$out_dir}/{$file[0]['nice_directory']}";
+                    if( ! file_exists($dir)) {
+                        mkdir($dir, 0777, true);
                     }
-                    $zip->addFile(public_path($file['ori_path']), $dir.$file['nice_name']);
-                    $zip->setCompressionName($dir.$file['nice_name'], ZipArchive::CM_STORE);
+                    
+                    $ori_full_path = $file[0]['ori_path'];
+                    $f = $dir.DIRECTORY_SEPARATOR.$file[0]['nice_name'];
+                    if( ! copy($ori_full_path, $f) ){
+                        $errors_copying[] = $file;
+                    }else{
+                        $copied_files[] = $f;
+                    }
+                    $source = realpath($out_dir);
+                    $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source), \RecursiveIteratorIterator::LEAVES_ONLY);
+                    $start_last_dir = strrpos($source, DIRECTORY_SEPARATOR) + 1;
+                    $maindir = substr($source, $start_last_dir);
+                    $source = substr($source, 0, $start_last_dir );
+                    $source_long_directories = strlen($source) - 1;
+                    $source_long_files = strlen($source);
+                    $omitted_directories = ['.', '..'];
+                    foreach ($files as $file){
+                        if( in_array($file->getFilename(), $omitted_directories) ){
+                            continue;
+                        }    
+                        $file = $file->getRealPath();        
+                        if (is_dir($file) === TRUE){
+                            $zip->addEmptyDir(substr($file, $source_long_directories));
+                        }else if (is_file($file) === TRUE ){ //&& file_exists($file)){
+                            $f_name_dest = substr($file, $source_long_files);
+                            try{
+                                $zip->addFile($file, $f_name_dest);
+                            }catch(\Exception $e){
+                                $this->failed($e);
+                            }
+                            $zip->setCompressionName($f_name_dest, \ZipArchive::CM_STORE);
+                        }
+                    }
+                }
+                $zip->close();
+            }
+            // Remove directorio y archivos
+            $master_directory = $out_dir;
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($master_directory, \RecursiveIteratorIterator::SELF_FIRST)
+            );
+            $dirs_delete = [];
+            foreach ($iterator as $info) {
+                if( ! in_array($info->getPath(), $dirs_delete))
+                    $dirs_delete[] = $info->getPath();
+            }
+            
+            rsort($dirs_delete);
+            foreach($dirs_delete as $dir){
+                foreach($copied_files as $file){
+                    $for_unlink = $file;
+                    if( ! empty($for_unlink) && strpos($for_unlink, '..') === FALSE && trim($for_unlink) !== '.' && file_exists($for_unlink) ){
+                        unlink($for_unlink);
+                    }
+                }
+                if(file_exists($dir) && $this->is_dir_empty($dir) ){
+                    @rmdir($dir);
+                }else{
+                    $error = "Directorio temporal '{$dir}' no existe o no esta vacio. No se puede borrar.";
+                    Log::error($error); 
                 }
             }
-            $zip->close();
             if(count($non_existant_files)> 0)
                 $request->session()->flash('warning', 'No se pudieron encontrar todos los archivos requeridos para descargar.');
             // archivo $zip tiene al menos 1 archivo
             return response()
-                ->download($zip_path_filename, 'tramites_'.$fecha.'.zip', ['Content-Type' => 'application/octet-stream'])
+                ->download($zip_name, $new_name, ['Content-Type' => 'application/octet-stream'])
                 ->deleteFileAfterSend(true);
         }else{
             $request->session()->flash('error', 'No se encontraron archivos para descargar.');
@@ -1116,4 +1208,16 @@ class StagesController extends Controller
 
         return response()->json($response);
     }
+
+    private function is_dir_empty($dir){
+        $files = scandir($dir);
+        foreach($files as $file){
+            if($file !== '.' && $file !== '..'){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }
