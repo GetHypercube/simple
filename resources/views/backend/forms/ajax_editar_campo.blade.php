@@ -211,8 +211,8 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">
-            <?= $campo->id ? 'Edición' : 'Creación' ?> de Campo <?= $campo->tipo ?>
-                <a href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html#btn_<?= $campo->tipo ?>"
+                Edición de Campo
+                <a onclick="ga('cuenta.send', 'event', 'Mejora_UX_Ayuda_Campo', '<?= $campo->tipo ?>');" href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html#btn_<?= $campo->tipo ?>"
                    target="_blank">
                     <i class="material-icons">help</i>
                 </a>
@@ -305,7 +305,7 @@
                 <?php if (!$campo->estatico): ?>
                 <?php if (isset($campo->datos_agenda) && $campo->datos_agenda) { ?>
                 <label style="display:none;">Reglas de validación
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_reglas_validacion_campos');" href="/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html"
                        target="_blank">
                         <i class="material-icons">help</i>
                     </a>
@@ -315,7 +315,7 @@
                 <?php } else { ?>
 					<br/>
                 <label>Reglas de validación
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html#validacion_campos"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_reglas_validacion_campos_visibles');" href="/ayuda/simple/backend/modelamiento-del-proceso/reglas-de-negocio-y-reglas-de-validacion.html#validacion_campos"
                        target="_blank">
                         <span class="glyphicon glyphicon-info-sign"></span>
                     </a>
