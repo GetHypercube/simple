@@ -149,6 +149,11 @@ class Campo extends Doctrine_Record
             'local' => 'reporte_id',
             'foreign' => 'id'
         ));
+
+        $this->hasMany('File as Files', array(
+            'local' => 'id',
+            'foreign' => 'campo_id'
+        ));
     }
 
     //Despliega la vista de un campo del formulario utilizando los datos de seguimiento (El dato que contenia el tramite al momento de cerrar la etapa)

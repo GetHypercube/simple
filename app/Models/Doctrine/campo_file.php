@@ -32,9 +32,14 @@ class CampoFile extends Campo
         $display .= '<input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="' . ($dato ? htmlspecialchars($dato->valor) : '') . '" />';
         $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);
         if ($dato) {
+            
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('dato', $dato->valor);
-            if ($file) {
+            if ($file && !$this->Files->count()) {
                 $display .= $this->displayFile($file, $modo, $usuario_backend);
+            } elseif($this->Files->count()){
+                foreach($this->Files as $file){
+                    $display .= $this->displayFile($file, $modo, $usuario_backend);
+                }
             } else {
                 $display .= '<p class="link">No se ha subido archivo.</p>';
             }
