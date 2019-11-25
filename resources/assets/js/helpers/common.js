@@ -335,3 +335,17 @@ var procesar_data = function(data){
 function isObject (value) {
   return value && typeof value === 'object' && value.constructor === Object;
 }
+
+function borrarArchivo(id, llave, nombre)
+{
+    if(!confirm('¿Está seguro que desea borrar el archivo ' + nombre + '?'))
+        return;
+
+    $.ajax({
+        method: 'delete',
+        url: '/uploader/del_datos_get/' + id + '/' + llave,
+        success: function(){
+            $('#link'+id).remove();
+        }
+    })
+}
