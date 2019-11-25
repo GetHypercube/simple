@@ -112,6 +112,7 @@ class UploadController extends Controller
             $result['file_name'] = $archivo;
             $file->tipo = 'dato';
             $file->llave = strtolower(str_random(12));
+            $file->campo_id = $campo_id;
             $file->save();
 
             $result['id'] = $file->id;
