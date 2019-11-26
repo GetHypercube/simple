@@ -96,9 +96,11 @@ ENV TZ America/Santiago
 
 WORKDIR $DIRECTORY_PROJECT
 
+RUN echo "cp .env.example .env"
+
 RUN echo "APP_KEY=$(php artisan key:generate --show)" > .env
 
-EXPOSE 80 9000
+EXPOSE 80 3000 9000
 
 # Services initialization (bash exec)
 ENTRYPOINT ["entrypoint"]
