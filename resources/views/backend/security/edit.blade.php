@@ -20,7 +20,7 @@
             <fieldset>
                 @if(!$edit)
                     <legend> Regitrar métodos de seguridad
-                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-seguridad"
+                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda-Registrar-medotos-seguridad');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-seguridad"
                            target="_blank">
                             <i class="material-icons">help</i>
                         </a>
@@ -28,7 +28,7 @@
                 @endif
                 @if($edit)
                     <legend> Editar métodos de seguridad
-                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-seguridad"
+                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda-editar-medotos-seguridad');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-seguridad"
                            target="_blank">
                             <i class="material-icons">help</i>
                         </a>

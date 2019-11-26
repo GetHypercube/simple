@@ -33,7 +33,7 @@
         });
     </script>
     <label>Nivel de Acceso
-        <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_usuarios"
+        <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_pestana_usuario');" href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_usuarios"
            target="_blank">
             <i class="material-icons">help</i>
         </a>

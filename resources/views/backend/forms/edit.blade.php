@@ -133,7 +133,7 @@
                             <div class="col-10">
                                 <div class="float-left">
                                     <legend><?= $formulario->nombre ?>
-                                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html"
+                                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda-Diseno-Nuevo-Formulario');" href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html"
                                            target="_blank">
                                             <i class="material-icons align-middle">help</i>
                                         </a>
