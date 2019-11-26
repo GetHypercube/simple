@@ -298,18 +298,14 @@ class FilesDownload implements ShouldQueue
                 $f_name_dest = substr($file, $source_long_files);
                 try{
                     $zip->addFile($file, $f_name_dest);
-                }catch(\Exception $e){
-                    $this->failed($e);
-                }
+                }catch(\Exception $e){ }
                 $zip->setCompressionName($f_name_dest, $compression);
             }
         }
         try{
-            return true;
-        }catch(\Exception $e){
-            $this->failed($e);
-        }
-    }
+            return $zip->close(); // TRUE o FALSE
+        }catch(\Exception $e){ }
+    }   
 
     public function failed(){
         $this->job_info->status = Job::$error;
