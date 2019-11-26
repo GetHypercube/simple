@@ -15,6 +15,7 @@ class Campo extends Doctrine_Record
     public $datos_agenda = false;     // Indica si se deben mostrar los satos adicionales para la agenda.
     public $datos_mapa = false; // Indica si se deben mostrar que datos se deben mostrar asociados al mapa.
 
+    // Al agregar un nuevo campo considerar el texto que debe retornar en la funcion getNombreInterfaz para mostrarlo en el modal que crea o edita un campo
     public static function factory($tipo)
     {
         if ($tipo == 'text')
@@ -73,7 +74,6 @@ class Campo extends Doctrine_Record
             $campo = new CampoBtnSiguiente();
 
         $campo->assignInheritanceValues();
-
         return $campo;
     }
 
@@ -826,4 +826,58 @@ class Campo extends Doctrine_Record
     {
         return json_decode($this->_get('condiciones_extra_visible'));
     }
+
+    public static function getNombreInterfaz($tipo){
+        if ($tipo == 'text')
+            $nombre_interfaz = 'Textbox';
+        else if ($tipo == 'password')
+            $nombre_interfaz = 'Password';
+        else if ($tipo == 'textarea')
+            $nombre_interfaz = 'Textarea';
+        else if ($tipo == 'select')
+            $nombre_interfaz = 'Select';
+        else if ($tipo == 'radio')
+            $nombre_interfaz = 'Radio';
+        else if ($tipo == 'checkbox')
+            $nombre_interfaz = 'Checkbox';
+        else if ($tipo == 'file')
+            $nombre_interfaz = 'File';
+        else if ($tipo == 'file_s3')
+            $nombre_interfaz = 'File Transfer';
+        else if ($tipo == 'date')
+            $nombre_interfaz = 'Date';
+        else if ($tipo == 'instituciones_gob')
+            $nombre_interfaz = 'Instituciones';
+        else if ($tipo == 'comunas')
+            $nombre_interfaz = 'Comunas';
+        else if ($tipo == 'paises')
+            $nombre_interfaz = 'Paises';
+        else if ($tipo == 'moneda')
+            $nombre_interfaz = 'Moneda';
+        else if ($tipo == 'title')
+            $nombre_interfaz = 'Título';
+        else if ($tipo == 'subtitle')
+            $nombre_interfaz = 'Subtítulo';
+        else if ($tipo == 'paragraph')
+            $nombre_interfaz = 'Párrafo';
+        else if ($tipo == 'documento')
+            $nombre_interfaz = 'Documento';
+        else if ($tipo == 'javascript')
+            $nombre_interfaz = 'Javascript';
+        else if ($tipo == 'grid')
+            $nombre_interfaz = 'Grilla';
+        else if ($tipo == 'agenda')
+            $nombre_interfaz = 'Agenda';
+        else if ($tipo == 'grid_datos_externos')
+            $nombre_interfaz = 'Grilla de Datos Externos';
+        else if ($tipo == 'provincias')
+            $nombre_interfaz = 'Provincias';
+        else if ($tipo == 'btn_asincrono')
+            $nombre_interfaz = 'Botón Asíncrono';
+        else if ($tipo == 'btn_siguiente')
+            $nombre_interfaz = 'Botón Siguiente';
+
+        return $nombre_interfaz;
+    }
+    
 }

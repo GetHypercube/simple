@@ -211,7 +211,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">
-            <?= $campo->id ? 'Edición' : 'Creación' ?> de Campo <?= $campo->tipo ?>
+            <?= $campo->id ? 'Edición de Campo' : 'Creación de Nuevo Campo' ?>  <?= $titulo_editar ?>
                 <a href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html#btn_<?= $campo->tipo ?>"
                    target="_blank">
                     <i class="material-icons">help</i>
