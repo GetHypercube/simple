@@ -37,7 +37,7 @@
                         <?= $proceso->nombre ?>
                         <a href="#" title="Editar"><i class="material-icons">edit</i></a>
                     </h1>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html" target="_blank"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_disenador');" href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html" target="_blank"
                        style="float:left;">
                         <i class="material-icons">help</i>
                     </a>

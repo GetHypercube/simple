@@ -17,7 +17,7 @@
         <a class="btn btn-success" href="<?=route('backend.security.create', [$proceso->id])?>">
             <i class="material-icons">insert_drive_file</i> Nuevo
         </a>
-        <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-seguridad"
+        <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_WS_Seguridad');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-seguridad"
            target="_blank">
             <i class="material-icons align-middle">help</i>
         </a>

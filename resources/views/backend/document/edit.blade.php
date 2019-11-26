@@ -33,7 +33,7 @@
                            value="blanco" <?= !$edit || ($edit && $documento->tipo) == 'blanco' ? 'checked' : '' ?> />
                     <label for="tipo_blanco" class="form-check-label">
                         En blanco
-                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-documentos.html#documento_en_blanco"
+                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_generacion_documentos_en_blanco');" href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-documentos.html#documento_en_blanco"
                            target="_blank">
                             <i class="material-icons">help</i>
                         </a>
@@ -44,7 +44,7 @@
                            value="certificado" <?= $edit && $documento->tipo == 'certificado' ? 'checked' : '' ?> />
                     <label for="tipo_certificado" class="form-check-label">
                         Certificado
-                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-documentos.html#documento_certificado"
+                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_generacion_Doc_Certificado');" href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-documentos.html#documento_certificado"
                            target="_blank">
                             <i class="material-icons">help</i>
                         </a>
