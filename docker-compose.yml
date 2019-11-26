@@ -1,96 +1,74 @@
 version: "3.0"
-
 services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-    # image: "simple2_image"
-    container_name: simple2
+      dockerfile: ./setup/Dockerfile
+    container_name: simple2_web
     restart: unless-stopped
     tty: true
-    # environment:
-    #   SERVICE_NAME: app
-    #   SERVICE_TAGS: dev
+    ports:
+      - "8000:80"
+    environment:
+      DB_HOST: db
+      ELASTICSEARCH_HOSTS: elasticsearch:9200
     working_dir: /var/www/simple
     volumes:
-        - ./:/var/www/simple
+      - ./:/var/www/simple
     networks:
-        - esnet
+      - esnet
     depends_on:
       - db
       - redis
       - elasticsearch
-
-  webserver:
-    image: "nginx:alpine"
-    volumes:
-        - "./nginx/:/etc/nginx/conf.d/"
-        - "./:/var/www/simple"
-    ports:
-        - "8000:80"
-        - "443:443"
-    networks:
-        - esnet
-    depends_on:
-      - elasticsearch
-      - app
   db:
     image: "mysql:5.7"
+    container_name: simple2_db
+    command: ["--sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"]
     environment:
-        - MYSQL_DATABASE=simple
-        - MYSQL_ROOT_PASSWORD=digital123
+      - MYSQL_DATABASE=simple
+      - MYSQL_ROOT_PASSWORD=digital123
     volumes:
-        - dbdata:/var/lib/mysql
+      - db_data:/var/lib/mysql
     ports:
-        - "3306:3306"
+      - "3306:3306"
     restart: unless-stopped
     networks:
-        - esnet
-    # depends_on:
-    #  - app
-
+      - esnet
   redis:
     image: "redis"
-    networks: 
-        - esnet
+    container_name: simple2_redis
+    networks:
+      - esnet
     ports:
-        - "6379:6379"
+      - "6379:6379"
     depends_on:
       - db
 
   elasticsearch:
     image: "elasticsearch:5.6"
+    container_name: simple2_elastic
     environment:
-        - node.name=elasticsearch
-        - discovery.seed_hosts=elasticsearch
-        - cluster.initial_master_nodes=elasticsearch
-        - cluster.name=elasticsearch
-        - bootstrap.memory_lock=true
-        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      - discovery.type=single-node
     volumes:
-        - elasticsearchdata:/usr/share/elasticsearch/data
+      - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
-        - "9200:9200"
+      - "9200:9200"
     networks:
-        - esnet
+      - esnet
     depends_on:
-      - redis
+      - db
 
 #Docker Volumes
 volumes:
-   dbdata:
-   elasticsearchdata:
+  db_data:
+  elasticsearch_data:
 
 #Docker Networks
 networks:
   esnet:
     driver: bridge
     ipam:
-     driver: default
-     config:
-       - subnet: 10.5.0.0/16
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
