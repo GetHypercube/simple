@@ -30,7 +30,7 @@
                     <thead>
                     <tr>
                         <th>Proceso
-                            <a href="/ayuda/simple/backend/seguimiento-de-procesos.html" target="_blank">
+                            <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_seguimiento_procesos');" href="/ayuda/simple/backend/seguimiento-de-procesos.html" target="_blank">
                                 <i class="material-icons">help</i>
                             </a>
                         </th>

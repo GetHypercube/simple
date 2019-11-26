@@ -26,7 +26,7 @@
                     <thead>
                     <tr>
                         <th width="10%">Reporte
-                            <a href="/ayuda/simple/backend/modelamiento-del-proceso/reportes.html"
+                            <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_generación_reportes');" href="/ayuda/simple/backend/modelamiento-del-proceso/reportes.html"
                                target="_blank">
                                 <i class="material-icons">help</i>
                             </a>

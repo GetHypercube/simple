@@ -29,47 +29,47 @@
                         Editar Acción
                     @endif
                     <?php if ($tipo == "enviar_correo") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#enviar_correo"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_Accion_enviar_correo');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#enviar_correo"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>
                     <?php } else if ($tipo == "webservice") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_Accion_WS');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>
                     <?php } else if ($tipo == "variable") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#variable"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_accion_variable');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#variable"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>
                     <?php } else if ($tipo == "rest") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-rest"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_accion_ws_rest');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-rest"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>
                     <?php } else if ($tipo == "soap") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-soap"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_accion_ws_soap');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webservice-soap"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>
                     <?php } else if ($tipo == "callback") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#callback"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_accion_callback');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#callback"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>
                     <?php } else if ($tipo == "webhook") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webhook"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_ accion_webhook');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#webhook"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>
                     <?php } else if ($tipo == "iniciar_tramite") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#iniciar-tramite"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_accion_iniciar_tramite');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#iniciar-tramite"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>
                     <?php } else if ($tipo == "continuar_tramite") { ?>
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#continuar-tramite"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda_accion_continuar_tramite');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#continuar-tramite"
                        target="_blank">
                         <i class="material-icons align-middle">help</i>
                     </a>

@@ -145,7 +145,7 @@
         </tbody>
     </table>
     <label class="checkbox">Para mayor información puedes consultar en el siguiente enlace.
-        <a href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_eventos"
+        <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_pestana_eventos');" href="/ayuda/simple/backend/modelamiento-del-proceso/disenador.html#pestana_eventos"
            target="_blank">
             <i class="material-icons">help</i>
         </a>

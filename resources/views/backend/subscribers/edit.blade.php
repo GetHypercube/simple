@@ -20,7 +20,7 @@
             <fieldset>
                 @if(!$edit)
                     <legend> Regitrar suscriptores
-                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#suscriptores"
+                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda-Registrar-Suscriptor');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#suscriptores"
                            target="_blank">
                             <i class="material-icons align-middle">help</i>
                         </a>
@@ -28,7 +28,7 @@
                 @endif
                 @if($edit)
                     <legend> Editar suscriptores
-                        <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#suscriptores"
+                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda-Editar-Suscriptor');" href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html#suscriptores"
                            target="_blank">
                             <i class="material-icons">help</i>
                         </a>

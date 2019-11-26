@@ -29,7 +29,7 @@
             <thead>
             <tr>
                 <th>Formulario
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-formularios.html"
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_generacion_formulario');" href="/ayuda/simple/backend/modelamiento-del-proceso/generacion-de-formularios.html"
                        target="_blank">
                         <i class="material-icons">help</i>
                     </a>
