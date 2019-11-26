@@ -8,7 +8,7 @@
   <p>
    <img src="{{ asset('img/reportes/presidential_bar.svg') }}">
    <h1 id="title">¡Tu reporte está listo! </h1>      
-    <text id="name_person">Hola</text> <?php echo $name_user; ?>, el reporte <b><?php echo $reportname; ?></b> que has solicitado se encuentra listo para que<br> 
+    <text id="name_person">Hola</text> <b><?php echo $user_name; ?></b>, el reporte <b><?php echo $reportname; ?></b> que has solicitado se encuentra listo para que<br> 
     puedas descargarlo.<br><p></p>
 
     Para poder acceder a él, haz click en el siguiente enlace:<p>
