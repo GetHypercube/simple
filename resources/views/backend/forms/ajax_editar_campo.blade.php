@@ -211,9 +211,8 @@
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">
-                Edición de Campo
-                <a onclick="ga('cuenta.send', 'event', 'Mejora_UX_Ayuda_Campo', '<?= $campo->tipo ?>');" href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html#btn_<?= $campo->tipo ?>"
-                   target="_blank">
+                <?= $campo->id ? 'Edición de Campo' : 'Creación de Nuevo Campo' ?>  <?= $titulo_editar ?>
+                <a onclick="ga('cuenta.send', 'event', 'Mejora_UX_Ayuda_Campo', '<?= $campo->tipo ?>');" href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html#btn_<?= $campo->tipo ?>" target="_blank">
                     <i class="material-icons">help</i>
                 </a>
             </h5>
