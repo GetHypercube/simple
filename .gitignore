@@ -19,3 +19,5 @@ yarn-error.log
 composer.lock
 package-lock.json
 .DS_Store
+/storage/debugbar
+*.code-workspace
