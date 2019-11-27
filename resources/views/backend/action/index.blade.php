@@ -26,7 +26,7 @@
             <thead>
             <tr>
                 <th>Accion
-                    <a href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html" target="_blank">
+                    <a onclick="ga('cuenta.send', 'event', 'Mejora UX', 'Ayuda_Acciones')"; href="/ayuda/simple/backend/modelamiento-del-proceso/acciones.html" target="_blank">
                         <i class="material-icons">help</i>
                     </a>
                 </th>

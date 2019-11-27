@@ -16,7 +16,7 @@
 
         <a class="btn btn-success" href="<?=route('backend.subscribers.create', [$proceso->id])?>">
             <i class="material-icons">insert_drive_file</i> Nuevo</a>
-        <a href="/ayuda/simple/backend/modelamiento-del-proceso/suscriptores-externos.html" target="_blank">
+        <a onclick="ga('cuenta.send','event','Mejora UX','Ayuda_suscriptores_externos');" href="/ayuda/simple/backend/modelamiento-del-proceso/suscriptores-externos.html" target="_blank">
             <i class="material-icons align-middle">help</i>
         </a>
         <table class="table mt-3">

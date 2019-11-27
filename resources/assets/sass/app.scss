@@ -563,7 +563,7 @@ progress::-webkit-progress-value {
   height: 400px;
 }
 
-.campo > .campos3{ 
+.campo > .campos3{
     border-bottom: 1px dotted #ccc;
     padding-top: 15px;
     margin-bottom: 10px;
@@ -581,11 +581,18 @@ progress::-webkit-progress-value {
 .rowheader_carab ul li a {color: #FFF;text-decoration: underline;}
 .rowheader_carab ul li:first-child a {border-right: 1px solid #fff;padding-right: 25px; }
 
+#app {
+  &.anuncios-on {
+    padding-top: 36px;
+  }
+}
 .anuncios {
-	width: 100%;
-  margin: auto; 
+  width: 100%;
+  margin: auto;
   padding-top: 10px;
   padding-bottom: 10px;
+  position: fixed;
+  z-index: 9999;
 
   &.critica {
     background-color: #E22C2C;
@@ -598,7 +605,7 @@ progress::-webkit-progress-value {
   &.warning {
     background-color: #E22C2C;
   }
-  
+
   p {
     color: #FFFFFF;
     font-family: 'Roboto';
@@ -607,10 +614,11 @@ progress::-webkit-progress-value {
     line-height: 15px;
     margin: 0;
 
-    .icono-anuncio{
-      margin-top: -1px;
+    .icono-anuncio {
+      margin-top: -4px;
+      margin-right: 5px;
     }
   }
-  
+
 }
 
