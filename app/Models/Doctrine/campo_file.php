@@ -32,10 +32,18 @@ class CampoFile extends Campo
         $display .= '<input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="' . ($dato ? htmlspecialchars($dato->valor) : '') . '" />';
         $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);
         if ($dato) {
-            
+            $whereFiles= ['tramite_id' => $etapa->tramite_id, 'nombre' => $dato->nombre];
+            $files = \App\Models\File::join('campo', 'campo.id', '=', 'file.campo_id')->where($whereFiles)->get();
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('dato', $dato->valor);
-            if ($file && !$this->Files->count()) {
-                $display .= $this->displayFile($file, $modo, $usuario_backend);
+            if (($file || $files->count()) && !$this->Files->count()) {
+                if(!$files->count()){
+                    $display .= $this->displayFile($file, $modo, $usuario_backend);
+                }
+                else{
+                    foreach($files as $file)
+                        $display .= $this->displayFile($file, $modo, $usuario_backend);
+                }
+                    
             } elseif($this->Files->count()){
                 foreach($this->Files as $file){
                     $display .= $this->displayFile($file, $modo, $usuario_backend);
