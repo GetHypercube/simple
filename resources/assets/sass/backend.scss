@@ -39,6 +39,26 @@ i.material-icons {
   box-shadow: 0 2px 4px 0 rgba(209, 209, 209, 0.50);
 }
 
+.container-backend {
+  .barra-gob {
+    margin-bottom: 88px;
+    position: absolute;
+    width: 160px;
+    .blue {
+      float: left;
+      width: 40%;
+      height: 9px;
+      background-color: $blue;
+    }
+    .red {
+      float: left;
+      width: 60%;
+      height: 9px;
+      background-color: $red;
+    }
+  }
+}
+
 .navbar-light .navbar-nav .nav-link {
   color: $primary;
   &.active {
