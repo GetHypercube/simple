@@ -149,6 +149,11 @@ class Campo extends Doctrine_Record
             'local' => 'reporte_id',
             'foreign' => 'id'
         ));
+
+        $this->hasMany('File as Files', array(
+            'local' => 'id',
+            'foreign' => 'campo_id'
+        ));
     }
 
     //Despliega la vista de un campo del formulario utilizando los datos de seguimiento (El dato que contenia el tramite al momento de cerrar la etapa)
@@ -507,7 +512,7 @@ class Campo extends Doctrine_Record
             }
 
             //condiciones extras de visibilidad
-            if (count($this->condiciones_extra_visible)>0){
+            if ($this->condiciones_extra_visible){
                 $condiciones = $this->condiciones_extra_visible;
                 
                 foreach($condiciones as $condicion){
