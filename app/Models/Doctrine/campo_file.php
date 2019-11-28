@@ -24,7 +24,7 @@ class CampoFile extends Campo
             return $display;
         }
 
-        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        $etapa = \App\Models\Etapa::find($etapa_id);
 
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
@@ -32,9 +32,11 @@ class CampoFile extends Campo
         $display .= '<input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="' . ($dato ? htmlspecialchars($dato->valor) : '') . '" />';
         $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);
         if ($dato) {
-            $whereFiles= ['tramite_id' => $etapa->tramite_id, 'nombre' => $dato->nombre];
-            $files = \App\Models\File::join('campo', 'campo.id', '=', 'file.campo_id')->where($whereFiles)->get();
+            $files = $etapa->tramite->files->filter(function($f) use($dato){
+                return is_object($f->campo) && $dato->nombre == $f->campo->nombre;
+            });
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('dato', $dato->valor);
+            
             if (($file || $files->count()) && !$this->Files->count()) {
                 if(!$files->count()){
                     $display .= $this->displayFile($file, $modo, $usuario_backend);
@@ -46,6 +48,7 @@ class CampoFile extends Campo
                     
             } elseif($this->Files->count()){
                 foreach($this->Files as $file){
+                    if($file->tramite_id != $etapa->tramite_id) continue;
                     $display .= $this->displayFile($file, $modo, $usuario_backend);
                 }
             } else {
