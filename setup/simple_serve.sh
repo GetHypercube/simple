@@ -5,5 +5,6 @@
 #npm run watch
 
 #npm install && \
+#yarn
 npm rebuild node-sass && \
-npm run prod
+yarn run watch
