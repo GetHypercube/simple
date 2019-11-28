@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Categoria;
+use App\Models\Documento;
+use DB;
 
 class ConfigurationController extends Controller
 {
@@ -261,9 +263,6 @@ class ConfigurationController extends Controller
     public function electronicSignature()
     {
         $firmas_electronicas = FirmaElectronica::where('cuenta_id',Auth::user()->cuenta_id)->get();
-        //$data['firmas_electronicas'] = Doctrine::getTable('HsmConfiguracion')->findAll();  //Categoria
-        //$data['title'] = 'Firmas Electrónicas';
-        //$data['content'] = view('backend.configuration.electronic_signature.index', $data);
         return view('backend.configuration.electronic_signature.index', compact('firmas_electronicas') );
     }
 
@@ -378,6 +377,8 @@ class ConfigurationController extends Controller
     
     public function deleteElectronicSignature(Request $request, $id)
     {
+        // Documento::where('hsm_configuracion_id',$id)->update(['hsm_configuracion_id' => NULL]);
+        DB::table('documento')->where('hsm_configuracion_id',$id)->update(array('hsm_configuracion_id' => NULL));
         FirmaElectronica::destroy($id);
 
         $request->session()->flash('status', 'Firma eliminada con éxito');

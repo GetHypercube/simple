@@ -15,6 +15,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::post('/uploader/datos/{campo_id}/{etapa_id}', 'UploadController@datos');
     Route::post('/uploader/datos_s3/{campo_id}/{etapa_id}/{multipart?}/{part_number?}/{total_segments?}', 'UploadController@datos_s3');
     Route::get('/uploader/datos_get/{id}/{token}/{usuario_backend?}', 'UploadController@datos_get');
+    Route::delete('/uploader/del_datos_get/{id}/{token}', 'UploadController@del_datos_get');
     Route::get('/uploader/datos_get_s3/{id}/{campo_id}/{token}/{file_name?}', 'UploadController@datos_get_s3');
 
     Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
@@ -263,7 +264,7 @@ Route::prefix('backend')->namespace('Backend')->name('backend.')->group(function
             Route::post('/configuracion/firmas_electronicas_editar', 'ConfigurationController@storeElectronicSignature')->name('configuration.electronic_signature.store');
             Route::get('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@editElectronicSignature')->name('configuration.electronic_signature.edit');
             Route::put('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@updateElectronicSignature')->name('configuration.electronic_signature.update');
-            Route::delete('/configuracion/firmas_electronicas_editar/{id}', 'ConfigurationController@deleteElectronicSignature')->name('configuration.electronic_signature.delete');
+            Route::get('/configuracion/firmas_electronicas_eliminar/{id}', 'ConfigurationController@deleteElectronicSignature')->name('configuration.electronic_signature.delete');
 
             //Categorias
 

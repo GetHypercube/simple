@@ -24,23 +24,29 @@ $(document).ready(function () {
 
     $(".file-uploader").each(function (i, el) {
         var $parentDiv = $(el).parent();
-        console.log($(el).data("action"));
         new qq.FileUploader({
             params: {_token: window._token},
             element: el,
             action: $(el).data("action"),
-            method: 'post',
             onComplete: function (id, filename, respuesta) {
-                if (!respuesta.error) {
-                    if (typeof(respuesta.file_name) !== "undefined") {
-                        $parentDiv.find(":input[type=hidden]").val(respuesta.file_name);
-                        $parentDiv.find(".qq-upload-list").empty();
-                        $parentDiv.find(".link").html("<a target='blank' href='/uploader/datos_get/" + respuesta.id + "/" + respuesta.llave + "'>" + respuesta.file_name + "</a> (<a href='#' class='remove'>X</a>)");
-                        prepareDynaForm(".dynaForm");
-                    } else {
-                        $parentDiv.find(".link").html("");
-                        alert("La imagen es muy grande");
-                    }
+                if (typeof respuesta.success != 'undefined' && respuesta.success ) {
+                    $parentDiv.find(":input[type=hidden]").val(respuesta.file_name);
+                    $parentDiv.find(".qq-upload-list").empty();
+                    var p = document.createElement('p');
+                    $(p).attr({'class': 'link', 'id': 'link' + respuesta.id});
+                    var a = document.createElement('a')
+                    $(a)
+                        .attr({ 'href': '/uploader/datos_get/' + respuesta.id + '/' + respuesta.llave, 'target': 'f' + respuesta.id })
+                        .text(respuesta.file_name);
+
+                    var onclick = 'borrarArchivo(' + respuesta.id + ', \'' + respuesta.llave + '\',\'' + respuesta.file_name + '\')';
+                    var span = " (<span class='remove text-danger' onClick=\"" + onclick + "\">X</span>)";
+                    p.innerHTML = a.outerHTML + span;
+                    $parentDiv.append(p)
+                    prepareDynaForm(".dynaForm");                    
+                }else {
+                    $parentDiv.find(".link").html("");
+                    alert("La imagen es muy grande");
                 }
             }
         });
@@ -328,4 +334,18 @@ var procesar_data = function(data){
 
 function isObject (value) {
   return value && typeof value === 'object' && value.constructor === Object;
+}
+
+function borrarArchivo(id, llave, nombre)
+{
+    if(!confirm('¿Está seguro que desea borrar el archivo ' + nombre + '?'))
+        return;
+
+    $.ajax({
+        method: 'delete',
+        url: '/uploader/del_datos_get/' + id + '/' + llave,
+        success: function(){
+            $('#link'+id).remove();
+        }
+    })
 }
