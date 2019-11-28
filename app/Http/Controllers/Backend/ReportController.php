@@ -278,7 +278,7 @@ class ReportController extends Controller
             $http_host = request()->getSchemeAndHttpHost();
             $email_to = Auth::user()->email;
             $name_to = Auth::user()->nombres;
-            $email_subject = '!Tú reporte está listo!';
+            $email_subject = '¡Tú reporte está listo!';
            
             $reporte_tabla = $reporte->getArregloInicial();
             $header_variables = $reporte->getHeaderVariables();
