@@ -17,10 +17,8 @@ php artisan cache:clear && \
 php artisan key:generate && \
 
 #NPM
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-apt install nodejs
-npm install
-npm run prod
+npm install && \
+npm run prod && \
 
 php artisan migrate:fresh --seed && \
 php artisan elasticsearch:admin create && \

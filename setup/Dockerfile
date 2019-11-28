@@ -7,7 +7,7 @@ WORKDIR $DIRECTORY_PROJECT
 
 # Install Packages
 RUN apt-get update && apt-get install -y \
- git zip unzip gnupg nginx curl apt-utils nano libpq-dev \
+ git zip unzip gnupg nginx curl bash apt-utils nano libpq-dev \
   mariadb-client nmap net-tools iputils-ping \
  libxml2-dev zip unzip zlib1g-dev \
  libpng-dev libmcrypt-dev libzip-dev
@@ -75,6 +75,9 @@ RUN { \
     } > /etc/nginx/sites-available/default
 
 
+#Node
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN apt-get install nodejs -y
 
 # Init services or another executions on build time
 RUN { \

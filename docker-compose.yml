@@ -1,4 +1,4 @@
-version: "3.0"
+version: "3.6"
 services:
   app:
     build:
@@ -9,9 +9,12 @@ services:
     tty: true
     ports:
       - "8000:80"
-    environment:
-      DB_HOST: db
-      ELASTICSEARCH_HOSTS: elasticsearch:9200
+    env_file:
+      - ./setup/.env
+#    environment:
+#      DB_HOST: db
+#      DB_DATABASE: 'simple'
+#      ELASTICSEARCH_HOSTS: elastic:9200
     working_dir: /var/www/simple
     volumes:
       - ./:/var/www/simple
@@ -27,7 +30,7 @@ services:
     command: ["--sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"]
     environment:
       - MYSQL_DATABASE=simple
-      - MYSQL_ROOT_PASSWORD=digital123
+      - MYSQL_ROOT_PASSWORD=1234
     volumes:
       - db_data:/var/lib/mysql
     ports:
