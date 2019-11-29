@@ -21,8 +21,8 @@ yarn && \
 yarn run prod && \
 
 php artisan migrate:fresh --seed && \
-php artisan simple:backend admin@simple.cl 1234 && \
-php artisan simple:manager admin@simple.cl 1234 && \
+php artisan simple:backend admin@simple.cl 123456 && \
+php artisan simple:manager admin@simple.cl 123456 && \
 php artisan elasticsearch:admin create && \
 php artisan elasticsearch:admin index && \
 echo "Done..."
