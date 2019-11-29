@@ -97,8 +97,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN chmod +x /usr/local/bin/entrypoint
 
-#RUN chown -R www-data:www-data storage/
-
 ENV LANG es_CL.UTF-8
 ENV LANGUAGE es_CL:es
 ENV LC_ALL es_CL.UTF-8
@@ -106,9 +104,7 @@ ENV TZ America/Santiago
 
 WORKDIR $DIRECTORY_PROJECT
 
-RUN echo "cp .env.example .env"
-
-RUN echo "APP_KEY=$(php artisan key:generate --show)" > .env
+RUN echo "cp setup/env.example setup/.env"
 
 EXPOSE 80 3000 9000
 
