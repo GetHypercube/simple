@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
 
+
 class StagesController extends Controller
 {
     public function run(Request $request, $etapa_id, $secuencia = 0)
@@ -879,6 +880,7 @@ class StagesController extends Controller
                                 case 'anonimo':
                                     $nice_directory = 'subidos_anonimo';
                                     break;
+                                
                             }
                         }
 
@@ -952,16 +954,16 @@ class StagesController extends Controller
                 
                 $zip = new ZipArchive;
                 $opened = $zip->open($zip_name, ZipArchive::CREATE | ZipArchive::OVERWRITE);
-                foreach($files_list[$tramite] as $file[0] ){
-
+                foreach($files_list[$tramite] as $file ){
+                
                     $out_dir = public_path('uploads/tmp/async_downloader').DIRECTORY_SEPARATOR.date('Ymdhis').'-'.$f_array[0]['tramite_id'];
-                    $dir = "{$out_dir}/{$file[0]['nice_directory']}";
+                    $dir = "{$out_dir}/{$file['nice_directory']}";
                     if( ! file_exists($dir)) {
                         mkdir($dir, 0777, true);
                     }
                     
-                    $ori_full_path = $file[0]['ori_path'];
-                    $f = $dir.DIRECTORY_SEPARATOR.$file[0]['nice_name'];
+                    $ori_full_path = $file['ori_path'];
+                    $f = $dir.DIRECTORY_SEPARATOR.$file['nice_name'];
                     if( ! copy($ori_full_path, $f) ){
                         $errors_copying[] = $file;
                     }else{
