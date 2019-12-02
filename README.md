@@ -1,45 +1,43 @@
 # SIMPLE 2.0
 
+El siguiente ejemplo esta enfocado para el el trabajo en un ambiente de desarrollo y levanta la aplicación sobre un 
+conjunto de contenedores los cuales hacen referencia a cada uno de los diferentes servicios que necesita la aplicación 
+SIMPLE.
+
+* Sitio web - Laravel 5.5
+* MySql 5.7
+* Elastic Search 5.6
+* Redis
+* Rabbit
+ 
 ## Requerimientos
 
-* NodeJS >= 8.11.3 
-* NPM >= 5.6.0
-* MySQL 5.7 ó MariaDB 10.2
-* PHP 7.1
-* Librerías PHP necesarias:
-    * OpenSSL
-    * PDO
-    * PDO_MYSQL
-    * Mbstring
-    * Tokenizer
-    * curl
-    * mcrypt
-    * Ctype
-    * XML
-    * JSON
-    * GD
-    * SOAP
-    * bcmath
+* Docker
+
+Instalación en sistema operativo Ubuntu, para otras distribuciones consultar la documentación oficial.
+
+
 
 ## Instalación
+Seguir paso a paso las instrucciones:
+
+[https://docs.docker.com/install/linux/docker-ce/ubuntu/](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 
 
-### Mysql >= 5.7
-Si estas usando una versión mayor o igual a MySQL 5.7, deberas desactivar el only_full_group_by, para eso en el sql mode deberás tener las siguientes lineas (my.cnf).
-
-    sql-mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
-
-
-### Permisos de directorio
-
-Es posible que deba configurar algunos permisos. Los directorios dentro de `storage` y `bootstrap/cache` deben ser editables por su servidor web o Laravel no se ejecutará.
+## (Considereación*)
+Para levantar el ambiente de desarrollo las variables o comandos a considerar son los definidos dentro del
+directorio setup/
 
 ### Variables de entorno
 
-El siguiente paso es copiar el archivo .env.example a .env y editar las variables de configuración de acuerdo a tu servidor:
+El siguiente paso es copiar el archivo setup/env.example a setup/.env y editar las variables de configuración de 
+acuerdo a tu necesidad, algunas variables ya vienen predefinidas dentro del archivo docker-compose.yml, tales como las 
+variables de host o ip referentes a los demás servicios, como elasticsearch, base de datos, puertos, etc.
 
 ```
-cp .env.example .env
+cd setup/
+
+cp env.example .env
 ```
 
 Descripción de variables de entorno a utilizar
@@ -94,124 +92,49 @@ DOWNLOADS_MAX_JOBS_PER_USER: Cantidad máxima de JOBS de archivos a descargar si
 DESTINATARIOS_CRON: Listado de correos separados por comas que serán destinatarios de recibir el estado de las tarea de cron
 ```
 
-### Instalar las dependencias con composer
 
-Laravel utiliza `Composer` para administrar sus dependencias. Entonces, antes de usar este proyecto desarrollado en Laravel, 
-asegúrese de tener Composer instalado en su máquina. Y ejecute el siguiente comando.
- 
-```
-composer install
-```
+## Docker-compose
 
-Luego, la instalación de las librerías JS necesarias:
+** Antes de instalar asegúrese de que los siguientes puertos se encuntran disponibles en su máquina:
+* 8000 -> Sitio web
+* 9200 -> Elasticsearch
+* 3306 -> MySql
+* 6379 -> Redis
+* 5672 -> RabbitMq
+* 15672 -> Manager de RabbitMq
 
-```
-npm install
-```
-
-Compilación de JS
-
-```
-npm run prod
+Servicio web (Aplicación)
+```bash
+$ cd setup/
+    
+$ bash install.sh
 ```
 
-Luego, Migración y Semillas de la base de datos:
+Luego comenzaran a levantar la aplicación tomando como base el Dockerfile definido
+dentro del directorio setup/
 
-```
-php artisan migrate --seed
-```
+Y continuará descargando y levantando los diferentes servicios, elasticsearch, MySql, redis y rabbit
 
-## Actualizaciones
-
-Cada vez que se realice un pull del proyecto, este deberá ser acompañado de la siguiente lista de ejecución de comandos.
-
-```
-npm install
-npm run production
-composer install
-php artisan migrate --force
-vendor/bin/phpunit
+Esto tomará algunos minutos, cuando la instalación termine pudes ejecutar:
+```bash
+docker ps
 ```
 
-## Elasticsearch
+Y se listaran los siguientes contenedores
 
-Para crear el índice:
-
-```
-php artisan elasticsearch:admin create
-```
-
-Para indexar todo (Realizar esto en instalación inicial):
-
-```
-php artisan elasticsearch:admin index
+```bash
+- simple2_web
+- simple2_elastic
+- simple2_redis
+- simple2_rabbit
 ```
 
-Para indexar solo páginas:
+Cada uno mapeado a sus respectivos puertos desde 127.0.0.1 hacia cada contenedor.
+
+```bash
 
 ```
-php artisan elasticsearch:admin index pages
-```
 
-## Creación de usuarios en Frontend, Backend y Manager
+```bash
 
-Para crear un usuario perteneciente a Frontend, basta con ejecutar este comando especificando email, contraseña y opcionalmente la cuenta:
-
-```
-php artisan simple:frontend {email} {password} {cuenta?}
-php artisan simple:frontend mail@example.com 123456 1
-```
-
-Para crear un usuario perteneciente al Backend, basta con ejecutar este comando especificando email y contraseña:
-
-```
-php artisan simple:backend {email} {password}
-php artisan simple:backend mail@example.com 123456
-```
-
-Y para crear un usuario perteneciente al Manager,
-
-```
-php artisan simple:manager {user} {password}
-php artisan simple:manager siturra qwerty
-```
-
-## Generar la llave de aplicación
-
-```
-php artisan key:generate
-```
-
-## Tests con PHPUnit
-
-Listado de Tests:
-
-- Verificar que las librerías de PHP requeridas por SIMPLE, estan habilitadas (VerifyLibrariesAvailableTest)
-- Validación de Reglas Customizadas (CustomValidationRulesTest)
-- Creación de Usuarios (Front, Backend, Manager) (CreateUsersTest)
-- Motor de Reglas SIMPLE BPM (RulesTest)
-
-Para ejecutar los Tests solo debes ejecutar el siguiente comando:
-
-```
-vendor/bin/phpunit
-```
-
-## Adicionales 
-
-Si desea poder utilizar una acción de tipo Soap, debe tener habilitada la librería Soap en su php.ini
-
-## Queue worker para indexar contenido de trámites
-Para indexar el contenido de los trámites cada vez que se avanza dentro del flujo, es necesario dejar corriendo el worker con el siguiente comando:
-
-```
-php artisan queue:work --timeout=0
-```
-
-## Tareas programadas
-Configurar por cada instancia el siguiente path para ser programado y que ejecute las tareas de limpieza de trámites sin avanzar, usuarios no registrados sin actividad y notificación de etapas por vencer
-
-```
-/schedule
-ejemplo: http://simple.cl/schedule
 ```
