@@ -2,10 +2,20 @@
 
 ## Requerimientos
 
+### Requisitos mínimos del servidor
+
+* Procesador: CPU 2 core de 2da generación
+* Memoria RAM: 4 GB
+* Espacio en disco duro: 10 GB
+* Sistema Operativo: Distro Linux basa en Debian / Red-Hat
+
+### Software y librerías
+
 * NodeJS >= 8.11.3 
 * NPM >= 5.6.0
 * MySQL 5.7 ó MariaDB 10.2
 * PHP 7.1
+* Docker >=  19.0.*
 * Librerías PHP necesarias:
     * OpenSSL
     * PDO

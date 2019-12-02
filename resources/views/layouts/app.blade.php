@@ -26,15 +26,15 @@
 
 </head>
 <body>
-	<div id="app">
-        @include('layouts.anuncios')
-    	@include($dominio_header)
-    	<div class="main-container container pb-5">
-        	@yield('content')
-        	{!! isset($content) ? $content : '' !!}
-    	</div>
-    	@include($dominio_footer, ['metadata' => $metadata_footer])
-	</div>
+@include('layouts.anuncios')
+<div id="app" @if(!is_null((new \App\Helpers\Utils())->get_anuncio_activo()))class="anuncios-on"@endif>
+    @include($dominio_header)
+    <div class="main-container container pb-5">
+        @yield('content')
+        {!! isset($content) ? $content : '' !!}
+    </div>
+    @include($dominio_footer, ['metadata' => $metadata_footer])
+</div>
 
 <!-- Scripts -->
 <script src="{{ asset('js/app.js') }}"></script>
