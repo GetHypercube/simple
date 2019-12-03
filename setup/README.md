@@ -19,7 +19,7 @@ instrucciones:
 
 
 ### (Consideración)
-Para levantar el ambiente de desarrollo las variables o comandos a considerar son los definidos dentro del
+Para levantar el ambiente de desarrollo las variables o comandos a considerar son los definidos dentro de este
 directorio `setup/`
 
 ### Variables de entorno
@@ -188,4 +188,57 @@ Este ejemplo aplica para cualquier comando ejecutado dentro de la aplicación la
 si llegara a ocurrir algun problema de conección a mitad de la instalación lo recomendable siempre será reinstalar.
 (`bash install.sh`) ya que de otro modo habría que entrar al docker de la aplicación (`docker exec -it simple2_web bash`)
 e ir instalando manualmente las instrucciones del Dockerfle según hasta dónde haya llegado nuestra intalación y como lo 
-muestra la terminal y realmente no queremos eso.  
+muestra la terminal y realmente no queremos eso.
+
+---
+### Sección Backend y Manager
+Dentro de la Instalación se creó un usuario para la sección de backend y manager
+
+```bash
+url:      localhost:8000/backend
+usuario:  admin@simple.cl
+password: 123456
+```
+
+```bash
+url:      localhost:8000/manager
+usuario:  admin@simple.cl
+password: 123456
+```
+
+Puedes crear nuevo usuarios desde un comando laravel, de la siguiente manera:
+
+```bash
+$ docker exec simple2_web bash -c "php artisan simple:backend nombre_email password_min_6_caracteres"
+
+$ docker exec simple2_web bash -c "php artisan simple:manager nombre_email password_min_6_caracteres"
+```
+
+
+---
+### Integración Con ClaveÚnica
+
+Para permitir el correcto funcionamiento del login con ClaveÚnica es necesario generar las credenciales 
+correspondientes, para ello debes dirigirte al siguiente [enlace](https://claveunica.gob.cl/institucional)
+en la pestaña `Solicitar Información`. Debes completar el formulario y obtendrás 2 credenciales, un `client_id` y un 
+`client_secret` tanto para desarollo como para producción, para este caso debes usar las de desarrollo.
+
+Ingresando a la url de la aplicación: `localhost:8000/manager` con el usuario `admin@simple.com` o un usuario válido
+puedes editar o crear una `cuenta` y ella agregar las credenciales en la sección `Editar Claveúnica`.
+
+###### Consideración:
+como nuestra url es un `localhost` debemos aplicar un pequeño `"hack"` solo para ser aplicado en desarrollo.
+Dentro de la clase `App\Providers\AppServiceProvider.php` en el método `bootClaveUnicaSocialite()` 
+```bash
+//comentar la linea
+$redirect = env('APP_MAIN_DOMAIN') == 'localhost' ?
+                    env('APP_URL') . '/login/claveunica/callback' :
+                    secure_url('login/claveunica/callback');
+Y cambiarla por..
+
+$redirect = 'http://127.0.0.1:8000/login/claveunica/callback';
+```
+
+Este `"Hack"` jamás debe ser subido ya que sólo es para efectos de desarrollo
+ 
+
