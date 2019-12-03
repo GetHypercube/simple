@@ -10,29 +10,24 @@ SIMPLE.
 * Redis
 * Rabbit
  
-## Requerimientos
-
-* Docker
-
-Instalación en sistema operativo Ubuntu, para otras distribuciones consultar la documentación oficial.
-
-
 
 ## Instalación
-Seguir paso a paso las instrucciones:
+Como requerimiento excluyente se debe contar con docker instalado en tu equipo. En el siguiente 
+[link](https://docs.docker.com/install/linux/docker-ce/ubuntu/) podrás encontrar un ejemplo de instalación para el 
+sistema operativo Ubuntu, para otras distribuciones consultar la documentación oficial y seguir las 
+instrucciones:
 
-[https://docs.docker.com/install/linux/docker-ce/ubuntu/](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 
-
-## (Considereación*)
+### (Consideración)
 Para levantar el ambiente de desarrollo las variables o comandos a considerar son los definidos dentro del
-directorio setup/
+directorio `setup/`
 
 ### Variables de entorno
 
-El siguiente paso es copiar el archivo setup/env.example a setup/.env y editar las variables de configuración de 
-acuerdo a tu necesidad, algunas variables ya vienen predefinidas dentro del archivo docker-compose.yml, tales como las 
-variables de host o ip referentes a los demás servicios, como elasticsearch, base de datos, puertos, etc.
+El siguiente paso es, dentro del directorio `setup/` crear un archivo llamado `.env` y copiar el contenido del archivo
+`env.example` dentro de el, luego ahí puedes editar las variables de configuración de  acuerdo a tu necesidad, algunas 
+variables ya vienen predefinidas dentro del archivo docker-compose.yml, tales como las variables de host o ip referentes
+a los demás servicios, como elasticsearch, base de datos, puertos, etc.
 
 ```
 cd setup/
@@ -103,38 +98,52 @@ DESTINATARIOS_CRON: Listado de correos separados por comas que serán destinatar
 * 5672 -> RabbitMq
 * 15672 -> Manager de RabbitMq
 
-Servicio web (Aplicación)
+Si no puedes disponibilizarlos, debes modificar los puertos en el archivo `.env`
+
+Recuerda estar dentro del directorio `setup/`
 ```bash
 $ cd setup/
-    
+```
+
+Simplemente ejecutamos el bash `install.sh`
+```
 $ bash install.sh
 ```
 
 Luego comenzaran a levantar la aplicación tomando como base el Dockerfile definido
-dentro del directorio setup/
+dentro del directorio `setup/`
 
 Y continuará descargando y levantando los diferentes servicios, elasticsearch, MySql, redis y rabbit
 
-Esto tomará algunos minutos, cuando la instalación termine pudes ejecutar:
+Esto tomará algunos minutos, ya que tendrá que descargar las diferentes imágenes de cada servicio 
+(en el caso de que no las tengas instaladas). Cuando la instalación termine pudes ejecutar:
 ```bash
-docker ps
+$ docker ps
 ```
 
 Y se listaran los siguientes contenedores
 
 ```bash
 - simple2_web
+- Simple2_db
 - simple2_elastic
 - simple2_redis
 - simple2_rabbit
 ```
 
-Cada uno mapeado a sus respectivos puertos desde 127.0.0.1 hacia cada contenedor.
+Cada uno mapeado a sus respectivos puertos desde 127.0.0.1 (localhost) hacia cada contenedor.
 
+Para acceder a un contenedor puedes ejecutar el siguiente comando:
 ```bash
+$ docker exec -it <nombre_contenedot> bash
 
+$ docker exec -it simple2_web bash
 ```
 
 ```bash
+$ docker exec -it simple2_db bash
 
+Y luego ya puedes entrar con: 
+
+mysql -u root -p
 ```
