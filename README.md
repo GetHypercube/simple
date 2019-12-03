@@ -12,27 +12,25 @@ SIMPLE.
  
 
 ## Instalación
-Como requerimiento excluyente se debe contar con docker instalado en tu equipo. En el siguiente 
-[link](https://docs.docker.com/install/linux/docker-ce/ubuntu/) podrás encontrar un ejemplo de instalación para el 
-sistema operativo Ubuntu, para otras distribuciones consultar la documentación oficial y seguir las 
-instrucciones:
+Existen 2 alternativas de instalación. La primera(recomendable) es ir al directorio `setup/` y seguir los pasos del README de ese directorio utilizando Docker. La segunda alternativa es continuar en este archivo y seguir cada uno de los pasos.
 
 
-### (Consideración)
-Para levantar el ambiente de desarrollo las variables o comandos a considerar son los definidos dentro del
-directorio `setup/`
+### Mysql >= 5.7
+Si estas usando una versión mayor o igual a MySQL 5.7, deberas desactivar el only_full_group_by, para eso en el sql mode deberás tener las siguientes lineas (my.cnf).
+
+    sql-mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+
+
+### Permisos de directorio
+
+Es posible que deba configurar algunos permisos. Los directorios dentro de `storage` y `bootstrap/cache` deben ser editables por su servidor web o Laravel no se ejecutará.
 
 ### Variables de entorno
 
-El siguiente paso es, dentro del directorio `setup/` crear un archivo llamado `.env` y copiar el contenido del archivo
-`env.example` dentro de el, luego ahí puedes editar las variables de configuración de  acuerdo a tu necesidad, algunas 
-variables ya vienen predefinidas dentro del archivo docker-compose.yml, tales como las variables de host o ip referentes
-a los demás servicios, como elasticsearch, base de datos, puertos, etc.
+El siguiente paso es copiar el archivo .env.example a .env y editar las variables de configuración de acuerdo a tu servidor:
 
 ```
-cd setup/
-
-cp env.example .env
+cp .env.example .env
 ```
 
 Descripción de variables de entorno a utilizar
@@ -87,105 +85,124 @@ DOWNLOADS_MAX_JOBS_PER_USER: Cantidad máxima de JOBS de archivos a descargar si
 DESTINATARIOS_CRON: Listado de correos separados por comas que serán destinatarios de recibir el estado de las tarea de cron
 ```
 
+### Instalar las dependencias con composer
 
-## Docker-compose
-
-** Antes de instalar asegúrese de que los siguientes puertos se encuntran disponibles en su máquina:
-* 8000 -> Sitio web
-* 9200 -> Elasticsearch
-* 3306 -> MySql
-* 6379 -> Redis
-* 5672 -> RabbitMq
-* 15672 -> Manager de RabbitMq
-
-Si no puedes disponibilizarlos, debes modificar los puertos en el archivo `.env`
-o eventualmente modificar los puertos que esten mapeados directamente en el docker-compose.yml, como por ej: 
-`elasticsearch`.
-
-Recuerda estar dentro del directorio `setup/`
-```bash
-$ cd setup/
+Laravel utiliza `Composer` para administrar sus dependencias. Entonces, antes de usar este proyecto desarrollado en Laravel, 
+asegúrese de tener Composer instalado en su máquina. Y ejecute el siguiente comando.
+ 
+```
+composer install
 ```
 
-Simplemente ejecutamos el bash `install.sh`
+Luego, la instalación de las librerías JS necesarias:
+
 ```
-$ bash install.sh
-```
-
-Luego comenzaran a levantar la aplicación tomando como base el Dockerfile definido
-dentro del directorio `setup/`
-
-Y continuará descargando y levantando los diferentes servicios, elasticsearch, MySql, redis y rabbit
-
-Esto tomará algunos minutos, ya que tendrá que descargar las diferentes imágenes de cada servicio 
-(en el caso de que no las tengas instaladas). Cuando la instalación termine pudes ejecutar:
-```bash
-$ docker ps
+npm install
 ```
 
-Y se listaran los siguientes contenedores
+Compilación de JS
 
-```bash
-CONTAINER ID        IMAGE                   COMMAND                  CREATED             STATUS              PORTS                                                                                        NAMES
-2b3dd0042bd0        simple_app              "entrypoint"             32 minutes ago      Up 32 minutes       3000/tcp, 9000/tcp, 0.0.0.0:8000->80/tcp                                                     simple2_web
-4ca2d8744acc        redis                   "docker-entrypoint.s…"   32 minutes ago      Up 32 minutes       0.0.0.0:6379->6379/tcp                                                                       simple2_redis
-b59a61d19f6e        elasticsearch:5.6       "/docker-entrypoint.…"   32 minutes ago      Up 32 minutes       0.0.0.0:9200->9200/tcp, 9300/tcp                                                             simple2_elastic
-1f5d24cb9da3        mysql:5.7               "docker-entrypoint.s…"   32 minutes ago      Up 32 minutes       0.0.0.0:3306->3306/tcp, 33060/tcp                                                            simple2_db
-736f5da549ae        rabbitmq:3-management   "docker-entrypoint.s…"   32 minutes ago      Up 32 minutes       4369/tcp, 5671/tcp, 0.0.0.0:5672->5672/tcp, 15671/tcp, 25672/tcp, 0.0.0.0:15672->15672/tcp   simple2_rabbit
+```
+npm run prod
 ```
 
-```bash
-- simple2_web
-- Simple2_db
-- simple2_elastic
-- simple2_redis
-- simple2_rabbit
+Luego, Migración y Semillas de la base de datos:
+
+```
+php artisan migrate --seed
 ```
 
-Cada uno mapeado a sus respectivos puertos desde 127.0.0.1 (localhost) hacia cada contenedor.
+## Actualizaciones
 
-Para acceder a un contenedor puedes ejecutar el siguiente comando:
-```bash
-$ docker exec -it <nombre_contenedot> bash
+Cada vez que se realice un pull del proyecto, este deberá ser acompañado de la siguiente lista de ejecución de comandos.
 
-$ docker exec -it simple2_web bash
+```
+npm install
+npm run production
+composer install
+php artisan migrate --force
+vendor/bin/phpunit
 ```
 
-```bash
-$ docker exec -it simple2_db bash
+## Elasticsearch
 
-Y luego ya puedes entrar con: 
+Para crear el índice:
 
-mysql -u root -p
+```
+php artisan elasticsearch:admin create
 ```
 
-Para ejecutar un comando artisan dentro del contenedor, puedes acceder directamente al contenedor `simple2_web`
-y dentro ejecutar:
-``` bash
-$ php artisan <commando>
-```
-o bien puedes hacerlo ejecutando el comando de la siguiwnte forma:
+Para indexar todo (Realizar esto en instalación inicial):
 
-```bash
-$ docker exec simple2_web bash -c "php artisan <comando>"
+```
+php artisan elasticsearch:admin index
 ```
 
-Este ejemplo aplica para cualquier comando ejecutado dentro de la aplicación laravel.
+Para indexar solo páginas:
 
-### Errores o fallos al instalar:
-1) Uno o más de los puertos requeridos estaba utilizado, no me di cuenta y mi instalación se interrumpió.
-    
-    Esto pobablemente haya interrumpido el levantamiento de alguno de los contenedores,
-    puedes revisar cuáles de los contenedores fuero levantados, si al ejecutar `docker ps` sólo se ve uno o no los 
-    vez, es recomendable realizar una reinstalación, ejecutando nuevamente `bash install.sh`. Si alguno de los 
-    contenedores alcanzó a ser creado, puedes probar tambien ejecutando ahora en la raiz del proyecto un comando de 
-    `docker-compose` (estos a diferencia de los bash debe ejecutarse en la raiz del proyecto).
-    
-    `$ docker-compose down` &&
-    `docker-compose up -d`
-    
-2) Es muy importante identificar en que momento de la instalación se produce el error, por ejemplo
-si llegara a ocurrir algun problema de conección a mitad de la instalación lo recomendable siempre será reinstalar.
-(`bash install.sh`) ya que de otro modo habría que entrar al docker de la aplicación (`docker exec -it simple2_web bash`)
-e ir instalando manualmente las instrucciones del Dockerfle según hasta dónde haya llegado nuestra intalación y como lo 
-muestra la terminal y realmente no queremos eso.  
+```
+php artisan elasticsearch:admin index pages
+```
+
+## Creación de usuarios en Frontend, Backend y Manager
+
+Para crear un usuario perteneciente a Frontend, basta con ejecutar este comando especificando email, contraseña y opcionalmente la cuenta:
+
+```
+php artisan simple:frontend {email} {password} {cuenta?}
+php artisan simple:frontend mail@example.com 123456 1
+```
+
+Para crear un usuario perteneciente al Backend, basta con ejecutar este comando especificando email y contraseña:
+
+```
+php artisan simple:backend {email} {password}
+php artisan simple:backend mail@example.com 123456
+```
+
+Y para crear un usuario perteneciente al Manager,
+
+```
+php artisan simple:manager {user} {password}
+php artisan simple:manager siturra qwerty
+```
+
+## Generar la llave de aplicación
+
+```
+php artisan key:generate
+```
+
+## Tests con PHPUnit
+
+Listado de Tests:
+
+- Verificar que las librerías de PHP requeridas por SIMPLE, estan habilitadas (VerifyLibrariesAvailableTest)
+- Validación de Reglas Customizadas (CustomValidationRulesTest)
+- Creación de Usuarios (Front, Backend, Manager) (CreateUsersTest)
+- Motor de Reglas SIMPLE BPM (RulesTest)
+
+Para ejecutar los Tests solo debes ejecutar el siguiente comando:
+
+```
+vendor/bin/phpunit
+```
+
+## Adicionales 
+
+Si desea poder utilizar una acción de tipo Soap, debe tener habilitada la librería Soap en su php.ini
+
+## Queue worker para indexar contenido de trámites
+Para indexar el contenido de los trámites cada vez que se avanza dentro del flujo, es necesario dejar corriendo el worker con el siguiente comando:
+
+```
+php artisan queue:work --timeout=0
+```
+
+## Tareas programadas
+Configurar por cada instancia el siguiente path para ser programado y que ejecute las tareas de limpieza de trámites sin avanzar, usuarios no registrados sin actividad y notificación de etapas por vencer
+
+```
+/schedule
+ejemplo: http://simple.cl/schedule
+```
