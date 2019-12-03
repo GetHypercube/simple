@@ -99,6 +99,8 @@ DESTINATARIOS_CRON: Listado de correos separados por comas que serán destinatar
 * 15672 -> Manager de RabbitMq
 
 Si no puedes disponibilizarlos, debes modificar los puertos en el archivo `.env`
+o eventualmente modificar los puertos que esten mapeados directamente en el docker-compose.yml, como por ej: 
+`elasticsearch`.
 
 Recuerda estar dentro del directorio `setup/`
 ```bash
@@ -147,3 +149,34 @@ Y luego ya puedes entrar con:
 
 mysql -u root -p
 ```
+
+Para ejecutar un comando artisan dentro del contenedor, puedes acceder directamente al contenedor `simple2_web`
+y dentro ejecutar:
+``` bash
+$ php artisan <commando>
+```
+o bien puedes hacerlo ejecutando el comando de la siguiwnte forma:
+
+```bash
+$ docker exec simple2_web bash -c "php artisan <comando>"
+```
+
+Este ejemplo aplica para cualquier comando ejecutado dentro de la aplicación laravel.
+
+### Errores o fallos al instalar:
+1) Uno o más de los puertos requeridos estaba utilizado, no me di cuenta y mi instalación se interrumpió.
+    
+    Esto pobablemente haya interrumpido el levantamiento de alguno de los contenedores,
+    puedes revisar cuáles de los contenedores fuero levantados, si al ejecutar `docker ps` sólo se ve uno o no los 
+    vez, es recomendable realizar una reinstalación, ejecutando nuevamente `bash install.sh`. Si alguno de los 
+    contenedores alcanzó a ser creado, puedes probar tambien ejecutando ahora en la raiz del proyecto un comando de 
+    `docker-compose` (estos a diferencia de los bash debe ejecutarse en la raiz del proyecto).
+    
+    `$ docker-compose down` &&
+    `docker-compose up -d`
+    
+2) Es muy importante identificar en que momento de la instalación se produce el error, por ejemplo
+si llegara a ocurrir algun problema de conección a mitad de la instalación lo recomendable siempre será reinstalar.
+(`bash install.sh`) ya que de otro modo habría que entrar al docker de la aplicación (`docker exec -it simple2_web bash`)
+e ir instalando manualmente las instrucciones del Dockerfle según hasta dónde haya llegado nuestra intalación y como lo 
+muestra la terminal y realmente no queremos eso.  
