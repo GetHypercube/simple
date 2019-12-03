@@ -34,7 +34,10 @@ build site:
     - npm i npm@latest -g
     - npm install
     - npm audit fix --force
-    - npm run prod
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+    - export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+    - apt install yarn -y
+    - yarn run prod
   artifacts:
     expire_in: 30 days
     paths:

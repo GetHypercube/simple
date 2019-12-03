@@ -725,7 +725,7 @@ class StagesController extends Controller
     {
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
-        if (Auth::user()->id != $etapa->usuario_id) {
+        if ($etapa->Tarea->acceso_modo != 'anonimo' && $etapa->usuario_id != Auth::user()->id) {
             echo 'No tiene permisos para hacer seguimiento a este tramite.';
             exit;
         }
