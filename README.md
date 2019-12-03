@@ -124,6 +124,15 @@ $ docker ps
 Y se listaran los siguientes contenedores
 
 ```bash
+CONTAINER ID        IMAGE                   COMMAND                  CREATED             STATUS              PORTS                                                                                        NAMES
+2b3dd0042bd0        simple_app              "entrypoint"             32 minutes ago      Up 32 minutes       3000/tcp, 9000/tcp, 0.0.0.0:8000->80/tcp                                                     simple2_web
+4ca2d8744acc        redis                   "docker-entrypoint.s…"   32 minutes ago      Up 32 minutes       0.0.0.0:6379->6379/tcp                                                                       simple2_redis
+b59a61d19f6e        elasticsearch:5.6       "/docker-entrypoint.…"   32 minutes ago      Up 32 minutes       0.0.0.0:9200->9200/tcp, 9300/tcp                                                             simple2_elastic
+1f5d24cb9da3        mysql:5.7               "docker-entrypoint.s…"   32 minutes ago      Up 32 minutes       0.0.0.0:3306->3306/tcp, 33060/tcp                                                            simple2_db
+736f5da549ae        rabbitmq:3-management   "docker-entrypoint.s…"   32 minutes ago      Up 32 minutes       4369/tcp, 5671/tcp, 0.0.0.0:5672->5672/tcp, 15671/tcp, 25672/tcp, 0.0.0.0:15672->15672/tcp   simple2_rabbit
+```
+
+```bash
 - simple2_web
 - Simple2_db
 - simple2_elastic
