@@ -599,7 +599,7 @@ class ProcessController extends Controller
 
         $json = $proceso->exportComplete();
 
-        return response()->json($json);
+        return response()->json($json)->header("Content-disposition", "attachment;filename={$proceso->nombre}.simple");
     }
 
     /**
