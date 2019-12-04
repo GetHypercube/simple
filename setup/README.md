@@ -218,17 +218,24 @@ $ docker exec simple2_web bash -c "php artisan simple:manager nombre_email passw
 ---
 ### Integración Con ClaveÚnica
 
-Para permitir el correcto funcionamiento del login con ClaveÚnica es necesario generar las credenciales 
+Para permitir el funcionamiento del login con ClaveÚnica es necesario generar las credenciales
 correspondientes, para ello debes dirigirte al siguiente [enlace](https://claveunica.gob.cl/institucional)
 en la pestaña `Solicitar Información`. Debes completar el formulario y obtendrás 2 credenciales, un `client_id` y un 
 `client_secret` tanto para desarollo como para producción, para este caso debes usar las de desarrollo.
+
+En la inscripción de una cuenta `institución` te pedirá datos relacionados al ambiente de desarrollo, tales como el host,
+debes recordar lo que ingreses, sea localhost o 127.0.0.1, ya que este dato lo necesitaremos mas adelante.
 
 Ingresando a la url de la aplicación: `localhost:8000/manager` con el usuario `admin@simple.com` o un usuario válido
 puedes editar o crear una `cuenta` y ella agregar las credenciales en la sección `Editar Claveúnica`.
 
 ###### Consideración:
 como nuestra url es un `localhost` debemos aplicar un pequeño `"hack"` solo para ser aplicado en desarrollo.
-Dentro de la clase `App\Providers\AppServiceProvider.php` en el método `bootClaveUnicaSocialite()` 
+Dentro de la clase `App\Providers\AppServiceProvider.php` en el método `bootClaveUnicaSocialite()`
+
+Aquí la url vendrá definida según como lo registraste en ClaveÚnica, por ejemplo si usaste `127.0.0.1`, quedará algo
+como lo siguiente.
+
 ```bash
 //comentar la linea
 $redirect = env('APP_MAIN_DOMAIN') == 'localhost' ?
