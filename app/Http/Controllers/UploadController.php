@@ -106,6 +106,7 @@ class UploadController extends Controller
             $result['file_name'] = $archivo;
             $file->tipo = 'dato';
             $file->llave = strtolower(str_random(12));
+            $file->campo_id = $campo_id;
             $file->save();
 
             $result['id'] = $file->id;
@@ -114,6 +115,17 @@ class UploadController extends Controller
         // to pass data through iframe you will need to encode all html tags
         //echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
         return response()->json($result);
+    }
+
+    public function del_datos_get($id, $token)
+    {
+        $tramites = Etapa::where(['usuario_id' => Auth::user()->id])->select('tramite_id')->pluck('tramite_id')->toArray();
+        $file = \App\Models\File::where(['id' => $id, 'llave' => $token])->whereIn('tramite_id', $tramites)->first();
+        if (!$file) {
+            return abort(500);
+        }
+        $file->delete();
+        return $file;
     }
 
     private static function readFromSTDIN(){

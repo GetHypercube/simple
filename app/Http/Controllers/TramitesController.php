@@ -88,7 +88,7 @@ class TramitesController extends Controller
             $rowtramites = Doctrine::getTable('Tramite')->findParticipados(Auth::user()->id, Cuenta::cuentaSegunDominio(), $perpage, $offset, $matches, $query);
         } else {
             $rowtramites = Doctrine::getTable('Tramite')->findParticipados(Auth::user()->id, Cuenta::cuentaSegunDominio(), $perpage, $offset, '0', $query);
-            $contador = Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+            $contador = Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
         }
 
         $config['base_url'] = url('tramites/participados');

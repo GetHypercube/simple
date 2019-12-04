@@ -43,4 +43,9 @@ class Tramite extends Model
     {
         return $this->hasMany(Etapa::class);
     }
+
+    public function files()
+    {
+        return $this->hasMany(File::class);
+    }
 }
