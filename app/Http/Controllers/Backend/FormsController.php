@@ -337,7 +337,7 @@ class FormsController extends Controller
 
         $items = array('items' => $data);
         $arr = array('code' => 200, 'mensaje' => 'Ok', 'resultado' => $items);
-        echo json_encode($arr);
+        return response()->json($arr);
     }
 
     public function obtener_agenda()
