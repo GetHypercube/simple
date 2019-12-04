@@ -101,8 +101,7 @@ class ApiController extends Controller
                 $respuesta->tramites->items[] = $t->toPublicArray();
         }
 
-        header('Content-type: application/json');
-        echo json_indent(json_encode($respuesta));
+        return response()->json($respuesta);
     }
 
     public function procesos(Request $request, $proceso_id = null, $recurso = null)
@@ -176,8 +175,7 @@ class ApiController extends Controller
             }
         }
 
-        header('Content-type: application/json');
-        echo json_indent(json_encode($respuesta));
+        return response()->json($respuesta);
     }
 
     public function notificar(Request $request, $tramite_id = null)
@@ -426,8 +424,7 @@ class ApiController extends Controller
             foreach ($datos as $dato) {
                 $data[$dato->nombre] = $dato->valor;
             }
-            header('Content-type: application/json');
-            echo json_indent(json_encode($data));
+            return response()->json($data);
         } else {
             return abort(404);
         }
@@ -481,8 +478,7 @@ class ApiController extends Controller
         foreach ($tramites as $p) {
             $respuesta->tramites[] = (object)array('cuenta' => $p->Cuenta->nombre, 'proceso_id' => $p->id, 'proceso' => $p->nombre, 'completados' => $p->ntramites);
         }
-        header('Content-type: application/json');
-        echo json_indent(json_encode($respuesta));
+        return response()->json($respuesta);
     }
 
     public function estados(Request $request, $tramite_id = null)

@@ -842,7 +842,7 @@ class ProcessController extends Controller
         }
         //print_r(json_encode($modelo));
         //exit;
-        echo json_encode($modelo);
+        return response()->json($modelo);
     }
 
     /**

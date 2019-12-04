@@ -8,9 +8,6 @@ use Doctrine_Query;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\FileUploader;
 use App\Helpers\FileS3Uploader;
-use App\Helpers\File;
-use Illuminate\Support\Facades\Log;
-use mysql_xdevapi\Exception;
 use App\Models\DatoSeguimiento;
 
 
@@ -20,8 +17,7 @@ class UploadController extends Controller
     public function datos_s3(Request $request, $campo_id, $etapa_id, $multipart=null, $part_number=null, $total_segments=null){
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
         if (Auth::user()->id != $etapa->usuario_id) {
-            echo 'Usuario no tiene permisos para subir archivos en esta etapa';
-            exit;
+            die('Usuario no tiene permisos para subir archivos en esta etapa');
         }
 
         $tramite_id = $etapa->tramite_id;
@@ -31,8 +27,7 @@ class UploadController extends Controller
             ->where('c.id = ? AND e.id = ?', array($campo_id, $etapa_id))
             ->fetchOne();
         if (!$campo) {
-            echo 'Campo no existe';
-            exit;
+            die('Campo no existe');
         }
 
         // list of valid extensions, ex. array("jpeg", "xml", "bmp")
@@ -48,23 +43,19 @@ class UploadController extends Controller
         $filename = urldecode($request->header('filename'));
 
         if($request->header('content-length') > FileS3Uploader::$sizeLimit){
-            echo json_encode(['error' => 'El archivo es muy grande'], JSON_UNESCAPED_UNICODE);
-            exit;
+            return response()->json(['error' => 'El archivo es muy grande']);
         }else if(! $request->hasHeader('content-length')){
-            echo json_encode(['error'=>'Cabeceras no contienen content-length'], JSON_UNESCAPED_UNICODE);
-            exit;
+            return response()->json(['error'=>'Cabeceras no contienen content-length']);
         }
 
         $filename = $campo->id.$filename;
-
+        $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename, $campo->id);
         if( ! is_null($multipart) && $multipart == 'multi'){
-            $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename, $campo->id);
             $result = $s3_uploader->uploadPart($etapa_id, $part_number, $total_segments);
         }else{
-            $s3_uploader = new FileS3Uploader($allowedExtensions, $tramite_id, $filename, $campo->id);
             $result = $s3_uploader->singlePartUpload();
         }
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        return response()->json($result);
     }
 
     public function datos(Request $request, $campo_id, $etapa_id, $multipart=null, $part_number=null)
@@ -122,7 +113,7 @@ class UploadController extends Controller
         }
         // to pass data through iframe you will need to encode all html tags
         //echo htmlspecialchars(json_encode($result), ENT_NOQUOTES);
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        return response()->json($result);
     }
 
     private static function readFromSTDIN(){
