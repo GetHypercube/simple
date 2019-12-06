@@ -1,8 +1,8 @@
 # SIMPLE 2.0
 
-El siguiente ejemplo esta enfocado para el el trabajo en un ambiente de desarrollo y levanta la aplicación sobre un 
-conjunto de contenedores los cuales hacen referencia a cada uno de los diferentes servicios que necesita la aplicación 
-SIMPLE.
+El siguiente ejemplo esta enfocado para levantar la aplicación SIMPLE en un ambiente de desarrollo local. 
+Esta instalación se lleva a cabo bajo un conjunto de contenedores los cuales hacen referencia a cada uno de los 
+diferentes servicios que necesita la aplicación.
 
 * Sitio web - Laravel 5.5
 * MySql 5.7
@@ -115,9 +115,9 @@ $ bash install.sh
 Luego comenzaran a levantar la aplicación tomando como base el Dockerfile definido
 dentro del directorio `setup/`
 
-Y continuará descargando y levantando los diferentes servicios, elasticsearch, MySql, redis y rabbit
+Y continuará descargando y instalando los diferentes servicios, elasticsearch, MySql, redis y rabbit
 
-Esto tomará algunos minutos, ya que tendrá que descargar las diferentes imágenes de cada servicio 
+Esto tomará algunos minutos, dependiendo de tu conección a internet ya que tendrá que descargar las diferentes imágenes de cada servicio 
 (en el caso de que no las tengas instaladas). Cuando la instalación termine puedes ejecutar:
 ```bash
 $ docker ps
@@ -176,7 +176,7 @@ Este ejemplo aplica para cualquier comando ejecutado dentro de la aplicación la
 1) Uno o más de los puertos requeridos estaba utilizado, no me di cuenta y mi instalación se interrumpió.
     
     Esto pobablemente haya interrumpido el levantamiento de alguno de los contenedores,
-    puedes revisar cuáles de los contenedores fuero levantados, si al ejecutar `docker ps` sólo se ve uno o no los 
+    puedes revisar cuáles de los contenedores fueron levantados, si al ejecutar `docker ps` sólo se ve uno o no los 
     vez, es recomendable realizar una reinstalación, ejecutando nuevamente `bash install.sh`. Si alguno de los 
     contenedores alcanzó a ser creado, puedes probar tambien ejecutando ahora en la raiz del proyecto un comando de 
     `docker-compose` (estos a diferencia de los bash debe ejecutarse en la raiz del proyecto).
@@ -217,6 +217,8 @@ $ docker exec simple2_web bash -c "php artisan simple:manager nombre_email passw
 
 ---
 ### Integración Con ClaveÚnica
+
+La integración con ClaveÚnica existe actualmente solo en Chile y para instituciones públicas.
 
 Para permitir el funcionamiento del login con ClaveÚnica es necesario generar las credenciales
 correspondientes, para ello debes dirigirte al siguiente [enlace](https://claveunica.gob.cl/institucional)

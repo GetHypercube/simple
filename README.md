@@ -1,18 +1,39 @@
 # SIMPLE 2.0
 
-El siguiente ejemplo esta enfocado para el el trabajo en un ambiente de desarrollo y levanta la aplicación sobre un 
-conjunto de contenedores los cuales hacen referencia a cada uno de los diferentes servicios que necesita la aplicación 
-SIMPLE.
+## Requerimientos
 
-* Sitio web - Laravel 5.5
-* MySql 5.7
-* Elastic Search 5.6
-* Redis
-* Rabbit
- 
+### Requisitos mínimos del servidor
+
+* Procesador: CPU 2 core de 2da generación
+* Memoria RAM: 4 GB
+* Espacio en disco duro: 10 GB
+* Sistema Operativo: Distro Linux basa en Debian / Red-Hat
+
+### Software y librerías
+
+* NodeJS >= 8.11.3 
+* NPM >= 5.6.0
+* MySQL 5.7 ó MariaDB 10.2
+* PHP 7.1
+* Docker >=  19.0.*
+* Librerías PHP necesarias:
+    * OpenSSL
+    * PDO
+    * PDO_MYSQL
+    * Mbstring
+    * Tokenizer
+    * curl
+    * mcrypt
+    * Ctype
+    * XML
+    * JSON
+    * GD
+    * SOAP
+    * bcmath
 
 ## Instalación
-Existen 2 alternativas de instalación. La primera(recomendable) es ir al directorio `setup/` y seguir los pasos del README de ese directorio utilizando Docker. La segunda alternativa es continuar en este archivo y seguir cada uno de los pasos.
+Existen 2 alternativas de instalación. La primera(recomendable) es ir al directorio `setup/` y seguir los pasos del 
+README de ese directorio utilizando Docker. La segunda alternativa es continuar en este archivo y seguir cada uno de los pasos.
 
 
 ### Mysql >= 5.7
