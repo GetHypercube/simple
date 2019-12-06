@@ -51,7 +51,7 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
-      - "9200:9200"
+      - "${ELASTICSEARCH_PORT}:9200"
     networks:
       - esnet
     depends_on:

@@ -172,6 +172,40 @@ $ docker exec simple2_web bash -c "php artisan <comando>"
 
 Este ejemplo aplica para cualquier comando ejecutado dentro de la aplicación laravel.
 
+### Comandos de Utilidad
+1.- Ejecutar el modo watch para los assets (el watch quedará esperando en la terminal)
+```bash
+$ docker exec simple2_web bash /var/www/simple/setup/watch_assets.sh
+```
+
+2.- Ejecutar el modo prod_assets para mimificar y procesar los assets para un eventual ambiente productivo
+```bash
+$ docker exec simple2_web bash /var/www/simple/setup/prod_assets.sh
+```
+
+3.- Instalar dependenias con composer
+```bash
+$ docker exec simple2_web bash /var/www/simple/setup/composer_install.sh
+```
+
+4.- Detener los servicios, `docker-compose` (es necesario estar en la raíz del proyecto)
+```bash
+(no elimina los contenedores)
+$ docker-compose stop
+```
+
+5.- Bajar los servicios, `docker-compose` (es necesario estar en la raíz del proyecto)
+```bash
+(elimina los contenedores)
+$ docker-compose down
+```
+
+6.- Levantar los servicios
+```bash
+$ docker-compose up -d
+```
+
+
 ### Errores o fallos al instalar:
 1) Uno o más de los puertos requeridos estaba utilizado, no me di cuenta y mi instalación se interrumpió.
     
