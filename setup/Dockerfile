@@ -104,8 +104,6 @@ ENV TZ America/Santiago
 
 WORKDIR $DIRECTORY_PROJECT
 
-RUN echo "cp setup/env.example setup/.env"
-
 EXPOSE 80 3000 9000
 
 # Services initialization (bash exec)
