@@ -188,13 +188,13 @@ $ docker exec simple2_web bash /var/www/simple/setup/prod_assets.sh
 $ docker exec simple2_web bash /var/www/simple/setup/composer_install.sh
 ```
 
-4.- Detener los servicios, `docker-compose` (es necesario estar en la raíz del proyecto)
+4.- Detener los servicios, `docker-compose`
 ```bash
 (no elimina los contenedores)
 $ docker-compose stop
 ```
 
-5.- Bajar los servicios, `docker-compose` (es necesario estar en la raíz del proyecto)
+5.- Bajar los servicios, `docker-compose`
 ```bash
 (elimina los contenedores)
 $ docker-compose down
