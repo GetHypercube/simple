@@ -207,6 +207,23 @@ $ docker-compose up -d
 
 
 ### Errores o fallos al instalar:
+
+Para ejecutar una reinstlación desde cero, es recomendable considerar lo siguiente:
+
+- Eliminar la imagen de simple que pudo no quedar bien instalada.
+```bash
+> listar imagenes
+$ docker images
+
+> Copiar el nombre de la imagen simple "simple_app" y eliminar
+$ docker image rm simple_app
+
+> Eliminar los contenedores (si estan activos)
+$ docker-compose down
+
+$ docker container rm <nombre_contenedor>
+```
+
 1) Uno o más de los puertos requeridos estaba utilizado, no me di cuenta y mi instalación se interrumpió.
     
     Esto pobablemente haya interrumpido el levantamiento de alguno de los contenedores,
@@ -218,11 +235,16 @@ $ docker-compose up -d
     `$ docker-compose down` &&
     `docker-compose up -d`
     
+    Opcionalmente si alguno de los puertos requeridos se encuentra ocupado, siempre puedes modificarlo en el archivo 
+    `.env`
+    
 2) Es muy importante identificar en que momento de la instalación se produce el error, por ejemplo
 si llegara a ocurrir algun problema de conección a mitad de la instalación lo recomendable siempre será reinstalar.
 (`bash install.sh`) ya que de otro modo habría que entrar al docker de la aplicación (`docker exec -it simple2_web bash`)
 e ir instalando manualmente las instrucciones del Dockerfle según hasta dónde haya llegado nuestra intalación y como lo 
 muestra la terminal y realmente no queremos eso.
+     
+       
 
 ---
 ### Sección Backend y Manager
