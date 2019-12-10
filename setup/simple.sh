@@ -14,7 +14,6 @@ chown www-data storage/logs/laravel.log
 composer install && \
 php artisan config:clear && \
 php artisan cache:clear && \
-php artisan key:generate && \
 
 #NPM
 yarn && \
