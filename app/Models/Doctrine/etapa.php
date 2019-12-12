@@ -293,7 +293,6 @@ class Etapa extends Doctrine_Record
             if ($usuario->email) {
                 $varurl = url('etapas/ejecutar/' . $this->id);
                 $url = ' Podrá realizarla en: ' . $varurl . ' ';
-                $imagen_presidencial = asset('img/reportes/presidential_bar.svg');
                 $url = str_replace("..", ".", $url);
                 $to = $usuario->email;
                 $subject = 'Se te asignó una Tarea';
