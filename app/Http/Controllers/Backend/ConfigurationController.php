@@ -511,7 +511,8 @@ class ConfigurationController extends Controller
         $this->validate($request, [
             'nombre' => 'required|max:128',
             'apellidos' => 'required|max:128',
-            'rol' => 'required'
+            'rol' => 'required',
+            'email' => 'required|unique:usuario_backend'
         ]);
 
         if ($request->has('password') && !empty($request->input('password'))) {
@@ -618,7 +619,10 @@ class ConfigurationController extends Controller
         }
 
         if (!$edit) {
-            $this->validate($request, ['usuario' => 'required|unique:usuario']);
+            $this->validate($request, [
+                'usuario' => 'required|unique:usuario',
+                'email' => 'required|unique:usuario'
+            ]);
 
             $user->usuario = $request->input('usuario');
         }
