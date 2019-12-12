@@ -2,20 +2,10 @@
 
 ## Requerimientos
 
-### Requisitos mínimos del servidor
-
-* Procesador: CPU 2 core de 2da generación
-* Memoria RAM: 4 GB
-* Espacio en disco duro: 10 GB
-* Sistema Operativo: Distro Linux basa en Debian / Red-Hat
-
-### Software y librerías
-
 * NodeJS >= 8.11.3 
 * NPM >= 5.6.0
 * MySQL 5.7 ó MariaDB 10.2
 * PHP 7.1
-* Docker >=  19.0.*
 * Librerías PHP necesarias:
     * OpenSSL
     * PDO
@@ -32,8 +22,6 @@
     * bcmath
 
 ## Instalación
-Existen 2 alternativas de instalación. La primera(recomendable) es ir al directorio `setup/` y seguir los pasos del 
-README de ese directorio utilizando Docker. La segunda alternativa es continuar en este archivo y seguir cada uno de los pasos.
 
 
 ### Mysql >= 5.7
