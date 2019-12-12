@@ -21,9 +21,7 @@
     <link rel="shortcut icon" href="{{asset('/img/favicon.png')}}">
 
     @yield('css')
-    @if($errors->any())
-        <script src='https://www.google.com/recaptcha/api.js'></script>
-    @endif
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body class="login">
 <div class="container">
@@ -84,9 +82,7 @@
                             </div>
                         </div>
 
-                        @if($errors->any())
-                            @include('shared.captcha')
-                        @endif
+                        @include('shared.captcha')
 
                         <div class="form-group row">
                             <div class="col-6">
