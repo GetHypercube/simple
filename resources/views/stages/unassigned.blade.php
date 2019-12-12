@@ -1,133 +1,104 @@
-<div class="row">
-    <div class="col-xs-12 col-md-8">
-        <h2>Etapas sin asignar</h2>
-    </div>
-    <div class="col-xs-12 col-md-4">
-        <!--buscador-->
-        <form class="form-search form-inline float-right" method="GET" action="">
-            <div class="input-group mb-3">
-                <input name="query" class="form-control" placeholder="Escribe aquí lo que deseas buscar"
-                       type="text"
-                       value="<?=$query?>">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">
-                        <i class="material-icons">search</i>
-                    </button>
+@extends('layouts.procedure')
+@section('content')
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <h2>Etapas sin asignar <small style="font-size: 12px;color:#666">({ {$etapas->total()}} registros)</small></h2> 
+        </div>
+        <div class="col-xs-12 col-md-4">
+            <!--buscador-->
+            <form class="form-search form-inline float-right" method="GET" action="">
+                <div class="input-group mb-3">
+                    <input name="query" class="form-control" placeholder="Escribe aquí lo que deseas buscar"
+                        type="text"
+                        value="<?=$query?>">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="material-icons">search</i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="col-xs-12 col-md-12">
-    <?php if (count($etapas) > 0): ?>
-    <table id="mainTable" class="table">
-        <thead>
-        <tr>
-            <th></th>
-            <th>Nro</th>
-            <th>Ref.</th>
-            <th>Nombre</th>
-            <th>Etapa</th>
-            <th>Modificación</th>
-            <th>Vencimiento</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php $registros = false; ?>
-        <?php foreach ($etapas as $e): ?>
-        <?php
-        $file = false;
-        if (\App\Helpers\Doctrine::getTable('File')->findByTramiteId($e->id)->count() > 0) {
-            $file = true;
-            $registros = true;
-        }
-        ?>
-        <?php
-        $previsualizacion = '';
-        if ( ! empty($e->previsualizacion)){
-            $r = new Regla($e->previsualizacion);
-            $previsualizacion = $r->getExpresionParaOutput($e->etapa_id);
-        }
-
-        ?>
-        <tr <?=$previsualizacion ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : ''?>>
-            <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
-            <?php if ($file): ?>
-            <td>
-                <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]"
-                                                    value="<?=$e->id?>"></label></div>
-            </td>
-            <?php else: ?>
-            <td></td>
-            <?php endif; ?>
-            <?php else: ?>
-            <td></td>
-            <?php endif; ?>
-            <td><?=$e->id?></td>
-            <td class="name">
-                <?php
-                $t = \App\Helpers\Doctrine::getTable('Tramite')->find($e->id);
-                $tramite_nro = '';
-                foreach ($t->getValorDatoSeguimiento() as $tra_nro) {
-                    if ($tra_nro->nombre == 'tramite_ref') {
-                        $tramite_nro = $tra_nro->valor;
-                    }
-                }
-                echo $tramite_nro != '' ? $tramite_nro : $e->p_nombre;
-                ?>
-            </td>
-            <td class="name">
-                <?php
-                $tramite_descripcion = '';
-                foreach ($t->getValorDatoSeguimiento() as $tra) {
-                    if ($tra->nombre == 'tramite_descripcion') {
-                        $tramite_descripcion = $tra->valor;
-                    }
-                }
-                echo $tramite_descripcion != '' ? $tramite_descripcion : $e->p_nombre;
-                ?>
-            </td>
-            <td><?=$e->t_nombre ?></td>
-            <td class="time"><?= strftime('%d.%b.%Y', mysql_to_unix($e->updated_at))?>
-                <br/><?= strftime('%H:%M:%S', mysql_to_unix($e->updated_at))?></td>
-            <td><?=$e->vencimiento_at ? strftime('%c', strtotime($e->vencimiento_at)) : 'N/A'?></td>
-            <td class="actions">
-                <a href="<?=url('etapas/asignar/' . $e->etapa_id)?>" class="btn btn-link"><i
-                            class="icon-check icon-white"></i> Asignármelo</a>
-                <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
-                <?php if ($file): ?>
-                <a href="#" onclick="return descargarDocumentos(<?=$e->id?>);" class="btn btn-link"><i
-                            class="icon-download icon-white"></i> Descargar</a>
-                <?php endif; ?>
-                <?php endif; ?>
-            </td>
-        </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
-
-    <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
-    <?php if ($registros): ?>
-    <div class="pull-right">
-        <div class="checkbox">
-            <input type="hidden" id="tramites" name="tramites"/>
-            <label>
-                <input type="checkbox" id="select_all" name="select_all"/> Seleccionar todos
-                <a href="#" onclick="return descargarSeleccionados();" class="btn btn-success preventDoubleRequest">
-                    <i class="icon-download icon-white"></i> Descargar seleccionados
-                </a>
-            </label>
+            </form>
         </div>
     </div>
-    <?php endif; ?>
-    <?php endif; ?>
-    <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
-    <?php else: ?>
-    <p>No hay trámites para ser asignados.</p>
-    <?php endif; ?>
-</div>
+    
+    <div class="col-xs-12 col-md-12">
+        @if (count($etapas) > 0)
+            <table id="mainTable" class="table table-hover table-condesed">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Nro</th>
+                    <th>Ref.</th>
+                    <th>Nombre</th>
+                    <th>Etapa</th>
+                    <th>Modificación</th>
+                    <th>Vencimiento</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {!! $registros = false !!}
+                @foreach ($etapas as $e)      
+                    @if($e->tramite->files->count() > 0)
+                    {!! $registros = true !!}
+                    @endif      
+                    <tr {!! getPrevisualization($e) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : '' !!}>
+                        <td class="text-nowrap">
+                            @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0) {
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" class="checkbox1" name="select[]" value="<?=$e->id?>">
+                                </label>
+                            </div>
+                            @endif
+                        </td>                
+                        <td class="text-nowrap">{{ $e->id }}</td>
+                        <td class="name text-nowrap">
+                            {{ getValorDatoSeguimiento($e, 'tramite_ref')}}
+                        </td>
+                        <td class="name">
+                            {{ getValorDatoSeguimiento($e, 'tramite_descripcion')}}
+                        </td>
+                        <td class="text-nowrap"><?=$e->tarea->nombre ?></td>
+                        <td class="time">{{$e->updated_at->format('d M Y') }}<br/>{{$e->updated_at->format('H:i:s') }}</td>
+                        <td> {{ $e->vencimiento_at == '' ? 'N/A' :$e->vencimiento_at->format('H:i:s') }}</td>
+                        <td class="actions">
+                            <a href="<?=url('etapas/asignar/' . $e->id)?>" class="btn btn-link">
+                                <i class="icon-check icon-white"></i> Asignármelo
+                            </a>
+                            @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
+                            <a href="#" onclick="return descargarDocumentos({{$e->id}});" class="btn btn-link">
+                                <i class="icon-download icon-white"></i> Descargar
+                            </a>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>    
+            @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0) {
+                <div class="pull-right">
+                    <div class="checkbox">
+                        <input type="hidden" id="tramites" name="tramites"/>
+                        <label>
+                            <input type="checkbox" id="select_all" name="select_all"/> Seleccionar todos
+                            <a href="#" onclick="return descargarSeleccionados();" class="btn btn-success preventDoubleRequest">
+                                <i class="icon-download icon-white"></i> Descargar seleccionados
+                            </a>
+                        </label>
+                    </div>
+                </div>
+            @endif
+            <p>
+                {{ $etapas->render("pagination::bootstrap-4")}}
+            </p>
+        @else
+            <p>No hay trámites para ser asignados.</p>
+        @endif
+    </div>
+@endsection
+
+
 <div class="modal hide" id="modal"></div>
 @push('script')
     <script>

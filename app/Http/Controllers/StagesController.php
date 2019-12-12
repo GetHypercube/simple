@@ -23,6 +23,9 @@ use App\Jobs\FilesDownload;
 use Carbon\Carbon;
 use Doctrine_Query;
 use App\Models\DatoSeguimiento;
+use App\Models\Etapa;
+use App\Models\GrupoUsuarios as ModelsGrupoUsuarios;
+use GrupoUsuarios;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
@@ -268,17 +271,12 @@ class StagesController extends Controller
             $request->session()->put('claveunica_redirect', URL::current());
             return redirect()->route('login.claveunica');
         }
-
         $query = $request->input('query');
         $matches = "";
-        $rowetapas = "";
         $resultotal = 'false';
-        $contador = "0";
-
         $page = Input::get('page', 1);
         $paginate = 50;
         $offset = ($page * $paginate) - $paginate;
-
         if ($query) {
             $result = Tramite::search($query)->get();
             $matches = array();
@@ -291,7 +289,6 @@ class StagesController extends Controller
                 $resultotal = "false";
             }
         }
-
         if ($resultotal == 'true') {
             $matches = $result->groupBy('id')->keys()->toArray();
             Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
@@ -299,58 +296,36 @@ class StagesController extends Controller
             $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
             //  $contador = count($rowetapas);
             $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-
-
         } else {
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset);
-            // $contador = count($rowetapas);
-            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+            //$rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset);
+            //$contador = count($rowetapas);
+            //$contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+            $grupos =  DB::table('grupo_usuarios_has_usuario')
+            ->select('grupo_usuarios_id')
+            ->where('usuario_id',Auth::user()->id)
+            ->get()
+            ->toArray();
+            /* nuevo */
+            $grupos_ = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
+            $cuenta=Cuenta::cuentaSegunDominio();
+            $etapas = Etapa::
+            whereHas('tarea', function($q) use ($grupos_,$cuenta){
+                $q->where(function($q) use ($grupos_){
+                    $q->whereIn('grupos_usuarios',$grupos_)
+                    ->orWhere('grupos_usuarios','LIKE','%@@%');
+                })
+                ->whereHas('proceso', function($q) use ($cuenta){
+                    $q->whereHas('cuenta', function($q) use ($cuenta){
+                        $q->where('cuenta.nombre',$cuenta->nombre);         
+                    });
+                });       
+            })           
+            ->whereNull('usuario_id')
+            ->orderBy('tarea_id', 'ASC')
+            ->paginate(25);
         }
-
-
-        //
-        //Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
-        // echo "<script>console.log(".json_encode($rowetapas).")</script>";
-        // echo "<script>console.log(".json_encode($contador).")</script>";
-        $config['base_url'] = url('etapas/sinasignar');
-        $config['total_rows'] = $contador;
-        $config['per_page'] = $paginate;
-        $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
-        $config['full_tag_close'] = '</ul></div>';
-        $config['page_query_string'] = false;
-        $config['query_string_segment'] = 'offset';
-        $config['first_link'] = 'Primero';
-        $config['first_tag_open'] = '<li>';
-        $config['first_tag_close'] = '</li>';
-        $config['last_link'] = 'Último';
-        $config['last_tag_open'] = '<li>';
-        $config['last_tag_close'] = '</li>';
-        $config['next_link'] = '»';
-        $config['next_tag_open'] = '<li>';
-        $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '«';
-        $config['prev_tag_open'] = '<li>';
-        $config['prev_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li class="active"><a href="#">';
-        $config['cur_tag_close'] = '</a></li>';
-        $config['num_tag_open'] = '<li>';
-        $config['num_tag_close'] = '</li>';
-        Log::info("El Valor de offset2 de SIN ASIGNAR es de: " . $offset);
-        Log::info("El Valor de page de SIN ASIGNAR es de: " . $page);
-        $data = \Cuenta::configSegunDominio();
-        $data['etapas'] = new LengthAwarePaginator(
-            $rowetapas, // Only grab the items we need$contador,
-            $total=1000, // Total items
-            $paginate, // Items per page
-            $page, // Current page,
-            ['path' => $request->url(), 'query' => $request->query()]); // We need this so we can keep all old query parameters from the url);
-        $data['query'] = $query;
-        // echo "<script>console.log(".json_encode($query).")</script>";
-        $data['sidebar'] = 'sinasignar';
-        $data['content'] = view('stages.unassigned', $data);
-        $data['title'] = 'Sin Asignar';
-
-        return view('layouts.procedure', $data);
+        return view('stages.unassigned', compact('etapas', 'cuenta', 'query'));
+        
     }
 
 
