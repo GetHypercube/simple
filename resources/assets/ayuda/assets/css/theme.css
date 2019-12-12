@@ -1,3 +1,7 @@
 ul > li.current{
 font-weight: bold;
 }
+
+.logo-header {
+    max-width: 300px;
+}
