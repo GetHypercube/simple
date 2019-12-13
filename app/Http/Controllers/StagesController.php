@@ -264,9 +264,9 @@ class StagesController extends Controller
     public function sinasignar(Request $request, $offset = 0)
     {
 
-        if (!Auth::user()->registrado) {
-            $request->session()->put('claveunica_redirect', URL::current());
-            return redirect()->route('login.claveunica');
+        if (!Auth::user()->open_id) {//reportes sin asignar
+          //  $request->session()->put('claveunica_redirect', URL::current());
+            return redirect()->route('login');
         }
 
         $query = $request->input('query');
