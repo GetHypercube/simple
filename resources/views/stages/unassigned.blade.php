@@ -2,7 +2,7 @@
 @section('content')
     <div class="row">
         <div class="col-xs-12 col-md-8">
-            <h2>Etapas sin asignar <small style="font-size: 12px;color:#666">({ {$etapas->total()}} registros)</small></h2> 
+            <h2>Etapas sin asignar</h2> 
         </div>
         <div class="col-xs-12 col-md-4">
             <!--buscador-->
