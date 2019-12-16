@@ -270,8 +270,8 @@ class StagesController extends Controller
             $request->session()->put('claveunica_redirect', URL::current());
             return redirect()->route('login.claveunica');
         }
-        $sortValue = $request->sortValue;
-        $sort = $request->sort;
+        $sortValue = $request->sortValue;// Obtengo el parametro de orden de los datos 
+        $sort = $request->sort;// Obtengo el parametro de dirección del orden
         $query = $request->input('query'); // Obtengo el parametro de búsqueda
         if ($query && session('query_sinasignar') != $query) 
         {// Si el dato buscado no es vacío y es distinto al ya buscado (variable de session query_sinasignar) realizo busqueda en elasticSearch
@@ -293,12 +293,12 @@ class StagesController extends Controller
         { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
             $etapas = $etapas->whereIn('tramite_id', session('matches_sinasignar'));
         }
-        $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta, $sortValue, $sort){
+        $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta){
             $q->where(function($q) use ($grupos){
                 $q->whereIn('grupos_usuarios',$grupos)
                 ->orWhere('grupos_usuarios','LIKE','%@@%');
             })
-            ->whereHas('proceso', function($q) use ($cuenta, $sortValue, $sort){
+            ->whereHas('proceso', function($q) use ($cuenta){
                 $q->whereHas('cuenta', function($q) use ($cuenta){
                     $q->where('cuenta.nombre',$cuenta->nombre);         
                 });

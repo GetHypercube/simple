@@ -10,7 +10,7 @@
                 <div class="input-group mb-3">
                     <input name="query" class="form-control" placeholder="Escribe aquí lo que deseas buscar"
                         type="text"
-                        value="<?=$query?>">
+                        value="{{$query}}">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="submit">
                             <i class="material-icons">search</i>
@@ -45,19 +45,19 @@
                             @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0) {
                             <div class="checkbox">
                                 <label>
-                                    <input type="checkbox" class="checkbox1" name="select[]" value="<?=$e->id?>">
+                                    <input type="checkbox" class="checkbox1" name="select[]" value="{{$e->id}}">
                                 </label>
                             </div>
                             @endif
                         </td> 
                         <td class="text-nowrap">{{ $e->tramite->id }}</td>
                         <td>{{ $e->tramite->proceso->nombre }}</td>               
-                        <td class="text-nowrap"><?=$e->tarea->nombre ?></td>
+                        <td class="text-nowrap">{{$e->tarea->nombre }}</td>
                         <td class="time">
                             {{ getUpdateAtFormat($e->tramite->updated_at)}}
                         </td>
                         <td class="actions">
-                            <a href="<?=url('etapas/asignar/' . $e->id)?>" class="btn btn-link">
+                            <a href="{{url('etapas/asignar/' . $e->id)}}" class="btn btn-link">
                                 <i class="icon-check icon-white"></i> Asignármelo
                             </a>
                             @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
@@ -70,7 +70,7 @@
                 @endforeach
                 </tbody>
             </table>    
-            @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0) {
+            @if($cuenta->descarga_masiva && $registros) {
                 <div class="pull-right">
                     <div class="checkbox">
                         <input type="hidden" id="tramites" name="tramites"/>
@@ -84,7 +84,7 @@
                 </div>
             @endif
             <p>
-                {{ $etapas->appends(Request::except('page'))->render("pagination::bootstrap-4")}}
+            {{ $etapas->appends(Request::except('page'))->render("pagination::bootstrap-4")}}
             </p>
         @else
             <p>No hay trámites para ser asignados.</p>
