@@ -27,12 +27,10 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th>Nro</th>
-                    <th>Ref.</th>
-                    <th>Nombre</th>
-                    <th>Etapa</th>
-                    <th>Modificación</th>
-                    <th>Vencimiento</th>
+                    <th><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Número</a></th>
+                    <th><a href="{{ getUrlSortUnassigned($request, 'nombre') }}">Nombre</a></th>
+                    <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
+                    <th><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
@@ -51,17 +49,13 @@
                                 </label>
                             </div>
                             @endif
-                        </td>                
-                        <td class="text-nowrap">{{ $e->id }}</td>
-                        <td class="name text-nowrap">
-                            {{ getValorDatoSeguimiento($e, 'tramite_ref')}}
-                        </td>
-                        <td class="name">
-                            {{ getValorDatoSeguimiento($e, 'tramite_descripcion')}}
-                        </td>
+                        </td> 
+                        <td class="text-nowrap">{{ $e->tramite->id }}</td>
+                        <td>{{ $e->tramite->proceso->nombre }}</td>               
                         <td class="text-nowrap"><?=$e->tarea->nombre ?></td>
-                        <td class="time">{{$e->updated_at->format('d M Y') }}<br/>{{$e->updated_at->format('H:i:s') }}</td>
-                        <td> {{ $e->vencimiento_at == '' ? 'N/A' :$e->vencimiento_at->format('H:i:s') }}</td>
+                        <td class="time">
+                            {{ getUpdateAtFormat($e->tramite->updated_at)}}
+                        </td>
                         <td class="actions">
                             <a href="<?=url('etapas/asignar/' . $e->id)?>" class="btn btn-link">
                                 <i class="icon-check icon-white"></i> Asignármelo
@@ -90,16 +84,14 @@
                 </div>
             @endif
             <p>
-                {{ $etapas->render("pagination::bootstrap-4")}}
+                {{ $etapas->appends(Request::except('page'))->render("pagination::bootstrap-4")}}
             </p>
         @else
             <p>No hay trámites para ser asignados.</p>
         @endif
     </div>
+    <div class="modal hide" id="modal"></div>
 @endsection
-
-
-<div class="modal hide" id="modal"></div>
 @push('script')
     <script>
         function descargarDocumentos(tramiteId) {

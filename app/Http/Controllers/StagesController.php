@@ -1,13 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Models\Proceso;
 use App\Models\Tramite;
 use App\Models\Job;
-use App\Models\File;
 use App\Models\Campo;
 use App\Rules\Captcha;
 use Illuminate\Support\Facades\Auth;
@@ -24,12 +21,7 @@ use Carbon\Carbon;
 use Doctrine_Query;
 use App\Models\DatoSeguimiento;
 use App\Models\Etapa;
-use App\Models\GrupoUsuarios as ModelsGrupoUsuarios;
-use GrupoUsuarios;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;
-
-
 
 class StagesController extends Controller
 {
@@ -264,67 +256,75 @@ class StagesController extends Controller
         return view('stages.inbox', $data);
     }
 
+    /**
+     * @method sinasignar()
+     * @internal Muestra las etapas sin asignar disponibles para el usuario logueado
+     * @param Request $request
+     * @param integer $offset
+     * @return view stages.unassigned
+     */
     public function sinasignar(Request $request, $offset = 0)
     {
-
-        if (!Auth::user()->registrado) {
+        if (!Auth::user()->registrado) 
+        {
             $request->session()->put('claveunica_redirect', URL::current());
             return redirect()->route('login.claveunica');
         }
-        $query = $request->input('query');
-        $matches = "";
-        $resultotal = 'false';
-        $page = Input::get('page', 1);
-        $paginate = 50;
-        $offset = ($page * $paginate) - $paginate;
-        if ($query) {
-            $result = Tramite::search($query)->get();
-            $matches = array();
-            foreach($result as $resultado){
-                array_push($matches, $resultado->id);
+        $sortValue = $request->sortValue;
+        $sort = $request->sort;
+        $query = $request->input('query'); // Obtengo el parametro de búsqueda
+        if ($query && session('query_sinasignar') != $query) 
+        {// Si el dato buscado no es vacío y es distinto al ya buscado (variable de session query_sinasignar) realizo busqueda en elasticSearch
+            $request->session()->put('query_sinasignar',$request->input('query')); // Seteo variable de session para comparar en la proxima busqueda
+            $result = Tramite::search($query)->take(5000)->get(); // Consulto en elasticSearch 
+            $matches = array(); // Array donde se guardaran los id de tramite
+            foreach($result as $resultado)
+            { // Recorro los resultados
+                array_push($matches, $resultado->id); // Agrego el id del tramite al array matches
             }
-            if(count($result) > 0){
-                $resultotal = "true";
-            }else{
-                $resultotal = "false";
-            }
+            $request->session()->put('matches_sinasignar', $matches); // Seteo una variable de session para los id's de tramite para la busqueda en la DB
         }
-        if ($resultotal == 'true') {
-            $matches = $result->groupBy('id')->keys()->toArray();
-            Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
-            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . $resultotal);
-            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-            //  $contador = count($rowetapas);
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-        } else {
-            //$rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset);
-            //$contador = count($rowetapas);
-            //$contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-            $grupos =  DB::table('grupo_usuarios_has_usuario')
-            ->select('grupo_usuarios_id')
-            ->where('usuario_id',Auth::user()->id)
-            ->get()
-            ->toArray();
-            /* nuevo */
-            $grupos_ = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
-            $cuenta=Cuenta::cuentaSegunDominio();
-            $etapas = Etapa::
-            whereHas('tarea', function($q) use ($grupos_,$cuenta){
-                $q->where(function($q) use ($grupos_){
-                    $q->whereIn('grupos_usuarios',$grupos_)
-                    ->orWhere('grupos_usuarios','LIKE','%@@%');
-                })
-                ->whereHas('proceso', function($q) use ($cuenta){
-                    $q->whereHas('cuenta', function($q) use ($cuenta){
-                        $q->where('cuenta.nombre',$cuenta->nombre);         
-                    });
-                });       
-            })           
-            ->whereNull('usuario_id')
-            ->orderBy('tarea_id', 'ASC')
-            ->paginate(25);
+        $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id'); // Obtengo los grupos al que pertenece el usuario logueado
+        $cuenta= Cuenta::cuentaSegunDominio(); // Obtengo la cuenta del usuario logueado
+        /* Query para obtener los tramites buscados de acuerdo al filtro */
+        $etapas = Etapa::
+        whereNull('etapa.usuario_id');
+        if($query!="" && !empty(session('matches_sinasignar')))
+        { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
+            $etapas = $etapas->whereIn('tramite_id', session('matches_sinasignar'));
         }
-        return view('stages.unassigned', compact('etapas', 'cuenta', 'query'));
+        $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta, $sortValue, $sort){
+            $q->where(function($q) use ($grupos){
+                $q->whereIn('grupos_usuarios',$grupos)
+                ->orWhere('grupos_usuarios','LIKE','%@@%');
+            })
+            ->whereHas('proceso', function($q) use ($cuenta, $sortValue, $sort){
+                $q->whereHas('cuenta', function($q) use ($cuenta){
+                    $q->where('cuenta.nombre',$cuenta->nombre);         
+                });
+            });
+        });
+        /* Order de acuerdo a lo solicitado desde los titulos de la tabla en la vista */
+        if($sortValue == 'etapa')
+        {// Orden por nombre de tarea
+            $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')->orderBy('tarea.nombre', $sort);
+        }
+        if($sortValue == 'nombre')
+        { // Orden por nombre de proceso
+            $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')
+            ->join('proceso', 'tarea.proceso_id', 'proceso.id')->orderBy('proceso.nombre', $sort);
+        }
+        if($sortValue == 'numero')
+        { // Orden por id de tramite
+            $etapas = $etapas->orderBy('tramite_id', $sort);
+        }
+        elseif($sortValue == 'modificacion')
+        { // Orden por fecha de modificación 
+            $etapas = $etapas->orderBy('updated_at', $sort);
+        }
+        $etapas=$etapas->paginate(50); // Pagino de 50 registros
+        /* Retorno vista bandeja sin asignar */ 
+        return view('stages.unassigned', compact('etapas', 'cuenta', 'query', 'request'));
         
     }
 

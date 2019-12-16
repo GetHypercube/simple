@@ -2,6 +2,8 @@
 
 use App\Models\Cuenta;
 use App\Models\Etapa;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Request;
 
 function getPrevisualization($e)
 {
@@ -26,4 +28,37 @@ function getValorDatoSeguimiento($e, $tipo)
 function getCuenta()
 {
     return Cuenta::find(1)->toArray();
+}
+
+function getTotalUnnasigned()
+{
+    $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
+    $cuenta=\Cuenta::cuentaSegunDominio();
+    return Etapa::
+    whereHas('tarea', function($q) use ($grupos,$cuenta){
+        $q->where(function($q) use ($grupos){
+            $q->whereIn('grupos_usuarios',$grupos)
+            ->orWhere('grupos_usuarios','LIKE','%@@%');
+        })
+        ->whereHas('proceso', function($q) use ($cuenta){
+            $q->whereHas('cuenta', function($q) use ($cuenta){
+                $q->where('cuenta.nombre',$cuenta->nombre);         
+            });
+        });       
+    })           
+    ->whereNull('usuario_id')
+    ->orderBy('tarea_id', 'ASC')
+    ->count();
+}
+
+function getUrlSortUnassigned($request, $sortValue)
+{
+    $path = Request::path();
+    $sort = $request->input('sort') == 'asc' ? 'desc':'asc';
+    return  "/".$path.'?query='.$request->input('query').'&sortValue='.$sortValue."&sort=".$sort;
+}
+
+function getUpdateAtFormat($updated_at)
+{
+    return $updated_at == null || !$updated_at ? '' : Carbon::parse($updated_at)->diffForHumans();
 }

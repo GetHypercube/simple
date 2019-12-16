@@ -14,7 +14,7 @@
     <meta name="keywords" content="{{ \Cuenta::seo_tags()->keywords }}">
 
     <!-- Styles -->
-    <link href="{{ asset('css/'. getCuenta()['estilo'].'') }} " rel="stylesheet">
+    <link href="{{ asset('css/'. getCuenta()['estilo']) }} " rel="stylesheet">
 
     <meta name="google" content="notranslate"/>
 
@@ -69,7 +69,7 @@
                             $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
                                 ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
                                 //dd($npendientes);
-                            $nsinasignar =count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
+                            $nsinasignar =getTotalUnnasigned();
                           //  dd($nsinasignar);
                            //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
                             $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
