@@ -20,6 +20,9 @@
             border: 1px dashed #ccc;
             cursor: move;
         }
+        #areaFormulario .btn {
+            padding: .3rem .4rem;
+        }
     </style>
 @endsection
 @section('content')
@@ -152,17 +155,24 @@
                                         <div class="col-10">
                                             <div class="control-group campo"
                                                  data-id="<?= $c->id ?>" <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : '' ?> >
-                                                <div class="float-left">{!!$c->displaySinDato()!!}</div>
-                                                <div class="buttons float-right">
-                                                    <a href="#" class="btn btn-primary"
-                                                       onclick="return editarCampo(<?= $c->id ?>)">
-                                                        <i class="material-icons">edit</i>
-                                                    </a>
-                                                    <a href="<?= route('backend.forms.delete_field', [$c->id]) ?>"
-                                                       class="btn btn-danger"
-                                                       onclick="return confirm('¿Esta seguro que desea eliminar?')">
-                                                        <i class="material-icons">delete</i>
-                                                    </a>&nbsp;
+
+                                                <div class="row align-items-center">
+                                                    <div class="col-1">
+                                                        <div class="buttons">
+                                                            <a href="#" class="btn btn-primary"
+                                                               onclick="return editarCampo(<?= $c->id ?>)">
+                                                                <i class="material-icons">edit</i>
+                                                            </a>
+                                                            <a href="<?= route('backend.forms.delete_field', [$c->id]) ?>"
+                                                               class="btn btn-danger"
+                                                               onclick="return confirm('¿Esta seguro que desea eliminar?')">
+                                                                <i class="material-icons">delete</i>
+                                                            </a>&nbsp;
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-11">
+                                                        <div class="float-left">{!!$c->displaySinDato()!!}</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
