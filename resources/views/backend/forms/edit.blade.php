@@ -23,6 +23,9 @@
         #areaFormulario .btn {
             padding: .3rem .4rem;
         }
+        #formEditarFormulario .name-form {
+            padding-left: 10px;
+        }
     </style>
 @endsection
 @section('content')
@@ -133,52 +136,52 @@
                 <div class="col-10 mt-2">
                     <form id="formEditarFormulario" class="form-horizontal dynaForm debugForm" onsubmit="return false">
                         <div class="row">
-                            <div class="col-10">
-                                <div class="float-left">
-                                    <legend><?= $formulario->nombre ?>
-                                        <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda-Diseno-Nuevo-Formulario');" href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html"
-                                           target="_blank">
-                                            <i class="material-icons align-middle">help</i>
-                                        </a>
-                                    </legend>
-                                </div>
+                            <div class="col-10 text-left">
+                                <legend class="name-form"><?= $formulario->nombre ?>
+                                    <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda-Diseno-Nuevo-Formulario');" href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html"
+                                       target="_blank">
+                                        <i class="material-icons align-middle">help</i>
+                                    </a>
+                                </legend>
                                 <div class="float-right">
                                     <a href="#" class="btn btn-primary"
                                        onclick="return editarFormulario(<?= $formulario->id ?>)">Cambiar Nombre y descripción</a>&nbsp;
                                 </div>
                             </div>
                         </div>
-                        <div class="edicionFormulario">
-                            @foreach ($formulario->Campos as $c)
-                                @if($c->tipo != 'hidden')
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <div class="control-group campo"
-                                                 data-id="<?= $c->id ?>" <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : '' ?> >
+                        <div class="row">
+                            <div class="col-12 edicionFormulario">
+                                @foreach ($formulario->Campos as $c)
+                                    @if($c->tipo != 'hidden')
+                                        <div class="row">
+                                            <div class="col-10">
+                                                <div class="control-group campo"
+                                                     data-id="<?= $c->id ?>" <?= $c->dependiente_campo ? 'data-dependiente-campo="' . $c->dependiente_campo . '" data-dependiente-valor="' . $c->dependiente_valor . '" data-dependiente-tipo="' . $c->dependiente_tipo . '" data-dependiente-relacion="' . $c->dependiente_relacion . '"' : '' ?> >
 
-                                                <div class="row align-items-center">
-                                                    <div class="col-1">
-                                                        <div class="buttons">
-                                                            <a href="#" class="btn btn-primary"
-                                                               onclick="return editarCampo(<?= $c->id ?>)">
-                                                                <i class="material-icons">edit</i>
-                                                            </a>
-                                                            <a href="<?= route('backend.forms.delete_field', [$c->id]) ?>"
-                                                               class="btn btn-danger"
-                                                               onclick="return confirm('¿Esta seguro que desea eliminar?')">
-                                                                <i class="material-icons">delete</i>
-                                                            </a>&nbsp;
+                                                    <div class="row align-items-center">
+                                                        <div class="col-1">
+                                                            <div class="buttons">
+                                                                <a href="#" class="btn btn-primary"
+                                                                   onclick="return editarCampo(<?= $c->id ?>)">
+                                                                    <i class="material-icons">edit</i>
+                                                                </a>
+                                                                <a href="<?= route('backend.forms.delete_field', [$c->id]) ?>"
+                                                                   class="btn btn-danger"
+                                                                   onclick="return confirm('¿Esta seguro que desea eliminar?')">
+                                                                    <i class="material-icons">delete</i>
+                                                                </a>&nbsp;
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-11">
-                                                        <div class="float-left">{!!$c->displaySinDato()!!}</div>
+                                                        <div class="col-11">
+                                                            <div class="float-left">{!!$c->displaySinDato()!!}</div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                @endif
-                            @endforeach
+                                    @endif
+                                @endforeach
+                            </div>
                         </div>
                     </form>
                 </div>
