@@ -288,10 +288,10 @@ class ReportController extends Controller
             $reportname = $reporte->nombre;//Nombre del reporte
             $img_reporte =  asset('img/reporte/presidential_bar.svg');
             $name_user = Doctrine::getTable('Usuario')->find(Auth::user()->id);
-            $user_name = $name_user->nombres; //Aqui obtengo el Nombre del User
-            Log::debug("Nombre Usuario_unico " . $name_user);
-            Log::debug("Nombres " . $user_name);
-            $this->dispatch(new ProcessReport(Auth::user()->id, Auth::user()->user_type, $proceso->id, $reporte->id, $params, $reporte_tabla, $header_variables,$http_host,$email_to,$name_to,$email_subject,$created_at_desde,$created_at_hasta,$pendiente,$cuenta, $nombre_cuenta, $reportname, $user_name, $img_reporte));
+           // $user_name = $name_user->nombres; //Aqui obtengo el Nombre del User
+            //Log::debug("Nombre Usuario_unico " . $name_user);
+           // Log::debug("Nombres " . $user_name);
+            $this->dispatch(new ProcessReport(Auth::user()->id, Auth::user()->user_type, $proceso->id, $reporte->id, $params, $reporte_tabla, $header_variables,$http_host,$email_to,$name_to,$email_subject,$created_at_desde,$created_at_hasta,$pendiente,$cuenta, $nombre_cuenta, $reportname, $img_reporte));
             Log::debug("Nombre Cuenta " . $nombre_cuenta);
             Log::debug("Nombre Reporte " . $reportname);
            

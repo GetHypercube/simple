@@ -45,7 +45,6 @@ class ProcessReport implements ShouldQueue
     protected $cuenta;
     protected $nombre_cuenta;
     protected $reportname;
-    protected $user_name;
     protected $img_reporte;
 
     /**
@@ -53,7 +52,7 @@ class ProcessReport implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente, $cuenta, $nombre_cuenta, $reportname, $user_name, $img_reporte){
+    public function __construct($user_id,$user_type,$proceso_id,$reporte_id,$params,$reporte_tabla,$header_variables,$host, $email_to, $email_name, $email_subject, $desde, $hasta, $pendiente, $cuenta, $nombre_cuenta, $reportname, $img_reporte){
         $this->user_id = $user_id;
         $this->user_type = $user_type;
         $this->proceso_id = $proceso_id;
@@ -75,7 +74,6 @@ class ProcessReport implements ShouldQueue
         $this->cuenta = $cuenta;
         $this->nombre_cuenta = $nombre_cuenta;
         $this->reportname = $reportname;
-        $this->user_name = $user_name;
         $this->img_reporte = $img_reporte;
 
         $this->job_info = new Job();
@@ -221,10 +219,10 @@ class ProcessReport implements ShouldQueue
     private function send_notification(){
         $nombre_cuenta = $this->nombre_cuenta;
         $reportname = $this->reportname;
-        $user_name = $this->user_name;
+       
         $img_reporte = $this->img_reporte;
         $link = "{$this->link_host}/backend/reportes/descargar_archivo/{$this->user_id}/{$this->job_info->id}/{$this->job_info->filename}";
-        $data = ['link' => $link, 'reportname' => $reportname, 'nombre_cuenta' => $nombre_cuenta, 'user_name' => $user_name, 'img_reporte' => $img_reporte];
+        $data = ['link' => $link, 'reportname' => $reportname, 'nombre_cuenta' => $nombre_cuenta, 'img_reporte' => $img_reporte];
         $email_to = $this->email_to;
         $email_subject = $this->email_subject;
         $cuenta = $this->cuenta;
