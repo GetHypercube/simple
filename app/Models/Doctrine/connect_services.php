@@ -1,5 +1,7 @@
 <?php
 
+require_once 'config_general.php';
+
 class Connect_services
 {
     private $appkey = '';

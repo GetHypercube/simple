@@ -3,6 +3,10 @@
 @section('css')
     <link rel="stylesheet" href="<?= asset('js/helpers/calendar/css/calendar.css') ?>">
     <link rel="stylesheet" href="<?= asset('css/handsontable.full.min.css') ?>">
+    <style>
+        p.link{padding: 0!important; margin: 0!important;}
+        span.remove.text-danger{cursor: pointer}
+    </style>
 @endsection
 
 @section('content')
@@ -25,17 +29,13 @@
 
         <?php $existe_btn_siguiente = false; ?>
         @foreach($paso->Formulario->Campos as $c)
-            <?php
+            @php
                 $campos_dependientes[] = $c->nombre;
                 $condicion_final = "";
                 if( !is_null($c->dependiente_campo) && ! array_key_exists($c->dependiente_campo, $campos_ocultos_extra)){
                     $campos_ocultos_extra[$c->dependiente_campo] = $c->getVariableUltimoValor($c->dependiente_campo, $etapa);
                 }
-
-              
-
-               
-            ?>
+            @endphp
             @if($c->condiciones_extra_visible)
                 @foreach($c->condiciones_extra_visible as $condicion)
                     <?php

@@ -38,6 +38,26 @@ i.material-icons {
   margin-top: 15px;
 }
 
+.container-manager {
+  .barra-gob {
+    margin-bottom: 72px;
+    position: absolute;
+    width: 160px;
+    .blue {
+      float: left;
+      width: 40%;
+      height: 9px;
+      background-color: $blue;
+    }
+    .red {
+      float: left;
+      width: 60%;
+      height: 9px;
+      background-color: $red;
+    }
+  }
+}
+
 .dl-horizontal {
   dt {
     float: left;
