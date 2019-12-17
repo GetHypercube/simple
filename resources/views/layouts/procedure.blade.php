@@ -14,7 +14,7 @@
     <meta name="keywords" content="{{ \Cuenta::seo_tags()->keywords }}">
 
     <!-- Styles -->
-    <link href="{{ asset('css/'.$estilo.'') }} " rel="stylesheet">
+    <link href="{{ asset('css/'. getCuenta()['estilo']) }} " rel="stylesheet">
 
     <meta name="google" content="notranslate"/>
 
@@ -43,12 +43,12 @@
           }
         });
     </script>
-     <style type="text/css">{{ $personalizacion }}</style>
+     <style type="text/css">{{ getCuenta()['personalizacion'] }}</style>
 </head>
 <body class="h-100">
 <div id="app" class="h-100 d-flex flex-column" >
     @include('layouts.anuncios')
-    @include($dominio_header)
+    @include(getCuenta()['header'])
 
     <!-- <div class="alert alert-warning" role="alert">
         Estamos realizando labores de mantenimiento en el sitio, presentará intermitencia en su funcionamiento.
@@ -69,7 +69,7 @@
                             $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
                                 ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
                                 //dd($npendientes);
-                            $nsinasignar =count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
+                            $nsinasignar =getTotalUnnasigned();
                           //  dd($nsinasignar);
                            //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
                             $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
@@ -104,7 +104,7 @@
 
         </div>
     </div>
-    @include($dominio_footer, ['metadata' => $metadata_footer])
+    @include(getCuenta()['footer'], ['metadata' => json_decode(getCuenta()['metadata'])])
 </div>
 
 @stack('script')
