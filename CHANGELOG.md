@@ -1,3 +1,10 @@
-## v2.0.0 - 26-11-2019
-- Se implementa la funcionalidad de eliminar usuarios firmantes y se definen alertas que notifican si el usuario a eliminar está participando en alguna firma de un documento antes de ejecutar la acción.
-- Se agrega medición de los click al botón de ayuda en las distintas páginas para identificar los más recurridos para atacarlos a través de instrucciones o elementos gráficos con el fin de evitar recurrir al manual.
+# Change Log
+Todos los cambios notables a este proyecto se documentarán en este archivo.
+[KeepAChangeLog]: https://keepachangelog.com/
+
+## Issue-47-custom-report
+Cambios de envio de reportes por mail ejemplo: Tu reporte esta listo, Plataforma SIMPLE Informa: ¡Tiene una tarea pendiente!, tienes una tarea pendiente
+
+
+## 0.9.4.0 [2019-12-17]
+No change log folks. Sorry.
