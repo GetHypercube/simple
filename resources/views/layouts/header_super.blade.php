@@ -82,7 +82,7 @@
                         $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
                             ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
                         $nsinasignar = count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
-                        $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+                        $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
                     @endphp
                     <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'inbox' ? 'active' : ''}}"
                        href="{{route('stage.inbox')}}">

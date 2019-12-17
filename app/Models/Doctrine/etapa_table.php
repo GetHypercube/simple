@@ -3,8 +3,11 @@
 class EtapaTable extends Doctrine_Table {
     
     //busca las etapas que no han sido asignadas y que usuario_id se podria asignar
-    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$query="0",$limite=2000, $inicio=0){
+    public function findSinAsignar($usuario_id, $cuenta='localhost',$matches="0",$query="0",$limite=2000, $inicio=0, $orderby  = null){
         $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+        $orderby = is_null($orderby) ? ['etapa.tarea_id' => 'ASC'] : $orderby;
+        $field = key($orderby);
+        $order = $orderby[$field];
         if(!$usuario->open_id){
             $grupos =  DB::table('grupo_usuarios_has_usuario')
                 ->select('grupo_usuarios_id')
@@ -33,7 +36,7 @@ class EtapaTable extends Doctrine_Table {
                 ->whereNull('tramite.deleted_at')
                 ->limit($limite)
                 ->offset($inicio)
-                ->orderBy('etapa.tarea_id', 'ASC')
+                ->orderBy($field, $order)
                 ->get()->toArray();
 
                 //se buscan etapas cuyas tareas que por nivel de acceso esten configuradas por nombre de grupo como variables @@
@@ -50,7 +53,7 @@ class EtapaTable extends Doctrine_Table {
                     ->whereNull('tramite.deleted_at')
                     ->limit($limite)
                     ->offset($inicio)
-                    ->orderBy('etapa.tarea_id', 'ASC')
+                    ->orderBy($field, $order)
                     ->get()->toArray();
                 if(count($tareas_aa)){
                     foreach($tareas_aa as $key=>$t)
@@ -73,8 +76,11 @@ class EtapaTable extends Doctrine_Table {
         return $tareas;
     }
 
-   public function findSinAsignarMatch($usuario_id, $cuenta='localhost',$matches="0",$query="0"){
+   public function findSinAsignarMatch($usuario_id, $cuenta='localhost',$matches="0",$query="0", $orderby = null){
        $usuario = \App\Helpers\Doctrine::getTable('Usuario')->find($usuario_id);
+       $orderby = is_null($orderby) ? ['etapa.tarea_id' => 'ASC'] : $orderby;
+       $field = key($orderby);
+       $order = $orderby[$field];
        if(!$usuario->open_id){
             $grupos =  DB::table('grupo_usuarios_has_usuario')
                         ->select('grupo_usuarios_id')
@@ -95,7 +101,7 @@ class EtapaTable extends Doctrine_Table {
                 ->whereIn('tarea.grupos_usuarios',[$grupos])
                 ->whereIn('tramite.id',[$matches])
                 ->whereNull('etapa.usuario_id')
-                ->orderBy('etapa.tarea_id', 'ASC')
+                ->orderBy($field, $order)
                 ->get()->toArray();
             }
             else{
@@ -134,16 +140,15 @@ class EtapaTable extends Doctrine_Table {
 
     public function findPendientesALL($usuario_id, $cuenta='localhost', $orderby='updated_at',$direction='desc',$matches="0",$buscar="0"){        
         $query=Doctrine_Query::create()
+                ->select('count(*) as contador')
                 ->from('Tramite t, t.Proceso.Cuenta c, t.Etapas e, e.Usuario u')
                 ->where('u.id = ?',$usuario_id)
                 ->andWhere('e.pendiente=1')
-                ->limit(3000)
-                ->andWhere('t.deleted_at is NULL')
-                ->orderBy('t.updated_at desc');
+                ->andWhere('t.deleted_at is NULL');
         
         if($cuenta!='localhost')
             $query->andWhere('c.nombre = ?',$cuenta->nombre);        
-        return $query->execute();
+        return $query->execute()[0]->contador;
     }
 
     public function canUsuarioAsignarsela($usuario_id, $acceso_modo, $grupos_usuarios, $etapa_id)

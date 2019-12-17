@@ -186,9 +186,8 @@ class StagesController extends Controller
 
         if ($resultotal == "true") {
             $matches = $result->groupBy('id')->keys()->toArray();
-             Log::info("El Valor de RESULTOTAL de INBOX es de: " . $resultotal);
-             $contador = Doctrine::getTable('Etapa')
-                 ->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+            Log::info("El Valor de RESULTOTAL de INBOX es de: " . $resultotal);
+            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
             $rowetapas = Doctrine::getTable('Etapa')
                 ->findPendientes(Auth::user()->id,
                     \Cuenta::cuentaSegunDominio(),
@@ -208,8 +207,7 @@ class StagesController extends Controller
                     $buscar,
                     $paginate,
                     $offset);
-            $contador = Doctrine::getTable('Etapa')
-                ->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
          
         }
         
@@ -272,10 +270,11 @@ class StagesController extends Controller
         $query = $request->input('query');
         $matches = "";
         $rowetapas = "";
-        $resultotal = 'false';
+        $resultotal = false;
         $contador = "0";
 
         $page = Input::get('page', 1);
+        $order_by = !is_null($request->order_field) && !is_null($request->order) ? [$request->order_field => $request->order] : null;
         $paginate = 50;
         $offset = ($page * $paginate) - $paginate;
 
@@ -286,25 +285,24 @@ class StagesController extends Controller
                 array_push($matches, $resultado->id);
             }
             if(count($result) > 0){
-                $resultotal = "true";
+                $resultotal = true;
             }else{
-                $resultotal = "false";
+                $resultotal = false;
             }
         }
 
-        if ($resultotal == 'true') {
+        if ($resultotal) {
             $matches = $result->groupBy('id')->keys()->toArray();
             Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
-            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . $resultotal);
-            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . (string) $resultotal);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, null, null, $order_by);
             //  $contador = count($rowetapas);
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
-
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, null, null, $order_by);
 
         } else {
-            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset);
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset, $order_by);
             // $contador = count($rowetapas);
-            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, $order_by);
         }
 
 
@@ -317,7 +315,7 @@ class StagesController extends Controller
         $config['per_page'] = $paginate;
         $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
         $config['full_tag_close'] = '</ul></div>';
-        $config['page_query_string'] = false;
+        $config['page_query_string'] = $request->except(['page']);
         $config['query_string_segment'] = 'offset';
         $config['first_link'] = 'Primero';
         $config['first_tag_open'] = '<li>';
@@ -344,6 +342,7 @@ class StagesController extends Controller
             $paginate, // Items per page
             $page, // Current page,
             ['path' => $request->url(), 'query' => $request->query()]); // We need this so we can keep all old query parameters from the url);
+        $data['orderByList'] = ['tramite.id' => 'Nro' , 't_nombre' => 'Etapa' , 'etapa.updated_at' => 'Modificación' , 'etapa.vencimiento_at' => 'Vencimiento' ];
         $data['query'] = $query;
         // echo "<script>console.log(".json_encode($query).")</script>";
         $data['sidebar'] = 'sinasignar';

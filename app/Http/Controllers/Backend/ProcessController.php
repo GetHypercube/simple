@@ -595,15 +595,11 @@ class ProcessController extends Controller
      */
     public function export($proceso_id)
     {
-
         $proceso = Doctrine::getTable('Proceso')->find($proceso_id);
 
         $json = $proceso->exportComplete();
 
-        header("Content-Disposition: attachment; filename=\"" . mb_convert_case(str_replace(' ', '-', $proceso->nombre), MB_CASE_LOWER) . ".simple\"");
-        header('Content-Type: application/json');
-        echo $json;
-
+        return response()->json($json)->header("Content-disposition", "attachment;filename={$proceso->nombre}.simple");
     }
 
     /**
@@ -846,7 +842,7 @@ class ProcessController extends Controller
         }
         //print_r(json_encode($modelo));
         //exit;
-        echo json_encode($modelo);
+        return response()->json($modelo);
     }
 
     /**

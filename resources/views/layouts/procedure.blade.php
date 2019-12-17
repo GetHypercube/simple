@@ -44,6 +44,7 @@
         });
     </script>
      <style type="text/css">{{ $personalizacion }}</style>
+     <style>button.btn.btn-outline-secondary[type="submit"]{height:35px}</style>
 </head>
 <body class="h-100">
 <div id="app" class="h-100 d-flex flex-column" >
@@ -72,7 +73,7 @@
                             $nsinasignar =count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
                           //  dd($nsinasignar);
                            //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
-                            $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+                            $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
                         @endphp
                         <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'inbox' ? 'active' : ''}}"
                            href="{{route('stage.inbox')}}">
