@@ -34,6 +34,36 @@ i.material-icons {
   }
 }
 
+.arrow-order {
+  position: absolute !important;
+  margin-top: -2px !important;
+  .top-arrow {
+    display: block;
+    font-size: 18px !important;
+    margin-bottom: -10px;
+    color: #212529;
+
+    &.active {
+      color: #cccccc;
+    }
+  }
+
+  .bottom-arrow {
+    display: block;
+    font-size: 18px !important;
+    margin-top: -10px;
+    color: #212529;
+
+    &.active {
+      color: #cccccc;
+    }
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
 .custom-nav {
   background: #FFFFFF;
   box-shadow: 0 2px 4px 0 rgba(209, 209, 209, 0.50);
