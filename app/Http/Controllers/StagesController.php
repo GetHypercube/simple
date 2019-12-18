@@ -155,7 +155,6 @@ class StagesController extends Controller
     }
 
     /**
-     * @method inbox()
      * @internal Muestra las etapas disponibles para ejecutar asignadas al usuario logueado
      * @param Request $request
      * @return view stages.inbox
@@ -179,6 +178,12 @@ class StagesController extends Controller
         }
         /* Query para obtener los tramites buscados de acuerdo al filtro */
         $etapas = Etapa::where('etapa.usuario_id', Auth::user()->id)->where('etapa.pendiente', 1)
+        ->whereHas('tramite', function($q) use ($query){
+            if($query!="" && !empty(session('matches_sinasignar')))
+            { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
+                $q->whereIn('tramite_id', session('matches_sinasignar'));
+            }
+        })
         ->whereHas('tarea', function($q){
             $q->where('activacion', "si")
             ->orWhere(function($q){
@@ -221,10 +226,8 @@ class StagesController extends Controller
     }
 
     /**
-     * @method sinasignar()
      * @internal Muestra las etapas sin asignar disponibles para el usuario logueado
      * @param Request $request
-     * @param integer $offset
      * @return view stages.unassigned
      */
     public function sinasignar(Request $request)
@@ -252,11 +255,13 @@ class StagesController extends Controller
         $cuenta= Cuenta::cuentaSegunDominio(); // Obtengo la cuenta del usuario logueado
         /* Query para obtener los tramites buscados de acuerdo al filtro */
         $etapas = Etapa::
-        whereNull('etapa.usuario_id');
-        if($query!="" && !empty(session('matches_sinasignar')))
-        { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
-            $etapas = $etapas->whereIn('tramite_id', session('matches_sinasignar'));
-        }
+        whereNull('etapa.usuario_id')
+        ->whereHas('tramite', function($q) use ($query){
+            if($query!="" && !empty(session('matches_sinasignar')))
+            { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
+                $q->whereIn('tramite_id', session('matches_sinasignar'));
+            }
+        });
         $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta, $sortValue, $sort){
             $q->where(function($q) use ($grupos){
                 $q->whereIn('grupos_usuarios',$grupos)

@@ -35,7 +35,8 @@ function getTotalUnnasigned()
     $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
     $cuenta=\Cuenta::cuentaSegunDominio();
     return Etapa::
-    whereHas('tarea', function($q) use ($grupos,$cuenta){
+    whereHas('tramite')
+    ->whereHas('tarea', function($q) use ($grupos,$cuenta){
         $q->where(function($q) use ($grupos){
             $q->whereIn('grupos_usuarios',$grupos)
             ->orWhere('grupos_usuarios','LIKE','%@@%');
