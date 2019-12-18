@@ -62,3 +62,21 @@ function getUpdateAtFormat($updated_at)
 {
     return $updated_at == null || !$updated_at ? '' : Carbon::parse($updated_at)->diffForHumans();
 }
+
+function hasFiles($etapas)
+{
+    foreach ($etapas as $e)      
+    {
+        if($e->tramite->files->count() > 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+function getLastTask($etapa)
+{
+
+    return $etapa->tramite->etapas()->where('pendiente', 0)->orderBy('id', 'desc')->first() ? 
+    getUpdateAtFormat($etapa->tramite->etapas()->where('pendiente', 0)->orderBy('id', 'desc')->first()->ended_at) : 'N/A';
+}
