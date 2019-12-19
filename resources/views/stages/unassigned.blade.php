@@ -68,7 +68,7 @@
                 @endforeach
                 </tbody>
             </table>    
-            @if($cuenta->descarga_masiva && hasFiles($etapas)) {
+            @if($cuenta->descarga_masiva && hasFiles($etapas))
                 <div class="pull-right">
                     <div class="checkbox">
                         <input type="hidden" id="tramites" name="tramites"/>
@@ -129,7 +129,7 @@
                 });
                 $('#tramites').val(checked);
                 var tramites = $('#tramites').val();
-                $("#modal").load("/etapas/descargar/" + vtramites);
+                $("#modal").load("/etapas/descargar/" + tramites);
                 $("#modal").modal();
                 return false;
             }
