@@ -422,7 +422,7 @@ class ConfigurationController extends Controller
             $order_by_rol = ($order_by_rol == 'asc') ? 'desc':'asc';
         }
 
-        $users = $users->get();
+        $users = $users->paginate(20);
 
         return view('backend.configuration.backend_users.index', [
             'users' => $users,
@@ -576,11 +576,49 @@ class ConfigurationController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function frontendUsers()
+    public function frontendUsers(Request $request)
     {
-        $users = User::whereCuentaId(Auth::user()->cuenta_id)->get();
+        $email_search = $request->input('email_search', null);
+        $order_by_email = $request->input('order_by_email', null);
+        $order_by_name = $request->input('order_by_name', null);
+        $order_by_lastname = $request->input('order_by_lastname', null);
+        $order_by_usuario = $request->input('order_by_usuario', null);
 
-        return view('backend.configuration.frontend_users.index', compact('users'));
+        $users = User::whereCuentaId(Auth::user()->cuenta_id);
+
+        if (null != $email_search)
+            $users->where('email', 'like', "%$email_search%");
+
+        if (null != $order_by_usuario) {
+            $users->orderBy('usuario', $order_by_usuario);
+            $order_by_usuario = ($order_by_usuario == 'asc') ? 'desc':'asc';
+        }
+
+        if (null != $order_by_email) {
+            $users->orderBy('email', $order_by_email);
+            $order_by_email = ($order_by_email == 'asc') ? 'desc':'asc';
+        }
+
+        if (null != $order_by_name) {
+            $users->orderBy('nombres', $order_by_name);
+            $order_by_name = ($order_by_name == 'asc') ? 'desc':'asc';
+        }
+
+        if (null != $order_by_lastname) {
+            $users->orderBy('apellido_paterno', $order_by_lastname);
+            $order_by_lastname = ($order_by_lastname == 'asc') ? 'desc':'asc';
+        }
+
+        $users = $users->paginate(20);
+
+        return view('backend.configuration.frontend_users.index', [
+            'users' => $users,
+            'email_search' => $email_search,
+            'order_by_email' => $order_by_email,
+            'order_by_name' => $order_by_name,
+            'order_by_lastname' => $order_by_lastname,
+            'order_by_usuario' => $order_by_usuario
+        ]);
     }
 
     /**
