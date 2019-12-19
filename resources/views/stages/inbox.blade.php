@@ -12,124 +12,78 @@
                     <div class="input-group mb-3">
                         <input class="search-form_input form-control" placeholder="Escribe aquí lo que deseas buscar"
                                type="text"
-                               name="buscar"
-                               value="<?= $buscar?>">
+                               name="query"
+                               value="{{ $query }}">
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" type="submit">
                                 <i class="material-icons">search</i>
                             </button>
                         </div>
                     </div>
-
                 </div>
             </form>
         </div>
     </div>
-
     <div class="row">
         <div class="col-xs-12 col-md-12">
-            <?php if (count($etapas) > 0): ?>
+            @if($etapas)
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                     <tr>
                         <th></th>
-                        <th>
-                            <a href="<?=Request::url() . '?orderby=id&direction=' . ($direction == 'asc' ? 'desc' : 'asc')?>">Nro</a>
-                        </th>
+                        <th><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Nro</a></th>
                         <th>Ref.</th>
-                        <th>
-                            <a href="<?=Request::url() . '?orderby=proceso_nombre&direction=' . ($direction == 'asc' ? 'desc' : 'asc')?>">Nombre</a>
-                        </th>
-                        <th>
-                            <a href="<?=Request::url() . '?orderby=tarea_nombre&direction=' . ($direction == 'asc' ? 'desc' : 'asc')?>">Etapa</a>
-                        </th>
-                        <th>
-                            <a href="<?=Request::url() . '?orderby=updated_at&direction=' . ($direction == 'asc' ? 'desc' : 'asc')?>">Modificación</a>
-                        </th>
-                        <th>
-                            <a href="<?=Request::url() . '?orderby=vencimiento_at&direction=' . ($direction == 'asc' ? 'desc' : 'asc')?>">Vencimiento</a>
-                        </th>
+                        <th><a href="{{ getUrlSortUnassigned($request, 'nombre') }}">Nombre</a></th>
+                        <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
+                        <th class="text-nowrap">Fecha últ. <br> etapa realizada</th>
+                        <th><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <?php $registros = false; ?>
-                    <?php foreach ($etapas as $e): ?>
-                    <?php
-                    $file = false;
-                    if (\App\Helpers\Doctrine::getTable('File')->findByTramiteId($e->Tramite->id)->count() > 0) {
-                        $file = true;
-                        $registros = true;
-                    }
-                    ?>
-                    <tr <?=$e->getPrevisualizacion() ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($e->getPrevisualizacion()) . '" data-trigger="hover" data-placement="bottom"' : ''?>>
-                        <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
-                        <?php if ($file): ?>
-                        <td>
-                            <div class="checkbox"><label><input type="checkbox" class="checkbox1" name="select[]"
-                                                                value="<?=$e->Tramite->id?>"></label></div>
-                        </td>
-                        <?php else: ?>
-                        <td></td>
-                        <?php endif; ?>
-                        <?php else: ?>
-                        <td></td>
-                        <?php endif; ?>
-                        <td><?=$e->Tramite->id?></td>
-                        <td class="name">
-                            <?php
-                            $t = \App\Helpers\Doctrine::getTable('Tramite')->find($e->Tramite->id);
-                            $tramite_nro = '';
-                            foreach ($t->getValorDatoSeguimiento() as $tra_nro) {
-                                if ($tra_nro->nombre == 'tramite_ref') {
-                                    $tramite_nro = $tra_nro->valor;
-                                }
-                            }
-                            echo $tramite_nro != '' ? $tramite_nro : $e->Tramite->Proceso->nombre;
-                            ?>
-                        </td><!--Nro. tramites-->
-                    <!--<td class="name"><a class="preventDoubleRequest" href="<?//=url('etapas/ejecutar/'.$e->id)?>"><?//= $e->Tramite->Proceso->nombre ?></a></td> Nombre-->
-                        <td class="name"><a class="preventDoubleRequest" href="<?=url('etapas/ejecutar/' . $e->id)?>">
-                                <?php
-                                $tramite_descripcion = '';
-                                foreach ($t->getValorDatoSeguimiento() as $tra) {
-                                    if ($tra->nombre == 'tramite_descripcion') {
-                                        $tramite_descripcion = $tra->valor;
-                                    }
-                                }
-                                echo $tramite_descripcion != '' ? $tramite_descripcion : $e->Tramite->Proceso->nombre;
-                                ?>
-                            </a></td><!--Tramites-->
-                        <td><?=$e->Tarea->nombre?></td>
-                        <td class="time">{{\Carbon\Carbon::parse($e->updated_at)->format('d-m-Y')}}</td>
-                        <td><?=$e->vencimiento_at ? \Carbon\Carbon::parse($e->vencimiento_at)->format('d-m-Y') : 'N/A'?></td>
-                        <td class="actions">
-                            <a href="<?=url('etapas/ejecutar/' . $e->id)?>"
-                               class="btn btn-sm btn-primary preventDoubleRequest"><i class="icon-edit icon-white"></i>
-                                Realizar</a>
-                            <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
-                            <?php if ($file): ?>
-                            <a href="#" onclick="return descargarDocumentos(<?=$e->Tramite->id?>);"
-                               class="btn btn btn-sm btn-success"><i
-                                        class="icon-download icon-white"></i> Descargar</a>
-                            <?php endif; ?>
-                            <?php endif; ?>
-                            @if(Auth::check() && Auth::user()->open_id && !is_null($e->Tarea->Proceso->eliminar_tramites) && $e->Tarea->Proceso->eliminar_tramites)
-                                <a href="#" onclick="return eliminarTramite(<?=$e->Tramite->id?>);"
-                                   class="btn btn-sm btn-danger preventDoubleRequest"><i class="icon-edit icon-red"></i>
-                                    Borrar</a>
-                        @endif
-                        <!--<?php if($e->netapas == 1):?><a href="<?=url('tramites/eliminar/' . $e->tramite_id)?>" class="btn" onclick="return confirm('¿Esta seguro que desea eliminar este tramite?')"><i class="icon-trash"></i></a><?php endif ?>-->
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
+                    @foreach ($etapas as $e)
+                        <tr {!! getPrevisualization($e) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars(getPrevisualization($e)) . '" data-trigger="hover" data-placement="bottom"' : '' !!}>
+                            <td class="text-nowrap">
+                                @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" class="checkbox1" name="select[]" value="{{ $e->id }}">
+                                    </label>
+                                </div>
+                                @endif
+                            </td> 
+                            <td> {{ $e->tramite->id }}</td>
+                            <td class="name">
+                                {{ getValorDatoSeguimiento($e, 'tramite_ref')}}
+                            </td>
+                            <td>{{ $e->tramite->proceso->nombre }}</td>               
+                            <td class="text-nowrap">{{ $e->tarea->nombre }}</td>
+                            <td class="time">
+                                {{ getLastTask($e) }}
+                            </td>
+                            <td>{{ $e->vencimiento_at ? getUpdateAtFormat($e->vencimiento_at) : 'N/A'}}</td>
+                            <td class="actions">
+                                <a href="{{ url('etapas/ejecutar/' . $e->id) }}" class="btn btn-sm btn-primary preventDoubleRequest">
+                                    <i class="icon-edit icon-white"></i> Realizar
+                                </a>
+                                @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0) 
+                                    <a href="javascript:;" onclick="return descargarDocumentos({{ $e->tramite->id}});" class="btn btn btn-sm btn-success">
+                                        <i class="icon-download icon-white"></i> Descargar
+                                    </a>                               
+                               @endif
+                                @if(Auth::check() && Auth::user()->open_id && !is_null($e->tarea->proceso->eliminar_tramites) && $e->Tarea->Proceso->eliminar_tramites)
+                                    <a href="#" onclick="return eliminarTramite({{$e->Tramite->id}});" class="btn btn-sm btn-danger preventDoubleRequest">
+                                        <i class="icon-edit icon-red"></i> Borrar
+                                    </a>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
             </div>
-
-            <?php if (Cuenta::cuentaSegunDominio()->descarga_masiva): ?>
-            <?php if ($registros): ?>
+            @if ($cuenta->descarga_masiva && hasFiles($etapas))
             <div class="pull-right">
                 <div class="checkbox">
                     <input type="hidden" id="tramites" name="tramites"/>
@@ -140,18 +94,17 @@
                     </label>
                 </div>
             </div>
-            <?php endif; ?>
-            <?php endif; ?>
-            <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
-            <?php else: ?>
+            @endif
+            <p>
+                {{ $etapas->appends(Request::except('page'))->render("pagination::bootstrap-4")}}
+            </p>
+            @else
             <p>No hay trámites pendientes en su bandeja de entrada.</p>
-            <?php endif; ?>
+            @endif
         </div>
     </div>
     <div class="modal hide in" id="modal"></div>
-
 @endsection
-
 @push('script')
     <script>
         function descargarDocumentos(tramiteId) {

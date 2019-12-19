@@ -30,16 +30,13 @@
                     <th><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Número</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'nombre') }}">Nombre</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
-                    <th><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</th>
+                    <th>Fecha úlitma tarea realizada</th>
+                    <th><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                {!! $registros = false !!}
                 @foreach ($etapas as $e)      
-                    @if($e->tramite->files->count() > 0)
-                    {!! $registros = true !!}
-                    @endif      
                     <tr {!! getPrevisualization($e) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : '' !!}>
                         <td class="text-nowrap">
                             @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
@@ -54,8 +51,9 @@
                         <td>{{ $e->tramite->proceso->nombre }}</td>               
                         <td class="text-nowrap">{{$e->tarea->nombre }}</td>
                         <td class="time">
-                            {{ getUpdateAtFormat($e->tramite->updated_at)}}
+                            {{ getLastTask($e) }}
                         </td>
+                        <td>{{ $e->vencimiento_at ? getUpdateAtFormat($e->vencimiento_at) : 'N/A'}}</td>
                         <td class="actions">
                             <a href="{{url('etapas/asignar/' . $e->id)}}" class="btn btn-link">
                                 <i class="icon-check icon-white"></i> Asignármelo
@@ -70,7 +68,7 @@
                 @endforeach
                 </tbody>
             </table>    
-            @if($cuenta->descarga_masiva && $registros) {
+            @if($cuenta->descarga_masiva && hasFiles($etapas)) {
                 <div class="pull-right">
                     <div class="checkbox">
                         <input type="hidden" id="tramites" name="tramites"/>
