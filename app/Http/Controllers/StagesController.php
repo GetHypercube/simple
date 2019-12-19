@@ -262,7 +262,7 @@ class StagesController extends Controller
                 $q->whereIn('tramite_id', session('matches_sinasignar'));
             }
         });
-        $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta, $sortValue, $sort){
+        $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta){
             $q->where(function($q) use ($grupos){
                 $q->whereIn('grupos_usuarios',$grupos)
                 ->orWhere('grupos_usuarios','LIKE','%@@%');

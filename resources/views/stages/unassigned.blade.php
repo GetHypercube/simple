@@ -31,6 +31,7 @@
                     <th><a href="{{ getUrlSortUnassigned($request, 'nombre') }}">Nombre</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
                     <th>Fecha úlitma tarea realizada</th>
+                    <th><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
                     <th>Acciones</th>
                 </tr>
@@ -53,7 +54,8 @@
                         <td class="time">
                             {{ getLastTask($e) }}
                         </td>
-                        <td>{{ $e->vencimiento_at ? getUpdateAtFormat($e->vencimiento_at) : 'N/A'}}</td>
+                        <td>{{ getDateFormat($e->updated_at)}}</td>
+                        <td>{{ $e->vencimiento_at ? getDateFormat($e->vencimiento_at, 'vencimiento') : 'N/A'}}</td>
                         <td class="actions">
                             <a href="{{url('etapas/asignar/' . $e->id)}}" class="btn btn-link">
                                 <i class="icon-check icon-white"></i> Asignármelo
