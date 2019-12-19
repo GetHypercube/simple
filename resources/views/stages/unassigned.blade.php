@@ -31,6 +31,7 @@
                     <th><a href="{{ getUrlSortUnassigned($request, 'nombre') }}">Nombre</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
                     <th>Fecha úlitma tarea realizada</th>
+                    <th><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
                     <th>Acciones</th>
                 </tr>
@@ -39,7 +40,7 @@
                 @foreach ($etapas as $e)      
                     <tr {!! getPrevisualization($e) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : '' !!}>
                         <td class="text-nowrap">
-                            @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0) {
+                            @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" class="checkbox1" name="select[]" value="<?=$e->id?>">
@@ -53,6 +54,7 @@
                         <td class="time">
                             {{ getLastTask($e) }}
                         </td>
+                        <td>{{ $e->tramite->updated_at ? getUpdateAtFormat($e->tramite->updated_at) : 'N/A'}}</td>
                         <td>{{ $e->vencimiento_at ? getUpdateAtFormat($e->vencimiento_at) : 'N/A'}}</td>
                         <td class="actions">
                             <a href="<?=url('etapas/asignar/' . $e->id)?>" class="btn btn-link">

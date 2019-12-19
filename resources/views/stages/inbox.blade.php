@@ -27,8 +27,7 @@
     <div class="row">
         <div class="col-xs-12 col-md-12">
             @if($etapas)
-            <div class="table-responsive">
-                <table class="table">
+                <table class="table table-condensed table-hover">
                     <thead>
                     <tr>
                         <th></th>
@@ -37,6 +36,7 @@
                         <th><a href="{{ getUrlSortUnassigned($request, 'nombre') }}">Nombre</a></th>
                         <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
                         <th class="text-nowrap">Fecha últ. <br> etapa realizada</th>
+                        <th><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</a></th>
                         <th><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
                         <th>Acciones</th>
                     </tr>
@@ -62,6 +62,7 @@
                             <td class="time">
                                 {{ getLastTask($e) }}
                             </td>
+                            <td>{{ $e->tramite->updated_at ? getUpdateAtFormat($e->tramite->updated_at) : 'N/A'}}</td>
                             <td>{{ $e->vencimiento_at ? getUpdateAtFormat($e->vencimiento_at) : 'N/A'}}</td>
                             <td class="actions">
                                 <a href="{{ url('etapas/ejecutar/' . $e->id) }}" class="btn btn-sm btn-primary preventDoubleRequest">
@@ -82,7 +83,6 @@
                     @endforeach
                     </tbody>
                 </table>
-            </div>
             @if ($cuenta->descarga_masiva && hasFiles($etapas))
             <div class="pull-right">
                 <div class="checkbox">
