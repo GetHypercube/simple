@@ -154,116 +154,83 @@ class StagesController extends Controller
         return $num_pasos[0][0];
     }
 
-    public function inbox(Request $request, $offset= 0)
+    /**
+     * @internal Muestra las etapas disponibles para ejecutar asignadas al usuario logueado
+     * @param Request $request
+     * @return view stages.inbox
+     */
+    public function inbox(Request $request)
     {
-
-        $buscar = $request->input('buscar');
-        $orderby = $request->has('orderby') ? $request->input('orderby') : 'updated_at';
-        $direction = $request->has('direction') ? $request->input('direction') : 'desc';
-
-        $matches = "";
-        $rowetapas = "";
-        $resultotal = "false";
-        $contador= 0;
-
-        $page = Input::get('page', 1);
-        $paginate = 50;
-        $offset = ($page * $paginate) - $paginate;
-
-        if ($buscar) {
-            $result = Tramite::search($buscar)->get();
-            if (!$result->isEmpty()) {
-                $resultotal = "true";
-            } else {
-                $resultotal = "false";
+        $cuenta= Cuenta::cuentaSegunDominio(); // Obtengo la cuenta del usuario logueado
+        $sortValue = $request->sortValue;
+        $sort = $request->sort;
+        $query = $request->input('query'); // Obtengo el parametro de búsqueda
+        if ($query && session('query_sinasignar') != $query) 
+        {// Si el dato buscado no es vacío y es distinto al ya buscado (variable de session query_sinasignar) realizo busqueda en elasticSearch
+            $request->session()->put('query_sinasignar',$request->input('query')); // Seteo variable de session para comparar en la proxima busqueda
+            $result = Tramite::search($query)->get(); // Consulto en elasticSearch 
+            $matches = array(); // Array donde se guardaran los id de tramite
+            foreach($result as $resultado)
+            { // Recorro los resultados
+                array_push($matches, $resultado->id); // Agrego el id del tramite al array matches
             }
+            $request->session()->put('matches_sinasignar', $matches); // Seteo una variable de session para los id's de tramite para la busqueda en la DB
         }
-
-        if ($resultotal == "true") {
-            $matches = $result->groupBy('id')->keys()->toArray();
-             Log::info("El Valor de RESULTOTAL de INBOX es de: " . $resultotal);
-             $contador = Doctrine::getTable('Etapa')
-                 ->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
-            $rowetapas = Doctrine::getTable('Etapa')
-                ->findPendientes(Auth::user()->id,
-                    \Cuenta::cuentaSegunDominio(),
-                    $orderby,
-                    $direction,
-                    $matches,
-                    $buscar,
-                    $paginate,
-                    $offset);
-        } else {
-            $rowetapas = Doctrine::getTable('Etapa')
-                ->findPendientes(Auth::user()->id,
-                    \Cuenta::cuentaSegunDominio(),
-                    $orderby,
-                    $direction,
-                    "0",
-                    $buscar,
-                    $paginate,
-                    $offset);
-            $contador = Doctrine::getTable('Etapa')
-                ->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
-         
+        /* Query para obtener los tramites buscados de acuerdo al filtro */
+        $etapas = Etapa::where('etapa.usuario_id', Auth::user()->id)->where('etapa.pendiente', 1)
+        ->whereHas('tramite', function($q) use ($query){
+            if($query!="" && !empty(session('matches_sinasignar')))
+            { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
+                $q->whereIn('tramite_id', session('matches_sinasignar'));
+            }
+        })
+        ->whereHas('tarea', function($q){
+            $q->where('activacion', "si")
+            ->orWhere(function($q){
+                $q->where('activacion', "entre_fechas")
+                ->where('activacion_inicio', '<=', Carbon::now())
+                ->where('activacion_fin', '>=', Carbon::now());   
+            });
+        });
+        if($query!="" && !empty(session('matches_sinasignar')))
+        { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
+            $etapas = $etapas->whereIn('tramite_id', session('matches_sinasignar'));
         }
-        
-        $config['base_url'] = url('etapas/inbox');
-        $config['total_rows'] = $contador;
-        $config['per_page'] = $paginate;
-        $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
-        $config['full_tag_close'] = '</ul></div>';
-        $config['page_query_string'] = false;
-        $config['query_string_segment'] = 'offset';
-        $config['first_link'] = 'Primero';
-        $config['first_tag_open'] = '<li>';
-        $config['first_tag_close'] = '</li>';
-        $config['last_link'] = 'Último';
-        $config['last_tag_open'] = '<li>';
-        $config['last_tag_close'] = '</li>';
-        $config['next_link'] = '»';
-        $config['next_tag_open'] = '<li>';
-        $config['next_tag_close'] = '</li>';
-        $config['prev_link'] = '«';
-        $config['prev_tag_open'] = '<li>';
-        $config['prev_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li class="active"><a href="#">';
-        $config['cur_tag_close'] = '</a></li>';
-        $config['num_tag_open'] = '<li>';
-        $config['num_tag_close'] = '</li>';
-
-            Log::info("El Valor de offset es de: " . $offset);
-    
-        $data = \Cuenta::configSegunDominio();
-
-        // paginador
-        $data['etapas'] = new LengthAwarePaginator(
-            $rowetapas,
-            $contador,
-            $paginate, 
-            $page,
-            ['path' => $request->url(), 'buscar' => $request->query()]);
-        // fin paginador
-
-        $data['buscar'] = $buscar;
-        $data['orderby'] = $orderby;
-        $data['direction'] = $direction;
-        $data['sidebar'] = 'inbox';
-        $data['title'] = 'Bandeja de Entrada';
-
-     //    echo "<script>console.log(".json_encode($idrnt_cha).")</script>";    
-
-        return view('stages.inbox', $data);
+        /* Order de acuerdo a lo solicitado desde los titulos de la tabla en la vista */
+        if($sortValue == 'etapa')
+        {// Orden por nombre de tarea
+            $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')->orderBy('tarea.nombre', $sort);
+        }
+        if($sortValue == 'nombre')
+        { // Orden por nombre de proceso
+            $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')
+            ->join('proceso', 'tarea.proceso_id', 'proceso.id')->orderBy('proceso.nombre', $sort);
+        }
+        if($sortValue == 'numero')
+        { // Orden por id de tramite
+            $etapas = $etapas->orderBy('tramite_id', $sort);
+        }
+        elseif($sortValue == 'modificacion')
+        { // Orden por fecha de modificación 
+            $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
+            ->orderBy('tramite.updated_at', $sort);
+        }
+        elseif($sortValue == 'vencimiento')
+        { // Orden por fecha de modificación 
+            $etapas = $etapas->orderBy('vencimiento_at', $sort);
+        }
+        $etapas = $etapas->groupBy('etapa.id') // Agrupo por el id de la etapa
+        ->paginate(50); // Pagino de 50 registros
+        // Retorno la vista inbox
+        return view('stages.inbox', compact('etapas', 'cuenta', 'query', 'request'));
     }
 
     /**
-     * @method sinasignar()
      * @internal Muestra las etapas sin asignar disponibles para el usuario logueado
      * @param Request $request
-     * @param integer $offset
      * @return view stages.unassigned
      */
-    public function sinasignar(Request $request, $offset = 0)
+    public function sinasignar(Request $request)
     {
         if (!Auth::user()->registrado) 
         {
@@ -276,7 +243,7 @@ class StagesController extends Controller
         if ($query && session('query_sinasignar') != $query) 
         {// Si el dato buscado no es vacío y es distinto al ya buscado (variable de session query_sinasignar) realizo busqueda en elasticSearch
             $request->session()->put('query_sinasignar',$request->input('query')); // Seteo variable de session para comparar en la proxima busqueda
-            $result = Tramite::search($query)->take(5000)->get(); // Consulto en elasticSearch 
+            $result = Tramite::search($query)->get(); // Consulto en elasticSearch 
             $matches = array(); // Array donde se guardaran los id de tramite
             foreach($result as $resultado)
             { // Recorro los resultados
@@ -288,11 +255,13 @@ class StagesController extends Controller
         $cuenta= Cuenta::cuentaSegunDominio(); // Obtengo la cuenta del usuario logueado
         /* Query para obtener los tramites buscados de acuerdo al filtro */
         $etapas = Etapa::
-        whereNull('etapa.usuario_id');
-        if($query!="" && !empty(session('matches_sinasignar')))
-        { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
-            $etapas = $etapas->whereIn('tramite_id', session('matches_sinasignar'));
-        }
+        whereNull('etapa.usuario_id')
+        ->whereHas('tramite', function($q) use ($query){
+            if($query!="" && !empty(session('matches_sinasignar')))
+            { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
+                $q->whereIn('tramite_id', session('matches_sinasignar'));
+            }
+        });
         $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta, $sortValue, $sort){
             $q->where(function($q) use ($grupos){
                 $q->whereIn('grupos_usuarios',$grupos)
@@ -322,12 +291,14 @@ class StagesController extends Controller
         { // Orden por fecha de modificación 
             $etapas = $etapas->orderBy('updated_at', $sort);
         }
+        elseif($sortValue == 'vencimiento')
+        { // Orden por fecha de modificación 
+            $etapas = $etapas->orderBy('vencimiento_at', $sort);
+        }
         $etapas=$etapas->paginate(50); // Pagino de 50 registros
         /* Retorno vista bandeja sin asignar */ 
         return view('stages.unassigned', compact('etapas', 'cuenta', 'query', 'request'));
-        
     }
-
 
     public function ejecutar_form(Request $request, $etapa_id, $secuencia)
     {
