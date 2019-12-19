@@ -42,7 +42,7 @@
                     @endif      
                     <tr {!! getPrevisualization($e) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : '' !!}>
                         <td class="text-nowrap">
-                            @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0) {
+                            @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" class="checkbox1" name="select[]" value="{{$e->id}}">
