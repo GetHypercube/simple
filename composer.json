@@ -52,10 +52,11 @@
       "app/Helpers/helpers.php",
       "app/Helpers/JsonHelper.php",
       "app/Helpers/JWTHelper.php",
-      "app/Helpers/SaferEval.php",
+      "app/Helpers/SaferEval.php", 
       "app/Helpers/dateHelper.php",
       "app/Helpers/nusoap/lib/nusoap.php",
-      "app/Helpers/Utils.php"
+      "app/Helpers/Utils.php",
+      "app/Helpers/UtilsStagesHelper.php"
     ]
   },
   "autoload-dev": {
