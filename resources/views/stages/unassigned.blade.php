@@ -131,7 +131,7 @@
                 });
                 $('#tramites').val(checked);
                 var tramites = $('#tramites').val();
-                $("#modal").load("/etapas/descargar/" + vtramites);
+                $("#modal").load("/etapas/descargar/" + tramites);
                 $("#modal").modal();
                 return false;
             }

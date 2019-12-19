@@ -72,17 +72,17 @@
                            //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
                             $nparticipados = getTotalHistory();
                         @endphp
-                        <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'inbox' ? 'active' : ''}}"
+                         <a class="list-group-item list-group-item-action {{linkActive('etapas/inbox')}}"
                            href="{{route('stage.inbox')}}">
                             <i class="material-icons">inbox</i> Bandeja de Entrada ({{$npendientes}})
                         </a>
                         @if ($nsinasignar)
-                            <a class="list-group-item list-group-item-action {{ isset($sidebar) && $sidebar == 'sinasignar' ? 'active' : '' }}"
+                            <a class="list-group-item list-group-item-action {{linkActive('etapas/sinasignar')}}"
                                href="{{route('stage.unassigned')}}">
                                 <i class="material-icons">assignment</i> Sin asignar ({{$nsinasignar}})
                             </a>
                         @endif
-                        <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'participados' ? 'active' : ''}}"
+                        <a class="list-group-item list-group-item-action {{linkActive('tramites/participados')}}"
                            href="{{route('tramites.participados')}}">
                             <i class="material-icons">history</i> Historial de Trámites ({{$nparticipados}})
                         </a>

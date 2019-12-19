@@ -86,6 +86,11 @@ function getTotalHistory()
         ->count();
 }
 
+function linkActive($path)
+{
+    return Request::path() == $path ? 'active':'';
+}
+
 function getUrlSortUnassigned($request, $sortValue)
 {
     $path = Request::path();
