@@ -30,7 +30,7 @@
                     <th><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Número</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'nombre') }}">Nombre</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
-                    <th>Fecha úlitma tarea realizada</th>
+                    <th><a href="{{ getUrlSortUnassigned($request, 'ingreso') }}">Ingreso</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</a></th>
                     <th><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
                     <th>Acciones</th>
@@ -51,10 +51,8 @@
                         <td class="text-nowrap">{{ $e->tramite->id }}</td>
                         <td>{{ $e->tramite->proceso->nombre }}</td>               
                         <td class="text-nowrap">{{$e->tarea->nombre }}</td>
-                        <td class="time">
-                            {{ getLastTask($e) }}
-                        </td>
-                        <td>{{ getDateFormat($e->updated_at)}}</td>
+                        <td>{{ getDateFormat($e->tramite->created_at)}}</td>
+                        <td>{{ getDateFormat($e->tramite->updated_at)}}</td>
                         <td>{{ $e->vencimiento_at ? getDateFormat($e->vencimiento_at, 'vencimiento') : 'N/A'}}</td>
                         <td class="actions">
                             <a href="{{url('etapas/asignar/' . $e->id)}}" class="btn btn-link">

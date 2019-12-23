@@ -66,7 +66,7 @@ function getUrlSortUnassigned($request, $sortValue)
 
 function getDateFormat($date, $type = 'update')
 {
-    return $date == null || !$date ? '' : Carbon::parse($date)->format('d-m-Y'.($type == 'update' ? 'H:i:s': ''));
+    return $date == null || !$date ? '' : Carbon::parse($date)->format('d-m-Y '.($type == 'update' ? 'H:i:s': ''));
 }
 
 function hasFiles($etapas)

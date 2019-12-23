@@ -215,6 +215,11 @@ class StagesController extends Controller
             $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
             ->orderBy('tramite.updated_at', $sort);
         }
+        elseif($sortValue == 'ingreso')
+        { // Orden por fecha de modificación 
+            $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
+            ->orderBy('tramite.created_at', $sort);
+        }
         elseif($sortValue == 'vencimiento')
         { // Orden por fecha de modificación 
             $etapas = $etapas->orderBy('vencimiento_at', $sort);
@@ -289,7 +294,13 @@ class StagesController extends Controller
         }
         elseif($sortValue == 'modificacion')
         { // Orden por fecha de modificación 
-            $etapas = $etapas->orderBy('updated_at', $sort);
+            $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
+            ->orderBy('tramite.updated_at', $sort);
+        }
+        elseif($sortValue == 'ingreso')
+        { // Orden por fecha de modificación 
+            $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
+            ->orderBy('tramite.created_at', $sort);
         }
         elseif($sortValue == 'vencimiento')
         { // Orden por fecha de modificación 
