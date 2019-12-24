@@ -237,6 +237,7 @@ class StagesController extends Controller
      */
     public function sinasignar(Request $request)
     {
+        $etapas = [];
         if (!Auth::user()->registrado) 
         {
             $request->session()->put('claveunica_redirect', URL::current());
@@ -245,69 +246,73 @@ class StagesController extends Controller
         $sortValue = $request->sortValue;// Obtengo el parametro de orden de los datos 
         $sort = $request->sort;// Obtengo el parametro de dirección del orden
         $query = $request->input('query'); // Obtengo el parametro de búsqueda
-        if ($query && session('query_sinasignar') != $query) 
-        {// Si el dato buscado no es vacío y es distinto al ya buscado (variable de session query_sinasignar) realizo busqueda en elasticSearch
-            $request->session()->put('query_sinasignar',$request->input('query')); // Seteo variable de session para comparar en la proxima busqueda
-            $result = Tramite::search($query)->get(); // Consulto en elasticSearch 
-            $matches = array(); // Array donde se guardaran los id de tramite
-            foreach($result as $resultado)
-            { // Recorro los resultados
-                array_push($matches, $resultado->id); // Agrego el id del tramite al array matches
+        if (!Auth::user()->open_id) 
+        {
+            
+            if ($query && session('query_sinasignar') != $query) 
+            {// Si el dato buscado no es vacío y es distinto al ya buscado (variable de session query_sinasignar) realizo busqueda en elasticSearch
+                $request->session()->put('query_sinasignar',$request->input('query')); // Seteo variable de session para comparar en la proxima busqueda
+                $result = Tramite::search($query)->get(); // Consulto en elasticSearch 
+                $matches = array(); // Array donde se guardaran los id de tramite
+                foreach($result as $resultado)
+                { // Recorro los resultados
+                    array_push($matches, $resultado->id); // Agrego el id del tramite al array matches
+                }
+                $request->session()->put('matches_sinasignar', $matches); // Seteo una variable de session para los id's de tramite para la busqueda en la DB
             }
-            $request->session()->put('matches_sinasignar', $matches); // Seteo una variable de session para los id's de tramite para la busqueda en la DB
-        }
-        $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id'); // Obtengo los grupos al que pertenece el usuario logueado
-        $cuenta= Cuenta::cuentaSegunDominio(); // Obtengo la cuenta del usuario logueado
-        /* Query para obtener los tramites buscados de acuerdo al filtro */
-        $etapas = Etapa::
-        whereNull('etapa.usuario_id')
-        ->whereHas('tramite', function($q) use ($query){
-            if($query!="" && !empty(session('matches_sinasignar')))
-            { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
-                $q->whereIn('tramite_id', session('matches_sinasignar'));
-            }
-        });
-        $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta){
-            $q->where(function($q) use ($grupos){
-                $q->whereIn('grupos_usuarios',$grupos)
-                ->orWhere('grupos_usuarios','LIKE','%@@%');
-            })
-            ->whereHas('proceso', function($q) use ($cuenta){
-                $q->whereHas('cuenta', function($q) use ($cuenta){
-                    $q->where('cuenta.nombre',$cuenta->nombre);         
+            $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id'); // Obtengo los grupos al que pertenece el usuario logueado
+            $cuenta= Cuenta::cuentaSegunDominio(); // Obtengo la cuenta del usuario logueado
+            /* Query para obtener los tramites buscados de acuerdo al filtro */
+            $etapas = Etapa::
+            whereNull('etapa.usuario_id')
+            ->whereHas('tramite', function($q) use ($query){
+                if($query!="" && !empty(session('matches_sinasignar')))
+                { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
+                    $q->whereIn('tramite_id', session('matches_sinasignar'));
+                }
+            });
+            $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta){
+                $q->where(function($q) use ($grupos){
+                    $q->whereIn('grupos_usuarios',$grupos)
+                    ->orWhere('grupos_usuarios','LIKE','%@@%');
+                })
+                ->whereHas('proceso', function($q) use ($cuenta){
+                    $q->whereHas('cuenta', function($q) use ($cuenta){
+                        $q->where('cuenta.nombre',$cuenta->nombre);         
+                    });
                 });
             });
-        });
-        /* Order de acuerdo a lo solicitado desde los titulos de la tabla en la vista */
-        if($sortValue == 'etapa')
-        {// Orden por nombre de tarea
-            $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')->orderBy('tarea.nombre', $sort);
+            /* Order de acuerdo a lo solicitado desde los titulos de la tabla en la vista */
+            if($sortValue == 'etapa')
+            {// Orden por nombre de tarea
+                $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')->orderBy('tarea.nombre', $sort);
+            }
+            if($sortValue == 'nombre')
+            { // Orden por nombre de proceso
+                $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')
+                ->join('proceso', 'tarea.proceso_id', 'proceso.id')->orderBy('proceso.nombre', $sort);
+            }
+            if($sortValue == 'numero')
+            { // Orden por id de tramite
+                $etapas = $etapas->orderBy('tramite_id', $sort);
+            }
+            elseif($sortValue == 'modificacion')
+            { // Orden por fecha de modificación 
+                $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
+                ->orderBy('tramite.updated_at', $sort);
+            }
+            elseif($sortValue == 'ingreso')
+            { // Orden por fecha de modificación 
+                $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
+                ->orderBy('tramite.created_at', $sort);
+            }
+            elseif($sortValue == 'vencimiento')
+            { // Orden por fecha de modificación 
+                $etapas = $etapas->orderBy('vencimiento_at', $sort);
+            }
+            $etapas=$etapas->paginate(50); // Pagino de 50 registros
+            /* Retorno vista bandeja sin asignar */ 
         }
-        if($sortValue == 'nombre')
-        { // Orden por nombre de proceso
-            $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')
-            ->join('proceso', 'tarea.proceso_id', 'proceso.id')->orderBy('proceso.nombre', $sort);
-        }
-        if($sortValue == 'numero')
-        { // Orden por id de tramite
-            $etapas = $etapas->orderBy('tramite_id', $sort);
-        }
-        elseif($sortValue == 'modificacion')
-        { // Orden por fecha de modificación 
-            $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
-            ->orderBy('tramite.updated_at', $sort);
-        }
-        elseif($sortValue == 'ingreso')
-        { // Orden por fecha de modificación 
-            $etapas = $etapas->join('tramite', 'tramite.id', 'etapa.tramite_id')
-            ->orderBy('tramite.created_at', $sort);
-        }
-        elseif($sortValue == 'vencimiento')
-        { // Orden por fecha de modificación 
-            $etapas = $etapas->orderBy('vencimiento_at', $sort);
-        }
-        $etapas=$etapas->paginate(50); // Pagino de 50 registros
-        /* Retorno vista bandeja sin asignar */ 
         return view('stages.unassigned', compact('etapas', 'cuenta', 'query', 'request'));
     }
 

@@ -32,24 +32,27 @@ function getCuenta()
 
 function getTotalUnnasigned()
 {
-    $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
-    $cuenta=\Cuenta::cuentaSegunDominio();
-    return Etapa::
-    whereHas('tramite')
-    ->whereHas('tarea', function($q) use ($grupos,$cuenta){
-        $q->where(function($q) use ($grupos){
-            $q->whereIn('grupos_usuarios',$grupos)
-            ->orWhere('grupos_usuarios','LIKE','%@@%');
-        })
-        ->whereHas('proceso', function($q) use ($cuenta){
-            $q->whereHas('cuenta', function($q) use ($cuenta){
-                $q->where('cuenta.nombre',$cuenta->nombre);         
-            });
-        });       
-    })           
-    ->whereNull('usuario_id')
-    ->orderBy('tarea_id', 'ASC')
-    ->count();
+    if (!Auth::user()->open_id) 
+    {
+        $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
+        $cuenta=\Cuenta::cuentaSegunDominio();
+        return Etapa::
+        whereHas('tramite')
+        ->whereHas('tarea', function($q) use ($grupos,$cuenta){
+            $q->where(function($q) use ($grupos){
+                $q->whereIn('grupos_usuarios',$grupos)
+                ->orWhere('grupos_usuarios','LIKE','%@@%');
+            })
+            ->whereHas('proceso', function($q) use ($cuenta){
+                $q->whereHas('cuenta', function($q) use ($cuenta){
+                    $q->where('cuenta.nombre',$cuenta->nombre);         
+                });
+            });       
+        })           
+        ->whereNull('usuario_id')
+        ->orderBy('tarea_id', 'ASC')
+        ->count();
+    }
 }
 
 function linkActive($path)
