@@ -32,7 +32,8 @@
                     <tr>
                         <th></th>
                         <th><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Nro</a></th>
-                        <th><a href="{{ getUrlSortUnassigned($request, 'nombre') }}">Nombre</a></th>
+                        <th>Ref.</th>
+                        <th>Nombre</th>
                         <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
                         <th><a href="{{ getUrlSortUnassigned($request, 'ingreso') }}">Ingreso</a></th>
                         <th><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</a></th>
@@ -53,7 +54,8 @@
                                 @endif
                             </td> 
                             <td> {{ $e->tramite->id }}</td>
-                            <td>{{ $e->tramite->proceso->nombre }}</td>               
+                            <td>{{ getValorDatoSeguimiento($e, 'tramite_ref') }}</td>  
+                            <td>{{ getValorDatoSeguimiento($e, 'tramite_descripcion') }}</td>               
                             <td class="text-nowrap">{{ $e->tarea->nombre }}</td>                            
                             <td>{{ getDateFormat($e->tramite->created_at)}}</td>
                             <td>{{ getDateFormat($e->tramite->updated_at)}}</td>
