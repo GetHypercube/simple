@@ -184,12 +184,17 @@ class StagesController extends Controller
                 $q->whereIn('tramite_id', session('matches_sinasignar'));
             }
         })
-        ->whereHas('tarea', function($q){
+        ->whereHas('tarea', function($q) use ($cuenta){
             $q->where('activacion', "si")
             ->orWhere(function($q){
                 $q->where('activacion', "entre_fechas")
                 ->where('activacion_inicio', '<=', Carbon::now())
                 ->where('activacion_fin', '>=', Carbon::now());   
+            })
+            ->whereHas('proceso', function($q) use ($cuenta){
+                $q->whereHas('cuenta', function($q) use ($cuenta){
+                    $q->where('nombre',$cuenta->nombre);         
+                });
             });
         });
         if($query!="" && !empty(session('matches_sinasignar')))
@@ -278,7 +283,7 @@ class StagesController extends Controller
                 })
                 ->whereHas('proceso', function($q) use ($cuenta){
                     $q->whereHas('cuenta', function($q) use ($cuenta){
-                        $q->where('cuenta.nombre',$cuenta->nombre);         
+                        $q->where('nombre',$cuenta->nombre);         
                     });
                 });
             });
