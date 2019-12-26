@@ -55,6 +55,40 @@ function getTotalUnnasigned()
     }
 }
 
+function getTotalAssigned()
+{
+    return Etapa::where('etapa.usuario_id', Auth::user()->id)->where('etapa.pendiente', 1)
+        ->whereHas('tramite')
+        ->whereHas('tarea', function($q){
+            $q->where('activacion', "si")
+            ->orWhere(function($q)
+            {
+                $q->where('activacion', "entre_fechas")
+                ->where('activacion_inicio', '<=', Carbon::now())
+                ->where('activacion_fin', '>=', Carbon::now());   
+            });
+        })
+    ->count();
+}
+
+function getTotalHistory()
+{
+    $cuenta=\Cuenta::cuentaSegunDominio();
+    return Etapa::where('pendiente', 0)
+        ->whereHas('tramite', function($q) use ($cuenta){
+            $q->whereHas('proceso', function($q) use ($cuenta){
+                $q->whereHas('cuenta', function($q) use ($cuenta){
+                    if($cuenta != 'localhost')
+                    {
+                        $q->where('nombre', $cuenta->nombre);
+                    }
+                });
+            });
+        })
+        ->where('usuario_id', Auth::user()->id)
+        ->count();
+}
+
 function linkActive($path)
 {
     return Request::path() == $path ? 'active':'';

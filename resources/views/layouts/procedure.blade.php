@@ -49,7 +49,6 @@
 <div id="app" class="h-100 d-flex flex-column" >
     @include('layouts.anuncios')
     @include(getCuenta()['header'])
-
     <!-- <div class="alert alert-warning" role="alert">
         Estamos realizando labores de mantenimiento en el sitio, presentará intermitencia en su funcionamiento.
     </div> -->
@@ -66,20 +65,19 @@
 
                     @if(Auth::user()->registrado)
                         @php
-                            $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
-                                ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+                            $npendientes = getTotalAssigned();
                                 //dd($npendientes);
                             $nsinasignar =getTotalUnnasigned();
                           //  dd($nsinasignar);
                            //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
-                            $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
+                            $nparticipados = getTotalHistory();
                         @endphp
                          <a class="list-group-item list-group-item-action {{linkActive('etapas/inbox')}}"
                            href="{{route('stage.inbox')}}">
                             <i class="material-icons">inbox</i> Bandeja de Entrada ({{$npendientes}})
                         </a>
                         @if ($nsinasignar)
-                        <a class="list-group-item list-group-item-action {{linkActive('etapas/sinasignar')}}"
+                            <a class="list-group-item list-group-item-action {{linkActive('etapas/sinasignar')}}"
                                href="{{route('stage.unassigned')}}">
                                 <i class="material-icons">assignment</i> Sin asignar ({{$nsinasignar}})
                             </a>
