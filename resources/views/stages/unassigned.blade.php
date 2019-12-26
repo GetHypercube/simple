@@ -2,7 +2,7 @@
 @section('content')
     <div class="row">
         <div class="col-xs-12 col-md-8">
-            <h2>Etapas sin asignar</h2> 
+            <h2>Etapas sin asignar</h2><!--h--> 
         </div>
         <div class="col-xs-12 col-md-4">
             <!--buscador-->
