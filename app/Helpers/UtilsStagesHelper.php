@@ -37,17 +37,17 @@ function getTotalUnnasigned()
         $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
         $cuenta=\Cuenta::cuentaSegunDominio();
         return Etapa::
-        whereHas('tramite')
-        ->whereHas('tarea', function($q) use ($grupos,$cuenta){
+        whereHas('tramite', function($q) use ($cuenta)
+        {
+            $q->whereHas('proceso', function($q) use ($cuenta){
+                $q->where('cuenta_id',$cuenta->id);
+            });
+        })
+        ->whereHas('tarea', function($q) use ($grupos){
             $q->where(function($q) use ($grupos){
                 $q->whereIn('grupos_usuarios',$grupos)
                 ->orWhere('grupos_usuarios','LIKE','%@@%');
-            })
-            ->whereHas('proceso', function($q) use ($cuenta){
-                $q->whereHas('cuenta', function($q) use ($cuenta){
-                    $q->where('cuenta.nombre',$cuenta->nombre);         
-                });
-            });       
+            });
         })           
         ->whereNull('usuario_id')
         ->orderBy('tarea_id', 'ASC')
@@ -57,8 +57,13 @@ function getTotalUnnasigned()
 
 function getTotalAssigned()
 {
+    $cuenta=\Cuenta::cuentaSegunDominio();
     return Etapa::where('etapa.usuario_id', Auth::user()->id)->where('etapa.pendiente', 1)
-        ->whereHas('tramite')
+        ->whereHas('tramite', function($q) use ($cuenta){
+            $q->whereHas('proceso', function($q) use ($cuenta){
+                $q->where('cuenta_id', $cuenta->id);
+            });
+        })
         ->whereHas('tarea', function($q){
             $q->where('activacion', "si")
             ->orWhere(function($q)
@@ -77,12 +82,7 @@ function getTotalHistory()
     return Etapa::where('pendiente', 0)
         ->whereHas('tramite', function($q) use ($cuenta){
             $q->whereHas('proceso', function($q) use ($cuenta){
-                $q->whereHas('cuenta', function($q) use ($cuenta){
-                    if($cuenta != 'localhost')
-                    {
-                        $q->where('nombre', $cuenta->nombre);
-                    }
-                });
+                $q->where('cuenta_id', $cuenta->id);
             });
         })
         ->where('usuario_id', Auth::user()->id)
