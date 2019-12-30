@@ -17,10 +17,15 @@ function getPrevisualization($e)
 }
 function getValorDatoSeguimiento($e, $tipo)
 {
+    $etapas = $e->tramite->etapas;
     $tramite_nro = '';
-    foreach ($e->datoSeguimientos as $dato) {
-        if ($dato->nombre == $tipo) {
-            $tramite_nro = $dato->valor;
+    foreach ($etapas as $etapa )
+    {
+        foreach($etapa->datoSeguimientos as $dato) 
+        {
+            if ($dato->nombre == $tipo) {
+                $tramite_nro = json_decode('"'.str_replace('"','',$dato->valor).'"');
+            }
         }
     }
     return $tramite_nro != '' ? $tramite_nro : $e->tramite->proceso->nombre;
@@ -122,4 +127,12 @@ function getLastTask($etapa)
 
     return $etapa->tramite->etapas()->where('pendiente', 0)->orderBy('id', 'desc')->first() ? 
     getDateFormat($etapa->tramite->etapas()->where('pendiente', 0)->orderBy('id', 'desc')->first()->ended_at) : 'N/A';
+}
+
+function replace_unicode_escape_sequence($match) {
+    return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
+}
+
+function unicode_decode($str) {
+    return preg_replace_callback('/\\\\u([0-9a-f]{4})/i', 'replace_unicode_escape_sequence', $str);
 }
