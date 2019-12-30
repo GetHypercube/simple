@@ -171,31 +171,29 @@ class StagesController extends Controller
             $result = Tramite::search($query)->get(); // Consulto en elasticSearch 
             $matches = array(); // Array donde se guardaran los id de tramite
             foreach($result as $resultado)
-            { // Recorro los resultados
+            { // Recorro los resultados 
                 array_push($matches, $resultado->id); // Agrego el id del tramite al array matches
             }
             $request->session()->put('matches_sinasignar', $matches); // Seteo una variable de session para los id's de tramite para la busqueda en la DB
         }
         /* Query para obtener los tramites buscados de acuerdo al filtro */
         $etapas = Etapa::where('etapa.usuario_id', Auth::user()->id)->where('etapa.pendiente', 1)
-        ->whereHas('tramite', function($q) use ($query){
+        ->whereHas('tramite', function($q) use ($query, $cuenta){
+            $q->whereHas('proceso', function($q) use ($cuenta){
+                $q->where('cuenta_id',$cuenta->id);         
+            });
             if($query!="" && !empty(session('matches_sinasignar')))
             { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
                 $q->whereIn('tramite_id', session('matches_sinasignar'));
             }
         })
-        ->whereHas('tarea', function($q) use ($cuenta){
+        ->whereHas('tarea', function($q){
             $q->where('activacion', "si")
             ->orWhere(function($q){
                 $q->where('activacion', "entre_fechas")
                 ->where('activacion_inicio', '<=', Carbon::now())
                 ->where('activacion_fin', '>=', Carbon::now());   
-            })
-            ->whereHas('proceso', function($q) use ($cuenta){
-                $q->whereHas('cuenta', function($q) use ($cuenta){
-                    $q->where('nombre',$cuenta->nombre);         
-                });
-            });
+            }); 
         });
         if($query!="" && !empty(session('matches_sinasignar')))
         { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
@@ -270,21 +268,19 @@ class StagesController extends Controller
             /* Query para obtener los tramites buscados de acuerdo al filtro */
             $etapas = Etapa::
             whereNull('etapa.usuario_id')
-            ->whereHas('tramite', function($q) use ($query){
+            ->whereHas('tramite', function($q) use ($query, $cuenta){
+                $q->whereHas('proceso', function($q) use ($cuenta){
+                    $q->where('cuenta_id',$cuenta->id);
+                });
                 if($query!="" && !empty(session('matches_sinasignar')))
                 { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
                     $q->whereIn('tramite_id', session('matches_sinasignar'));
                 }
             });
-            $etapas = $etapas->whereHas('tarea', function($q) use ($grupos,$cuenta){
+            $etapas = $etapas->whereHas('tarea', function($q) use ($grupos){
                 $q->where(function($q) use ($grupos){
                     $q->whereIn('grupos_usuarios',$grupos)
                     ->orWhere('grupos_usuarios','LIKE','%@@%');
-                })
-                ->whereHas('proceso', function($q) use ($cuenta){
-                    $q->whereHas('cuenta', function($q) use ($cuenta){
-                        $q->where('nombre',$cuenta->nombre);         
-                    });
                 });
             });
             /* Order de acuerdo a lo solicitado desde los titulos de la tabla en la vista */
