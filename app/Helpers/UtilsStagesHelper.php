@@ -24,7 +24,7 @@ function getValorDatoSeguimiento($e, $tipo)
         foreach($etapa->datoSeguimientos as $dato) 
         {
             if ($dato->nombre == $tipo) {
-                $tramite_nro = strtolower($dato->valor) == 'null' ? '' :json_decode('"'.str_replace('"','',$dato->valor).'"');
+                $tramite_nro = json_decode('"'.str_replace('"','',$dato->valor).'"');
             }
         }
     }
