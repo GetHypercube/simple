@@ -9,6 +9,8 @@
 @import "~bootstrap/scss/bootstrap";
 //Footer
 @import "footer";
+// general styles
+@import "general";
 //datetimepicker
 @import "~bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css";
 
@@ -428,4 +430,8 @@ pre {
     }
   }
   
+}
+
+#leyend-edit-form {
+  display: inline;
 }

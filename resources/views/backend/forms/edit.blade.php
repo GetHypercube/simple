@@ -21,7 +21,8 @@
             cursor: move;
         }
         #areaFormulario .btn {
-            padding: .3rem .4rem;
+            padding: .15rem .4rem;
+            margin-left: 2px;
         }
         #formEditarFormulario .name-form {
             padding-left: 10px;
@@ -137,16 +138,14 @@
                     <form id="formEditarFormulario" class="form-horizontal dynaForm debugForm" onsubmit="return false">
                         <div class="row">
                             <div class="col-10 text-left">
-                                <legend class="name-form"><?= $formulario->nombre ?>
+                                <legend class="name-form" id="leyend-edit-form"><?= $formulario->nombre ?>
                                     <a onclick="ga('cuenta.send', 'event', 'Mejora_UX', 'Ayuda-Diseno-Nuevo-Formulario');" href="/ayuda/simple/backend/modelamiento-del-proceso/diseno-de-formularios.html"
                                        target="_blank">
                                         <i class="material-icons align-middle">help</i>
                                     </a>
                                 </legend>
-                                <div class="float-right">
-                                    <a href="#" class="btn btn-primary"
-                                       onclick="return editarFormulario(<?= $formulario->id ?>)">Cambiar Nombre y descripción</a>&nbsp;
-                                </div>
+                                <a href="#" class="btn btn-simple-light text-capitalize"
+                                   onclick="return editarFormulario(<?= $formulario->id ?>)">(Cambiar Nombre y descripción)</a>&nbsp;
                             </div>
                         </div>
                         <div class="row">
@@ -169,7 +168,7 @@
                                                                    class="btn btn-danger"
                                                                    onclick="return confirm('¿Esta seguro que desea eliminar?')">
                                                                     <i class="material-icons">delete</i>
-                                                                </a>&nbsp;
+                                                                </a>
                                                             </div>
                                                         </div>
                                                         <div class="col-11">
