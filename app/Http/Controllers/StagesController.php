@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Tramite;
 use App\Models\Job;
 use App\Models\Campo;
@@ -251,7 +249,6 @@ class StagesController extends Controller
         $query = $request->input('query'); // Obtengo el parametro de búsqueda
         if (!Auth::user()->open_id) 
         {
-            
             if ($query && session('query_sinasignar') != $query) 
             {// Si el dato buscado no es vacío y es distinto al ya buscado (variable de session query_sinasignar) realizo busqueda en elasticSearch
                 $request->session()->put('query_sinasignar',$request->input('query')); // Seteo variable de session para comparar en la proxima busqueda
@@ -268,30 +265,31 @@ class StagesController extends Controller
             /* Query para obtener los tramites buscados de acuerdo al filtro */
             $etapas = Etapa::
             whereNull('etapa.usuario_id')
-            ->whereHas('tramite', function($q) use ($query, $cuenta){
-                $q->whereHas('proceso', function($q) use ($cuenta){
-                    $q->where('cuenta_id',$cuenta->id);
+            ->join('tarea', function($q) use ($grupos){
+                $q->on('etapa.tarea_id','=', 'tarea.id')
+                ->where(function($q) use ($grupos){
+                    $q->whereIn('grupos_usuarios',$grupos)
+                    ->orWhere('grupos_usuarios','LIKE','%@@%');
                 });
+            })
+            ->join('proceso', function($q) use ($cuenta){
+                $q->on('tarea.proceso_id', '=', 'proceso.id')
+                ->where('cuenta_id',$cuenta->id);
+            })
+            ->whereHas('tramite', function($q) use ($query){
                 if($query!="" && !empty(session('matches_sinasignar')))
                 { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
                     $q->whereIn('tramite_id', session('matches_sinasignar'));
                 }
             });
-            $etapas = $etapas->whereHas('tarea', function($q) use ($grupos){
-                $q->where(function($q) use ($grupos){
-                    $q->whereIn('grupos_usuarios',$grupos)
-                    ->orWhere('grupos_usuarios','LIKE','%@@%');
-                });
-            });
             /* Order de acuerdo a lo solicitado desde los titulos de la tabla en la vista */
             if($sortValue == 'etapa')
             {// Orden por nombre de tarea
-                $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')->orderBy('tarea.nombre', $sort);
+                $etapas = $etapas->orderBy('tarea.nombre', $sort);
             }
             if($sortValue == 'nombre')
             { // Orden por nombre de proceso
-                $etapas = $etapas->join('tarea', 'tarea.id', 'etapa.tarea_id')
-                ->join('proceso', 'tarea.proceso_id', 'proceso.id')->orderBy('proceso.nombre', $sort);
+                $etapas = $etapas->orderBy('proceso.nombre', $sort);
             }
             if($sortValue == 'numero')
             { // Orden por id de tramite
@@ -311,7 +309,7 @@ class StagesController extends Controller
             { // Orden por fecha de modificación 
                 $etapas = $etapas->orderBy('vencimiento_at', $sort);
             }
-            $etapas=$etapas->paginate(50); // Pagino de 50 registros
+            $etapas=$etapas->paginate(50);
             /* Retorno vista bandeja sin asignar */ 
         }
         return view('stages.unassigned', compact('etapas', 'cuenta', 'query', 'request'));
