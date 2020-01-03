@@ -32,21 +32,21 @@
                     <table class="table table-condensed table-hover">
                         <thead>
                         <tr>
-                            <th></th>
-                            <th><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Nro</a></th>
-                            <th>Ref.</th>
-                            <th>Nombre</th>
-                            <th><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
-                            <th><a href="{{ getUrlSortUnassigned($request, 'ingreso') }}">Ingreso</a></th>
-                            <th><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</a></th>
-                            <th><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
-                            <th>Acciones</th>
+                            <th class="text-center"></th>
+                            <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Número</a></th>
+                            <th class="text-center">Ref.</th>
+                            <th class="text-center">Nombre</th>
+                            <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
+                            <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'ingreso') }}">Ingreso</a></th>
+                            <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</a></th>
+                            <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach ($etapas as $e)
                             <tr {!! getPrevisualization($e) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars(getPrevisualization($e)) . '" data-trigger="hover" data-placement="bottom"' : '' !!}>
-                                <td class="text-nowrap">
+                                <td class="text-center">
                                     @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
                                     <div class="checkbox">
                                         <label>
@@ -55,14 +55,14 @@
                                     </div>
                                     @endif
                                 </td> 
-                                <td> {{ $e->tramite->id }}</td>
-                                <td>{{ getValorDatoSeguimiento($e, 'tramite_ref') }}</td>  
-                                <td>{{ getValorDatoSeguimiento($e, 'tramite_descripcion') }}</td>               
-                                <td class="text-nowrap">{{ $e->tarea->nombre }}</td>                            
-                                <td>{{ getDateFormat($e->tramite->created_at)}}</td>
-                                <td>{{ getDateFormat($e->tramite->updated_at)}}</td>
-                                <td>{{ $e->vencimiento_at ? getDateFormat($e->vencimiento_at, 'vencimiento') : 'N/A'}}</td>
-                                <td class="actions">
+                                <td class="text-center "> {{ $e->tramite->id }}</td>
+                                <td class="text-center ">{{ getValorDatoSeguimiento($e, 'tramite_ref') }}</td>  
+                                <td class="text-center ">{{ getValorDatoSeguimiento($e, 'tramite_descripcion') }}</td>               
+                                <td class="text-center">{{ $e->tarea->nombre }}</td>                            
+                                <td class="text-center ">{{ getDateFormat($e->tramite->created_at)}}</td>
+                                <td class="text-center ">{{ getDateFormat($e->tramite->updated_at)}}</td>
+                                <td class="text-center ">{{ $e->vencimiento_at ? getDateFormat($e->vencimiento_at, 'vencimiento') : 'N/A'}}</td>
+                                <td class="text-center actions">
                                     <a href="{{ url('etapas/ejecutar/' . $e->id) }}" class="btn btn-sm btn-primary preventDoubleRequest">
                                         <i class="icon-edit icon-white"></i> Realizar
                                     </a>
