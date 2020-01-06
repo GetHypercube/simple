@@ -106,8 +106,8 @@
 }</pre>
 
                 <p>
-                    Si necesitas obtener el valor de una de las variables del arreglo "datos" dentro del tramite,
-                    puedes agregar a la url el atributo "dato", así como se muestra a continuación.
+                    Si necesitas obtener el valor de una de las variables del arreglo "datos" dentro del trÁmite,
+                    puedes agregar a la URL el atributo "dato", así como se muestra a continuación.
                 </p>
                 <pre>GET {{url('/backend/api/tramites/{tramiteId}?token={token}&dato=nombres')}}</pre>
 <pre>{
