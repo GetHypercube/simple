@@ -47,6 +47,11 @@
                         <td>string</td>
                         <td>Código de acceso para acceder a los métodos de esta API.</td>
                     </tr>
+                    <tr>
+                        <td>dato</td>
+                        <td>string</td>
+                        <td>Nombre de la variable por la cuál desees filtrar</td>
+                    </tr>
                     </tbody>
                 </table>
 
@@ -99,6 +104,20 @@
         ]
     }
 }</pre>
+
+                <p>
+                    Si necesitas obtener el valor de una de las variables del arreglo "datos" dentro del tramite,
+                    puedes agregar a la url el atributo "dato", así como se muestra a continuación.
+                </p>
+                <pre>GET {{url('/backend/api/tramites/{tramiteId}?token={token}&dato=nombres')}}</pre>
+<pre>{
+    "nombres": "JUAN"
+}</pre>
+                <p>
+                    SI la respuesta es exitosa retornará la variable y su valor junto a un status 200 y en el caso de
+                    no estar definida simplemente retornará un mensaje de error junto a un 404.
+                    <br><br>
+                </p>
             </div>
         </div>
     </div>
