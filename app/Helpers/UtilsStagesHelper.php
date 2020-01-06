@@ -3,6 +3,7 @@
 use App\Models\Cuenta;
 use App\Models\Etapa;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
 function getPrevisualization($e)
@@ -41,18 +42,23 @@ function getTotalUnnasigned()
     {
         $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
         $cuenta=\Cuenta::cuentaSegunDominio();
-        return $etapas = Etapa::
+        return Etapa::
         whereNull('etapa.usuario_id')
         ->join('tarea', function($q) use ($grupos){
-            $q->on('etapa.tarea_id','=', 'tarea.id')
-            ->where(function($q) use ($grupos){
-                $q->whereIn('grupos_usuarios',$grupos)
-                ->orWhere('grupos_usuarios','LIKE','%@@%');
-            });
+            $q->on('etapa.tarea_id','=', 'tarea.id');
         })
-        ->join('proceso', function($q) use ($cuenta){
-            $q->on('tarea.proceso_id', '=', 'proceso.id')
-            ->where('cuenta_id',$cuenta->id);
+        ->join('proceso', function($q){
+            $q->on('tarea.proceso_id', '=', 'proceso.id');            
+        })
+        ->where(function($q) use ($grupos){
+            $q->where('grupos_usuarios','LIKE','%@@%');
+            foreach($grupos as $grupo){
+                $q->orWhereRaw('CONCAT(SPACE(1), REPLACE(tarea.grupos_usuarios, ",", " "), SPACE(1)) like "% '.$grupo.' %"');
+            }
+        })
+        ->where(function($q)  use ($cuenta){
+            $q->where('cuenta_id',$cuenta->id)
+            ->where('activo', 1);
         })
         ->whereHas('tramite')
         ->count();
@@ -134,4 +140,35 @@ function replace_unicode_escape_sequence($match) {
 
 function unicode_decode($str) {
     return preg_replace_callback('/\\\\u([0-9a-f]{4})/i', 'replace_unicode_escape_sequence', $str);
+}
+
+function puedeVisualizarla($e)
+{
+    if ($e->tarea->acceso_modo == 'publico' || $e->tarea->acceso_modo == 'anonimo')
+    {
+        return true;
+    }
+
+    if ($e->tarea->acceso_modo == 'claveunica' && Auth::user()->open_id)
+    {
+        return true;
+    }
+
+    if ($e->tarea->acceso_modo == 'registrados' && Auth::user()->registrado)
+    {
+        return true;
+    }
+    if ($e->tarea->acceso_modo == 'grupos_usuarios') 
+    {
+        $r = new Regla($e->tarea->grupos_usuarios);
+        $grupos_arr = explode(',', $r->getExpresionParaOutput($e->id));
+        foreach (Auth::user()->grupo_usuarios as $g)
+        {
+            if (in_array($g->id, $grupos_arr))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
