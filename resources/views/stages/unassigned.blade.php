@@ -28,18 +28,19 @@
                     <thead>
                     <tr>
                         <th class="text-center"></th>
-                        <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Número</a></th>
+                        <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'numero') }}">Nro.</a></th>
                         <th class="text-center">Ref.</th>
                         <th class="text-center">Nombre</th>
                         <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'etapa') }}">Etapa</a></th>
                         <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'ingreso') }}">Ingreso</a></th>
                         <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'modificacion') }}">Modificación</a></th>
-                        <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Vencimiento</a></th>
+                        <th class="text-center"><a href="{{ getUrlSortUnassigned($request, 'vencimiento') }}">Venc.</a></th>
                         <th class="text-center">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
                     @foreach ($etapas as $e)      
+                        @if(puedeVisualizarla($e))
                         <tr {!! getPrevisualization($e) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars($previsualizacion) . '" data-trigger="hover" data-placement="bottom"' : '' !!}>
                             <td class="text-center ">
                                 @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
@@ -68,6 +69,7 @@
                                 @endif
                             </td>
                         </tr>
+                        @endif
                     @endforeach
                     </tbody>
                 </table>    

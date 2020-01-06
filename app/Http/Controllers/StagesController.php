@@ -263,18 +263,23 @@ class StagesController extends Controller
             $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id'); // Obtengo los grupos al que pertenece el usuario logueado
             $cuenta= Cuenta::cuentaSegunDominio(); // Obtengo la cuenta del usuario logueado
             /* Query para obtener los tramites buscados de acuerdo al filtro */
-            $etapas = Etapa::
+            $etapas = Etapa::select('etapa.*')->
             whereNull('etapa.usuario_id')
             ->join('tarea', function($q) use ($grupos){
-                $q->on('etapa.tarea_id','=', 'tarea.id')
-                ->where(function($q) use ($grupos){
-                    $q->whereIn('grupos_usuarios',$grupos)
-                    ->orWhere('grupos_usuarios','LIKE','%@@%');
-                });
+                $q->on('etapa.tarea_id','=', 'tarea.id');                
             })
             ->join('proceso', function($q) use ($cuenta){
-                $q->on('tarea.proceso_id', '=', 'proceso.id')
-                ->where('cuenta_id',$cuenta->id);
+                $q->on('tarea.proceso_id', '=', 'proceso.id');
+            })
+            ->where(function($q) use ($grupos){
+                $q->where('grupos_usuarios','LIKE','%@@%');
+                foreach($grupos as $grupo){
+                    $q->orWhereRaw('CONCAT(SPACE(1), REPLACE(tarea.grupos_usuarios, ",", " "), SPACE(1)) like "% '.$grupo.' %"');
+                }
+            })
+            ->where(function($q)  use ($cuenta){
+                $q->where('cuenta_id',$cuenta->id)
+                ->where('activo', 1);
             })
             ->whereHas('tramite', function($q) use ($query){
                 if($query!="" && !empty(session('matches_sinasignar')))
