@@ -279,7 +279,7 @@ class StagesController extends Controller
             })
             ->where(function($q)  use ($cuenta){
                 $q->where('cuenta_id',$cuenta->id)
-                ->where('activo', 1);
+                ->where('proceso.activo', 1);
             })
             ->whereHas('tramite', function($q) use ($query){
                 if($query!="" && !empty(session('matches_sinasignar')))
