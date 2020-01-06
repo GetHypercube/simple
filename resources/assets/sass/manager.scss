@@ -40,21 +40,28 @@ i.material-icons {
 
 .container-manager {
   .barra-gob {
-    margin-bottom: 72px;
+    //margin-bottom: 72px;
+    top: 0;
     position: absolute;
     width: 160px;
     .blue {
       float: left;
       width: 40%;
-      height: 9px;
+      height: 6px;
       background-color: $blue;
     }
     .red {
       float: left;
       width: 60%;
-      height: 9px;
+      height: 6px;
       background-color: $red;
     }
+  }
+}
+
+.navbar-brand {
+  .logo-header {
+    margin-top: 10px;
   }
 }
 
