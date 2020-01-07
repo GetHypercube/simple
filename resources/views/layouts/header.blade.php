@@ -3,7 +3,7 @@
         <a class="" href="{{ url('/') }}">
             <div class="media">
                 <img class="align-self-center mr-3 logo"
-                     src="{{Cuenta::cuentaSegunDominio() != 'localhost' ? Cuenta::cuentaSegunDominio()->logoADesplegar : asset('assets/img/logo.png') }}"
+                     src="{{ Cuenta::cuentaSegunDominio()->logoADesplegar }}"
                      alt="{{Cuenta::cuentaSegunDominio() != 'localhost' ? Cuenta::cuentaSegunDominio()->nombre_largo : env('APP_NAME') }}"/>
                 <div class="media-body align-self-center name-institution">
                     <h5 class="mt-1">{{Cuenta::cuentaSegunDominio() != 'localhost' ? Cuenta::cuentaSegunDominio()->nombre_largo : ''}}</h5>
