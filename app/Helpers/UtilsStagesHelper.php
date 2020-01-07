@@ -33,7 +33,7 @@ function getValorDatoSeguimiento($e, $tipo)
 }
 function getCuenta()
 {
-    return Cuenta::find(1)->toArray();
+    return \Cuenta::cuentaSegunDominio()->toArray();
 }
 
 function getTotalUnnasigned()
