@@ -4,17 +4,22 @@ ARG DIRECTORY_PROJECT=/var/www/simple
 WORKDIR $DIRECTORY_PROJECT
 
 # Install NewRelic
-RUN  curl -L https://download.newrelic.com/php_agent/release/newrelic-php5-9.4.1.250-linux.tar.gz | tar -C /tmp -zx && \
-   export NR_INSTALL_USE_CP_NOT_LN=1 && \
-    export NR_INSTALL_SILENT=1 && \
-     /tmp/newrelic-php5-*/newrelic-install install && \
-      rm -rf /tmp/newrelic-php5-* /tmp/nrinstall* && \
-        sed -i -e 's/"REPLACE_WITH_REAL_KEY"/"6eed51509d7ffe6e0a82db3994a63cbe14f6NRAL"/' \
-     -e 's/newrelic.appname = "PHP Application"/newrelic.appname = "Simple2"/' \
-         /usr/local/etc/php/conf.d/newrelic.ini
+RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list
+
+#RUN  curl -L https://download.newrelic.com/php_agent/release/newrelic-php5-9.4.1.250-linux.tar.gz | tar -C /tmp -zx && \
+#   export NR_INSTALL_USE_CP_NOT_LN=1 && \
+#    export NR_INSTALL_SILENT=1 && \
+#     /tmp/newrelic-php5-*/newrelic-install install && \
+#      rm -rf /tmp/newrelic-php5-* /tmp/nrinstall* && \
+#        sed -i -e 's/"REPLACE_WITH_REAL_KEY"/"6eed51509d7ffe6e0a82db3994a63cbe14f6NRAL"/' \
+#     -e 's/newrelic.appname = "PHP Application"/newrelic.appname = "Simple2"/' \
+#         /usr/local/etc/php/conf.d/newrelic.ini
 
 # Install Packages
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && echo newrelic-php5 newrelic-php5/license-key string "6eed51509d7ffe6e0a82db3994a63cbe14f6NRAL" | debconf-set-selections && \
+apt-get install -y \
+#se agrega newrelic
+newrelic-php5 \
  git zip unzip gnupg \
  libxml2-dev zip unzip zlib1g-dev \
  libpng-dev libmcrypt-dev \
