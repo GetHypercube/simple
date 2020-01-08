@@ -65,7 +65,7 @@ i.material-icons {
     text-decoration: none;
   }
 }
-
+2728506
 .custom-nav {
   background: #FFFFFF;
   box-shadow: 0 2px 4px 0 rgba(209, 209, 209, 0.50);
@@ -73,21 +73,27 @@ i.material-icons {
 
 .container-backend {
   .barra-gob {
-    margin-bottom: 88px;
+    top: 0 !important;
     position: absolute;
     width: 160px;
     .blue {
       float: left;
       width: 40%;
-      height: 9px;
+      height: 6px;
       background-color: $blue;
     }
     .red {
       float: left;
       width: 60%;
-      height: 9px;
+      height: 6px;
       background-color: $red;
     }
+  }
+}
+
+.navbar-brand {
+  .logo-header {
+    margin-top: 10px;
   }
 }
 
