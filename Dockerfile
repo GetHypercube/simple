@@ -13,10 +13,9 @@ RUN apt-get update && apt-get install -y \
 
 # Install NewRelic
 RUN echo newrelic-php5 newrelic-php5/license-key string "6eed51509d7ffe6e0a82db3994a63cbe14f6NRAL" | debconf-set-selections && \ 
-    echo newrelic-php5 newrelic-php5/application-name string "Simple2" | debconf-set-selections && \
     echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list && \
     wget -O- https://download.newrelic.com/548C16BF.gpg | apt-key add - && \
-    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install newrelic-php5 
+    apt-get update && apt-get install -y newrelic-php5 
     
 # Docker extension install
 RUN docker-php-ext-install \
