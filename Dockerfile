@@ -3,7 +3,7 @@ ARG DIRECTORY_PROJECT=/var/www/simple
 
 WORKDIR $DIRECTORY_PROJECT
 
-# Install Packages
+# Install Packages.
 RUN apt-get update && apt-get install -y \
  git zip unzip gnupg \
  libxml2-dev zip unzip zlib1g-dev \
