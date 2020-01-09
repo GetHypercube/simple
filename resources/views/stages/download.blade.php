@@ -8,7 +8,7 @@
         </div>
         <div class="modal-body">
             <form enctype="multipart/form-data" id="formDescargarDocumentos" method='POST'
-                  action="{{ url('etapas/descargar_form/') }}">
+                  action="<?= url('etapas/descargar_form/') ?>">
                 {{csrf_field()}}
 
                 <label>Seleccione:</label>
@@ -19,6 +19,8 @@
                         Generados: Documentación que el sistema genera al usuario.   
                     </label>
                 </div>
+                
+
                 @if (!Auth::user()->open_id)
                 <div class="radio">
                     <label>
@@ -26,7 +28,8 @@
                         Subidos: Documentación que el usuario adjuntó en el trámite.
                     </label>
                 </div>
-                @endif                
+                @endif
+                
                 @if (Auth::user()->open_id)
                 <div class="radio">
                     <label>
@@ -35,9 +38,12 @@
                     </label>
                 </div>
                 @endif
+
+
                 <input type="hidden" id="tramites" name="tramites" value="<?= $tramites ?>">
             </form>
         </div>
+
         <div class="modal-footer">
             <a class="btn btn-light closeModal" data-dismiss="modal">Cerrar</a>
             <a href="#" onclick="javascript:$('#formDescargarDocumentos').submit();$('#modal').modal('hide')"

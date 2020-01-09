@@ -14,7 +14,7 @@
     <meta name="keywords" content="{{ \Cuenta::seo_tags()->keywords }}">
 
     <!-- Styles -->
-    <link href="{{ asset('css/'. getCuenta()['estilo']) }} " rel="stylesheet">
+    <link href="{{ asset('css/'.$estilo.'') }} " rel="stylesheet">
 
     <meta name="google" content="notranslate"/>
 
@@ -49,7 +49,8 @@
 <body class="h-100">
 <div id="app" class="h-100 d-flex flex-column" >
     @include('layouts.anuncios')
-    @include(getCuenta()['header'])
+    @include($dominio_header)
+
     <!-- <div class="alert alert-warning" role="alert">
         Estamos realizando labores de mantenimiento en el sitio, presentará intermitencia en su funcionamiento.
     </div> -->
@@ -66,24 +67,25 @@
 
                     @if(Auth::user()->registrado)
                         @php
-                            $npendientes = getTotalAssigned();
+                            $npendientes = \App\Helpers\Doctrine::getTable('Etapa')
+                                ->findPendientes(Auth::user()->id, Cuenta::cuentaSegunDominio())->count();
                                 //dd($npendientes);
-                            $nsinasignar =getTotalUnnasigned();
+                            $nsinasignar =count(\App\Helpers\Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio()));
                           //  dd($nsinasignar);
                            //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
                             $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
                         @endphp
-                         <a class="list-group-item list-group-item-action {{linkActive('etapas/inbox')}}"
+                        <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'inbox' ? 'active' : ''}}"
                            href="{{route('stage.inbox')}}">
                             <i class="material-icons">inbox</i> Bandeja de Entrada ({{$npendientes}})
                         </a>
                         @if ($nsinasignar)
-                            <a class="list-group-item list-group-item-action {{linkActive('etapas/sinasignar')}}"
+                            <a class="list-group-item list-group-item-action {{ isset($sidebar) && $sidebar == 'sinasignar' ? 'active' : '' }}"
                                href="{{route('stage.unassigned')}}">
                                 <i class="material-icons">assignment</i> Sin asignar ({{$nsinasignar}})
                             </a>
                         @endif
-                        <a class="list-group-item list-group-item-action {{linkActive('tramites/participados')}}"
+                        <a class="list-group-item list-group-item-action {{isset($sidebar) && $sidebar == 'participados' ? 'active' : ''}}"
                            href="{{route('tramites.participados')}}">
                             <i class="material-icons">history</i> Historial de Trámites ({{$nparticipados}})
                         </a>
@@ -103,7 +105,7 @@
 
         </div>
     </div>
-    @include(getCuenta()['footer'], ['metadata' => json_decode(getCuenta()['metadata'])])
+    @include($dominio_footer, ['metadata' => $metadata_footer])
 </div>
 
 @stack('script')
