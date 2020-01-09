@@ -32,9 +32,4 @@ class Proceso extends Model
         return $this->hasMany(Tramite::class);
     }
 
-    public function cuenta()
-    {
-        return $this->belongsTo(Cuenta::class, 'cuenta_id');
-    } 
-
 }
