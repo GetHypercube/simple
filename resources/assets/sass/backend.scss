@@ -9,8 +9,6 @@
 @import "~bootstrap/scss/bootstrap";
 //Footer
 @import "footer";
-// general styles
-@import "general";
 //datetimepicker
 @import "~bootstrap4-datetimepicker/build/css/bootstrap-datetimepicker.css";
 
@@ -36,6 +34,7 @@ i.material-icons {
   }
 }
 
+<<<<<<< HEAD
 .arrow-order {
   position: absolute !important;
   margin-top: -2px !important;
@@ -66,11 +65,14 @@ i.material-icons {
   }
 }
 
+=======
+>>>>>>> parent of ccd0e54... Merge branch 'staging' into 'master'
 .custom-nav {
   background: #FFFFFF;
   box-shadow: 0 2px 4px 0 rgba(209, 209, 209, 0.50);
 }
 
+<<<<<<< HEAD
 .container-backend {
   .barra-gob {
     margin-bottom: 88px;
@@ -91,6 +93,8 @@ i.material-icons {
   }
 }
 
+=======
+>>>>>>> parent of ccd0e54... Merge branch 'staging' into 'master'
 .navbar-light .navbar-nav .nav-link {
   color: $primary;
   &.active {
@@ -430,8 +434,4 @@ pre {
     }
   }
   
-}
-
-#leyend-edit-form {
-  display: inline;
 }
