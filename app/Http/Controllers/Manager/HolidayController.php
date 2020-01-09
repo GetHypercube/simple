@@ -115,7 +115,7 @@ class HolidayController extends Controller
             $mensaje = 'No se pudo ingresar el día el parametro de fecha a ingresar es incorrecto';
         }
         $array = array('code' => $code, 'mensaje' => $mensaje, 'daysoff' => $data);
-        return response()->json($array);
+        echo json_encode($array);
     }
 
     public function ajax_confirmar_eliminar_dia()
@@ -156,6 +156,6 @@ class HolidayController extends Controller
             $mensaje = 'No se pudo eliminar el día, el parametro de la fecha a eliminar es incorrecto';
         }
         $array = array('code' => $code, 'mensaje' => $mensaje, 'daysoff' => $data);
-        return response()->json($array);
+        echo json_encode($array);
     }
 }

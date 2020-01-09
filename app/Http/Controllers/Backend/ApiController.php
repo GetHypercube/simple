@@ -14,7 +14,6 @@ use stdClass;
 use Cuenta;
 use Regla;
 use Carbon\Carbon;
-use Symfony\Component\HttpFoundation\Response;
 
 class ApiController extends Controller
 {
@@ -48,7 +47,6 @@ class ApiController extends Controller
     public function tramites(Request $request, $tramite_id = null)
     {
         $api_token = $request->input('token');
-        $api_dato_key = $request->input('dato', null);
 
         $cuenta = Cuenta::cuentaSegunDominio();
 
@@ -103,28 +101,8 @@ class ApiController extends Controller
                 $respuesta->tramites->items[] = $t->toPublicArray();
         }
 
-        $coincidence = false;
-
-        if ($api_dato_key && !empty($respuesta->tramite['datos'])) {
-            // searching for key
-            foreach ($respuesta->tramite['datos'] as $dato) {
-                // extract the value of key
-                reset($dato);
-                $first_key = key($dato);
-
-                // verify if key really exist
-                if ($first_key == $api_dato_key) {
-                    $coincidence = true;
-                    $respuesta = $dato;
-                }
-            }
-        }
-
-        if ($api_dato_key && !$coincidence) {
-            return response()->json('variable not found!', 404);
-        }
-
-        return response()->json($respuesta);
+        header('Content-type: application/json');
+        echo json_indent(json_encode($respuesta));
     }
 
     public function procesos(Request $request, $proceso_id = null, $recurso = null)
@@ -198,7 +176,8 @@ class ApiController extends Controller
             }
         }
 
-        return response()->json($respuesta);
+        header('Content-type: application/json');
+        echo json_indent(json_encode($respuesta));
     }
 
     public function notificar(Request $request, $tramite_id = null)
@@ -447,7 +426,8 @@ class ApiController extends Controller
             foreach ($datos as $dato) {
                 $data[$dato->nombre] = $dato->valor;
             }
-            return response()->json($data);
+            header('Content-type: application/json');
+            echo json_indent(json_encode($data));
         } else {
             return abort(404);
         }
@@ -501,7 +481,8 @@ class ApiController extends Controller
         foreach ($tramites as $p) {
             $respuesta->tramites[] = (object)array('cuenta' => $p->Cuenta->nombre, 'proceso_id' => $p->id, 'proceso' => $p->nombre, 'completados' => $p->ntramites);
         }
-        return response()->json($respuesta);
+        header('Content-type: application/json');
+        echo json_indent(json_encode($respuesta));
     }
 
     public function estados(Request $request, $tramite_id = null)

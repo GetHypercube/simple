@@ -2,7 +2,11 @@
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ route('manager.home') }}">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <img src="{{asset('/img/logo_nuevo.svg')}}" alt="">
+=======
+            <img src="{{asset('/img/logo.png')}}" alt="">
+>>>>>>> parent of ccd0e54... Merge branch 'staging' into 'master'
 =======
             <img src="{{asset('/img/logo.png')}}" alt="">
 >>>>>>> parent of ccd0e54... Merge branch 'staging' into 'master'

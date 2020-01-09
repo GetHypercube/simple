@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Log;
-
 class TramiteTable extends Doctrine_Table {
     
 
@@ -30,15 +28,16 @@ class TramiteTable extends Doctrine_Table {
    
     public function findParticipadosALL($usuario_id, $cuenta='localhost'){        
         $query=Doctrine_Query::create()
-                ->select('count(*) as contador')
                 ->from('Tramite t, t.Proceso.Cuenta c, t.Etapas e, e.Usuario u')
                 ->where('u.id = ?',$usuario_id)
                 ->andWhere('e.pendiente=0')
-                ->andWhere('t.deleted_at is NULL');
+                ->limit(3000)
+                ->andWhere('t.deleted_at is NULL')
+                ->orderBy('t.updated_at desc');
         
         if($cuenta!='localhost')
-            $query->andWhere('c.nombre = ?',$cuenta->nombre);
-        return $query->execute()[0]->contador;
+            $query->andWhere('c.nombre = ?',$cuenta->nombre);        
+        return $query->execute();
     }
     
     public function findParticipadosMatched($usuario_id, $cuenta='localhost', $datos, $buscar){

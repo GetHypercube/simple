@@ -389,49 +389,11 @@ class ConfigurationController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function backendUsers(Request $request)
+    public function backendUsers()
     {
-        $email_search = $request->input('email_search', null);
-        $order_by_email = $request->input('order_by_email', null);
-        $order_by_name = $request->input('order_by_name', null);
-        $order_by_lastname = $request->input('order_by_lastname', null);
-        $order_by_rol = $request->input('order_by_rol', null);
+        $users = UsuarioBackend::where('cuenta_id',Auth::user()->cuenta_id)->get();
 
-        $users = UsuarioBackend::where('cuenta_id',Auth::user()->cuenta_id);
-
-        if (null != $email_search)
-            $users->where('email', 'like', "%$email_search%");
-
-        if (null != $order_by_email) {
-            $users->orderBy('email', $order_by_email);
-            $order_by_email = ($order_by_email == 'asc') ? 'desc':'asc';
-        }
-
-        if (null != $order_by_name) {
-            $users->orderBy('nombre', $order_by_name);
-            $order_by_name = ($order_by_name == 'asc') ? 'desc':'asc';;
-        }
-
-        if (null != $order_by_lastname) {
-            $users->orderBy('apellidos', $order_by_lastname);
-            $order_by_lastname = ($order_by_lastname == 'asc') ? 'desc':'asc';
-        }
-
-        if (null != $order_by_rol) {
-            $users->orderBy('rol', $order_by_rol);
-            $order_by_rol = ($order_by_rol == 'asc') ? 'desc':'asc';
-        }
-
-        $users = $users->paginate(20);
-
-        return view('backend.configuration.backend_users.index', [
-            'users' => $users,
-            'email_search' => $email_search ? $email_search:'',
-            'order_by_email' => $order_by_email,
-            'order_by_name' => $order_by_name,
-            'order_by_lastname' => $order_by_lastname,
-            'order_by_rol' => $order_by_rol
-        ]);
+        return view('backend.configuration.backend_users.index', compact('users'));
     }
 
     /**
@@ -549,8 +511,7 @@ class ConfigurationController extends Controller
         $this->validate($request, [
             'nombre' => 'required|max:128',
             'apellidos' => 'required|max:128',
-            'rol' => 'required',
-            'email' => 'required|unique:usuario_backend'
+            'rol' => 'required'
         ]);
 
         if ($request->has('password') && !empty($request->input('password'))) {
@@ -577,49 +538,11 @@ class ConfigurationController extends Controller
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function frontendUsers(Request $request)
+    public function frontendUsers()
     {
-        $email_search = $request->input('email_search', null);
-        $order_by_email = $request->input('order_by_email', null);
-        $order_by_name = $request->input('order_by_name', null);
-        $order_by_lastname = $request->input('order_by_lastname', null);
-        $order_by_usuario = $request->input('order_by_usuario', null);
+        $users = User::whereCuentaId(Auth::user()->cuenta_id)->get();
 
-        $users = User::whereCuentaId(Auth::user()->cuenta_id);
-
-        if (null != $email_search)
-            $users->where('email', 'like', "%$email_search%");
-
-        if (null != $order_by_usuario) {
-            $users->orderBy('usuario', $order_by_usuario);
-            $order_by_usuario = ($order_by_usuario == 'asc') ? 'desc':'asc';
-        }
-
-        if (null != $order_by_email) {
-            $users->orderBy('email', $order_by_email);
-            $order_by_email = ($order_by_email == 'asc') ? 'desc':'asc';
-        }
-
-        if (null != $order_by_name) {
-            $users->orderBy('nombres', $order_by_name);
-            $order_by_name = ($order_by_name == 'asc') ? 'desc':'asc';
-        }
-
-        if (null != $order_by_lastname) {
-            $users->orderBy('apellido_paterno', $order_by_lastname);
-            $order_by_lastname = ($order_by_lastname == 'asc') ? 'desc':'asc';
-        }
-
-        $users = $users->paginate(20);
-
-        return view('backend.configuration.frontend_users.index', [
-            'users' => $users,
-            'email_search' => $email_search,
-            'order_by_email' => $order_by_email,
-            'order_by_name' => $order_by_name,
-            'order_by_lastname' => $order_by_lastname,
-            'order_by_usuario' => $order_by_usuario
-        ]);
+        return view('backend.configuration.frontend_users.index', compact('users'));
     }
 
     /**
@@ -695,10 +618,7 @@ class ConfigurationController extends Controller
         }
 
         if (!$edit) {
-            $this->validate($request, [
-                'usuario' => 'required|unique:usuario',
-                'email' => 'required|unique:usuario'
-            ]);
+            $this->validate($request, ['usuario' => 'required|unique:usuario']);
 
             $user->usuario = $request->input('usuario');
         }

@@ -154,7 +154,6 @@ class FormsController extends Controller
         $data['edit'] = TRUE;
         $data['campo'] = $campo;
         $data['formulario'] = $campo->Formulario;
-        $data['titulo_editar'] = \Campo::getNombreInterfaz($campo->tipo);
 
         return view('backend.forms.ajax_editar_campo', $data);
     }
@@ -237,10 +236,10 @@ class FormsController extends Controller
 
         $campo = \Campo::factory($tipo);
         $campo->formulario_id = $formulario_id;
+
         $data['edit'] = false;
         $data['formulario'] = $formulario;
         $data['campo'] = $campo;
-        $data['titulo_editar'] = \Campo::getNombreInterfaz($tipo);
 
         return view('backend.forms.ajax_editar_campo', $data);
     }
@@ -337,7 +336,7 @@ class FormsController extends Controller
 
         $items = array('items' => $data);
         $arr = array('code' => 200, 'mensaje' => 'Ok', 'resultado' => $items);
-        return response()->json($arr);
+        echo json_encode($arr);
     }
 
     public function obtener_agenda()

@@ -97,9 +97,6 @@ class FileUploader
         } else {
             $this->file = false;
         }
-
-        if(in_array('jpg', $this->allowedExtensions))
-            $this->allowedExtensions[]='jpeg';
     }
 
     private function checkServerSettings()

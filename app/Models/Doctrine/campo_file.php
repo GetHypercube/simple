@@ -24,33 +24,23 @@ class CampoFile extends Campo
             return $display;
         }
 
-        $etapa = \App\Models\Etapa::find($etapa_id);
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
 
         $display = '<label class="control-label">' . $this->etiqueta . (in_array('required', $this->validacion) ? '' : ' (Opcional)') . '</label>';
         $display .= '<div class="controls">';
         $display .= '<div class="file-uploader" data-action="' . url('uploader/datos/' . $this->id . '/' . $etapa->id) . '" ' . ($modo == 'visualizacion' ? ' hidden' : '') . ' "></div>';
         $display .= '<input id="' . $this->id . '" type="hidden" name="' . $this->nombre . '" value="' . ($dato ? htmlspecialchars($dato->valor) : '') . '" />';
-        $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);
+
         if ($dato) {
-            $files = $etapa->tramite->files->filter(function($f) use($dato){
-                return is_object($f->campo) && $dato->nombre == $f->campo->nombre;
-            });
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('dato', $dato->valor);
-            
-            if (($file || $files->count()) && !$this->Files->count()) {
-                if(!$files->count()){
-                    $display .= $this->displayFile($file, $modo, $usuario_backend);
-                }
-                else{
-                    foreach($files as $file)
-                        $display .= $this->displayFile($file, $modo, $usuario_backend);
-                }
-                    
-            } elseif($this->Files->count()){
-                foreach($this->Files as $file){
-                    if($file->tramite_id != $etapa->tramite_id) continue;
-                    $display .= $this->displayFile($file, $modo, $usuario_backend);
-                }
+            if ($file) {
+                $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);
+                if($usuario_backend)
+                    $display .= '<p class="link"><a href="' . url("uploader/datos_get/{$file->id}/{$file->llave}/{$usuario_backend->id}") . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
+                else
+                    $display .= '<p class="link"><a href="' . url("uploader/datos_get/{$file->id}/{$file->llave}") . '" target="_blank">' . htmlspecialchars($dato->valor) . '</a>';
+                if (!($modo == 'visualizacion'))
+                    $display .= '(<a class="remove" href="#">X</a>)</p>';
             } else {
                 $display .= '<p class="link">No se ha subido archivo.</p>';
             }
@@ -63,16 +53,6 @@ class CampoFile extends Campo
 
         $display .= '</div>';
 
-        return $display;
-    }
-
-    private function displayFile($file, $modo, $usuario_backend)
-    {
-        $url = url("uploader/datos_get/{$file->id}/{$file->llave}". ($usuario_backend ? "/".$usuario_backend->id : ''));
-        $link= "link{$file->id}";
-        $display = "<p class=\"link\" id=\"{$link}\"><a href=\"{$url}\" target=\"{$link}\">{$file->filename}</a>";
-        if (!($modo == 'visualizacion'))
-            $display .= "(<span class=\"remove text-danger\" onClick=\"borrarArchivo({$file->id},'{$file->llave}','{$file->filename}')\">X</span>)</p>";
         return $display;
     }
 

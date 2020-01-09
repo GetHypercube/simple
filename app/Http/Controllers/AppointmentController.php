@@ -9,9 +9,6 @@ use App\Helpers\Doctrine;
 use Doctrine_Query;
 use Httpful\Request as RequestHttp;
 
-require_once app_path('Models/Doctrine/cuenta.php');
-require_once app_path('Models/Doctrine/connect_services.php');
-
 class AppointmentController extends Controller
 {
     private $base_services = '';

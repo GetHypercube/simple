@@ -196,6 +196,7 @@ class Proceso extends Doctrine_Record
 
         $object = $proceso->toArray();
         $object['Conexiones'] = $proceso->getConexiones()->toArray();
+
         return json_encode($object);
 
     }

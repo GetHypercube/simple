@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('css')
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+    @if($errors->any())
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+    @endif
 @endsection
 
 @section('content')
@@ -54,9 +56,11 @@
                                 @endif
                             </div>
 
-                            <div class="col-6">
-                                @include('shared.captcha')
-                            </div>
+                            @if($errors->any())
+                                <div class="col-6">
+                                    @include('shared.captcha')
+                                </div>
+                            @endif
 
                             <div class="form-group row">
                                 <div class="form-check">
