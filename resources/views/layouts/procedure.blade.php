@@ -43,7 +43,8 @@
           }
         });
     </script>
-     <style type="text/css">{{ getCuenta()['personalizacion'] }}</style>
+     <style type="text/css">{{ $personalizacion }}</style>
+     <style>button.btn.btn-outline-secondary[type="submit"]{height:35px}</style>
 </head>
 <body class="h-100">
 <div id="app" class="h-100 d-flex flex-column" >
@@ -70,7 +71,7 @@
                             $nsinasignar =getTotalUnnasigned();
                           //  dd($nsinasignar);
                            //  echo "<script>console.log(".json_encode($nsinasignar).")</script>";
-                            $nparticipados = getTotalHistory();
+                            $nparticipados = \App\Helpers\Doctrine::getTable('Tramite')->findParticipadosALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
                         @endphp
                          <a class="list-group-item list-group-item-action {{linkActive('etapas/inbox')}}"
                            href="{{route('stage.inbox')}}">

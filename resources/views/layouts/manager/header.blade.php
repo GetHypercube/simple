@@ -1,7 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-light custom-nav">
-    <div class="container-fluid">
+    <div class="container-fluid container-manager">
+        <div class="barra-gob">
+            <div class="blue"></div>
+            <div class="red"></div>
+        </div>
         <a class="navbar-brand" href="{{ route('manager.home') }}">
-            <img src="{{asset('/img/logo.png')}}" alt="">
+            <img src="{{asset('/img/logo_nuevo.svg')}}" alt="" class="logo-header">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

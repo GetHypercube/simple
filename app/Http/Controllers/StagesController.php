@@ -174,28 +174,32 @@ class StagesController extends Controller
             }
             $request->session()->put('matches_sinasignar', $matches); // Seteo una variable de session para los id's de tramite para la busqueda en la DB
         }
-        /* Query para obtener los tramites buscados de acuerdo al filtro */
-        $etapas = Etapa::where('etapa.usuario_id', Auth::user()->id)->where('etapa.pendiente', 1)
-        ->whereHas('tramite', function($q) use ($query, $cuenta){
-            $q->whereHas('proceso', function($q) use ($cuenta){
-                $q->where('cuenta_id',$cuenta->id);         
-            });
-            if($query!="" && !empty(session('matches_sinasignar')))
-            { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
-                $q->whereIn('tramite_id', session('matches_sinasignar'));
-            }
-        })
-        ->whereHas('tarea', function($q){
-            $q->where('activacion', "si")
-            ->orWhere(function($q){
-                $q->where('activacion', "entre_fechas")
-                ->where('activacion_inicio', '<=', Carbon::now())
-                ->where('activacion_fin', '>=', Carbon::now());   
-            }); 
-        });
-        if($query!="" && !empty(session('matches_sinasignar')))
-        { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
-            $etapas = $etapas->whereIn('tramite_id', session('matches_sinasignar'));
+
+        if ($resultotal == "true") {
+            $matches = $result->groupBy('id')->keys()->toArray();
+            Log::info("El Valor de RESULTOTAL de INBOX es de: " . $resultotal);
+            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
+            $rowetapas = Doctrine::getTable('Etapa')
+                ->findPendientes(Auth::user()->id,
+                    \Cuenta::cuentaSegunDominio(),
+                    $orderby,
+                    $direction,
+                    $matches,
+                    $buscar,
+                    $paginate,
+                    $offset);
+        } else {
+            $rowetapas = Doctrine::getTable('Etapa')
+                ->findPendientes(Auth::user()->id,
+                    \Cuenta::cuentaSegunDominio(),
+                    $orderby,
+                    $direction,
+                    "0",
+                    $buscar,
+                    $paginate,
+                    $offset);
+            $contador = Doctrine::getTable('Etapa')->findPendientesALL(Auth::user()->id, Cuenta::cuentaSegunDominio());
+         
         }
         /* Order de acuerdo a lo solicitado desde los titulos de la tabla en la vista */
         if($sortValue == 'etapa')
@@ -238,59 +242,33 @@ class StagesController extends Controller
      */
     public function sinasignar(Request $request)
     {
-        $etapas = [];
-        if (!Auth::user()->registrado) 
-        {
-            $request->session()->put('claveunica_redirect', URL::current());
-            return redirect()->route('login.claveunica');
+
+        if (!Auth::user()->open_id) {//reportes sin asignar
+          //  $request->session()->put('claveunica_redirect', URL::current());
+            return redirect()->route('login');
         }
-        $sortValue = $request->sortValue;// Obtengo el parametro de orden de los datos 
-        $sort = $request->sort;// Obtengo el parametro de dirección del orden
-        $query = $request->input('query'); // Obtengo el parametro de búsqueda
-        if (!Auth::user()->open_id) 
-        {
-            if ($query && session('query_sinasignar') != $query) 
-            {// Si el dato buscado no es vacío y es distinto al ya buscado (variable de session query_sinasignar) realizo busqueda en elasticSearch
-                $request->session()->put('query_sinasignar',$request->input('query')); // Seteo variable de session para comparar en la proxima busqueda
-                $result = Tramite::search($query)->get(); // Consulto en elasticSearch 
-                $matches = array(); // Array donde se guardaran los id de tramite
-                foreach($result as $resultado)
-                { // Recorro los resultados
-                    array_push($matches, $resultado->id); // Agrego el id del tramite al array matches
-                }
-                $request->session()->put('matches_sinasignar', $matches); // Seteo una variable de session para los id's de tramite para la busqueda en la DB
+
+        $query = $request->input('query');
+        $matches = "";
+        $rowetapas = "";
+        $resultotal = false;
+        $contador = "0";
+
+        $page = Input::get('page', 1);
+        $order_by = !is_null($request->order_field) && !is_null($request->order) ? [$request->order_field => $request->order] : null;
+        $paginate = 50;
+        $offset = ($page * $paginate) - $paginate;
+
+        if ($query) {
+            $result = Tramite::search($query)->get();
+            $matches = array();
+            foreach($result as $resultado){
+                array_push($matches, $resultado->id);
             }
-            $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id'); // Obtengo los grupos al que pertenece el usuario logueado
-            $cuenta= Cuenta::cuentaSegunDominio(); // Obtengo la cuenta del usuario logueado
-            /* Query para obtener los tramites buscados de acuerdo al filtro */
-            $etapas = Etapa::select('etapa.*')->
-            whereNull('etapa.usuario_id')
-            ->join('tarea', function($q) use ($grupos){
-                $q->on('etapa.tarea_id','=', 'tarea.id');                
-            })
-            ->join('proceso', function($q) use ($cuenta){
-                $q->on('tarea.proceso_id', '=', 'proceso.id');
-            })
-            ->where(function($q) use ($grupos){
-                $q->where('grupos_usuarios','LIKE','%@@%');
-                foreach($grupos as $grupo){
-                    $q->orWhereRaw('CONCAT(SPACE(1), REPLACE(tarea.grupos_usuarios, ",", " "), SPACE(1)) like "% '.$grupo.' %"');
-                }
-            })
-            ->where(function($q)  use ($cuenta){
-                $q->where('cuenta_id',$cuenta->id)
-                ->where('proceso.activo', 1);
-            })
-            ->whereHas('tramite', function($q) use ($query){
-                if($query!="" && !empty(session('matches_sinasignar')))
-                { // Si viene el filtro de busqueda y se obtiene datos de elasticSearch agrego where para id de tramites
-                    $q->whereIn('tramite_id', session('matches_sinasignar'));
-                }
-            });
-            /* Order de acuerdo a lo solicitado desde los titulos de la tabla en la vista */
-            if($sortValue == 'etapa')
-            {// Orden por nombre de tarea
-                $etapas = $etapas->orderBy('tarea.nombre', $sort);
+            if(count($result) > 0){
+                $resultotal = true;
+            }else{
+                $resultotal = false;
             }
             if($sortValue == 'nombre')
             { // Orden por nombre de proceso
@@ -317,7 +295,66 @@ class StagesController extends Controller
             $etapas=$etapas->paginate(50);
             /* Retorno vista bandeja sin asignar */ 
         }
-        return view('stages.unassigned', compact('etapas', 'cuenta', 'query', 'request'));
+
+        if ($resultotal) {
+            $matches = $result->groupBy('id')->keys()->toArray();
+            Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
+            Log::info("El Valor de RESULTOTAL de SIN ASIGNAR es de: " . (string) $resultotal);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, null, null, $order_by);
+            //  $contador = count($rowetapas);
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, null, null, $order_by);
+
+        } else {
+            $rowetapas = Doctrine::getTable('Etapa')->findSinAsignar(Auth::user()->id, Cuenta::cuentaSegunDominio(),"0", $query, $paginate, $offset, $order_by);
+            // $contador = count($rowetapas);
+            $contador = Doctrine::getTable('Etapa')->findSinAsignarMatch(Auth::user()->id, Cuenta::cuentaSegunDominio(), $matches, $query, $order_by);
+        }
+
+
+        //
+        //Log::info("El Valor de result de SIN ASIGNAR es de: " . $result);
+        // echo "<script>console.log(".json_encode($rowetapas).")</script>";
+        // echo "<script>console.log(".json_encode($contador).")</script>";
+        $config['base_url'] = url('etapas/sinasignar');
+        $config['total_rows'] = $contador;
+        $config['per_page'] = $paginate;
+        $config['full_tag_open'] = '<div class="pagination pagination-centered"><ul>';
+        $config['full_tag_close'] = '</ul></div>';
+        $config['page_query_string'] = $request->except(['page']);
+        $config['query_string_segment'] = 'offset';
+        $config['first_link'] = 'Primero';
+        $config['first_tag_open'] = '<li>';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = 'Último';
+        $config['last_tag_open'] = '<li>';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '»';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '«';
+        $config['prev_tag_open'] = '<li>';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="#">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+        Log::info("El Valor de offset2 de SIN ASIGNAR es de: " . $offset);
+        Log::info("El Valor de page de SIN ASIGNAR es de: " . $page);
+        $data = \Cuenta::configSegunDominio();
+        $data['etapas'] = new LengthAwarePaginator(
+            $rowetapas, // Only grab the items we need$contador,
+            $total=1000, // Total items
+            $paginate, // Items per page
+            $page, // Current page,
+            ['path' => $request->url(), 'query' => $request->query()]); // We need this so we can keep all old query parameters from the url);
+        $data['orderByList'] = ['tramite.id' => 'Nro' , 't_nombre' => 'Etapa' , 'etapa.updated_at' => 'Modificación' , 'etapa.vencimiento_at' => 'Vencimiento' ];
+        $data['query'] = $query;
+        // echo "<script>console.log(".json_encode($query).")</script>";
+        $data['sidebar'] = 'sinasignar';
+        $data['content'] = view('stages.unassigned', $data);
+        $data['title'] = 'Sin Asignar';
+
+        return view('layouts.procedure', $data);
     }
 
     public function ejecutar_form(Request $request, $etapa_id, $secuencia)
