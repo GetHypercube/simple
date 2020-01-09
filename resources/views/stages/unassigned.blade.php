@@ -14,8 +14,8 @@
                         <i class="material-icons">search</i>
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
     <div class="col-xs-12 col-md-3">
         @include('stages.order_by', ['options' => $orderByList])
@@ -119,14 +119,8 @@
             </label>
         </div>
     </div>
-    <?php endif; ?>
-    <?php endif; ?>
-    <p><?= $etapas->links('vendor.pagination.bootstrap-4') ?></p>
-    <?php else: ?>
-    <p>No hay trámites para ser asignados.</p>
-    <?php endif; ?>
-</div>
-<div class="modal hide" id="modal"></div>
+    <div class="modal hide" id="modal"></div>
+@endsection
 @push('script')
     <script>
         function descargarDocumentos(tramiteId) {
@@ -166,7 +160,7 @@
                 });
                 $('#tramites').val(checked);
                 var tramites = $('#tramites').val();
-                $("#modal").load("/etapas/descargar/" + vtramites);
+                $("#modal").load("/etapas/descargar/" + tramites);
                 $("#modal").modal();
                 return false;
             }
