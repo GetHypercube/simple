@@ -5,7 +5,7 @@
             <div class="red"></div>
         </div>
         <a class="navbar-brand" href="{{ route('manager.home') }}">
-            <img src="{{asset('/img/logo_nuevo.svg')}}" alt="" class="logo-header">
+            <img src="{{asset('/img/logo_nuevo.svg')}}" alt="">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

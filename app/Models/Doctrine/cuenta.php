@@ -167,7 +167,7 @@ function setTableDefinition()
         if ($this->logo)
             return asset('logos/' . $this->logo);
         else
-            return asset('img/logo_nuevo.svg');
+            return asset('img/logo.png');
     }
 
     public function getLogofADesplegar()
