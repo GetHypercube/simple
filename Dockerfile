@@ -4,10 +4,7 @@ ARG DIRECTORY_PROJECT=/var/www/simple
 WORKDIR $DIRECTORY_PROJECT
 
 # Install Packages
-RUN apt-get update && echo newrelic-php5 newrelic-php5/license-key string "6eed51509d7ffe6e0a82db3994a63cbe14f6NRAL" | debconf-set-selections && \
-apt-get install -y \
-#se agrega newrelic
-newrelic-php5 \
+RUN apt-get update && apt-get install -y \
  git zip unzip gnupg \
  libxml2-dev zip unzip zlib1g-dev \
  libpng-dev libmcrypt-dev \
