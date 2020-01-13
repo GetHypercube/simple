@@ -1188,4 +1188,19 @@ class StagesController extends Controller
         return true;
     }
 
+    public function ejecutar_error(Request $request, $etapa_id){
+        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        $data = \Cuenta::configSegunDominio();
+        $data['extra']['analytics'] = null;
+        $data['tareas_proximas'] = $etapa->getTareasProximas();
+        $extra_etapa = json_decode($etapa->extra, true);
+        $extra_etapa = ($extra_etapa === null ) ? [] : $extra_etapa;
+        $data['etapa'] = $etapa;
+        $data['qs'] = $request->getQueryString();
+        $data['sidebar'] = Auth::user()->registrado ? 'inbox' : 'disponibles';
+        $data['title'] = $etapa->Tarea->nombre;
+        $template = $request->input('iframe') ? 'template_iframe' : 'template_newhome';
+        return view('stages.errores', $data);
+    }
+
 }

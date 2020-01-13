@@ -48,7 +48,8 @@ class CampoDocumento extends Campo
         if (isset($this->extra->firmar) && $this->extra->firmar) {
             return $this->displayFirmador($modo, $dato, $etapa_id);
         } else {
-            return $this->displayDescarga($modo, $dato, $etapa_id);
+            $display_descarga = $this->displayDescarga($modo, $dato, $etapa_id);
+            return $display_descarga;
         }
     }
 
@@ -63,6 +64,10 @@ class CampoDocumento extends Campo
 
         if (!$dato) {   //Generamos el documento, ya que no se ha generado
             $file = $this->Documento->generar($etapa->id);
+            if(!$file){
+                $ruta = url("/etapas/errores/{$etapa_id}");
+                return '<script>window.location.href = "'.$ruta.'";</script>';
+            }
 
             $dato = new DatoSeguimiento();
             $dato->nombre = $this->nombre;
@@ -77,6 +82,10 @@ class CampoDocumento extends Campo
                     $file->delete();
                 }
                 $file = $this->Documento->generar($etapa->id);
+                if(!$file){
+                    $ruta = url("/etapas/errores/{$etapa_id}");
+                    return '<script>window.location.href = "'.$ruta.'";</script>';
+                }
                 $dato->valor = $file->filename;
                 $dato->save();
             }

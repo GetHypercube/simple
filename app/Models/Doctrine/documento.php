@@ -88,7 +88,9 @@ class Documento extends Doctrine_Record
         $file->save();
 
         //Renderizamos     
-        $this->render($file->id, $file->llave_copia, $etapa->id, $file->filename, false);
+        $retorno_doc = $this->render($file->id, $file->llave_copia, $etapa->id, $file->filename, false);
+        if(!$retorno_doc)
+            return false;
         /*
         $filename_copia = $filename_uniqid . '.copia.pdf';
         $this->render($file->id, $file->llave_copia, $etapa->id,$filename_copia, true);
@@ -180,6 +182,8 @@ class Documento extends Doctrine_Record
                 $fechatime = time();
                 $expiracion = date("Y-m-d", $fechatime) . 'T' . date("H:i:s", $fechatime);
                 $resultadoFirma = $hsm->firmar($file_path, $cuenta_entidad->entidad, $this->HsmConfiguracion->rut, $expiracion, $this->HsmConfiguracion->proposito);
+                if(!$resultadoFirma)
+                    return false;
             }
         } else {
             $obj->Output($filename);
