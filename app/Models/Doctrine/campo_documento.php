@@ -64,7 +64,7 @@ class CampoDocumento extends Campo
 
         if (!$dato) {   //Generamos el documento, ya que no se ha generado
             $file = $this->Documento->generar($etapa->id);
-            if(!$file){
+            if(is_bool($file) && !$file){
                 $ruta = url("/etapas/errores/{$etapa_id}");
                 return '<script>window.location.href = "'.$ruta.'";</script>';
             }
@@ -82,7 +82,7 @@ class CampoDocumento extends Campo
                     $file->delete();
                 }
                 $file = $this->Documento->generar($etapa->id);
-                if(!$file){
+                if(is_bool($file) && !$file){
                     $ruta = url("/etapas/errores/{$etapa_id}");
                     return '<script>window.location.href = "'.$ruta.'";</script>';
                 }

@@ -69,7 +69,7 @@ class AccionGenerarDocumento extends Accion
             }
             $file = $documento->generar($etapa->id);
 
-            if(!$file){
+            if(is_bool($file) && !$file){
                 $ruta = url("/etapas/errores/{$etapa_id}");
                 return '<script>window.location.href = "'.$ruta.'";</script>';
             }

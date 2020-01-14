@@ -182,8 +182,7 @@ class Documento extends Doctrine_Record
                 $fechatime = time();
                 $expiracion = date("Y-m-d", $fechatime) . 'T' . date("H:i:s", $fechatime);
                 $resultadoFirma = $hsm->firmar($file_path, $cuenta_entidad->entidad, $this->HsmConfiguracion->rut, $expiracion, $this->HsmConfiguracion->proposito);
-                if(!$resultadoFirma)
-                    return false;
+                return $resultadoFirma;
             }
         } else {
             $obj->Output($filename);
