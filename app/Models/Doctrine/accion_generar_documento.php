@@ -53,7 +53,7 @@ class AccionGenerarDocumento extends Accion
             $file = $documento->generar($etapa->id);
 
             if(!$file){
-                $ruta = url("/etapas/errores/{$etapa_id}");
+                $ruta = url("/etapas/errores/{$etapa->id}");
                 return '<script>window.location.href = "'.$ruta.'";</script>';
             }
 
@@ -70,7 +70,7 @@ class AccionGenerarDocumento extends Accion
             $file = $documento->generar($etapa->id);
 
             if(is_bool($file) && !$file){
-                $ruta = url("/etapas/errores/{$etapa_id}");
+                $ruta = url("/etapas/errores/{$etapa->id}");
                 return '<script>window.location.href = "'.$ruta.'";</script>';
             }
 
