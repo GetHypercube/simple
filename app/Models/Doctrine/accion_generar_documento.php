@@ -52,6 +52,11 @@ class AccionGenerarDocumento extends Accion
         if (!$dato) {   //Generamos el documento, ya que no se ha generado
             $file = $documento->generar($etapa->id);
 
+            if(!$file){
+                $ruta = url("/etapas/errores/{$etapa_id}");
+                return '<script>window.location.href = "'.$ruta.'";</script>';
+            }
+
             $dato = new DatoSeguimiento();
             $dato->nombre = $this->extra->variable;
             $dato->valor = $file->filename;
@@ -63,6 +68,12 @@ class AccionGenerarDocumento extends Accion
                 $file->delete();
             }
             $file = $documento->generar($etapa->id);
+
+            if(!$file){
+                $ruta = url("/etapas/errores/{$etapa_id}");
+                return '<script>window.location.href = "'.$ruta.'";</script>';
+            }
+
             $dato->valor = $file->filename;
             $dato->save();
         }
