@@ -52,9 +52,22 @@ class AccionGenerarDocumento extends Accion
         if (!$dato) {   //Generamos el documento, ya que no se ha generado
             $file = $documento->generar($etapa->id);
 
-            if(!$file){
+            if(is_bool($file) && !$file){
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa['error'] = false;
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
+                $etapa->cerrar(false);
                 $ruta = url("/etapas/errores/{$etapa->id}");
                 return '<script>window.location.href = "'.$ruta.'";</script>';
+            }else{
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa = json_decode($etapa->extra, true);
+                if(isset($extra_etapa['error'])){
+                    unset($extra_etapa['error']);
+                }
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
             }
 
             $dato = new DatoSeguimiento();
@@ -70,8 +83,21 @@ class AccionGenerarDocumento extends Accion
             $file = $documento->generar($etapa->id);
 
             if(is_bool($file) && !$file){
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa['error'] = false;
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
+                $etapa->cerrar(false);
                 $ruta = url("/etapas/errores/{$etapa->id}");
                 return '<script>window.location.href = "'.$ruta.'";</script>';
+            }else{
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa = json_decode($etapa->extra, true);
+                if(isset($extra_etapa['error'])){
+                    unset($extra_etapa['error']);
+                }
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
             }
 
             $dato->valor = $file->filename;

@@ -371,32 +371,36 @@ class Etapa extends Doctrine_Record
         if (!$this->pendiente)
             return;
 
-        if ($this->Tarea->almacenar_usuario) {
-            $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($this->Tarea->almacenar_usuario_variable, $this->id);
-            if (!$dato)
-                $dato = new DatoSeguimiento();
-            $dato->nombre = $this->Tarea->almacenar_usuario_variable;
-            $dato->valor = UsuarioSesion::usuario()->id;
-            $dato->etapa_id = $this->id;
-            $dato->save();
-        }
+        $extra_etapa = json_decode($this->extra, true);
+        $extra_etapa = $extra_etapa === null ? [] : $extra_etapa;
+        if(!isset($extra_etapa['error'])){
 
-        // Ejecutamos los eventos
-        if ($ejecutar_eventos) {
-            $eventos = Doctrine_Query::create()->from('Evento e')
-                ->where('e.tarea_id = ? AND e.instante = ? AND e.paso_id IS NULL', array($this->Tarea->id, 'despues'))
-                ->execute();
-            foreach ($eventos as $e) {
-                $r = new Regla($e->regla);
-                if ($r->evaluar($this->id))
-                    $e->Accion->ejecutar($this);
+            if ($this->Tarea->almacenar_usuario) {
+                $dato = Doctrine::getTable('DatoSeguimiento')->findOneByNombreAndEtapaId($this->Tarea->almacenar_usuario_variable, $this->id);
+                if (!$dato)
+                    $dato = new DatoSeguimiento();
+                $dato->nombre = $this->Tarea->almacenar_usuario_variable;
+                $dato->valor = UsuarioSesion::usuario()->id;
+                $dato->etapa_id = $this->id;
+                $dato->save();
             }
-        }
 
-        // Cerramos la etapa
-        $this->pendiente = 0;
-        $this->ended_at = date('Y-m-d H:i:s');
-        $this->save();
+            // Ejecutamos los eventos
+            if ($ejecutar_eventos) {
+                $eventos = Doctrine_Query::create()->from('Evento e')
+                    ->where('e.tarea_id = ? AND e.instante = ? AND e.paso_id IS NULL', array($this->Tarea->id, 'despues'))
+                    ->execute();
+                foreach ($eventos as $e) {
+                    $r = new Regla($e->regla);
+                    if ($r->evaluar($this->id))
+                        $e->Accion->ejecutar($this);
+                }
+            }
+            // Cerramos la etapa
+            $this->pendiente = 0;
+            $this->ended_at = date('Y-m-d H:i:s');
+            $this->save();
+        }
     }
 
     //Retorna el paso correspondiente a la secuencia, dado los datos ingresados en el tramite hasta el momento.
