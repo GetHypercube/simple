@@ -111,10 +111,14 @@ class HsmConfiguracion extends Doctrine_Record
         }
 
         // fin primera peticion
-
+        
         try {
             // procesando peticion
             $dataresult = json_decode($result);
+            if(!isset($dataresult->session_token)){
+                Log::info('Error al ejecutar la primera peticion a FIRMA: Token inválido\n\n');
+                return false;
+            }
             $session_token = $dataresult->session_token;
 
             Log::info('Continuando procedimiento de firma, segundo request => \n', [
