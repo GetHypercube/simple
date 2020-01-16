@@ -188,7 +188,7 @@ class Documento extends Doctrine_Record
             $obj->Output($filename);
         }
 
-        return;
+        return true;
     }
 
     public function exportComplete()
