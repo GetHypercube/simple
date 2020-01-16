@@ -57,7 +57,6 @@ class AccionGenerarDocumento extends Accion
                 $extra_etapa['error'] = false;
                 $etapa->extra= json_encode($extra_etapa, true);
                 $etapa->save();
-                $etapa->cerrar(false);
                 $ruta = url("/etapas/errores/{$etapa->id}");
                 return '<script>window.location.href = "'.$ruta.'";</script>';
             }else{
@@ -87,7 +86,6 @@ class AccionGenerarDocumento extends Accion
                 $extra_etapa['error'] = false;
                 $etapa->extra= json_encode($extra_etapa, true);
                 $etapa->save();
-                $etapa->cerrar(false);
                 $ruta = url("/etapas/errores/{$etapa->id}");
                 return '<script>window.location.href = "'.$ruta.'";</script>';
             }else{
