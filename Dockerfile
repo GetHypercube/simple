@@ -66,6 +66,7 @@ RUN apt-get update && \
     
 ADD run.sh /run.sh
 RUN chmod +x /run.sh
+RUN /run.sh
 #=============End New Relic
 
 ENV LANG es_CL.UTF-8
