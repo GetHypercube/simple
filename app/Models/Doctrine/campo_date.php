@@ -36,33 +36,34 @@ class CampoDate extends Campo
 
         switch ($optionStart) {
             case 'current_date':
-                $minDate = date('Y-m-d');
+                $minDate = date('d-m-Y');
                 break;
             case 'start_date':
-                $minDate = date("Y-m-d", strtotime($this->extra->config_date->start->date));
+                $minDate = date("d-m-Y", strtotime($this->extra->config_date->start->date));
                 break;
         }
 
         switch ($optionEnd) {
             case 'current_date':
-                $maxDate = date('Y-m-d');
+                $maxDate = date('d-m-Y');
                 break;
             case 'end_date':
-                $maxDate = date("Y-m-d", strtotime($this->extra->config_date->end->date));
+                $maxDate = date("d-m-Y", strtotime($this->extra->config_date->end->date));
                 break;
         }
+
+        $fechaSeleccionada = isset($dato->valor) ? date('d-m-Y', strtotime($dato->valor)):null;
 
         $display .= "
                     <script>
                         $(document).ready(function(){
-                            const maxDate = '".$maxDate."';
-                            const minDate = '".$minDate."';
-                            const idDateTime = '".$this->id."';
-                            const config = {
+                            const maxDate = \"$maxDate\";
+                            const minDate = \"$minDate\";
+                            const idDateTime = \"$this->id\";
+                            const fechaSeleccionada = \"$fechaSeleccionada\";
+
+                            let config = {
                                 format: 'DD-MM-YYYY',
-                                maxDate: maxDate,
-                                minDate: minDate,
-                                //daysOfWeekDisabled: [6,0], 6:sabados y 0:domingos
                                 icons: {
                                     previous: 'glyphicon glyphicon-chevron-left',
                                     next: 'glyphicon glyphicon-chevron-right'
@@ -70,16 +71,18 @@ class CampoDate extends Campo
                                 locale: 'es'
                             };
 
-                            if (!minDate) {
-                                delete config.minDate;
-                            }
-
-                            if (!maxDate) {
-                                delete config.maxDate;
-                            }
-
-                            $('#'+idDateTime).datetimepicker(config);
-                        });
+                            $('#'+idDateTime).datetimepicker(config).on('dp.show', function() {
+                                if (minDate) {
+                                    $('#'+idDateTime).data('DateTimePicker').minDate(minDate);
+                                }
+                                if (maxDate) {
+                                    $('#'+idDateTime).data('DateTimePicker').maxDate(maxDate);
+                                }
+                                if (fechaSeleccionada) {
+                                    $('#'+idDateTime).data('DateTimePicker').defaultDate(fechaSeleccionada);
+                                }
+                            });
+                         });
                     </script>
                 ";
         return $display;
