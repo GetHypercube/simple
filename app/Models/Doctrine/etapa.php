@@ -492,20 +492,42 @@ class Etapa extends Doctrine_Record
 
     public function iniciarPaso(Paso $paso)
     {
+        $extra_etapa = json_decode($this->extra, true);
+        if(isset($extra_etapa['error'])){
+            unset($extra_etapa['error']);
+        }
+        $this->extra= json_encode($extra_etapa, true);
+        $this->save();
+
         //Ejecutamos los eventos iniciales
         $eventos = Doctrine_Query::create()->from('Evento e')
             ->where('e.paso_id = ? AND e.instante = ?', array($paso->id, 'antes'))
             ->execute();
         foreach ($eventos as $e) {
             $r = new Regla($e->regla);
-            if ($r->evaluar($this->id))
+            if ($r->evaluar($this->id)){
                 $e->Accion->ejecutar($this);
-
+                
+                $extra_etapa = json_decode($this->extra, true);
+                $extra_etapa = $extra_etapa === null ? [] : $extra_etapa;
+                if(isset($extra_etapa['error'])){
+                    $ruta = url("/etapas/errores/{$this->id}");
+                    return $ruta;
+                }
+            }
         }
+        return NULL;
     }
 
     public function finalizarPaso(Paso $paso)
     {
+        $extra_etapa = json_decode($this->extra, true);
+        if(isset($extra_etapa['error'])){
+            unset($extra_etapa['error']);
+        }
+        $this->extra= json_encode($extra_etapa, true);
+        $this->save();
+
         //Ejecutamos los eventos finales
         $eventos = Doctrine_Query::create()->from('Evento e')
             ->where('e.paso_id = ? AND e.instante = ?', array($paso->id, 'despues'))
@@ -514,8 +536,17 @@ class Etapa extends Doctrine_Record
             $r = new Regla($e->regla);
             if ($r->evaluar($this->id)) {
                 $e->Accion->ejecutar($this);
+                
+                $extra_etapa = json_decode($this->extra, true);
+                $extra_etapa = $extra_etapa === null ? [] : $extra_etapa;
+                if(isset($extra_etapa['error'])){
+                    \Log::info('cae aqui');
+                    $ruta = url("/etapas/errores/{$this->id}");
+                    return $ruta;
+                }
             }
         }
+        return NULL;
     }
 
     public function toPublicArray()

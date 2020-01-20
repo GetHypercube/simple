@@ -327,7 +327,7 @@ class IntegracionMediator
             if (isset($paso)) {
                 Log::info("Paso ejecutable nro secuencia[" . $secuencia . "]: " . $paso->id);
 
-                $etapa->iniciarPaso($paso);
+                $respuesta = $etapa->iniciarPaso($paso);
 
                 $formulario = $paso->Formulario;
 
@@ -554,7 +554,7 @@ class IntegracionMediator
                 }
 
             } else {
-                $etapa->iniciarPaso($paso);
+                $respuesta = $etapa->iniciarPaso($paso);
                 $forms[] = $this->obtenerFormulario($paso->formulario_id, $etapa->id);
             }
         }
@@ -641,7 +641,7 @@ class IntegracionMediator
         } else {
             //Procesar pasos de una misma etapa
             $paso = $etapa->getPasoEjecutable($secuencia);
-            $etapa->iniciarPaso($paso);
+            $respuesta = $etapa->iniciarPaso($paso);
             $forms[] = $this->obtenerFormulario($paso->formulario_id, $etapa->id);
             $estado = $this->obtenerEstadoProceso($forms, $etapa, $id_proceso, $secuencia);
         }

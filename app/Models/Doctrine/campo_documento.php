@@ -79,14 +79,16 @@ class CampoDocumento extends Campo
                 }
                 $etapa->extra= json_encode($extra_etapa, true);
                 $etapa->save();
+
+                $dato = new DatoSeguimiento();
+                $dato->nombre = $this->nombre;
+                $dato->valor = $file->filename;
+                $dato->etapa_id = $etapa->id;
+
+                $dato->save();
             }
 
-            $dato = new DatoSeguimiento();
-            $dato->nombre = $this->nombre;
-            $dato->valor = $file->filename;
-            $dato->etapa_id = $etapa->id;
-
-            $dato->save();
+            
         } else {
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('documento', $dato->valor);
             if ($etapa->pendiente && isset($this->extra->regenerar) && $this->extra->regenerar) {
@@ -109,9 +111,10 @@ class CampoDocumento extends Campo
                     }
                     $etapa->extra= json_encode($extra_etapa, true);
                     $etapa->save();
+                    $dato->valor = $file->filename;
+                    $dato->save();
                 }
-                $dato->valor = $file->filename;
-                $dato->save();
+                
             }
         }
         $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);

@@ -58,7 +58,6 @@ class AccionGenerarDocumento extends Accion
                 $etapa->extra= json_encode($extra_etapa, true);
                 $etapa->save();
                 $ruta = url("/etapas/errores/{$etapa->id}");
-                return '<script>window.location.href = "'.$ruta.'";</script>';
             }else{
                 $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
                 $extra_etapa = json_decode($etapa->extra, true);
@@ -67,13 +66,15 @@ class AccionGenerarDocumento extends Accion
                 }
                 $etapa->extra= json_encode($extra_etapa, true);
                 $etapa->save();
+
+                $dato = new DatoSeguimiento();
+                $dato->nombre = $this->extra->variable;
+                $dato->valor = $file->filename;
+                $dato->etapa_id = $etapa->id;
+                $dato->save();
             }
 
-            $dato = new DatoSeguimiento();
-            $dato->nombre = $this->extra->variable;
-            $dato->valor = $file->filename;
-            $dato->etapa_id = $etapa->id;
-            $dato->save();
+            
         }else{
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('documento', $dato->valor);
             if ($file != false) {
@@ -87,7 +88,6 @@ class AccionGenerarDocumento extends Accion
                 $etapa->extra= json_encode($extra_etapa, true);
                 $etapa->save();
                 $ruta = url("/etapas/errores/{$etapa->id}");
-                return '<script>window.location.href = "'.$ruta.'";</script>';
             }else{
                 $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
                 $extra_etapa = json_decode($etapa->extra, true);
@@ -96,10 +96,11 @@ class AccionGenerarDocumento extends Accion
                 }
                 $etapa->extra= json_encode($extra_etapa, true);
                 $etapa->save();
+                $dato->valor = $file->filename;
+                $dato->save();
             }
 
-            $dato->valor = $file->filename;
-            $dato->save();
+            
         }
     }
 }

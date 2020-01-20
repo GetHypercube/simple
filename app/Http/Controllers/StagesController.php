@@ -71,8 +71,14 @@ class StagesController extends Controller
             Log::info("Entra en no paso: ");
             return redirect('etapas/ejecutar_fin/' . $etapa->id . ($qs ? '?' . $qs : ''));
         } else if (($etapa->Tarea->final || !$etapa->Tarea->paso_confirmacion) && $paso->getReadonly() && end($pasosEjecutables) == $paso) { // No se requiere mas input
-            $etapa->iniciarPaso($paso);
-            $etapa->finalizarPaso($paso);
+            $respuesta = $etapa->iniciarPaso($paso);
+            if(isset($respuesta)){
+                return redirect($respuesta);
+            }
+            $respuesta = $etapa->finalizarPaso($paso);
+            if(isset($respuesta)){
+                return redirect($respuesta);
+            }
              Log::info("El finalizar paso: " .  $etapa->finalizarPaso($paso));
             $etapa->avanzar();
             
@@ -86,7 +92,10 @@ class StagesController extends Controller
             return redirect('etapas/ver/' . $etapa->id . '/' . (count($pasosEjecutables) - 1));
         } else {
             
-            $etapa->iniciarPaso($paso);
+            $respuesta = $etapa->iniciarPaso($paso);
+            if(isset($respuesta)){
+                return redirect($respuesta);
+            }
             if(session()->has('redirect_url')){
                 return redirect()->away(session()->get('redirect_url'));
             }
@@ -420,19 +429,35 @@ class StagesController extends Controller
                 }
             }
             $etapa->save();
-
-            $etapa->finalizarPaso($paso);
-
+            $respuesta->redirect = $etapa->finalizarPaso($paso);
+            if(isset($respuesta->redirect)){
+                return response()->json([
+                    'validacion' => true,
+                    'redirect' => $respuesta->redirect
+                ]);
+            }
+            
             $respuesta->validacion = TRUE;
-
             $qs = $request->getQueryString();
             $prox_paso = $etapa->getPasoEjecutable($secuencia + 1);
             $pasosEjecutables = $etapa->getPasosEjecutables();
             if (!$prox_paso) {
                 $respuesta->redirect = '/etapas/ejecutar_fin/' . $etapa_id . ($qs ? '?' . $qs : '');
             } else if ($etapa->Tarea->final && $prox_paso->getReadonly() && end($pasosEjecutables) == $prox_paso) { //Cerrado automatico
-                $etapa->iniciarPaso($prox_paso);
-                $etapa->finalizarPaso($prox_paso);
+                $respuesta->redirect = $etapa->iniciarPaso($prox_paso);
+                if(isset($respuesta->redirect)){
+                    return response()->json([
+                        'validacion' => true,
+                        'redirect' => $respuesta->redirect
+                    ]);
+                }
+                $respuesta->redirect = $etapa->finalizarPaso($prox_paso);
+                if(isset($respuesta->redirect)){
+                    return response()->json([
+                        'validacion' => true,
+                        'redirect' => $respuesta->redirect
+                    ]);
+                }
                 $etapa->avanzar();
                 //Job para indexar contenido cada vez que se avanza de etapa
                 $this->dispatch(new IndexStages($etapa->Tramite->id));
@@ -450,8 +475,20 @@ class StagesController extends Controller
             if (!$prox_paso) {
                 $respuesta->redirect = '/etapas/ejecutar_fin/' . $etapa_id . ($qs ? '?' . $qs : '');
             } else if ($etapa->Tarea->final && $prox_paso->getReadonly() && end($pasosEjecutables) == $prox_paso) { //Cerrado automatico
-                $etapa->iniciarPaso($prox_paso);
-                $etapa->finalizarPaso($prox_paso);
+                $respuesta->redirect = $etapa->iniciarPaso($prox_paso);
+                if(isset($respuesta->redirect)){
+                    return response()->json([
+                        'validacion' => true,
+                        'redirect' => $respuesta->redirect
+                    ]);
+                }
+                $respuesta->redirect = $etapa->finalizarPaso($prox_paso);
+                if(isset($respuesta->redirect)){
+                    return response()->json([
+                        'validacion' => true,
+                        'redirect' => $respuesta->redirect
+                    ]);
+                }
                 $etapa->avanzar();
                 //Job para indexar contenido cada vez que se avanza de etapa
                 $this->dispatch(new IndexStages($etapa->Tramite->id));
