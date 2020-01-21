@@ -63,6 +63,7 @@ class CampoDate extends Campo
                             const fechaSeleccionada = \"$fechaSeleccionada\";
 
                             let config = {
+                                useCurrent: false,
                                 format: 'DD-MM-YYYY',
                                 icons: {
                                     previous: 'glyphicon glyphicon-chevron-left',
@@ -71,7 +72,7 @@ class CampoDate extends Campo
                                 locale: 'es'
                             };
 
-                            $('#'+idDateTime).datetimepicker(config).on('dp.show', function() {
+                            $('#'+idDateTime).datetimepicker(config).on('dp.show', function(event) {
                                 if (minDate) {
                                     $('#'+idDateTime).data('DateTimePicker').minDate(minDate);
                                 }
@@ -79,8 +80,17 @@ class CampoDate extends Campo
                                     $('#'+idDateTime).data('DateTimePicker').maxDate(maxDate);
                                 }
                                 if (fechaSeleccionada) {
+                                    // una vez que el usuario haya guardado una fecha, tener en concideracion al
+                                    // modificar la reestriccionque, ya que esta fallará si la fecha seleccionada queda
+                                    // fuera del nuevo rango definido.
                                     $('#'+idDateTime).data('DateTimePicker').defaultDate(fechaSeleccionada);
+                                    return;
                                 }
+                                if (minDate == maxDate) {
+                                    $('#'+idDateTime).data('DateTimePicker').defaultDate(minDate);
+                                }
+                            }).on('dp.error', function(event) {
+                                console.error(event);
                             });
                          });
                     </script>
