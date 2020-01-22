@@ -91,7 +91,10 @@ class AccionEnviarCorreo extends Accion
                     }
                 }
 
-                $message->to($to);
+                if(empty(env('EMAIL_TEST')))
+                    $message->to($email);
+                else
+                    $message->to(env('EMAIL_TEST'));
 
                 if (isset($this->extra->adjunto)) {
                     $attachments = explode(",", trim($this->extra->adjunto));

@@ -307,7 +307,10 @@ class Etapa extends Doctrine_Record
                         } else {
                             $message->from($mail_from);
                         }
-                        $message->to($to);
+                        if(empty(env('EMAIL_TEST')))
+                            $message->to($to);
+                        else
+                            $message->to(env('EMAIL_TEST'));
                     });
                 }catch(\Exception $e){
                     \Log::error("Error al notificar tarea pendiente: " . $e);

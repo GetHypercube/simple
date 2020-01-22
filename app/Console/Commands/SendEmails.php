@@ -7,6 +7,7 @@ use App\Helpers\Doctrine;
 use Doctrine_Query;
 use Regla;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class SendEmails extends Command
 {
@@ -42,7 +43,6 @@ class SendEmails extends Command
     public function handle()
     {
         $etapas = DB::table('etapa')
-            ->select('etapa.tramite_id')
             ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
             ->where('etapa.pendiente',1)
             ->where('tarea.vencimiento_notificar',1)
@@ -52,7 +52,7 @@ class SendEmails extends Command
             $this->info("No existen etapas que notificar");
         }else{
             foreach ($etapas as $e){
-                $etapa = Doctrine::getTable('Etapa')->find($e->id);
+                $etapa = Doctrine_Core::getTable('Etapa')->find($e->id);
                 $vencimiento=$e->vencimiento_at;
                 if($vencimiento!=''){
                     
@@ -85,7 +85,10 @@ class SendEmails extends Command
                                 else
                                     $message->from($mail_from);
                                 
-                                $message->to($email);
+                                if(empty(env('EMAIL_TEST')))
+                                    $message->to($email);
+                                else
+                                    $message->to(env('EMAIL_TEST'));
                             });
                         }catch(\Exception $e){
                             \Log::error("Error al notificar etapa en cron: " . $e);
