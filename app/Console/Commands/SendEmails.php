@@ -53,7 +53,6 @@ class SendEmails extends Command
         }else{
             foreach ($etapas as $e){
                 $etapa = Doctrine::getTable('Etapa')->find($e->id);
-                dd($etapa);
                 $vencimiento=$e->vencimiento_at;
                 if($vencimiento!=''){
                     
