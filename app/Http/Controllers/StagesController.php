@@ -33,6 +33,7 @@ class StagesController extends Controller
     {   
         $iframe = $request->input('iframe');
         $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+        dd($etapa);
        
         $data = \Cuenta::configSegunDominio();
         

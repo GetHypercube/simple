@@ -52,7 +52,8 @@ class SendEmails extends Command
             $this->info("No existen etapas que notificar");
         }else{
             foreach ($etapas as $e){
-                $etapa = Doctrine_Core::getTable('Etapa')->find($e->id);
+                $etapa = Doctrine::getTable('Etapa')->find($e->id);
+                dd($etapa);
                 $vencimiento=$e->vencimiento_at;
                 if($vencimiento!=''){
                     
