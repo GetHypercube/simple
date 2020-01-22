@@ -52,19 +52,55 @@ class AccionGenerarDocumento extends Accion
         if (!$dato) {   //Generamos el documento, ya que no se ha generado
             $file = $documento->generar($etapa->id);
 
-            $dato = new DatoSeguimiento();
-            $dato->nombre = $this->extra->variable;
-            $dato->valor = $file->filename;
-            $dato->etapa_id = $etapa->id;
-            $dato->save();
+            if(is_bool($file) && !$file){
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa['error'] = false;
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
+                $ruta = url("/etapas/errores/{$etapa->id}");
+            }else{
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa = json_decode($etapa->extra, true);
+                if(isset($extra_etapa['error'])){
+                    unset($extra_etapa['error']);
+                }
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
+
+                $dato = new DatoSeguimiento();
+                $dato->nombre = $this->extra->variable;
+                $dato->valor = $file->filename;
+                $dato->etapa_id = $etapa->id;
+                $dato->save();
+            }
+
+            
         }else{
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('documento', $dato->valor);
             if ($file != false) {
                 $file->delete();
             }
             $file = $documento->generar($etapa->id);
-            $dato->valor = $file->filename;
-            $dato->save();
+
+            if(is_bool($file) && !$file){
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa['error'] = false;
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
+                $ruta = url("/etapas/errores/{$etapa->id}");
+            }else{
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa = json_decode($etapa->extra, true);
+                if(isset($extra_etapa['error'])){
+                    unset($extra_etapa['error']);
+                }
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
+                $dato->valor = $file->filename;
+                $dato->save();
+            }
+
+            
         }
     }
 }

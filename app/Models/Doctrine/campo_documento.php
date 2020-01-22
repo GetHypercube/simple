@@ -48,7 +48,8 @@ class CampoDocumento extends Campo
         if (isset($this->extra->firmar) && $this->extra->firmar) {
             return $this->displayFirmador($modo, $dato, $etapa_id);
         } else {
-            return $this->displayDescarga($modo, $dato, $etapa_id);
+            $display_descarga = $this->displayDescarga($modo, $dato, $etapa_id);
+            return $display_descarga;
         }
     }
 
@@ -63,13 +64,31 @@ class CampoDocumento extends Campo
 
         if (!$dato) {   //Generamos el documento, ya que no se ha generado
             $file = $this->Documento->generar($etapa->id);
+            if(is_bool($file) && !$file){
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa['error'] = false;
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
+                $ruta = url("/etapas/errores/{$etapa->id}");
+                return '<script>window.location.href = "'.$ruta.'";</script>';
+            }else{
+                $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                $extra_etapa = json_decode($etapa->extra, true);
+                if(isset($extra_etapa['error'])){
+                    unset($extra_etapa['error']);
+                }
+                $etapa->extra= json_encode($extra_etapa, true);
+                $etapa->save();
 
-            $dato = new DatoSeguimiento();
-            $dato->nombre = $this->nombre;
-            $dato->valor = $file->filename;
-            $dato->etapa_id = $etapa->id;
+                $dato = new DatoSeguimiento();
+                $dato->nombre = $this->nombre;
+                $dato->valor = $file->filename;
+                $dato->etapa_id = $etapa->id;
 
-            $dato->save();
+                $dato->save();
+            }
+
+            
         } else {
             $file = Doctrine::getTable('File')->findOneByTipoAndFilename('documento', $dato->valor);
             if ($etapa->pendiente && isset($this->extra->regenerar) && $this->extra->regenerar) {
@@ -77,8 +96,25 @@ class CampoDocumento extends Campo
                     $file->delete();
                 }
                 $file = $this->Documento->generar($etapa->id);
-                $dato->valor = $file->filename;
-                $dato->save();
+                if(is_bool($file) && !$file){
+                    $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                    $extra_etapa['error'] = false;
+                    $etapa->extra= json_encode($extra_etapa, true);
+                    $etapa->save();
+                    $ruta = url("/etapas/errores/{$etapa->id}");
+                    return '<script>window.location.href = "'.$ruta.'";</script>';
+                }else{
+                    $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
+                    $extra_etapa = json_decode($etapa->extra, true);
+                    if(isset($extra_etapa['error'])){
+                        unset($extra_etapa['error']);
+                    }
+                    $etapa->extra= json_encode($extra_etapa, true);
+                    $etapa->save();
+                    $dato->valor = $file->filename;
+                    $dato->save();
+                }
+                
             }
         }
         $usuario_backend = App\Models\UsuarioBackend::find(Auth::user()->id);

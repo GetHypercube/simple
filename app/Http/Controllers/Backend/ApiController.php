@@ -410,7 +410,7 @@ class ApiController extends Controller
                     break;
 
                 //ejecución de eventos antes de iniciar el paso
-                $etapa->iniciarPaso($paso);
+                $respuesta = $etapa->iniciarPaso($paso);
                 //campos del paso(formulario)
                 foreach ($paso->Formulario->Campos as $c) {
                     $c->displayConDatoSeguimiento($etapa->id, $paso->modo);
