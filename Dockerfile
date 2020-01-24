@@ -52,17 +52,17 @@ RUN composer install
 RUN chown -R www-data:www-data storage/
 
 #Start New Relic =========
-RUN apt-get update && \
-    apt-get -yq install wget && \
-    wget -O - https://download.newrelic.com/548C16BF.gpg | apt-key add - && \
-    echo "deb http://apt.newrelic.com/debian/ newrelic non-free" > /etc/apt/sources.list.d/newrelic.list
- 
-RUN apt-get update && \
-    apt-get -yq install newrelic-php5
-    
-ADD run.sh /start/run.sh
-RUN chmod +x /start/run.sh
-RUN newrelic-install install
+#RUN apt-get update && \
+#    apt-get -yq install wget && \
+#    wget -O - https://download.newrelic.com/548C16BF.gpg | apt-key add - && \
+#    echo "deb http://apt.newrelic.com/debian/ newrelic non-free" > /etc/apt/sources.list.d/newrelic.list
+# 
+#RUN apt-get update && \
+#    apt-get -yq install newrelic-php5
+#    
+#ADD run.sh /start/run.sh
+#RUN chmod +x /start/run.sh
+#RUN newrelic-install install
 #=============End New Relic
 
 RUN  ln -sf /dev/stderr /var/log/php-errors.log
@@ -77,4 +77,5 @@ WORKDIR $DIRECTORY_PROJECT
 
 EXPOSE 9000
 
-CMD ["/start/run.sh"]
+#CMD ["/start/run.sh"]
+CMD ["php-fpm"]
