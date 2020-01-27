@@ -42,17 +42,15 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        $etapas = DB::table('etapa')
-            ->leftJoin('tarea', 'etapa.tarea_id', '=', 'tarea.id')
-            ->where('etapa.pendiente',1)
-            ->where('tarea.vencimiento_notificar',1)
-            ->get();
+        $etapas = Doctrine_Query::create()
+                ->from('Etapa e, e.Tarea t')
+                ->where('e.pendiente = 1 AND t.vencimiento_notificar = 1')
+                ->execute();
         if(count($etapas)==0){
             \Log::error("No existen etapas que notificar");
             $this->info("No existen etapas que notificar");
         }else{
             foreach ($etapas as $e){
-                $etapa = Doctrine_Core::getTable('Etapa')->find($e->id);
                 $vencimiento=$e->vencimiento_at;
                 if($vencimiento!=''){
                     
