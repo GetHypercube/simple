@@ -36,23 +36,21 @@ class CampoDate extends Campo
 
         switch ($optionStart) {
             case 'current_date':
-                $minDate = date('d-m-Y');
+                $minDate = date('Y-m-d');
                 break;
             case 'start_date':
-                $minDate = date("d-m-Y", strtotime($this->extra->config_date->start->date));
+                $minDate = date("Y-m-d", strtotime($this->extra->config_date->start->date));
                 break;
         }
 
         switch ($optionEnd) {
             case 'current_date':
-                $maxDate = date('d-m-Y');
+                $maxDate = date('Y-m-d');
                 break;
             case 'end_date':
-                $maxDate = date("d-m-Y", strtotime($this->extra->config_date->end->date));
+                $maxDate = date("Y-m-d", strtotime($this->extra->config_date->end->date));
                 break;
         }
-
-        $fechaSeleccionada = isset($dato->valor) ? date('d-m-Y', strtotime($dato->valor)):null;
 
         $display .= "
                     <script>
@@ -60,11 +58,9 @@ class CampoDate extends Campo
                             const maxDate = \"$maxDate\";
                             const minDate = \"$minDate\";
                             const idDateTime = \"$this->id\";
-                            const fechaSeleccionada = \"$fechaSeleccionada\";
-
                             let config = {
-                                useCurrent: false,
                                 format: 'DD-MM-YYYY',
+                                useCurrent: false,
                                 icons: {
                                     previous: 'glyphicon glyphicon-chevron-left',
                                     next: 'glyphicon glyphicon-chevron-right'
@@ -74,23 +70,20 @@ class CampoDate extends Campo
 
                             $('#'+idDateTime).datetimepicker(config).on('dp.show', function(event) {
                                 if (minDate) {
-                                    $('#'+idDateTime).data('DateTimePicker').minDate(minDate);
+                                    $('#'+idDateTime).data('DateTimePicker').minDate(moment(minDate));
                                 }
                                 if (maxDate) {
-                                    $('#'+idDateTime).data('DateTimePicker').maxDate(maxDate);
-                                }
-                                if (fechaSeleccionada) {
-                                    // una vez que el usuario haya guardado una fecha, tener en concideracion al
-                                    // modificar la reestriccionque, ya que esta fallará si la fecha seleccionada queda
-                                    // fuera del nuevo rango definido.
-                                    $('#'+idDateTime).data('DateTimePicker').defaultDate(fechaSeleccionada);
-                                    return;
+                                    $('#'+idDateTime).data('DateTimePicker').maxDate(moment(maxDate));
                                 }
                                 if (minDate == maxDate) {
-                                    $('#'+idDateTime).data('DateTimePicker').defaultDate(minDate);
+                                    $('#'+idDateTime).data('DateTimePicker').defaultDate(moment(minDate));
                                 }
-                            }).on('dp.error', function(event) {
-                                console.error(event);
+                            }).on('dp.error', function(e) {
+                                console.error(e);
+                                if (moment(e.date._d).format('YYYY-MM-DD') == maxDate) {
+                                    let fecha = String(moment(e.date._d).format('YYYY-MM-DD'));
+                                    $('#'+idDateTime).data('DateTimePicker').defaultDate(moment(fecha));
+                                }
                             });
                          });
                     </script>
