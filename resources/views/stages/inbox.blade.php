@@ -45,7 +45,6 @@
                         </thead>
                         <tbody>
                         @foreach ($etapas as $e)
-                            @if(puedeVisualizarla($e))
                             <tr {!! getPrevisualization($e) ? 'data-toggle="popover" data-html="true" data-title="<h4>Previsualización</h4>" data-content="' . htmlspecialchars(getPrevisualization($e)) . '" data-trigger="hover" data-placement="bottom"' : '' !!}>
                                 <td class="text-center">
                                     @if($cuenta->descarga_masiva && $e->tramite->files->count() > 0)
@@ -79,7 +78,6 @@
                                     @endif
                                 </td>
                             </tr>
-                            @endif
                         @endforeach
                         </tbody>
                     </table>
