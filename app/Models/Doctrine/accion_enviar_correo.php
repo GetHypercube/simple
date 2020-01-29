@@ -92,7 +92,7 @@ class AccionEnviarCorreo extends Accion
                 }
 
                 if(empty(env('EMAIL_TEST')))
-                    $message->to($email);
+                    $message->to($to);
                 else
                     $message->to(env('EMAIL_TEST'));
 
