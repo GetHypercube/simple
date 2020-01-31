@@ -60,6 +60,21 @@ class DatoSeguimientoTable extends Doctrine_Table{
         
         return $result;
     }
-    
+
+    //Busca el valor del dato hasta la etapa $etapa_id
+    public function findByNombreHastaEtapaConsole($nombre,$etapa_id){
+        $etapa = App\Models\Etapa::select('id','tramite_id')->where('id',$etapa_id)->first();
+
+        $etapas = DB::table('etapa')
+                    ->select('dato_seguimiento.*')
+                    ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                    ->leftJoin('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
+                    ->where('dato_seguimiento.nombre',$nombre)
+                    ->where('tramite.id','=',$etapa->tramite_id)
+                    ->where('etapa.id','<=',$etapa->id)
+                    ->where('tramite.pendiente',1)
+                    ->first();
+        return $etapas;
+    }
     
 }

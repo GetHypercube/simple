@@ -42,44 +42,62 @@ class SendEmails extends Command
      */
     public function handle()
     {
-        $etapas = Doctrine_Query::create()
-                ->from('Etapa e, e.Tarea t')
-                ->where('e.pendiente = 1 AND t.vencimiento_notificar = 1')
-                ->execute();
+        $etapas = DB::table('etapa')
+                ->select('etapa.*','tarea.vencimiento_notificar_email','tarea.vencimiento_notificar_dias','tarea.vencimiento_habiles','tarea.nombre as tarea_nombre')
+                ->leftJoin('tarea', 'tarea.id', '=', 'etapa.tarea_id')
+                ->where('etapa.pendiente',1)
+                ->where('tarea.vencimiento_notificar',1)
+                ->get();
         if(count($etapas)==0){
             \Log::error("No existen etapas que notificar");
             $this->info("No existen etapas que notificar");
         }else{
+            $notificaciones_enviadas = 0;
             foreach ($etapas as $e){
                 $vencimiento=$e->vencimiento_at;
-                if($vencimiento!=''){
+                if(!is_null($vencimiento)){
                     
                     $dias_por_vencer=ceil((strtotime($e->vencimiento_at)-time())/60/60/24);
                     $dias_no_habiles = 0;
-                    if ($e->Tarea->vencimiento_habiles == 1)
+                    if ($e->vencimiento_habiles == 1)
                         $dias_no_habiles = (new \App\Helpers\dateHelper())->get_working_days_count(date('Y-m-d'), $e->vencimiento_at);
                     
-                    $regla=new Regla($e->Tarea->vencimiento_notificar_email);
-                    $email=$regla->getExpresionParaOutput($e->id);
+                    try{
+                        $regla=new \Regla($e->vencimiento_notificar_email);
+                        $email=$regla->getExpresionParaOutputConsole($e->id);
+                    }catch(Exception $ex){
+                        $this->info('Se produjo una excepción al obtener el correo--'.$ex);
+                        $email = NULL;
+                    }
                     
                     if ($dias_por_vencer > 0)
                         $dias_por_vencer-=$dias_no_habiles;                 
                     
-                    if ($dias_por_vencer <= $e->Tarea->vencimiento_notificar_dias){
+                    if ($dias_por_vencer <= $e->vencimiento_notificar_dias && !is_null($email)){
+                        $cuenta = DB::table('cuenta')
+                                ->select('cuenta.nombre as cuenta_nombre','cuenta.nombre_largo as cuenta_nombre_largo','proceso.nombre as proceso_nombre')
+                                ->leftJoin('proceso', 'proceso.cuenta_id', '=', 'cuenta.id')
+                                ->leftJoin('tramite', 'tramite.proceso_id', '=', 'proceso.id')
+                                ->where('tramite.id',$e->tramite_id)
+                                ->first();
+                        $data_usuario = DB::table('usuario')
+                                        ->where('id',$e->usuario_id)
+                                        ->first();
                         $this->info('Enviando correo de notificacion para etapa ' . $e->id);
                         $subject = 'Etapa se encuentra ' . ($dias_por_vencer>0 ?'por vencer':'vencida');
-                        $cuenta=$e->Tramite->Proceso->Cuenta;
-                        $url_final = empty(env('APP_MAIN_DOMAIN')) ? url("/etapas/ejecutar/{$e->id}") : "https://".$cuenta->nombre.".".env('APP_MAIN_DOMAIN')."/etapas/ejecutar/{$e->id}";
-                        $message = '<p>La etapa "' . $e->Tarea->nombre . '" del proceso "'.$e->Tramite->Proceso->nombre.'" se encuentra '
-                                .($dias_por_vencer>0?'a '.$dias_por_vencer. (abs($dias_por_vencer)==1?' día ':' días ') .($e->Tarea->vencimiento_habiles == 1 ? 'habiles ' : '') .
+                        
+                        $url_final = empty(env('APP_MAIN_DOMAIN')) ? url("/etapas/ejecutar/{$e->id}") : "https://".$cuenta->cuenta_nombre.".".env('APP_MAIN_DOMAIN')."/etapas/ejecutar/{$e->id}";
+                        $message = '<p>La etapa "' . $e->tarea_nombre . '" del proceso "'.$cuenta->proceso_nombre.'" se encuentra '
+                                .($dias_por_vencer>0?'a '.$dias_por_vencer. (abs($dias_por_vencer)==1?' día ':' días ') .($e->vencimiento_habiles == 1 ? 'habiles ' : '') .
                                         'por vencer':('vencida '.($dias_por_vencer<0 ? 'hace '.abs($dias_por_vencer).(abs($dias_por_vencer)==1?' día ':' días ') : 'hoy'))).' ('.date('d/m/Y',strtotime($e->vencimiento_at)).').' . "</p><br>" . 
-                                '<p>Usuario asignado: ' . $e->Usuario->usuario .'</p>'.($dias_por_vencer > 0 ? '<p>Para realizar la etapa, hacer click en el siguiente link: '. $url_final .'</p>':'');
+                                '<p>Usuario asignado: ' . $data_usuario->usuario .'</p>'.($dias_por_vencer > 0 ? '<p>Para realizar la etapa, hacer click en el siguiente link: '. $url_final .'</p>':'');
                         try{
+                            $notificaciones_enviadas++;
                             \Mail::send('emails.send', ['content' => $message], function ($message) use ($e, $subject, $cuenta, $email) {
                                 $message->subject($subject);
                                 $mail_from = env('MAIL_FROM_ADDRESS');
                                 if(empty($mail_from))
-                                    $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                                    $message->from($cuenta->cuenta_nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->cuenta_nombre_largo);
                                 else
                                     $message->from($mail_from);
                                 
@@ -95,6 +113,10 @@ class SendEmails extends Command
                     }
                 }
             }
+            \Log::error("Notificaciones de etapas por vencer enviadas: " . $notificaciones_enviadas);
+            $this->info("Notificaciones de etapas por vencer enviadas: " . $notificaciones_enviadas);
         }
     }
+
+    
 }

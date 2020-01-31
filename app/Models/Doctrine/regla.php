@@ -406,4 +406,139 @@ class Regla
         Log::debug(' regla : ' . implode(', ', $res_));
         return $res_;
     }
+
+    // Obtiene la expresion con los reemplazos de variables ya hechos de acuerdo a los datos capturados en el tramite tramite_id.
+    // Esta es una representacion con las variables reemplazadas. No es una expresion evaluable. (Los arrays y strings no estan definidos como tal)
+    public function getExpresionParaOutputConsole($etapa_id, $evaluar = false)
+    {
+        $new_regla = $this->regla;
+        $new_regla = preg_replace_callback('/@@(\w+)((->\w+|\[\w+\])*)/', function ($match) use ($etapa_id, $evaluar) {
+            $nombre_dato = $match[1];
+            $accesor = isset($match[2]) ? $match[2] : '';
+
+            $dato = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapaConsole($nombre_dato, $etapa_id);
+
+            if ($dato) {
+
+                try {                    
+                    $dato_almacenado = eval('$x=json_decode(\'' . json_encode($dato->valor, JSON_HEX_APOS) . '\'); return $x' . $accesor . ';');
+                } catch (Exception $e) {
+                    $dato_almacenado = '';
+                    $valor_dato = '';
+                    Log::error("Error" . $e);
+                }
+
+                if (!is_string($dato_almacenado)) {
+                    $valor_dato = json_encode($dato_almacenado);
+
+                    if ($evaluar == true && strlen($accesor) == 0) {
+                        // Grilla
+                        $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+                        $result = Doctrine_Query::create()
+                            ->select('c.tipo')
+                            ->from('Campo c, c.Formulario f, f.Proceso p')
+                            ->where('c.nombre=? AND p.activo=1 AND p.id=?', array($nombre_dato, $etapa->Tarea->Proceso->id))
+                            ->execute();
+                        if ($result[0]->tipo == 'grid') {
+                            $valor_dato = json_decode($valor_dato);
+                            $tabla = '<table border="1" cellpadding="1" cellspacing="1"><thead>';
+                            foreach ($valor_dato as $key => $array) {
+                                if ($key == 1) {
+                                    $tabla .= '</thead><tbody><tr>';
+                                } else {
+                                    $tabla .= '<tr>';
+                                }
+                                foreach ($array as $llave => $value) {
+                                    if ($key == 0) {
+                                        $tabla .= '<td><strong>' . $value . '</strong></td>';
+                                    } else {
+                                        $tabla .= '<td>' . $value . '</td>';
+                                    }
+                                }
+                                $tabla .= '</tr>';
+                            }
+                            $tabla .= '</tbody></table>';
+                            $valor_dato = $tabla;
+                            // Fin grilla
+                            // Instituciones y comunas
+                        } elseif ($result[0]->tipo == 'comunas' or $result[0]->tipo == 'instituciones_gob') {
+                            $valor_dato = json_decode($valor_dato, true);
+                            $i = 0;
+                            foreach ($valor_dato as $key => $value) {
+                                if ($i == 1) {
+                                    $valor_dato = $value;
+                                }
+                                $i++;
+                            }
+                            // Fin instituciones y comunas
+                        } elseif ($result[0]->tipo == 'maps') {
+                            $valor_dato = json_decode($valor_dato);
+                            $image = '<img src="https://maps.googleapis.com/maps/api/staticmap?zoom4&size=600x300&maptype=roadmap';
+                            $image .= '&markers=color:red%7Clabel:1%7C' . $valor_dato->latitude . ',' . $valor_dato->longitude;
+                            $image .= '&key=AIzaSyCDOQ2m4sss96dWd5sEs5levoURjrzMUYc" height="300" width="600">';
+                            $image .= '<strong>1</strong> : ' . $valor_dato->address . '<br>';
+                            $valor_dato = $image;
+                        }
+                    }
+                } else {
+                    $valor_dato = $dato_almacenado;
+                }
+            } else {
+                // Entregamos vacio
+                $valor_dato = '';
+            }
+            //Log::debug("############# 1. dato valor: ".$dato->valor, FALSE);
+            return $valor_dato;
+        }, $new_regla);
+
+        // Variables globales
+        $new_regla = preg_replace_callback('/@#(\w+)/', function ($match) use ($etapa_id) {
+            $nombre_dato = $match[1];
+
+            $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+            $dato = Doctrine::getTable('DatoSeguimiento')->findGlobalByNombreAndProceso($nombre_dato, $etapa->Tramite->id);
+            $valor_dato = json_encode($dato);
+
+            Log::debug("############# 2. dato valor: " . $dato->valor);
+            return $valor_dato;
+        }, $new_regla);
+
+        $new_regla = preg_replace_callback('/@!(\w+)/', function ($match) use ($etapa_id) {
+            $nombre_dato = $match[1];
+
+            $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
+            $usuario = $etapa->Usuario;
+
+            if ($nombre_dato == 'rut')
+                return $usuario->rut;
+            else if ($nombre_dato == 'nombre')         // Deprecated
+                return $usuario->nombres;
+            else if ($nombre_dato == 'apellidos')      // Deprecated
+                return $usuario->apellido_paterno . ' ' . $usuario->apellido_materno;
+            else if ($nombre_dato == 'nombres')
+                return $usuario->nombres;
+            else if ($nombre_dato == 'apellido_paterno')
+                return $usuario->apellido_paterno;
+            else if ($nombre_dato == 'apellido_materno')
+                return $usuario->apellido_materno;
+            else if ($nombre_dato == 'email')
+                return $usuario->email;
+            else if ($nombre_dato == 'tramite_id')
+                return Doctrine::getTable('Etapa')->find($etapa_id)->tramite_id;
+            else if ($nombre_dato == 'tramite_proc_cont')
+                return Doctrine::getTable('Tramite')->find(Doctrine::getTable('Etapa')->find($etapa_id)->tramite_id)->tramite_proc_cont;
+            else if ($nombre_dato == 'fecha_vencimiento'){
+                return \Carbon\Carbon::parse($etapa->vencimiento_at)->format('d-m-Y');
+            }else if ($nombre_dato == 'dias_para_vencer'){
+                $dias_habiles = (new \App\Helpers\dateHelper())->diasHabiles($etapa->vencimiento_at);
+                $dias_totales = (new \App\Helpers\dateHelper())->diasTotales($etapa->vencimiento_at);
+                return json_encode(array($dias_habiles,$dias_totales));
+            }else if($nombre_dato == 'base_url'){
+                return \URL::to('/');
+            }
+
+        }, $new_regla);
+
+        return $new_regla;
+    }
 }
