@@ -65,6 +65,7 @@ class SendEmails extends Command
                     try{
                         $regla=new \Regla($e->vencimiento_notificar_email);
                         $email=$regla->getExpresionParaOutputConsole($e->id);
+                        $email = str_replace('"','',$email);
                     }catch(Exception $ex){
                         $this->info('Se produjo una excepción al obtener el correo--'.$ex);
                         $email = NULL;
@@ -107,6 +108,7 @@ class SendEmails extends Command
                                     $message->to(env('EMAIL_TEST'));
                             });
                         }catch(\Exception $e){
+                            $notificaciones_enviadas--;
                             \Log::error("Error al notificar etapa en cron: " . $e);
                             $this->info("Error al notificar etapa en cron: " . $e);
                         }
