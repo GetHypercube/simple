@@ -84,7 +84,7 @@ class SendEmails extends Command
                         $data_usuario = DB::table('usuario')
                                         ->where('id',$e->usuario_id)
                                         ->first();
-                        $this->info('Enviando correo de notificacion para etapa ' . $e->id);
+                        $this->info('Enviando correo de notificacion para tramite: ' . $e->tramite_id);
                         $subject = 'Etapa se encuentra ' . ($dias_por_vencer>0 ?'por vencer':'vencida');
                         
                         $url_final = empty(env('APP_MAIN_DOMAIN')) ? url("/etapas/ejecutar/{$e->id}") : "https://".$cuenta->cuenta_nombre.".".env('APP_MAIN_DOMAIN')."/etapas/ejecutar/{$e->id}";

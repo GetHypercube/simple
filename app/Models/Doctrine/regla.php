@@ -416,7 +416,16 @@ class Regla
             $nombre_dato = $match[1];
             $accesor = isset($match[2]) ? $match[2] : '';
 
-            $dato = Doctrine::getTable('DatoSeguimiento')->findByNombreHastaEtapaConsole($nombre_dato, $etapa_id);
+            $etapa = App\Models\Etapa::select('id','tramite_id')->where('id',$etapa_id)->first();
+            $dato = DB::table('etapa')
+                        ->select('dato_seguimiento.*')
+                        ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                        ->leftJoin('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
+                        ->where('dato_seguimiento.nombre',$nombre_dato)
+                        ->where('tramite.id','=',$etapa->tramite_id)
+                        ->where('etapa.id','<=',$etapa->id)
+                        ->where('tramite.pendiente',1)
+                        ->first();
 
             if ($dato) {
 
@@ -495,7 +504,22 @@ class Regla
         $new_regla = preg_replace_callback('/@#(\w+)/', function ($match) use ($etapa_id) {
             $nombre_dato = $match[1];
             $etapa = App\Models\Etapa::find($etapa_id);
-            $dato = Doctrine::getTable('DatoSeguimiento')->findGlobalByNombreAndProcesoConsole($nombre_dato, $etapa->tramite_id);
+            $tramite=Tramite::find($etapa->tramite_id);
+            $dato = DB::table('etapa')
+                ->select('dato_seguimiento.valor')
+                ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                ->leftJoin('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
+                ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
+                ->where('dato_seguimiento.nombre',$nombre_dato)
+                ->where('proceso.activo',1)
+                ->where('proceso.id',$tramite->proceso_id)
+                ->where('tramite.id','!=',$tramite->id)
+                ->where('tramite.pendiente',1)
+                ->groupBy('tramite.id')
+                ->havingRaw('dato_seguimiento.id = MAX(dato_seguimiento.id)')
+                ->get()
+                ->toArray();
+
             $valor_dato = json_encode($dato);
 
             Log::debug("############# 2. dato valor: " . $dato->valor);
