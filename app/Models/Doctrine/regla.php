@@ -495,7 +495,7 @@ class Regla
         $new_regla = preg_replace_callback('/@#(\w+)/', function ($match) use ($etapa_id) {
             $nombre_dato = $match[1];
             $etapa = App\Models\Etapa::find($etapa_id);
-            $dato = Doctrine::getTable('DatoSeguimiento')->findGlobalByNombreAndProceso($nombre_dato, $etapa->tramite_id);
+            $dato = Doctrine::getTable('DatoSeguimiento')->findGlobalByNombreAndProcesoConsole($nombre_dato, $etapa->tramite_id);
             $valor_dato = json_encode($dato);
 
             Log::debug("############# 2. dato valor: " . $dato->valor);
