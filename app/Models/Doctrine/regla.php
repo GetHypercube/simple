@@ -494,9 +494,8 @@ class Regla
         // Variables globales
         $new_regla = preg_replace_callback('/@#(\w+)/', function ($match) use ($etapa_id) {
             $nombre_dato = $match[1];
-
-            $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-            $dato = Doctrine::getTable('DatoSeguimiento')->findGlobalByNombreAndProceso($nombre_dato, $etapa->Tramite->id);
+            $etapa = App\Models\Etapa::find($etapa_id);
+            $dato = Doctrine::getTable('DatoSeguimiento')->findGlobalByNombreAndProceso($nombre_dato, $etapa->tramite_id);
             $valor_dato = json_encode($dato);
 
             Log::debug("############# 2. dato valor: " . $dato->valor);
@@ -505,9 +504,8 @@ class Regla
 
         $new_regla = preg_replace_callback('/@!(\w+)/', function ($match) use ($etapa_id) {
             $nombre_dato = $match[1];
-
-            $etapa = Doctrine::getTable('Etapa')->find($etapa_id);
-            $usuario = $etapa->Usuario;
+            $etapa = App\Models\Etapa::find($etapa_id);
+            $usuario = App\Models\Usuario::find($etapa->usuario_id);
 
             if ($nombre_dato == 'rut')
                 return $usuario->rut;
@@ -524,9 +522,9 @@ class Regla
             else if ($nombre_dato == 'email')
                 return $usuario->email;
             else if ($nombre_dato == 'tramite_id')
-                return Doctrine::getTable('Etapa')->find($etapa_id)->tramite_id;
+                return $etapa->tramite_id;
             else if ($nombre_dato == 'tramite_proc_cont')
-                return Doctrine::getTable('Tramite')->find(Doctrine::getTable('Etapa')->find($etapa_id)->tramite_id)->tramite_proc_cont;
+                return Doctrine::getTable('Tramite')->find($etapa->tramite_id)->tramite_proc_cont;
             else if ($nombre_dato == 'fecha_vencimiento'){
                 return \Carbon\Carbon::parse($etapa->vencimiento_at)->format('d-m-Y');
             }else if ($nombre_dato == 'dias_para_vencer'){

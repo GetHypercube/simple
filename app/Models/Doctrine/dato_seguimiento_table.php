@@ -76,5 +76,26 @@ class DatoSeguimientoTable extends Doctrine_Table{
                     ->first();
         return $etapas;
     }
+
+    //Devuelve un arreglo con los valores del dato recopilados durante todo el proceso
+    public function findGlobalByNombreAndProcesoConsole($nombre,$tramite_id){
+        $tramite=Tramite::find($tramite_id);
+        $datos = DB::table('etapa')
+                ->select('dato_seguimiento.valor')
+                ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                ->leftJoin('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
+                ->leftJoin('proceso', 'tramite.proceso_id', '=', 'proceso.id')
+                ->where('dato_seguimiento.nombre',$nombre)
+                ->where('proceso.activo',1)
+                ->where('proceso.id',$tramite->proceso_id)
+                ->where('tramite.id','!=',$tramite->id)
+                ->where('tramite.pendiente',1)
+                ->groupBy('tramite.id')
+                ->havingRaw('dato_seguimiento.id = MAX(dato_seguimiento.id)')
+                ->get()
+                ->toArray();
+        
+        return $datos;
+    }
     
 }
