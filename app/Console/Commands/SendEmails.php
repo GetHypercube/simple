@@ -104,8 +104,11 @@ class SendEmails extends Command
                                 
                                 if(empty(env('EMAIL_TEST')))
                                     $message->to($email);
-                                else
-                                    $message->to(env('EMAIL_TEST'));
+                                else{
+                                    $destinatarios_test = explode(",",env('EMAIL_TEST'));
+                                    $message->to($destinatarios_test);
+                                }
+                                    
                             });
                         }catch(\Exception $e){
                             $notificaciones_enviadas--;
