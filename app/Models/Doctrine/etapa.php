@@ -309,8 +309,10 @@ class Etapa extends Doctrine_Record
                         }
                         if(empty(env('EMAIL_TEST')))
                             $message->to($to);
-                        else
-                            $message->to(env('EMAIL_TEST'));
+                        else{
+                            $destinatarios_test = explode(",",env('EMAIL_TEST'));
+                            $message->to($destinatarios_test);
+                        }
                     });
                 }catch(\Exception $e){
                     \Log::error("Error al notificar tarea pendiente: " . $e);
@@ -365,8 +367,10 @@ class Etapa extends Doctrine_Record
                         }
                         if(empty(env('EMAIL_TEST')))
                             $message->to($to);
-                        else
-                            $message->to(env('EMAIL_TEST'));
+                        else{
+                            $destinatarios_test = explode(",",env('EMAIL_TEST'));
+                            $message->to($destinatarios_test);
+                        }
                     });
 
                 }
