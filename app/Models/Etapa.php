@@ -22,4 +22,8 @@ class Etapa extends Model
     {
         return $this->hasMany(DatoSeguimiento::class);
     }
+
+    public function usuario(){
+        return $this->belongsTo(Usuario::class);
+    }
 }
