@@ -35,7 +35,7 @@ class ScheduleController extends Controller
         \Log::info('####INICIO CRON');
         $limpieza = \Artisan::call('simple:limpieza');
         // $etapas_avanzadas = \Artisan::call('simple:avanzar');
-        $emails_enviados = \Artisan::call('simple:sendmails');
+        // $emails_enviados = \Artisan::call('simple:sendmails');
         $message = 'Se ha ejecutado el cron de limpieza, avance de etapas vencidas y notificación de etapas en '.env('APP_MAIN_DOMAIN', 'localhost');    
         $cuenta = \Cuenta::cuentaSegunDominio();
         $to = env('DESTINATARIOS_CRON');
