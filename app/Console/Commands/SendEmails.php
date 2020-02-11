@@ -63,7 +63,7 @@ class SendEmails extends Command
                         $dias_no_habiles = (new \App\Helpers\dateHelper())->get_working_days_count(date('Y-m-d'), $e->vencimiento_at);
                     
                     try{
-                        $regla=new \Regla($e->vencimiento_notificar_email);
+                        $regla=new Regla($e->vencimiento_notificar_email);
                         $email=$regla->getExpresionParaOutputConsole($e->id);
                         $email = str_replace('"','',$email);
                     }catch(Exception $ex){
