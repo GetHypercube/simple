@@ -24,6 +24,11 @@ build:
     - docker build -t git.gob.cl:4567/simple/simple -t git.gob.cl:4567/simple/simple:$CI_COMMIT_REF_NAME .
     - docker push git.gob.cl:4567/simple/simple
     - docker push git.gob.cl:4567/simple/simple:$CI_COMMIT_REF_NAME
+  only:
+    - master
+    - staging
+    - staging_abenis
+
 
 build site:
   stage: build

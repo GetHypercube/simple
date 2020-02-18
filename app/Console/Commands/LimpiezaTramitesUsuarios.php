@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use App\Helpers\Doctrine;
 use Doctrine_Query;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\Tramite;
 
 class LimpiezaTramitesUsuarios extends Command
 {
@@ -41,57 +43,72 @@ class LimpiezaTramitesUsuarios extends Command
     public function handle()
     {
         //Limpia los tramites que que llevan mas de 1 dia sin modificarse, sin avanzar de etapa y sin datos ingresados (En blanco).
-        $error_blancos = NULL;
-        try{
-            $tramites_en_blanco=Doctrine_Query::create()
-                ->from('Tramite t, t.Etapas e, e.Usuario u, e.DatosSeguimiento d')
-                ->where('t.updated_at < DATE_SUB(NOW(),INTERVAL 1 DAY) AND t.pendiente = 1')
-                ->groupBy('t.id')
-                ->having('COUNT(e.id) = 1 AND COUNT(d.id) = 0')
-                ->execute();
-            $this->info('tramites en blanco eliminados--'.count($tramites_en_blanco));
-            \Log::info('tramites en blanco eliminados--'.count($tramites_en_blanco));
-            $tramites_en_blanco->delete();
-        }catch (Exception $e) {
-            \Log::info('Se produjo un error al eliminar los trámites en blanco--'.$e);
-        }
-        
-        //Limpia los tramites que han sido iniciados por usuarios no registrados, y que llevan mas de 1 dia sin modificarse, y sin avanzar de etapa.
-        try{
-            $tramites_en_primera_etapa=Doctrine_Query::create()
-                    ->from('Tramite t, t.Etapas e, e.Usuario u')
-                    ->where('t.updated_at < DATE_SUB(NOW(),INTERVAL 1 DAY) AND t.pendiente = 1')
-                    ->groupBy('t.id')
-                    ->having('COUNT(e.id) = 1')
-                    ->execute();
-            foreach($tramites_en_primera_etapa as $t){
-                $cantidad_tramites_primera_etapa = 0;
-                if(!is_null($t->Etapas[0]->usuario_id)){
-                    if($t->Etapas[0]->Usuario->registrado == 0){
-                        $this->info('tramite--'.$t->id);
-                        $t->delete();
-                        $cantidad_tramites_primera_etapa++;
-                    }
-                }
+        \Log::info('Inicio ejecución comando limpieza: '.Carbon::now());
+        $this->info('Inicio ejecución comando limpieza: '.Carbon::now());
+        $amount = 10000; // cantidad de registros a operar
+        $etapas_left = true; // partimos asumiendo que se encuentran registros
+        $count = 0; // cuenta cuantas veces iteramos en el while
+        $total_data_count = 0; // total de dato_seguimiento borrados
+        while ($etapas_left) {
+            $offset = $count * $amount; // parte en cero, aumenta de 10.000 en 10.000
+            $etapas = DB::table('etapa')
+                    ->select('etapa.tramite_id')
+                    ->leftJoin('tramite', 'etapa.tramite_id', '=', 'tramite.id')
+                    ->leftJoin('dato_seguimiento', 'dato_seguimiento.etapa_id', '=', 'etapa.id')
+                    ->whereRaw('tramite.updated_at < DATE_SUB(NOW(),INTERVAL 1 DAY)')
+                    ->where('tramite.pendiente',1)
+                    ->groupBy('etapa.id')
+                    ->havingRaw('COUNT(etapa.id) = 1 AND COUNT(dato_seguimiento.id) = 0')
+                    ->skip($offset)
+                    ->take($amount)
+                    ->orderBy('etapa.id', 'DESC')
+                    ->get()->toArray();            
+            if (count($etapas) > 0){
+                    $etapas = json_decode(json_encode($etapas), true);
+                    $data_count = DB::table('tramite')->whereIn('id', $etapas)->count();
+                    $eliminados = DB::table('tramite')->whereIn('id', $etapas)->delete();
+                    \Log::info("Registros eliminados de tramite: ".$data_count);
+                    $this->info("Registros eliminados de tramite: ".$data_count);
+                    $total_data_count += $data_count;
+                    $count++;
+            }else{
+                $etapas_left = false; // no encontramos más registros, nos permite salir del while
             }
-            $this->info('tramites en primera etapa eliminados--'.$cantidad_tramites_primera_etapa);
-            \Log::info('tramites en primera etapa eliminados--'.$cantidad_tramites_primera_etapa);
-        }catch (Exception $e) {
-            \Log::info('Se produjo un error al eliminar de usuarios no registrados--'.$e);
-        }        
+        }
+        \Log::info("Total trámites eliminados: ".$total_data_count);
+        $this->info("Total trámites eliminados: ".$total_data_count);
 
         //Elimina los usuarios no registrados con mas de 1 dia de antiguedad y que no hayan iniciado etapas
-        try{
-            $noregistrados=Doctrine_Query::create()
-                ->from('Usuario u, u.Etapas e')
-                ->where('u.registrado = 0 AND DATEDIFF(NOW(),u.updated_at) >= 1')
-                ->groupBy('u.id')
-                ->having('COUNT(e.id) = 0')
-                ->execute();
-            \Log::info('usuarios no registrados sin actividad eliminados--'.count($noregistrados));
-            $noregistrados->delete();
-        }catch (Exception $e) {
-            \Log::info('Se produjo un error al eliminar los usuarios no registrados sin actividad--'.$e);
+        $etapas_left = true; // partimos asumiendo que se encuentran registros
+        $count = 0; // cuenta cuantas veces iteramos en el while
+        $amount = 10000; // cantidad de registros a operar
+        $total_usuarios_no_registrados = 0;
+        while ($etapas_left){
+            $offset = $count * $amount; // parte en cero, aumenta de 10.000 en 10.000
+            $usuarios = DB::table('usuario')
+                ->select('usuario.id')
+                ->leftJoin('etapa', 'etapa.usuario_id', '=', 'usuario.id')
+                ->whereRaw('usuario.registrado=0 AND DATEDIFF(NOW(),usuario.updated_at) >= 1')
+                ->groupBy('usuario.id')
+                ->havingRaw('COUNT(etapa.id) = 0')
+                ->skip($offset)
+                ->take($amount)
+                ->get()->toArray();
+            if (count($usuarios) > 0){
+                $usuarios = json_decode(json_encode($usuarios), true);
+                $data_count = DB::table('usuario')->whereIn('id', $usuarios)->count();
+                $eliminados = DB::table('usuario')->whereIn('id', $usuarios)->delete();
+                \Log::info("Registros eliminados de usuario: ".$data_count);
+                $this->info("Registros eliminados de usuario: ".$data_count);
+                $total_usuarios_no_registrados += $data_count;
+                $count++;
+            }else{
+                $etapas_left = false; // no encontramos más registros, nos permite salir del while
+            }
         }
+        \Log::info("Total registros eliminados de usuario: ".$total_usuarios_no_registrados);
+        $this->info("Total registros eliminados de usuario: ".$total_usuarios_no_registrados);
+        \Log::info('Fin ejecución comando limpieza: '.Carbon::now());
+        $this->info('Fin ejecución comando limpieza: '.Carbon::now());
     }
 }

@@ -298,16 +298,25 @@ class Etapa extends Doctrine_Record
                 $cuenta = $this->Tramite->Proceso->Cuenta;
                 $message = '<p>' . $this->Tramite->Proceso->nombre . '</p><p>Se le ha asignado la tarea: ' . $this->Tarea->nombre . '</p><p>' . $url . '</p>';
 
-                Mail::send('emails.send', ['content' => $message], function ($message) use ($subject, $cuenta, $to) {
-                    $message->subject($subject);
-                    $mail_from = env('MAIL_FROM_ADDRESS');
-                    if(empty($mail_from)) {
-                        $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
-                    } else {
-                        $message->from($mail_from);
-                    }
-                    $message->to($to);
-                });
+                try{
+                    Mail::send('emails.send', ['content' => $message], function ($message) use ($subject, $cuenta, $to) {
+                        $message->subject($subject);
+                        $mail_from = env('MAIL_FROM_ADDRESS');
+                        if(empty($mail_from)) {
+                            $message->from($cuenta->nombre . '@' . env('APP_MAIN_DOMAIN', 'localhost'), $cuenta->nombre_largo);
+                        } else {
+                            $message->from($mail_from);
+                        }
+                        if(empty(env('EMAIL_TEST')))
+                            $message->to($to);
+                        else{
+                            $destinatarios_test = explode(",",env('EMAIL_TEST'));
+                            $message->to($destinatarios_test);
+                        }
+                    });
+                }catch(\Exception $e){
+                    \Log::error("Error al notificar tarea pendiente: " . $e);
+                }
 
             }
         }
@@ -356,7 +365,12 @@ class Etapa extends Doctrine_Record
                         } else {
                             $message->from($mail_from);
                         }
-                        $message->to($to);
+                        if(empty(env('EMAIL_TEST')))
+                            $message->to($to);
+                        else{
+                            $destinatarios_test = explode(",",env('EMAIL_TEST'));
+                            $message->to($destinatarios_test);
+                        }
                     });
 
                 }

@@ -104,6 +104,7 @@ AWS_S3_MAX_SINGLE_PART: Al superar este límite en bytes, los archivos se subir�
 DOWNLOADS_FILE_MAX_SIZE: Al momento de descargar trámites que no posean archivos subidos a Amazon S3, se compara el total a descargar con esta variable en Mega bytes, si es mayor que la variable, se usará un JOB para empaquetar y luego enviar el enlace de descarga por correo electrónico a la dirección registrada para ese nombre de usuario. Si es menor que esta variable, se descargará de forma directa sin un Job. Si no se especifica usa por omisión 500 MB.
 DOWNLOADS_MAX_JOBS_PER_USER: Cantidad máxima de JOBS de archivos a descargar simultáneos permitidos por cada usuario.
 DESTINATARIOS_CRON: Listado de correos separados por comas que serán destinatarios de recibir el estado de las tarea de cron
+TOKEN_CRON: Token a configurar para la ejecución correcta del cron. 
 ```
 
 ### Instalar las dependencias con composer

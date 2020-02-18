@@ -38,17 +38,18 @@ function getCuenta()
 
 function getTotalUnnasigned()
 {
+    $c=0;
     if (!Auth::user()->open_id) 
     {
         $grupos = Auth::user()->grupo_usuarios()->pluck('grupo_usuarios_id');
         $cuenta=\Cuenta::cuentaSegunDominio();
-        return Etapa::
-        whereNull('etapa.usuario_id')
-        ->join('tarea', function($q) use ($grupos){
+        $etapas =  Etapa::select('etapa.*')
+        ->whereNull('etapa.usuario_id')
+        ->join('tarea', function($q){
             $q->on('etapa.tarea_id','=', 'tarea.id');
         })
         ->join('proceso', function($q){
-            $q->on('tarea.proceso_id', '=', 'proceso.id');            
+            $q->on('tarea.proceso_id', '=', 'proceso.id');
         })
         ->where(function($q) use ($grupos){
             $q->where('grupos_usuarios','LIKE','%@@%');
@@ -61,8 +62,17 @@ function getTotalUnnasigned()
             ->where('proceso.activo', 1);
         })
         ->whereHas('tramite')
-        ->count();
+        ->get();
+
+        foreach($etapas as $etapa)
+        {
+            if(puedeVisualizarla($etapa))
+            {
+                $c++;
+            }
+        }
     }
+    return $c;
 }
 
 function getTotalAssigned()

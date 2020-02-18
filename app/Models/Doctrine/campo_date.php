@@ -55,14 +55,12 @@ class CampoDate extends Campo
         $display .= "
                     <script>
                         $(document).ready(function(){
-                            const maxDate = '".$maxDate."';
-                            const minDate = '".$minDate."';
-                            const idDateTime = '".$this->id."';
-                            const config = {
+                            const maxDate = \"$maxDate\";
+                            const minDate = \"$minDate\";
+                            const idDateTime = \"$this->id\";
+                            let config = {
                                 format: 'DD-MM-YYYY',
-                                maxDate: maxDate,
-                                minDate: minDate,
-                                //daysOfWeekDisabled: [6,0], 6:sabados y 0:domingos
+                                useCurrent: false,
                                 icons: {
                                     previous: 'glyphicon glyphicon-chevron-left',
                                     next: 'glyphicon glyphicon-chevron-right'
@@ -70,16 +68,24 @@ class CampoDate extends Campo
                                 locale: 'es'
                             };
 
-                            if (!minDate) {
-                                delete config.minDate;
-                            }
-
-                            if (!maxDate) {
-                                delete config.maxDate;
-                            }
-
-                            $('#'+idDateTime).datetimepicker(config);
-                        });
+                            $('#'+idDateTime).datetimepicker(config).on('dp.show', function(event) {
+                                if (minDate) {
+                                    $('#'+idDateTime).data('DateTimePicker').minDate(moment(minDate));
+                                }
+                                if (maxDate) {
+                                    $('#'+idDateTime).data('DateTimePicker').maxDate(moment(maxDate));
+                                }
+                                if (minDate == maxDate) {
+                                    $('#'+idDateTime).data('DateTimePicker').defaultDate(moment(minDate));
+                                }
+                            }).on('dp.error', function(e) {
+                                console.error(e);
+                                if (moment(e.date._d).format('YYYY-MM-DD') == maxDate) {
+                                    let fecha = String(moment(e.date._d).format('YYYY-MM-DD'));
+                                    $('#'+idDateTime).data('DateTimePicker').defaultDate(moment(fecha));
+                                }
+                            });
+                         });
                     </script>
                 ";
         return $display;

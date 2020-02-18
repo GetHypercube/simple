@@ -41,17 +41,20 @@ class AvanzarTramitesVencidos extends Command
     public function handle()
     {
         $fecha_actual = \Carbon\Carbon::now('America/Santiago')->format('Y-m-d');
-        $etapas_vencidas = Doctrine_Query::create()
-                ->from('Etapa e')
-                ->where('e.vencimiento_at <= ? AND e.pendiente = 1', array($fecha_actual))
-                ->execute();
+        $etapas_vencidas = Etapa::where('vencimiento_at','<=',$fecha_actual)
+                           ->where('pendiente',1)
+                           ->get();
         foreach($etapas_vencidas as $etapa){
+            $etapa = Doctrine::getTable('Etapa')->find($etapa->id);
             if($etapa->vencida())
                 $etapa->avanzar();
         }
-        if(count($etapas_vencidas))
+        if(count($etapas_vencidas)){
             \Log::info('etapas vencidas avanzadas--'.count($etapas_vencidas));
-        else
+            $this->info('etapas vencidas avanzadas--'.count($etapas_vencidas));
+        }else{
             \Log::info('No existen etapas para avanzar');
+            $this->info('No existen etapas para avanzar');
+        }
     }   
 }
