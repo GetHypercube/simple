@@ -1,6 +1,6 @@
 <?php
 // Change To Repo Directory
-chdir("/full/path/to/repo");
+chdir("/var/www/simple/public/");
 
 // Cargando los utimos3 registros
 $git_history = [];
