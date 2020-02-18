@@ -51,7 +51,7 @@ RUN composer install
 
 RUN chown -R www-data:www-data storage/
 
-#Start New Relic =========
+#Start New Relic =====
 RUN apt-get update && \
     apt-get -yq install wget && \
     wget -O - https://download.newrelic.com/548C16BF.gpg | apt-key add - && \
@@ -63,7 +63,7 @@ RUN apt-get update && \
 ADD run.sh /start/run.sh
 RUN chmod +x /start/run.sh
 RUN newrelic-install install
-#=============End New Relic
+#=======End New Relic
 
 RUN apt-get update  && \
     apt-get -y install libpng16-16 libpng-tools libpng-dev  && \
