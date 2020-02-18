@@ -64,16 +64,6 @@ ADD run.sh /start/run.sh
 RUN chmod +x /start/run.sh
 RUN newrelic-install install
 #=======End New Relic
-
-RUN apt-get update  && \
-    apt-get -y install libpng16-16 libpng-tools libpng-dev  && \
-    npm i npm@latest -g  && \
-    npm install  && \
-    npm audit fix --force  && \
-    curl -o- -L https://yarnpkg.com/install.sh | bash  && \
-    export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"  && \
-    apt install yarn -y  && \
-    yarn run prod
     
 RUN  ln -sf /dev/stderr /var/log/php-errors.log
 #RUN  ln -sf /dev/stderr /var/www/simple/storage/logs/laravel.log
