@@ -7,7 +7,8 @@ sed -i "s/newrelic.appname = \"\"/newrelic.appname = \"${NR_APP_NAME}\"/" /usr/l
 sed -i "s/newrelic.license = \"\"/newrelic.license = \"${NR_INSTALL_KEY}\"/" /usr/local/etc/php/conf.d/newrelic.ini
 
 ### se desactivando modulo browser
-sed -i "s/;newrelic.browser_monitoring.auto_instrument = true/newrelic.browser_monitoring.auto_instrument = false" /usr/local/etc/php/conf.d/newrelic.ini
+### sed -i "s/;newrelic.browser_monitoring.auto_instrument = true/newrelic.browser_monitoring.auto_instrument = false" /usr/local/etc/php/conf.d/newrelic.ini
+echo 'newrelic.browser_monitoring.auto_instrument = false' >> /usr/local/etc/php/conf.d/newrelic.ini
 
 echo "Start deamon New Relic"
 /etc/init.d/newrelic-daemon start
