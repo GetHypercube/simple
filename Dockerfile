@@ -77,4 +77,4 @@ WORKDIR $DIRECTORY_PROJECT
 
 EXPOSE 9000
 
-CMD ["/start/run.sh"]
+CMD ["/start/run.sh"]+
