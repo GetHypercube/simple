@@ -2,7 +2,7 @@
 
 @section('content')
     <form method="POST" class="ajaxForm dynaForm"
-          action="{{route('stage.ejecutar_fin_form', [$etapa->id])}}/{{$qs ? '?' . $qs : ''}}">
+          action="{{route('stage.ejecutar_fin_form', [$etapa->id])}}{{$qs ? '?' . $qs : ''}}">
         {{csrf_field()}}
         <fieldset>
             <div class="validacion"></div>
