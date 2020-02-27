@@ -1,7 +1,7 @@
 @extends('layouts.procedure')
 
 @section('content')
-    <form method="put" class="ajaxForm dynaForm"
+    <form method="POST" class="ajaxForm dynaForm"
           action="{{route('stage.ejecutar_fin_form', [$etapa->id])}}/{{$qs ? '?' . $qs : ''}}">
         {{csrf_field()}}
         <fieldset>
