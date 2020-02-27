@@ -20,7 +20,7 @@
         <input type="text" name="analytics" value="<?= $cuenta->analytics ?>" class="form-control col-3"/><br><!--Gogole Analytics--->
          <label>ID Seguimiento Analytics Primario (ID Default instancia)</label>
         <input type="text" class="form-control col-3" readonly="true" disabled="true" value="<?= env('ANALYTICS') ?>"/><br><!--Gogole Analytics--->
-        
+
         <label>Mensaje de bienvenida (Puede contener HTML)</label>
         <textarea name="mensaje" class="form-control col-6"><?= $cuenta->mensaje ?></textarea>
         <label>Logo Header</label>
@@ -29,13 +29,13 @@
         <img class="logo"
              src="<?= $cuenta->logo ? asset('logos/' . $cuenta->logo) : asset('img/simple.png') ?>"
              alt="logo"/>
-        <br>     
+        <br>
         <label>Logo Footer</label>
         <div id="file-uploaderf"></div>
         <input type="hidden" name="logof" value="<?= $cuenta->logof ?>"/>
         <img class="logof"
              src="<?= $cuenta->logof ? asset('logos/' . $cuenta->logof) : asset('img/simple.png') ?>"
-             alt="logof"/>    
+             alt="logof"/>
     </fieldset>
     <br>
     <fieldset>
@@ -90,6 +90,7 @@
             <option value="layouts.header" <?= ($cuenta->header == 'layouts.header') ? 'selected' : '' ?>>layouts.header</option>
             <option value="layouts.header_super" <?= ($cuenta->header == 'layouts.header_super') ? 'selected' : '' ?>>layouts.header_super</option>
             <option value="layouts.header_carabineros" <?= ($cuenta->header == 'layouts.header_carabineros') ? 'selected' : '' ?>>layouts.header_carabineros</option>
+            <option value="layouts.hypercube" <?= ($cuenta->header == 'layouts.hypercube') ? 'selected' : '' ?>>layouts.hypercube</option>
         </select>
     </fieldset>
     <fieldset>
@@ -102,11 +103,12 @@
             <option value="layouts.footer" <?= ($cuenta->footer == 'layouts.footer') ? 'selected' : '' ?>>layouts.footer</option>
             <option value="layouts.footer_super" <?= ($cuenta->footer == 'layouts.footer_super') ? 'selected' : '' ?>>layouts.footer_super</option>
             <option value="layouts.footer_carabineros" <?= ($cuenta->footer == 'layouts.footer_carabineros') ? 'selected' : '' ?>>layouts.footer_carabineros</option>
+            <option value="layouts.footer_hypercube" <?= ($cuenta->footer == 'layouts.footer_hypercube') ? 'selected' : '' ?>>layouts.footer_hypercube</option>
         </select>
     </fieldset>
     <hr>
-    
-     
+
+
     <fieldset>
         <legend><?= $title ?> configuraci&oacute;n avanzada</legend>
         <label>Descripci&oacute;n</label>
