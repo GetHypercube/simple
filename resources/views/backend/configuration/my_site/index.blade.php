@@ -125,11 +125,11 @@
 @section('script')
     <script src="{{asset('js/helpers/fileuploader.js')}}"></script>
     <script>
-    // @TODO: Added /public/ as a hack for correct route in uploader
+    // ¬
         var uploader = new qq.FileUploader({
             element: document.getElementById('file-uploader'),
             params: {_token: '{{csrf_token()}}'},
-            action: '/public/backend/uploader/logo',
+            action: '{{route('backend.configuration.my_site.save')}}/backend/uploader/logo',
             onComplete: function (id, filename, respuesta) {
                 $("input[name=logo]").val(respuesta.file_name);
                 $("img.logo").attr("src", "/logos/" + respuesta.file_name);
@@ -140,7 +140,7 @@
         var uploader = new qq.FileUploader({
             element: document.getElementById('file-uploaderf'),
             params: {_token: '{{csrf_token()}}'},
-            action: '/public/backend/uploader/logof',
+            action: '{{route('backend.configuration.my_site.save')}}/backend/uploader/logof',
             onComplete: function (id, filename, respuesta) {
                 $("input[name=logof]").val(respuesta.file_name);
                 $("img.logof").attr("src", "/logos/" + respuesta.file_name);
@@ -150,7 +150,7 @@
         let upload_favicon = new qq.FileUploader({
             element: document.getElementById('file-uploader-favicon'),
             params: {_token: '{{csrf_token()}}'},
-            action: '/public/backend/uploader/logo',
+            action: '{{route('backend.configuration.my_site.save')}}/backend/uploader/logo',
             onComplete: function (id, filename, respuesta) {
                 $("input[name=favicon]").val(respuesta.file_name);
                 $("img.favicon").attr("src", "/logos/" + respuesta.file_name);
