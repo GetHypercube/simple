@@ -90,7 +90,7 @@
             <option value="layouts.header" <?= ($cuenta->header == 'layouts.header') ? 'selected' : '' ?>>layouts.header</option>
             <option value="layouts.header_super" <?= ($cuenta->header == 'layouts.header_super') ? 'selected' : '' ?>>layouts.header_super</option>
             <option value="layouts.header_carabineros" <?= ($cuenta->header == 'layouts.header_carabineros') ? 'selected' : '' ?>>layouts.header_carabineros</option>
-            <option value="layouts.hypercube" <?= ($cuenta->header == 'layouts.hypercube') ? 'selected' : '' ?>>layouts.hypercube</option>
+            <option value="layouts.header_hypercube" <?= ($cuenta->header == 'layouts.header_hypercube') ? 'selected' : '' ?>>layouts.header_hypercube</option>
         </select>
     </fieldset>
     <fieldset>
