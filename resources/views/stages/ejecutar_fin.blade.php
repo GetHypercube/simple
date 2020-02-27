@@ -1,7 +1,7 @@
 @extends('layouts.procedure')
 
 @section('content')
-    <form method="POST" class="ajaxForm dynaForm"
+    <form method="put" class="ajaxForm dynaForm"
           action="{{route('stage.ejecutar_fin_form', [$etapa->id])}}/{{$qs ? '?' . $qs : ''}}">
         {{csrf_field()}}
         <fieldset>
@@ -44,7 +44,7 @@
                     <p>{{$paso_confirmacion_contenido}}</p>
                 @else
                     <p>Luego de hacer click en Finalizar esta etapa quedara detenida momentaneamente hasta que se completen el resto de etapas pendientes.</p>
-                @endif                
+                @endif
             <?php elseif($tareas_proximas->estado == 'completado'):?>
                 @if(!is_null($etapa->Tarea->paso_confirmacion_contenido))
                     <?php
@@ -92,7 +92,7 @@
     </form>
 @endsection
  @if(!is_null($extra['analytics']))
-             
+
             @push('script')
                 <script>
                     console.log('<?=$extra['es_final'];?>'); //imprimiendo el fin
@@ -113,8 +113,8 @@
                         eventAction: '<?=$extra['analytics']['nombre_marca'];?>',
                         eventLabel: '<?=$extra['analytics']['evento_enviante'];?>'
                     };
-                    if (ES_FINAL==1) { 
-                                
+                    if (ES_FINAL==1) {
+
                           $(document).ready(function () {
                             $('#boton-termino').on('click', function () {
                               // event.preventDefault();d
@@ -124,7 +124,7 @@
                         });
 
                       }
-                    
+
 
 
               /*    if (ES_FINAL==1) { //esto enviaba 2 veces
