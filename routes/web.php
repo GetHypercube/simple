@@ -39,7 +39,7 @@ Route::middleware(['auth_user'])->group(function () {
     Route::get('/etapas/sinasignar', 'StagesController@sinasignar')->name('stage.unassigned');
     Route::get('/etapas/ejecutar_fin/{etapa_id}', 'StagesController@ejecutar_fin')->name('stage.ejecutar_fin');
     Route::get('/etapas/errores/{etapa_id}', 'StagesController@ejecutar_error')->name('stage.errores');
-    Route::get('/etapas/ejecutar_fin_form/{etapa_id}', 'StagesController@ejecutar_fin_form')->name('stage.ejecutar_fin_form');
+    Route::post('/etapas/ejecutar_fin_form/{etapa_id}', 'StagesController@ejecutar_fin_form')->name('stage.ejecutar_fin_form');
     Route::get('/etapas/ejecutar_exito', 'StagesController@ejecutar_exito')->name('stage.ejecutar_exito');
     Route::get('/etapas/descargar/{tramites}', 'StagesController@descargar')->name('stage.download');
     Route::post('/etapas/descargar_form', 'StagesController@descargar_form')->name('stage.descargar_form');
