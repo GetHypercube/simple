@@ -125,7 +125,6 @@
 @section('script')
     <script src="{{asset('js/helpers/fileuploader.js')}}"></script>
     <script>
-    // ¬
         var uploader = new qq.FileUploader({
             element: document.getElementById('file-uploader'),
             params: {_token: '{{csrf_token()}}'},
